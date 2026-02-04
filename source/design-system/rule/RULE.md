@@ -48,7 +48,11 @@ font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 
 | Token | Value | Usage | Type |
 |-------|-------|-------|------|
-| `--color-bg-combobox-hover` | `#F0F1FF` | Item on the combobox, dropdown | color |
+| `--color-bg-combobox-hover` | `#F0F1FF` | Hover on the item on the combobox, dropdown | color |
+| `--color-border-textbox-hover` | `#184EFF` | border when hovering the textbox, search box, datebox... Always 1px. | color |
+| `--color-text-blue` | `#184EFF` | Hovering the button with text is black | color |
+| `--color-bg-button-hover` | `#F0F1FF` | Hovering the button color is white | color |
+| `--color-text-secondary` | `#222222` | Main section, Sub section, text in the item (list, dropdownlist) | color |
 
 ---
 
@@ -71,6 +75,10 @@ Include these variables in your component styles:
   --color-btn-action-hover: #184EFFE6;
   --color-btn-cancel-hover: #F5F7F9;
   --color-bg-combobox-hover: #F0F1FF;
+  --color-border-textbox-hover: #184EFF;
+  --color-text-blue: #184EFF;
+  --color-bg-button-hover: #F0F1FF;
+  --color-text-secondary: #222222;
 }
 ```
 

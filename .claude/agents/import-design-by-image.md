@@ -50,6 +50,51 @@ When you identify icons needed in the component:
 - **Ask First**: Always confirm component name and details before creating files
 - **Multi-Image Support**: Analyze multiple images to capture all component states
 - **Interactive JavaScript**: Generate JavaScript for components requiring user interaction
+- **MANDATORY PREVIEW**: Always show complete mock-up layout and get user approval BEFORE creating any .md file
+
+## CRITICAL: Mock-up Preview & Approval Required
+
+**MANDATORY WORKFLOW - NO EXCEPTIONS:**
+
+1. **ALWAYS show the complete HTML/CSS mock-up** to the user first
+2. **NEVER create .md file** until user explicitly approves the mock-up
+3. **Use AskUserQuestion** to get formal approval before file creation
+
+### Preview Format (MUST SHOW):
+
+```markdown
+## Mock-up Preview
+
+Here is the complete component code:
+
+\`\`\`html
+{complete HTML with Tailwind classes}
+\`\`\`
+
+## Component States Table
+| State | Visual | Tailwind Classes |
+|-------|--------|------------------|
+| ... | ... | ... |
+
+## JavaScript (if interactive)
+\`\`\`javascript
+{complete JS code}
+\`\`\`
+```
+
+### Approval Question (MUST ASK):
+
+After showing the mock-up, ALWAYS use `AskUserQuestion`:
+```
+"Here is the mock-up layout for {ComponentName}. Please review:"
+
+Options:
+- "Approved - Create the .md file"
+- "Need changes - Let me provide feedback"
+- "Cancel - Do not create file"
+```
+
+**ONLY proceed to create .md file if user selects "Approved"**
 
 ## CRITICAL: Generate Interactive JavaScript
 
@@ -209,21 +254,36 @@ Questions:
 - ALL styling must use Tailwind utility classes
 - MUST follow RULE.md colors and fonts
 
-### Step 5: Confirm Before Creating
+### Step 5: Show Mock-up and Get Approval (MANDATORY)
 
-**IMPORTANT:** Use `AskUserQuestion` before creating the file:
+**CRITICAL - DO NOT SKIP THIS STEP:**
+
+1. **First, display the complete mock-up:**
+   - Full HTML code with all Tailwind classes
+   - Component states table (if applicable)
+   - JavaScript code (if interactive)
+
+2. **Then, use `AskUserQuestion` to get explicit approval:**
 ```
-"I've generated the code for {ComponentName}. Would you like me to create the documentation file?"
+"Here is the complete mock-up layout for {ComponentName}. Please review the code above."
 
 Options:
-- Yes, create {ComponentName}.md
-- No, just show me the code
-- Let me adjust the design first
+- "Approved - Create the .md file"
+- "Need changes - Let me provide feedback"
+- "Cancel - Do not create file"
 ```
+
+**ONLY proceed to create .md file if user selects "Approved"**
+**If user selects "Need changes", wait for feedback and update mock-up**
 
 ## Output Documentation Format
 
 **Output:** `source/design-system/{ComponentName}.md`
+
+**CRITICAL - MANDATORY SECTIONS:**
+- `## HTML` - Required (NOT `## HTML (Tailwind)`)
+- `## CSS` - Required (component styles with BEM naming)
+- Missing these sections will cause errors when opening the component!
 
 ```markdown
 ---
@@ -241,9 +301,26 @@ status: draft
 ## Usage
 {when and where to use this component}
 
-## HTML (Tailwind)
+## HTML
 \`\`\`html
 {generated HTML code with Tailwind classes}
+\`\`\`
+
+## CSS
+\`\`\`css
+/* Component styles - use BEM naming convention */
+.{component-name} {
+  font-family: 'Open Sans', sans-serif;
+  /* Add component-specific styles */
+}
+
+.{component-name}__element {
+  /* Element styles */
+}
+
+.{component-name}--modifier {
+  /* Modifier styles */
+}
 \`\`\`
 
 ## Tailwind Classes Used
@@ -370,29 +447,42 @@ Before creating the file, verify:
 ### Single Image Workflow
 ```
 1. Receive image from user
-2. Analyze visual design elements
-3. Ask user for component name and category
-4. Generate HTML with Tailwind classes
-5. Show code preview to user
-6. Ask confirmation before creating file
-7. Create {ComponentName}.md in source/design-system/
-8. Confirm file creation with path
+2. Read RULE.md and icons folder
+3. Analyze visual design elements
+4. Ask user for component name and category
+5. Generate HTML with Tailwind classes
+6. **MANDATORY: Show complete mock-up layout to user**
+7. **MANDATORY: Use AskUserQuestion to get explicit approval**
+8. **ONLY if approved**: Create {ComponentName}.md in source/design-system/
+9. Confirm file creation with path
 ```
 
 ### Multi-Image Workflow
 ```
 1. Receive multiple images from user
-2. Count images and catalog each one
-3. Analyze each image - identify which state it represents
-4. Compare images - find visual differences (color, opacity, borders, etc.)
-5. ASK USER if any state is unclear or ambiguous
-6. Consolidate all states into one component design
-7. Ask user for component name and category
-8. Generate HTML with ALL states using Tailwind modifiers (hover:, focus:, disabled:, etc.)
-9. Show code preview with states table
-10. Ask confirmation before creating file
-11. Create {ComponentName}.md with complete states documentation
-12. Confirm file creation with path
+2. Read RULE.md and icons folder
+3. Count images and catalog each one
+4. Analyze each image - identify which state it represents
+5. Compare images - find visual differences (color, opacity, borders, etc.)
+6. ASK USER if any state is unclear or ambiguous
+7. Consolidate all states into one component design
+8. Ask user for component name and category
+9. Generate HTML with ALL states using Tailwind modifiers (hover:, focus:, disabled:, etc.)
+10. **MANDATORY: Show complete mock-up layout with states table**
+11. **MANDATORY: Use AskUserQuestion to get explicit approval**
+12. **ONLY if approved**: Create {ComponentName}.md with complete states documentation
+13. Confirm file creation with path
+```
+
+### Editing Existing Component Workflow
+```
+1. Read the existing .md file
+2. Analyze requested changes
+3. Generate updated HTML/CSS/JS
+4. **MANDATORY: Show complete updated mock-up to user**
+5. **MANDATORY: Use AskUserQuestion to get explicit approval**
+6. **ONLY if approved**: Update the .md file
+7. Confirm changes made
 ```
 
 ## Common Tailwind Patterns
@@ -521,11 +611,12 @@ document.addEventListener('DOMContentLoaded', function() {
 3. HTML uses Tailwind utility classes only (no custom CSS)
 4. HTML is semantic and accessible
 5. Tailwind classes documented in table
-6. User confirmed before file creation
-7. Documentation follows standard format
-8. **Multi-image**: All states captured and documented (if multiple images)
-9. **Clarification**: Asked user when any state was unclear
-10. **JavaScript**: Interactive components include working JS for all user interactions:
+6. **MANDATORY: Mock-up layout shown to user BEFORE file creation**
+7. **MANDATORY: User approval obtained via AskUserQuestion BEFORE file creation**
+8. Documentation follows standard format
+9. **Multi-image**: All states captured and documented (if multiple images)
+10. **Clarification**: Asked user when any state was unclear
+11. **JavaScript**: Interactive components include working JS for all user interactions:
     - Search/filter functionality
     - Item selection with visual feedback
     - Hover states (if not CSS-only)

@@ -1,8 +1,8 @@
 ---
 name: ComboboxWithSearch
 category: forms
-created: 2026-02-04
-status: draft
+created: 2026-02-04T00:00:00.000Z
+status: approved
 ---
 
 # ComboboxWithSearch
@@ -11,8 +11,18 @@ status: draft
 A multi-select searchable combobox for selecting clients or groups. Features:
 - Search input with placeholder
 - Dropdown list with avatars (groups use icon, clients use initials)
-- Multi-select with removable tag/chip display
+- Multi-select with removable tag/chip display (unified blue style from Chip.md)
 - Focus state with blue border ring
+- Dropdown stays open after selection, closes only when clicking outside
+
+**Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
+
+**Google Fonts Import:**
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+```
 
 ## Usage
 Use for selecting multiple clients or groups, such as assigning licenses, adding team members, or any multi-select scenario with search.
@@ -34,72 +44,72 @@ Use for selecting multiple clients or groups, such as assigning licenses, adding
   <!-- Dropdown List -->
   <ul class="combobox-list" role="listbox" id="clientList">
     <!-- Group Item -->
-    <li class="combobox-item" role="option" data-value="group-er">
+    <li class="combobox-item" role="option" data-value="group-marketing">
       <div class="avatar avatar-blue">
         <svg class="avatar-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 14v-1.333A2.667 2.667 0 009.333 10H6.667a2.667 2.667 0 00-2.667 2.667V14M8 7.333A2.667 2.667 0 108 2a2.667 2.667 0 000 5.333zM13.333 14v-1.333a2.667 2.667 0 00-2-2.584M10.667 2.084a2.667 2.667 0 010 5.166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <div class="combobox-item-content">
-        <div class="combobox-item-title">Group: er</div>
-        <div class="combobox-item-subtitle">11 connected clients without a license</div>
+        <div class="combobox-item-title">Marketing Team</div>
+        <div class="combobox-item-subtitle">12 members</div>
       </div>
     </li>
 
     <!-- Group Item -->
-    <li class="combobox-item" role="option" data-value="group-87">
+    <li class="combobox-item" role="option" data-value="group-sales">
       <div class="avatar avatar-blue">
         <svg class="avatar-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 14v-1.333A2.667 2.667 0 009.333 10H6.667a2.667 2.667 0 00-2.667 2.667V14M8 7.333A2.667 2.667 0 108 2a2.667 2.667 0 000 5.333zM13.333 14v-1.333a2.667 2.667 0 00-2-2.584M10.667 2.084a2.667 2.667 0 010 5.166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <div class="combobox-item-content">
-        <div class="combobox-item-title">Group: 87</div>
-        <div class="combobox-item-subtitle">11 connected clients without a license</div>
+        <div class="combobox-item-title">Sales Department</div>
+        <div class="combobox-item-subtitle">23 members</div>
       </div>
     </li>
 
     <!-- Client Item - Selected State -->
-    <li class="combobox-item combobox-item-selected" role="option" data-value="client-cz" aria-selected="true">
+    <li class="combobox-item combobox-item-selected" role="option" data-value="client-sm" aria-selected="true">
       <div class="avatar avatar-blue">
-        <span class="avatar-text">CZ</span>
+        <span class="avatar-text">SM</span>
       </div>
       <div class="combobox-item-content">
-        <div class="combobox-item-title">CZ</div>
-        <div class="combobox-item-subtitle">cz@example.com</div>
+        <div class="combobox-item-title">Sarah Mitchell</div>
+        <div class="combobox-item-subtitle">sarah.mitchell@company.com</div>
       </div>
     </li>
 
     <!-- Client Item -->
-    <li class="combobox-item" role="option" data-value="client-jl">
+    <li class="combobox-item" role="option" data-value="client-jr">
       <div class="avatar avatar-orange">
-        <span class="avatar-text">JL</span>
+        <span class="avatar-text">JR</span>
       </div>
       <div class="combobox-item-content">
-        <div class="combobox-item-title">JL</div>
-        <div class="combobox-item-subtitle">jl@example.com</div>
+        <div class="combobox-item-title">James Rodriguez</div>
+        <div class="combobox-item-subtitle">james.rodriguez@company.com</div>
       </div>
     </li>
 
     <!-- Client Item -->
-    <li class="combobox-item" role="option" data-value="client-dd">
+    <li class="combobox-item" role="option" data-value="client-ec">
       <div class="avatar avatar-purple">
-        <span class="avatar-text">DD</span>
+        <span class="avatar-text">EC</span>
       </div>
       <div class="combobox-item-content">
-        <div class="combobox-item-title">DD</div>
-        <div class="combobox-item-subtitle">dd@example.com</div>
+        <div class="combobox-item-title">Emily Chen</div>
+        <div class="combobox-item-subtitle">emily.chen@company.com</div>
       </div>
     </li>
 
     <!-- Client Item -->
-    <li class="combobox-item" role="option" data-value="client-nc">
+    <li class="combobox-item" role="option" data-value="client-mo">
       <div class="avatar avatar-green">
-        <span class="avatar-text">NC</span>
+        <span class="avatar-text">MO</span>
       </div>
       <div class="combobox-item-content">
-        <div class="combobox-item-title">NC</div>
-        <div class="combobox-item-subtitle">nc@example.com</div>
+        <div class="combobox-item-title">Michael O'Brien</div>
+        <div class="combobox-item-subtitle">michael.obrien@company.com</div>
       </div>
     </li>
   </ul>
@@ -235,159 +245,96 @@ Use for selecting multiple clients or groups, such as assigning licenses, adding
 
 ## Tailwind CSS
 ```html
-<div class="bg-white border border-gray-200 rounded-lg overflow-hidden w-full max-w-md font-['Open_Sans']">
-  <!-- Search Input -->
-  <div class="p-3 border-b border-gray-200">
+<div class="relative w-full max-w-md font-['Open_Sans']" id="comboboxContainer">
+  <!-- Input Container with Tags (max 3 rows with scroll) -->
+  <div id="inputContainer" class="flex flex-wrap items-center gap-1 max-h-[84px] overflow-y-auto px-3 py-2 border border-gray-300 rounded-md bg-white cursor-text transition-colors">
+    <!-- Tags will be inserted here by JavaScript -->
+    <div id="tagsContainer" class="flex flex-wrap gap-1"></div>
     <input
       type="text"
-      class="w-full border-none outline-none text-sm text-[#141414] bg-transparent placeholder:text-gray-400 font-['Open_Sans']"
-      placeholder="Add client..."
       id="clientSearch"
+      class="flex-1 min-w-[100px] outline-none text-sm text-[#141414] bg-transparent placeholder:text-gray-400"
+      placeholder="Add client..."
       aria-label="Search clients"
     >
   </div>
 
   <!-- Dropdown List -->
-  <ul class="max-h-[280px] overflow-y-auto" role="listbox" id="clientList">
+  <ul id="clientList" class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-[280px] overflow-y-auto hidden" role="listbox">
     <!-- Group Item -->
-    <li class="flex items-center gap-3 p-3 cursor-pointer hover:bg-[#F5F7F9] transition-colors" role="option" data-value="group-er">
-      <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
-        <svg class="text-white" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 14v-1.333A2.667 2.667 0 009.333 10H6.667a2.667 2.667 0 00-2.667 2.667V14M8 7.333A2.667 2.667 0 108 2a2.667 2.667 0 000 5.333zM13.333 14v-1.333a2.667 2.667 0 00-2-2.584M10.667 2.084a2.667 2.667 0 010 5.166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <li class="flex items-center gap-3 p-3 cursor-pointer transition-colors" role="option" data-value="group-engineering" data-label="Engineering Team (35 members)">
+      <div class="w-8 h-8 rounded-full bg-[#5C89FF] flex items-center justify-center flex-shrink-0">
+        <svg class="text-white" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M12 14v-1.333A2.667 2.667 0 009.333 10H6.667a2.667 2.667 0 00-2.667 2.667V14M8 7.333A2.667 2.667 0 108 2a2.667 2.667 0 000 5.333z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium text-[#141414] leading-tight mb-0.5">Group: er</div>
-        <div class="text-xs text-gray-600 leading-tight">11 connected clients without a license</div>
+        <div class="text-sm font-medium text-[#141414]">Engineering Team (35 members)</div>
+        <div class="text-xs text-gray-500">Software developers and engineers</div>
       </div>
     </li>
 
-    <!-- Group Item -->
-    <li class="flex items-center gap-3 p-3 cursor-pointer hover:bg-[#F5F7F9] transition-colors" role="option" data-value="group-87">
-      <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
-        <svg class="text-white" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 14v-1.333A2.667 2.667 0 009.333 10H6.667a2.667 2.667 0 00-2.667 2.667V14M8 7.333A2.667 2.667 0 108 2a2.667 2.667 0 000 5.333zM13.333 14v-1.333a2.667 2.667 0 00-2-2.584M10.667 2.084a2.667 2.667 0 010 5.166" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+    <!-- Client Items -->
+    <li class="flex items-center gap-3 p-3 cursor-pointer transition-colors" role="option" data-value="client-sm" data-label="Sarah Mitchell">
+      <div class="w-8 h-8 rounded-full bg-[#C5E865] flex items-center justify-center flex-shrink-0">
+        <span class="text-xs font-semibold text-white">SM</span>
       </div>
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium text-[#141414] leading-tight mb-0.5">Group: 87</div>
-        <div class="text-xs text-gray-600 leading-tight">11 connected clients without a license</div>
+        <div class="text-sm font-medium text-[#141414]">Sarah Mitchell</div>
+        <div class="text-xs text-gray-500">sarah.mitchell@company.com</div>
       </div>
     </li>
 
-    <!-- Client Item - Selected State -->
-    <li class="flex items-center gap-3 p-3 cursor-pointer bg-blue-100 hover:bg-blue-200 transition-colors" role="option" data-value="client-cz" aria-selected="true">
-      <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
-        <span class="text-xs font-semibold text-white leading-none uppercase">CZ</span>
+    <li class="flex items-center gap-3 p-3 cursor-pointer transition-colors" role="option" data-value="client-jr" data-label="James Rodriguez">
+      <div class="w-8 h-8 rounded-full bg-[#5C9EFF] flex items-center justify-center flex-shrink-0">
+        <span class="text-xs font-semibold text-white">JR</span>
       </div>
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium text-[#141414] leading-tight mb-0.5">CZ</div>
-        <div class="text-xs text-gray-600 leading-tight">cz@example.com</div>
+        <div class="text-sm font-medium text-[#141414]">James Rodriguez</div>
+        <div class="text-xs text-gray-500">james.rodriguez@company.com</div>
       </div>
     </li>
 
-    <!-- Client Item -->
-    <li class="flex items-center gap-3 p-3 cursor-pointer hover:bg-[#F5F7F9] transition-colors" role="option" data-value="client-jl">
-      <div class="w-8 h-8 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0">
-        <span class="text-xs font-semibold text-white leading-none uppercase">JL</span>
+    <li class="flex items-center gap-3 p-3 cursor-pointer transition-colors" role="option" data-value="client-ec" data-label="Emily Chen">
+      <div class="w-8 h-8 rounded-full bg-[#E8A0A0] flex items-center justify-center flex-shrink-0">
+        <span class="text-xs font-semibold text-white">EC</span>
       </div>
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium text-[#141414] leading-tight mb-0.5">JL</div>
-        <div class="text-xs text-gray-600 leading-tight">jl@example.com</div>
+        <div class="text-sm font-medium text-[#141414]">Emily Chen</div>
+        <div class="text-xs text-gray-500">emily.chen@company.com</div>
       </div>
     </li>
 
-    <!-- Client Item -->
-    <li class="flex items-center gap-3 p-3 cursor-pointer hover:bg-[#F5F7F9] transition-colors" role="option" data-value="client-dd">
-      <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center flex-shrink-0">
-        <span class="text-xs font-semibold text-white leading-none uppercase">DD</span>
+    <li class="flex items-center gap-3 p-3 cursor-pointer transition-colors" role="option" data-value="client-mo" data-label="Michael O'Brien">
+      <div class="w-8 h-8 rounded-full bg-[#FF9F43] flex items-center justify-center flex-shrink-0">
+        <span class="text-xs font-semibold text-white">MO</span>
       </div>
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium text-[#141414] leading-tight mb-0.5">DD</div>
-        <div class="text-xs text-gray-600 leading-tight">dd@example.com</div>
+        <div class="text-sm font-medium text-[#141414]">Michael O'Brien</div>
+        <div class="text-xs text-gray-500">michael.obrien@company.com</div>
       </div>
     </li>
 
-    <!-- Client Item -->
-    <li class="flex items-center gap-3 p-3 cursor-pointer hover:bg-[#F5F7F9] transition-colors" role="option" data-value="client-nc">
-      <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-        <span class="text-xs font-semibold text-white leading-none uppercase">NC</span>
+    <li class="flex items-center gap-3 p-3 cursor-pointer transition-colors" role="option" data-value="client-jt" data-label="Jessica Taylor">
+      <div class="w-8 h-8 rounded-full bg-[#22C55E] flex items-center justify-center flex-shrink-0">
+        <span class="text-xs font-semibold text-white">JT</span>
       </div>
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium text-[#141414] leading-tight mb-0.5">NC</div>
-        <div class="text-xs text-gray-600 leading-tight">nc@example.com</div>
+        <div class="text-sm font-medium text-[#141414]">Jessica Taylor</div>
+        <div class="text-xs text-gray-500">jessica.taylor@company.com</div>
+      </div>
+    </li>
+
+    <li class="flex items-center gap-3 p-3 cursor-pointer transition-colors" role="option" data-value="client-dp" data-label="David Park">
+      <div class="w-8 h-8 rounded-full bg-[#A855F7] flex items-center justify-center flex-shrink-0">
+        <span class="text-xs font-semibold text-white">DP</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-[#141414]">David Park</div>
+        <div class="text-xs text-gray-500">david.park@company.com</div>
       </div>
     </li>
   </ul>
-</div>
-```
-
-## Multi-Select with Tags (Tailwind)
-```html
-<!-- Input with selected tags -->
-<div class="relative font-['Open_Sans'] w-full max-w-md">
-  <!-- Input Container with Tags -->
-  <div class="flex flex-wrap items-center gap-1 min-h-[42px] px-3 py-2 border border-[#184EFF] ring-1 ring-[#184EFF] rounded-md bg-white cursor-text">
-    <!-- Group Tag -->
-    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 rounded text-sm text-[#141414]">
-      Group 99 clients (45 members)
-      <button class="ml-1 text-gray-400 hover:text-gray-600">
-        <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="8" fill="currentColor" fill-opacity="0.3"/>
-          <path d="M5 11l3-3 3 3M5 5l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </span>
-    <!-- Client Tag -->
-    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 rounded text-sm text-[#141414]">
-      Dec1_failed1 Le
-      <button class="ml-1 text-gray-400 hover:text-gray-600">
-        <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="8" fill="currentColor" fill-opacity="0.3"/>
-          <path d="M5 11l3-3 3 3M5 5l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </span>
-    <!-- More tags... -->
-    <input
-      type="text"
-      class="flex-1 min-w-[60px] outline-none text-sm text-[#141414] bg-transparent"
-    />
-  </div>
-
-  <!-- Dropdown List -->
-  <div class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto">
-    <!-- Group Item -->
-    <div class="flex items-center gap-3 px-4 py-3 hover:bg-[#F0F1FF] cursor-pointer">
-      <div class="w-10 h-10 rounded-full bg-[#5C89FF] flex items-center justify-center">
-        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-        </svg>
-      </div>
-      <div class="flex-1">
-        <div class="text-sm font-semibold text-[#141414]">Group: G 23</div>
-        <div class="text-xs text-gray-500">10 connected clients without a license</div>
-      </div>
-    </div>
-
-    <!-- Client Item (Hover) -->
-    <div class="flex items-center gap-3 px-4 py-3 hover:bg-[#F0F1FF] cursor-pointer">
-      <div class="w-10 h-10 rounded-full bg-[#FF9F43] flex items-center justify-center text-white font-semibold text-sm">CZ</div>
-      <div class="flex-1">
-        <div class="text-sm font-semibold text-[#141414]">Check Zipcode</div>
-        <div class="text-xs text-gray-500">chungngo+cl999@everfit.io</div>
-      </div>
-    </div>
-
-    <!-- Client Item (Selected) -->
-    <div class="flex items-center gap-3 px-4 py-3 bg-[#5C89FF] cursor-pointer">
-      <div class="w-10 h-10 rounded-full bg-[#E8A0A0] flex items-center justify-center text-white font-semibold text-sm">JL</div>
-      <div class="flex-1">
-        <div class="text-sm font-semibold text-white">Jan5cancel1 Le</div>
-        <div class="text-xs text-white/80">hungle+jan5cancel1@everfit.io</div>
-      </div>
-    </div>
-  </div>
 </div>
 ```
 
@@ -396,11 +343,24 @@ Use for selecting multiple clients or groups, such as assigning licenses, adding
 | State | Trigger | Visual Changes | Tailwind Classes |
 |-------|---------|----------------|------------------|
 | Default | - | Gray border, placeholder | `border-gray-300` |
-| Focus | Click/Tab | Blue border with ring | `border-[#184EFF] ring-1 ring-[#184EFF]` |
-| Dropdown open | Focus | Shadow, list visible | `shadow-lg` |
-| Item hover | Mouse over | Light purple bg | `hover:bg-[#F0F1FF]` |
-| Item selected | Click | Blue bg, white text | `bg-[#5C89FF] text-white` |
-| Tag | After selection | Gray chip with X | `bg-gray-100 rounded` |
+| Hover | Mouse over input | Blue border 1px | `border-[#184EFF]` |
+| Focus | Click/Tab | Blue border, dropdown visible | `border-[#184EFF]` |
+| Item hover | Mouse over item | Light purple bg (JS controlled) | `bg-[#F0F1FF]` |
+| Tag added | Click item | Tag in input, item hidden, **dropdown stays open** | `bg-[#EBF3FF] rounded` |
+| Tag removed | Click X | Tag removed, item visible | - |
+
+## Behavior
+
+| Action | Result |
+|--------|--------|
+| Hover input box | Border changes to 1px #184EFF |
+| Click/focus input | Dropdown opens, border stays #184EFF |
+| Type in input | Filters dropdown items |
+| Click item | Adds tag to input, hides item from list, **dropdown stays open** |
+| Click X on tag | Removes tag, shows item back in list |
+| Click outside component | Closes dropdown |
+| Backspace (empty) | Removes last tag |
+| Max 3 rows | Tags container scrolls vertically |
 
 ## Avatar Colors
 
@@ -411,79 +371,150 @@ Use for selecting multiple clients or groups, such as assigning licenses, adding
 | Rose | `#E8A0A0` | `bg-[#E8A0A0]` |
 | Light Blue | `#5C9EFF` | `bg-[#5C9EFF]` |
 | Lime | `#C5E865` | `bg-[#C5E865]` |
+| Purple | `#A855F7` | `bg-[#A855F7]` |
 
 ## JavaScript
 ```javascript
-// ComboboxWithSearch - Full Interactive Functionality
+// ComboboxWithSearch - Multi-Select with Tags
 document.addEventListener('DOMContentLoaded', function() {
-  // Get elements - works with Tailwind HTML structure
-  const searchInput = document.querySelector('input[placeholder="Add client..."]') || document.querySelector('input');
-  const listContainer = document.querySelector('ul[role="listbox"]') || document.querySelector('ul');
-  const items = listContainer ? listContainer.querySelectorAll('li[role="option"]') : [];
+  const container = document.getElementById('comboboxContainer');
+  const inputContainer = document.getElementById('inputContainer');
+  const tagsContainer = document.getElementById('tagsContainer');
+  const searchInput = document.getElementById('clientSearch');
+  const dropdown = document.getElementById('clientList');
+  const items = dropdown ? dropdown.querySelectorAll('li[role="option"]') : [];
 
-  if (!searchInput || !listContainer || items.length === 0) {
+  if (!container || !searchInput || !dropdown || items.length === 0) {
     console.log('ComboboxWithSearch: Elements not found');
     return;
   }
 
-  // --- 1. SEARCH/FILTER FUNCTIONALITY ---
+  const selectedItems = new Set();
+
+  // --- 1. INPUT HOVER/FOCUS: Border 1px #184EFF ---
+  inputContainer.addEventListener('mouseenter', function() {
+    if (!this.classList.contains('border-[#184EFF]')) {
+      this.classList.remove('border-gray-300');
+      this.classList.add('border-[#184EFF]');
+    }
+  });
+
+  inputContainer.addEventListener('mouseleave', function() {
+    if (document.activeElement !== searchInput) {
+      this.classList.remove('border-[#184EFF]');
+      this.classList.add('border-gray-300');
+    }
+  });
+
+  // Focus: show dropdown, keep border
+  searchInput.addEventListener('focus', function() {
+    inputContainer.classList.remove('border-gray-300');
+    inputContainer.classList.add('border-[#184EFF]');
+    dropdown.classList.remove('hidden');
+  });
+
+  // Click outside to close dropdown
+  document.addEventListener('click', function(e) {
+    if (!container.contains(e.target)) {
+      dropdown.classList.add('hidden');
+      if (!inputContainer.matches(':hover')) {
+        inputContainer.classList.remove('border-[#184EFF]');
+        inputContainer.classList.add('border-gray-300');
+      }
+    }
+  });
+
+  // Click on input container focuses input
+  inputContainer.addEventListener('click', function() {
+    searchInput.focus();
+  });
+
+  // --- 2. SEARCH/FILTER ---
   searchInput.addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase().trim();
+    const term = e.target.value.toLowerCase().trim();
 
     items.forEach(item => {
-      const titleEl = item.querySelector('.font-medium, .font-semibold');
-      const subtitleEl = item.querySelector('.text-gray-600, .text-gray-500, .text-xs:last-child');
+      if (selectedItems.has(item.dataset.value)) return; // Already selected, stay hidden
 
-      const title = titleEl?.textContent?.toLowerCase() || '';
-      const subtitle = subtitleEl?.textContent?.toLowerCase() || '';
+      const label = item.dataset.label?.toLowerCase() || '';
+      const subtitle = item.querySelector('.text-gray-500')?.textContent?.toLowerCase() || '';
 
-      const matches = title.includes(searchTerm) || subtitle.includes(searchTerm);
+      const matches = label.includes(term) || subtitle.includes(term);
       item.style.display = matches ? '' : 'none';
     });
   });
 
-  // --- 2. ITEM SELECTION (Click) ---
-  items.forEach(item => {
-    item.style.cursor = 'pointer';
+  // --- 3. CREATE TAG ---
+  function createTag(value, label) {
+    const tag = document.createElement('span');
+    tag.className = 'inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414] whitespace-nowrap';
+    tag.dataset.value = value;
+    tag.innerHTML = `
+      ${label}
+      <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
+        <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
+          <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    `;
 
-    item.addEventListener('click', function() {
-      // Remove selected state from all items
-      items.forEach(i => {
-        i.classList.remove('bg-[#5C89FF]', 'bg-blue-100');
-        i.removeAttribute('aria-selected');
-
-        // Reset text colors
-        const title = i.querySelector('.font-medium, .font-semibold');
-        const subtitle = i.querySelector('.text-xs:last-child');
-        if (title) title.classList.remove('text-white');
-        if (subtitle) {
-          subtitle.classList.remove('text-white', 'text-white/80');
-          subtitle.classList.add('text-gray-600');
-        }
-      });
-
-      // Add selected state to clicked item
-      this.classList.add('bg-[#5C89FF]');
-      this.setAttribute('aria-selected', 'true');
-
-      // Update text colors for selected
-      const title = this.querySelector('.font-medium, .font-semibold');
-      const subtitle = this.querySelector('.text-xs:last-child');
-      if (title) title.classList.add('text-white');
-      if (subtitle) {
-        subtitle.classList.remove('text-gray-600');
-        subtitle.classList.add('text-white/80');
-      }
-
-      // Log selection (for demo)
-      console.log('Selected:', this.getAttribute('data-value'));
+    // Remove tag on click
+    tag.querySelector('button').addEventListener('click', function(e) {
+      e.stopPropagation();
+      removeTag(value);
     });
 
-    // --- 3. HOVER EFFECT ---
+    return tag;
+  }
+
+  // --- 4. ADD SELECTION ---
+  function addSelection(value, label) {
+    if (selectedItems.has(value)) return;
+
+    selectedItems.add(value);
+
+    // Add tag
+    const tag = createTag(value, label);
+    tagsContainer.appendChild(tag);
+
+    // Hide item from dropdown
+    const item = dropdown.querySelector(`li[data-value="${value}"]`);
+    if (item) item.style.display = 'none';
+
+    // Clear search and keep dropdown open
+    searchInput.value = '';
+    searchInput.focus();
+    dropdown.classList.remove('hidden');
+
+    console.log('Selected:', value);
+  }
+
+  // --- 5. REMOVE TAG ---
+  function removeTag(value) {
+    selectedItems.delete(value);
+
+    // Remove tag element
+    const tag = tagsContainer.querySelector(`span[data-value="${value}"]`);
+    if (tag) tag.remove();
+
+    // Show item back in dropdown
+    const item = dropdown.querySelector(`li[data-value="${value}"]`);
+    if (item) item.style.display = '';
+
+    console.log('Removed:', value);
+  }
+
+  // --- 6. ITEM CLICK = SELECT ---
+  items.forEach(item => {
+    item.addEventListener('click', function() {
+      const value = this.dataset.value;
+      const label = this.dataset.label;
+      addSelection(value, label);
+    });
+
+    // Hover effect (no default CSS hover)
     item.addEventListener('mouseenter', function() {
-      if (!this.classList.contains('bg-[#5C89FF]')) {
-        this.classList.add('bg-[#F0F1FF]');
-      }
+      this.classList.add('bg-[#F0F1FF]');
     });
 
     item.addEventListener('mouseleave', function() {
@@ -491,19 +522,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // --- 4. KEYBOARD NAVIGATION ---
+  // --- 7. KEYBOARD NAVIGATION ---
   searchInput.addEventListener('keydown', function(e) {
     const visibleItems = [...items].filter(i => i.style.display !== 'none');
 
-    if (e.key === 'ArrowDown') {
+    if (e.key === 'ArrowDown' && visibleItems.length > 0) {
       e.preventDefault();
-      if (visibleItems.length > 0) {
-        visibleItems[0].focus();
-      }
+      visibleItems[0].focus();
+    } else if (e.key === 'Backspace' && this.value === '' && selectedItems.size > 0) {
+      // Remove last tag on backspace
+      const lastValue = [...selectedItems].pop();
+      if (lastValue) removeTag(lastValue);
+    } else if (e.key === 'Escape') {
+      dropdown.classList.add('hidden');
+      this.blur();
     }
   });
 
-  items.forEach((item, index) => {
+  items.forEach(item => {
     item.setAttribute('tabindex', '0');
 
     item.addEventListener('keydown', function(e) {
@@ -519,43 +555,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentIndex === 0) {
           searchInput.focus();
         } else {
-          const prev = visibleItems[currentIndex - 1];
-          if (prev) prev.focus();
+          visibleItems[currentIndex - 1]?.focus();
         }
-      } else if (e.key === 'Enter' || e.key === ' ') {
+      } else if (e.key === 'Enter') {
         e.preventDefault();
         this.click();
       } else if (e.key === 'Escape') {
+        dropdown.classList.add('hidden');
         searchInput.focus();
-        searchInput.value = '';
-        // Show all items
-        items.forEach(i => i.style.display = '');
       }
     });
 
-    // Focus styling
     item.addEventListener('focus', function() {
-      if (!this.classList.contains('bg-[#5C89FF]')) {
-        this.classList.add('bg-[#F0F1FF]');
-      }
+      this.classList.add('bg-[#F0F1FF]');
     });
 
     item.addEventListener('blur', function() {
       this.classList.remove('bg-[#F0F1FF]');
     });
   });
-
-  // --- 5. INPUT FOCUS STYLING ---
-  const inputContainer = searchInput.closest('.p-3, .px-3');
-  if (inputContainer) {
-    searchInput.addEventListener('focus', function() {
-      inputContainer.classList.add('ring-2', 'ring-[#184EFF]', 'border-[#184EFF]');
-    });
-
-    searchInput.addEventListener('blur', function() {
-      inputContainer.classList.remove('ring-2', 'ring-[#184EFF]', 'border-[#184EFF]');
-    });
-  }
 
   console.log('ComboboxWithSearch: Initialized with', items.length, 'items');
 });
@@ -577,12 +595,15 @@ document.addEventListener('DOMContentLoaded', function() {
 - Focusable items with `tabindex="0"`
 
 ## Notes
-- Updated from 6 images on 2026-02-04
-- Supports multi-select with tag/chip display
-- Search filters by both title and subtitle text
-- Selected item uses blue background (#5C89FF)
-- Hover state uses #F0F1FF (combobox-hover from RULE.md)
-- Focus border uses #184EFF (action color from RULE.md)
-- Maximum list height: 280px with scroll
+- Updated on 2026-02-04
+- Multi-select with removable tags
+- Hover on input box = border 1px #184EFF (no default CSS hover)
+- Selected items hidden from dropdown, shown as tags
+- Removed tags restore items to dropdown
+- Tags container: max 3 rows (84px) with scroll
+- Backspace on empty input removes last tag
+- Search filters by label and subtitle
+- Hover state on items: #F0F1FF (JS controlled)
 - Uses Open Sans font family
-- Tags have close button for removal
+- **Chip styling matches Chip.md**: `bg-[#EBF3FF]` with `text-[#184EFF]` X button
+- **Dropdown behavior**: Stays open after selecting item, only closes when clicking outside component

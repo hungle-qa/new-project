@@ -156,6 +156,11 @@ Options:
 
 **Output:** `source/design-system/{ComponentName}.md`
 
+**CRITICAL - MANDATORY SECTIONS:**
+- `## HTML` - Required (NOT `## HTML (Tailwind)`)
+- `## CSS` - Required (component styles with BEM naming)
+- Missing these sections will cause errors when opening the component!
+
 ```markdown
 ---
 name: {ComponentName}
@@ -172,9 +177,26 @@ status: {draft|reviewed|approved}
 ## Usage
 {when to use this component}
 
-## HTML (Tailwind)
+## HTML
 \`\`\`html
 {validated HTML code with Tailwind classes}
+\`\`\`
+
+## CSS
+\`\`\`css
+/* Component styles - use BEM naming convention */
+.{component-name} {
+  font-family: 'Open Sans', sans-serif;
+  /* Add component-specific styles */
+}
+
+.{component-name}__element {
+  /* Element styles */
+}
+
+.{component-name}--modifier {
+  /* Modifier styles */
+}
 \`\`\`
 
 ## Tailwind Classes Used

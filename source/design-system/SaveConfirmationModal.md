@@ -1,8 +1,8 @@
 ---
 name: SaveConfirmationModal
 category: feedback
-created: Tue Feb 03 2026 07:00:00 GMT+0700 (Indochina Time)
-status: draft
+created: 'Tue Feb 03 2026 07:00:00 GMT+0700 (Indochina Time)'
+status: approved
 ---
 
 # SaveConfirmationModal

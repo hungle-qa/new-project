@@ -8,10 +8,14 @@ status: draft
 # ComboboxWithSearch
 
 ## Preview
-A searchable dropdown/combobox component for selecting clients or groups. Features a search input field and a list of selectable items with avatars. Supports both group items (with icon and subtitle) and individual client items (with initials and email).
+A multi-select searchable combobox for selecting clients or groups. Features:
+- Search input with placeholder
+- Dropdown list with avatars (groups use icon, clients use initials)
+- Multi-select with removable tag/chip display
+- Focus state with blue border ring
 
 ## Usage
-Use this component when users need to search and select from a list of clients or groups. Ideal for assignment workflows, filtering, or multi-step forms where selection is required.
+Use for selecting multiple clients or groups, such as assigning licenses, adding team members, or any multi-select scenario with search.
 
 ## HTML
 ```html
@@ -318,58 +322,184 @@ Use this component when users need to search and select from a list of clients o
 </div>
 ```
 
+## Multi-Select with Tags (Tailwind)
+```html
+<!-- Input with selected tags -->
+<div class="relative font-['Open_Sans'] w-full max-w-md">
+  <!-- Input Container with Tags -->
+  <div class="flex flex-wrap items-center gap-1 min-h-[42px] px-3 py-2 border border-[#184EFF] ring-1 ring-[#184EFF] rounded-md bg-white cursor-text">
+    <!-- Group Tag -->
+    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 rounded text-sm text-[#141414]">
+      Group 99 clients (45 members)
+      <button class="ml-1 text-gray-400 hover:text-gray-600">
+        <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="8" fill="currentColor" fill-opacity="0.3"/>
+          <path d="M5 11l3-3 3 3M5 5l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </span>
+    <!-- Client Tag -->
+    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 rounded text-sm text-[#141414]">
+      Dec1_failed1 Le
+      <button class="ml-1 text-gray-400 hover:text-gray-600">
+        <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="8" fill="currentColor" fill-opacity="0.3"/>
+          <path d="M5 11l3-3 3 3M5 5l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </span>
+    <!-- More tags... -->
+    <input
+      type="text"
+      class="flex-1 min-w-[60px] outline-none text-sm text-[#141414] bg-transparent"
+    />
+  </div>
+
+  <!-- Dropdown List -->
+  <div class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+    <!-- Group Item -->
+    <div class="flex items-center gap-3 px-4 py-3 hover:bg-[#F0F1FF] cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-[#5C89FF] flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+        </svg>
+      </div>
+      <div class="flex-1">
+        <div class="text-sm font-semibold text-[#141414]">Group: G 23</div>
+        <div class="text-xs text-gray-500">10 connected clients without a license</div>
+      </div>
+    </div>
+
+    <!-- Client Item (Hover) -->
+    <div class="flex items-center gap-3 px-4 py-3 hover:bg-[#F0F1FF] cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-[#FF9F43] flex items-center justify-center text-white font-semibold text-sm">CZ</div>
+      <div class="flex-1">
+        <div class="text-sm font-semibold text-[#141414]">Check Zipcode</div>
+        <div class="text-xs text-gray-500">chungngo+cl999@everfit.io</div>
+      </div>
+    </div>
+
+    <!-- Client Item (Selected) -->
+    <div class="flex items-center gap-3 px-4 py-3 bg-[#5C89FF] cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-[#E8A0A0] flex items-center justify-center text-white font-semibold text-sm">JL</div>
+      <div class="flex-1">
+        <div class="text-sm font-semibold text-white">Jan5cancel1 Le</div>
+        <div class="text-xs text-white/80">hungle+jan5cancel1@everfit.io</div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+## Component States
+
+| State | Trigger | Visual Changes | Tailwind Classes |
+|-------|---------|----------------|------------------|
+| Default | - | Gray border, placeholder | `border-gray-300` |
+| Focus | Click/Tab | Blue border with ring | `border-[#184EFF] ring-1 ring-[#184EFF]` |
+| Dropdown open | Focus | Shadow, list visible | `shadow-lg` |
+| Item hover | Mouse over | Light purple bg | `hover:bg-[#F0F1FF]` |
+| Item selected | Click | Blue bg, white text | `bg-[#5C89FF] text-white` |
+| Tag | After selection | Gray chip with X | `bg-gray-100 rounded` |
+
+## Avatar Colors
+
+| Color | Hex | Tailwind |
+|-------|-----|----------|
+| Group Blue | `#5C89FF` | `bg-[#5C89FF]` |
+| Orange | `#FF9F43` | `bg-[#FF9F43]` |
+| Rose | `#E8A0A0` | `bg-[#E8A0A0]` |
+| Light Blue | `#5C9EFF` | `bg-[#5C9EFF]` |
+| Lime | `#C5E865` | `bg-[#C5E865]` |
+
 ## JavaScript
 ```javascript
-// Search and Filter Functionality
+// ComboboxWithSearch - Full Interactive Functionality
 document.addEventListener('DOMContentLoaded', function() {
-  const searchInput = document.getElementById('clientSearch');
-  const clientList = document.getElementById('clientList');
-  const items = clientList.querySelectorAll('.combobox-item');
+  // Get elements - works with Tailwind HTML structure
+  const searchInput = document.querySelector('input[placeholder="Add client..."]') || document.querySelector('input');
+  const listContainer = document.querySelector('ul[role="listbox"]') || document.querySelector('ul');
+  const items = listContainer ? listContainer.querySelectorAll('li[role="option"]') : [];
 
-  // Search filter
+  if (!searchInput || !listContainer || items.length === 0) {
+    console.log('ComboboxWithSearch: Elements not found');
+    return;
+  }
+
+  // --- 1. SEARCH/FILTER FUNCTIONALITY ---
   searchInput.addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
+    const searchTerm = e.target.value.toLowerCase().trim();
 
     items.forEach(item => {
-      const title = item.querySelector('.combobox-item-title').textContent.toLowerCase();
-      const subtitle = item.querySelector('.combobox-item-subtitle')?.textContent.toLowerCase() || '';
+      const titleEl = item.querySelector('.font-medium, .font-semibold');
+      const subtitleEl = item.querySelector('.text-gray-600, .text-gray-500, .text-xs:last-child');
 
-      if (title.includes(searchTerm) || subtitle.includes(searchTerm)) {
-        item.classList.remove('combobox-item-hidden');
-      } else {
-        item.classList.add('combobox-item-hidden');
-      }
+      const title = titleEl?.textContent?.toLowerCase() || '';
+      const subtitle = subtitleEl?.textContent?.toLowerCase() || '';
+
+      const matches = title.includes(searchTerm) || subtitle.includes(searchTerm);
+      item.style.display = matches ? '' : 'none';
     });
   });
 
-  // Selection functionality
+  // --- 2. ITEM SELECTION (Click) ---
   items.forEach(item => {
+    item.style.cursor = 'pointer';
+
     item.addEventListener('click', function() {
       // Remove selected state from all items
       items.forEach(i => {
-        i.classList.remove('combobox-item-selected');
+        i.classList.remove('bg-[#5C89FF]', 'bg-blue-100');
         i.removeAttribute('aria-selected');
+
+        // Reset text colors
+        const title = i.querySelector('.font-medium, .font-semibold');
+        const subtitle = i.querySelector('.text-xs:last-child');
+        if (title) title.classList.remove('text-white');
+        if (subtitle) {
+          subtitle.classList.remove('text-white', 'text-white/80');
+          subtitle.classList.add('text-gray-600');
+        }
       });
 
       // Add selected state to clicked item
-      this.classList.add('combobox-item-selected');
+      this.classList.add('bg-[#5C89FF]');
       this.setAttribute('aria-selected', 'true');
 
-      // Optional: Emit custom event for parent components
-      const selectedValue = this.getAttribute('data-value');
-      const event = new CustomEvent('combobox-select', {
-        detail: { value: selectedValue }
-      });
-      clientList.dispatchEvent(event);
+      // Update text colors for selected
+      const title = this.querySelector('.font-medium, .font-semibold');
+      const subtitle = this.querySelector('.text-xs:last-child');
+      if (title) title.classList.add('text-white');
+      if (subtitle) {
+        subtitle.classList.remove('text-gray-600');
+        subtitle.classList.add('text-white/80');
+      }
+
+      // Log selection (for demo)
+      console.log('Selected:', this.getAttribute('data-value'));
+    });
+
+    // --- 3. HOVER EFFECT ---
+    item.addEventListener('mouseenter', function() {
+      if (!this.classList.contains('bg-[#5C89FF]')) {
+        this.classList.add('bg-[#F0F1FF]');
+      }
+    });
+
+    item.addEventListener('mouseleave', function() {
+      this.classList.remove('bg-[#F0F1FF]');
     });
   });
 
-  // Keyboard navigation
+  // --- 4. KEYBOARD NAVIGATION ---
   searchInput.addEventListener('keydown', function(e) {
+    const visibleItems = [...items].filter(i => i.style.display !== 'none');
+
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      const firstVisible = clientList.querySelector('.combobox-item:not(.combobox-item-hidden)');
-      if (firstVisible) firstVisible.focus();
+      if (visibleItems.length > 0) {
+        visibleItems[0].focus();
+      }
     }
   });
 
@@ -377,28 +507,57 @@ document.addEventListener('DOMContentLoaded', function() {
     item.setAttribute('tabindex', '0');
 
     item.addEventListener('keydown', function(e) {
+      const visibleItems = [...items].filter(i => i.style.display !== 'none');
+      const currentIndex = visibleItems.indexOf(this);
+
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        const nextItem = items[index + 1];
-        if (nextItem && !nextItem.classList.contains('combobox-item-hidden')) {
-          nextItem.focus();
-        }
+        const next = visibleItems[currentIndex + 1];
+        if (next) next.focus();
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        if (index === 0) {
+        if (currentIndex === 0) {
           searchInput.focus();
         } else {
-          const prevItem = items[index - 1];
-          if (prevItem && !prevItem.classList.contains('combobox-item-hidden')) {
-            prevItem.focus();
-          }
+          const prev = visibleItems[currentIndex - 1];
+          if (prev) prev.focus();
         }
       } else if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         this.click();
+      } else if (e.key === 'Escape') {
+        searchInput.focus();
+        searchInput.value = '';
+        // Show all items
+        items.forEach(i => i.style.display = '');
       }
     });
+
+    // Focus styling
+    item.addEventListener('focus', function() {
+      if (!this.classList.contains('bg-[#5C89FF]')) {
+        this.classList.add('bg-[#F0F1FF]');
+      }
+    });
+
+    item.addEventListener('blur', function() {
+      this.classList.remove('bg-[#F0F1FF]');
+    });
   });
+
+  // --- 5. INPUT FOCUS STYLING ---
+  const inputContainer = searchInput.closest('.p-3, .px-3');
+  if (inputContainer) {
+    searchInput.addEventListener('focus', function() {
+      inputContainer.classList.add('ring-2', 'ring-[#184EFF]', 'border-[#184EFF]');
+    });
+
+    searchInput.addEventListener('blur', function() {
+      inputContainer.classList.remove('ring-2', 'ring-[#184EFF]', 'border-[#184EFF]');
+    });
+  }
+
+  console.log('ComboboxWithSearch: Initialized with', items.length, 'items');
 });
 ```
 
@@ -418,10 +577,12 @@ document.addEventListener('DOMContentLoaded', function() {
 - Focusable items with `tabindex="0"`
 
 ## Notes
-- Generated from image on 2026-02-04
+- Updated from 6 images on 2026-02-04
+- Supports multi-select with tag/chip display
 - Search filters by both title and subtitle text
-- Selected state uses light blue background (#E0EAFF)
-- Hover state uses #F5F7F9 per RULE.md
+- Selected item uses blue background (#5C89FF)
+- Hover state uses #F0F1FF (combobox-hover from RULE.md)
+- Focus border uses #184EFF (action color from RULE.md)
 - Maximum list height: 280px with scroll
 - Uses Open Sans font family
-- Includes custom event 'combobox-select' for integration
+- Tags have close button for removal

@@ -49,6 +49,25 @@ When you identify icons needed in the component:
 - **Clean Code**: Generate semantic, accessible HTML
 - **Ask First**: Always confirm component name and details before creating files
 - **Multi-Image Support**: Analyze multiple images to capture all component states
+- **Interactive JavaScript**: Generate JavaScript for components requiring user interaction
+
+## CRITICAL: Generate Interactive JavaScript
+
+**Components that REQUIRE JavaScript:**
+- Dropdowns/Combobox → open/close, search/filter, select items
+- Modals → open/close, backdrop click
+- Tabs → switch active tab
+- Accordions → expand/collapse
+- Search inputs → filter list items
+- Multi-select → add/remove tags
+- Tooltips → show/hide on hover
+
+**JavaScript Requirements:**
+1. Use `DOMContentLoaded` event listener
+2. Add click handlers for interactive elements
+3. Add keyboard navigation (Arrow keys, Enter, Escape)
+4. Manage state classes (selected, hidden, active)
+5. Emit custom events for integration
 
 ## Multi-Image Analysis (IMPORTANT)
 
@@ -250,6 +269,53 @@ status: draft
 | Active | Click hold | {description} | `active:{classes}` |
 | Disabled | disabled attr | {description} | `disabled:{classes}` |
 
+## JavaScript
+\`\`\`javascript
+// REQUIRED for interactive components (dropdowns, search, modals, tabs, etc.)
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Get DOM references
+  const container = document.querySelector('.component-container');
+  const input = container?.querySelector('input');
+  const list = container?.querySelector('.list');
+  const items = list?.querySelectorAll('.item');
+
+  // 2. Search/Filter functionality (if has input)
+  if (input) {
+    input.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      items?.forEach(item => {
+        const text = item.textContent?.toLowerCase() || '';
+        item.classList.toggle('hidden', !text.includes(searchTerm));
+      });
+    });
+  }
+
+  // 3. Click handlers for selection
+  items?.forEach(item => {
+    item.addEventListener('click', function() {
+      // Remove selected from all
+      items.forEach(i => i.classList.remove('selected', 'bg-[#5C89FF]', 'text-white'));
+      // Add selected to clicked
+      this.classList.add('selected', 'bg-[#5C89FF]', 'text-white');
+    });
+  });
+
+  // 4. Keyboard navigation
+  input?.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const firstVisible = list?.querySelector('.item:not(.hidden)');
+      firstVisible?.focus();
+    } else if (e.key === 'Escape') {
+      list?.classList.add('hidden');
+    }
+  });
+
+  // 5. Toggle dropdown (if applicable)
+  input?.addEventListener('focus', () => list?.classList.remove('hidden'));
+});
+\`\`\`
+
 ## Accessibility
 - {accessibility considerations}
 
@@ -340,6 +406,114 @@ Before creating the file, verify:
 | Alert | `p-4 rounded-md border` |
 | Text input | `w-full px-3 py-2 border border-gray-300 rounded-md` |
 
+## JavaScript Patterns by Component Type
+
+### Combobox/Dropdown with Search
+```javascript
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('searchInput');
+  const dropdown = document.getElementById('dropdown');
+  const items = dropdown.querySelectorAll('.dropdown-item');
+
+  // Show dropdown on focus
+  searchInput.addEventListener('focus', () => dropdown.classList.remove('hidden'));
+
+  // Hide dropdown on blur (with delay for click)
+  searchInput.addEventListener('blur', () => {
+    setTimeout(() => dropdown.classList.add('hidden'), 200);
+  });
+
+  // Filter items on input
+  searchInput.addEventListener('input', function(e) {
+    const term = e.target.value.toLowerCase();
+    items.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      item.classList.toggle('hidden', !text.includes(term));
+    });
+  });
+
+  // Select item on click
+  items.forEach(item => {
+    item.addEventListener('click', function() {
+      items.forEach(i => i.classList.remove('bg-[#5C89FF]', 'text-white'));
+      this.classList.add('bg-[#5C89FF]', 'text-white');
+      searchInput.value = this.querySelector('.item-title')?.textContent || '';
+    });
+
+    // Hover effect
+    item.addEventListener('mouseenter', () => item.classList.add('bg-[#F0F1FF]'));
+    item.addEventListener('mouseleave', function() {
+      if (!this.classList.contains('bg-[#5C89FF]')) {
+        this.classList.remove('bg-[#F0F1FF]');
+      }
+    });
+  });
+
+  // Keyboard navigation
+  searchInput.addEventListener('keydown', function(e) {
+    const visibleItems = [...items].filter(i => !i.classList.contains('hidden'));
+    const currentIndex = visibleItems.findIndex(i => i === document.activeElement);
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const next = visibleItems[currentIndex + 1] || visibleItems[0];
+      next?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prev = visibleItems[currentIndex - 1] || visibleItems[visibleItems.length - 1];
+      prev?.focus();
+    } else if (e.key === 'Enter' && document.activeElement !== searchInput) {
+      e.preventDefault();
+      document.activeElement?.click();
+    } else if (e.key === 'Escape') {
+      dropdown.classList.add('hidden');
+      searchInput.blur();
+    }
+  });
+});
+```
+
+### Multi-Select with Tags
+```javascript
+document.addEventListener('DOMContentLoaded', function() {
+  const container = document.querySelector('.multiselect-container');
+  const input = container.querySelector('input');
+  const tagsContainer = container.querySelector('.tags');
+  const dropdown = container.querySelector('.dropdown');
+  const items = dropdown.querySelectorAll('.dropdown-item');
+  const selectedValues = new Set();
+
+  // Add tag
+  function addTag(value, label) {
+    if (selectedValues.has(value)) return;
+    selectedValues.add(value);
+
+    const tag = document.createElement('span');
+    tag.className = 'inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 rounded text-sm';
+    tag.innerHTML = `${label}<button class="ml-1 text-gray-400 hover:text-gray-600">&times;</button>`;
+    tag.dataset.value = value;
+
+    tag.querySelector('button').addEventListener('click', () => {
+      selectedValues.delete(value);
+      tag.remove();
+    });
+
+    tagsContainer.appendChild(tag);
+  }
+
+  // Select item
+  items.forEach(item => {
+    item.addEventListener('click', function() {
+      const value = this.dataset.value;
+      const label = this.querySelector('.item-title')?.textContent;
+      addTag(value, label);
+      input.value = '';
+      input.focus();
+    });
+  });
+});
+```
+
 ## Success Criteria
 
 1. **RULE.md compliance**: All styles match `source/design-system/rule/RULE.md`
@@ -351,3 +525,10 @@ Before creating the file, verify:
 7. Documentation follows standard format
 8. **Multi-image**: All states captured and documented (if multiple images)
 9. **Clarification**: Asked user when any state was unclear
+10. **JavaScript**: Interactive components include working JS for all user interactions:
+    - Search/filter functionality
+    - Item selection with visual feedback
+    - Hover states (if not CSS-only)
+    - Keyboard navigation (Arrow keys, Enter, Escape)
+    - Dropdown open/close
+    - Tag add/remove (for multi-select)

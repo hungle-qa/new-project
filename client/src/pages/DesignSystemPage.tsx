@@ -90,9 +90,9 @@ export function DesignSystemPage() {
     setActiveTab('preview')
   }
 
-  // Parse HTML, CSS, and description from markdown content
-  const { html, css, tailwindHtml, description } = useMemo(() => {
-    if (!selected?.content) return { html: '', css: '', tailwindHtml: '', description: '' }
+  // Parse HTML, CSS, JavaScript, and description from markdown content
+  const { html, css, tailwindHtml, javascript, description } = useMemo(() => {
+    if (!selected?.content) return { html: '', css: '', tailwindHtml: '', javascript: '', description: '' }
 
     const content = selected.content
 
@@ -112,7 +112,11 @@ export function DesignSystemPage() {
     const tailwindMatch = content.match(/## Tailwind CSS\s*```html\s*([\s\S]*?)```/)
     const tailwindHtml = tailwindMatch ? tailwindMatch[1].trim() : ''
 
-    return { html, css, tailwindHtml, description }
+    // Extract JavaScript block
+    const jsMatch = content.match(/## JavaScript\s*```javascript\s*([\s\S]*?)```/)
+    const javascript = jsMatch ? jsMatch[1].trim() : ''
+
+    return { html, css, tailwindHtml, javascript, description }
   }, [selected?.content])
 
   // Prepare edit data from selected component
@@ -198,7 +202,7 @@ export function DesignSystemPage() {
     }
   }
 
-  // Generate preview HTML with embedded styles
+  // Generate preview HTML with embedded styles and JavaScript
   const previewHtml = useMemo(() => {
     if (!html && !tailwindHtml) return ''
 
@@ -227,9 +231,10 @@ export function DesignSystemPage() {
 </head>
 <body>
   ${componentHtml}
+  ${javascript ? `<script>${javascript}</script>` : ''}
 </body>
 </html>`
-  }, [html, css, tailwindHtml])
+  }, [html, css, tailwindHtml, javascript])
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)

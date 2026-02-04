@@ -35,3 +35,10 @@ We keep all important docs in `./docs` folder and keep updating them, structure 
 ```
 
 **IMPORTANT:** *MUST READ* and *MUST COMPLY* all *INSTRUCTIONS* in project `./CLAUDE.md`, especially *WORKFLOWS* section is *CRITICALLY IMPORTANT*, this rule is *MANDATORY. NON-NEGOTIABLE. NO EXCEPTIONS. MUST REMEMBER AT ALL TIMES!!!*
+
+## Server Configuration Rules
+
+**MANDATORY:** Always use `localhost` for server URLs. Never use `127.0.0.1` or other IP addresses.
+- Proxy target: `http://localhost:3001`
+- API calls: `http://localhost:3001/api/*`
+- Client dev server: `http://localhost:3000`

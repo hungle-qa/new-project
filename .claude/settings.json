@@ -1,0 +1,6 @@
+{
+  "autoApprove": false,
+  "rules": [
+    "Always use localhost for server URLs, never use 127.0.0.1 or other IP addresses"
+  ]
+}

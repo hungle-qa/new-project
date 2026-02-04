@@ -1,0 +1,43 @@
+<!--
+  Page: Hello World
+  Demo: hello-world-page
+  Created: 2026-02-02
+  Product Idea: source/product-idea/hello-world-page.md
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World - Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <main class="flex flex-col items-center justify-center min-h-screen">
+    <!-- DiscardChangesModal Component - from design-system/DiscardChangesModal.md -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="relative bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
+        <button class="absolute top-3 right-3 text-gray-400 hover:text-gray-600" aria-label="Close">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 14 14">
+            <path d="M14 1.41L12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41Z"></path>
+          </svg>
+        </button>
+        <div class="flex gap-2 items-center">
+          <div class="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center mb-4 text-red-600">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+            </svg>
+          </div>
+          <h2 class="text-lg font-semibold text-gray-900 mb-3 h-fit">Discard Changes</h2>
+        </div>
+        <p class="text-sm text-gray-500 leading-relaxed mb-6">Are you sure you want to go? Changes have not been saved yet.</p>
+        <div class="gap-3 flex justify-end">
+          <button class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Cancel</button>
+          <button class="px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Discard Changes</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

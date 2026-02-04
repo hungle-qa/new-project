@@ -119,7 +119,31 @@ export class DesignSystemService {
 
     try {
       const files = await fs.readdir(SOURCE_DIR)
-      const result = files.filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+      const mdFiles = files.filter(f => f.endsWith('.md'))
+
+      // Read frontmatter from each file to get created date
+      const componentsWithDates = await Promise.all(
+        mdFiles.map(async (file) => {
+          const name = file.replace('.md', '')
+          try {
+            const filePath = path.join(SOURCE_DIR, file)
+            const content = await fs.readFile(filePath, 'utf-8')
+            const { data } = matter(content)
+            return {
+              name,
+              created: data.created ? new Date(data.created).getTime() : 0
+            }
+          } catch {
+            return { name, created: 0 }
+          }
+        })
+      )
+
+      // Sort by created date descending (newest first)
+      componentsWithDates.sort((a, b) => b.created - a.created)
+
+      // Extract just the names
+      const result = componentsWithDates.map(c => c.name)
 
       // Cache the result
       setCache('components', result)

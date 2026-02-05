@@ -12,6 +12,25 @@ You are a Design System Image-to-Code Converter. Analyze a SINGLE UI component i
 
 ---
 
+## ⚠️ IMAGE FIDELITY RULE (P0 - CRITICAL)
+
+**The original image is the SOURCE OF TRUTH. Adhere strictly to it.**
+
+| Principle | Rule |
+|-----------|------|
+| **Exact Match** | Generated code MUST visually match the image pixel-perfectly |
+| **No Assumptions** | Do NOT add elements, states, or features not visible in the image |
+| **No Improvements** | Do NOT "improve" or "enhance" the design beyond what's shown |
+| **Colors** | Extract exact colors from image (use color picker mentally) |
+| **Spacing** | Match padding, margins, gaps exactly as shown |
+| **Typography** | Match font sizes, weights, line heights from image |
+| **Border Radius** | Match exact roundness from image |
+| **Shadows** | Only add shadows if clearly visible in image |
+
+**When in doubt, ASK the user rather than guess.**
+
+---
+
 ## Step 0: Detect Action Type (MANDATORY)
 
 **Check if EDIT mode:**
@@ -140,52 +159,84 @@ Questions:
 
 ---
 
-## ⛔ APPROVAL GATE (P0 - BLOCKING)
+## 🚀 TWO-PHASE WORKFLOW (Speed & Token Optimization)
 
-**⚠️ NO FILE WILL BE CREATED OR MODIFIED UNTIL USER APPROVES.**
+**Phase 1: Update HTML ONLY → User tests in web app**
+**Phase 2: After approval → Update full .md documentation**
 
-**MUST use AskUserQuestion BEFORE any file operation:**
+---
+
+## Phase 1: Quick HTML Update (for testing)
+
+### Step 6a: Show Mock-up & Ask to Update HTML Only
 
 **For CREATE mode:**
 ```
-"Here is the mock-up for {ComponentName}. No file will be created until you approve."
+"Here is the mock-up for {ComponentName}. I'll create a minimal file with just the HTML section so you can test it in the web app."
 
 Options:
-- "Approved - Create the .md file"
+- "Create HTML only - Let me test first"
 - "Need changes - Let me provide feedback"
-- "Cancel - Do not create file"
+- "Cancel"
 ```
 
 **For EDIT mode:**
 ```
-"Here is the BEFORE vs AFTER comparison for {ComponentName}. No file will be modified until you approve."
+"Here is the BEFORE vs AFTER comparison for {ComponentName}. I'll update ONLY the HTML section so you can test it in the web app."
 
 Options:
-- "Approved - Update the .md file"
+- "Update HTML only - Let me test first"
 - "Need changes - Let me provide feedback"
-- "Cancel - Keep original, do not modify"
+- "Cancel"
 ```
 
-| Response | Action |
-|----------|--------|
-| "Approved" | Proceed to Write/Edit |
-| "Need changes" | Update mock-up, re-ask approval |
-| "Cancel" | Stop completely, no file changes |
+### Step 6b: Update HTML Section ONLY
 
-**NEVER create or modify file without "Approved" response.**
+**CREATE mode:** Create minimal file with:
+- Frontmatter (status: draft)
+- `## HTML` section only
+
+**EDIT mode:** Edit ONLY the `## HTML` section:
+- Use Edit tool to replace HTML code block
+- DO NOT touch other sections yet
+
+**Tell user:**
+```
+"HTML updated. Please test in the web app at: http://localhost:3000
+When ready, let me know to complete the full documentation."
+```
 
 ---
 
-## Step 7: Create/Update Documentation
+## Phase 2: Full Documentation (after user approval)
 
-**Only if approved.**
+### Step 7: Wait for User Approval
 
-**CREATE mode:** Create new file: `source/design-system/{ComponentName}.md`
+**User must confirm the HTML works correctly in the web app.**
 
-**EDIT mode:** Update existing file: `source/design-system/{ComponentName}.md`
-- Use Edit tool, not Write
+Use AskUserQuestion:
+```
+"Did the component work correctly in your testing?"
+
+Options:
+- "Approved - Complete the full documentation"
+- "Need fixes - The HTML has issues"
+- "Cancel - Revert changes"
+```
+
+### Step 8: Complete Full Documentation
+
+**Only if user approved Phase 2.**
+
+**CREATE mode:** Update file with all sections (16 sections)
+
+**EDIT mode:** Update remaining sections:
+- CSS, Tailwind Classes, Component States, Specifications, etc.
 - Preserve sections not being changed
-- Update: HTML, CSS, Tailwind Classes, Component States as needed
+
+**MANDATORY: Set `status: draft`**
+- After ANY import or edit, frontmatter MUST have `status: draft`
+- User/reviewer will change to `approved` after review
 
 Follow format from shared rules (16 sections).
 
@@ -216,10 +267,10 @@ Follow format from shared rules (16 sections).
 
 ## Success Criteria
 
-1. ⛔ APPROVAL GATE PASSED (user explicitly approved)
-2. RULE.md compliance
-3. Generated code matches image
-4. Tailwind only (no custom CSS)
-5. Documentation follows format
-6. **EDIT mode:** BEFORE vs AFTER shown, user confirmed update
-7. **CREATE mode:** Mock-up shown, user confirmed creation
+1. **Phase 1:** HTML updated and user tested in web app
+2. **Phase 2:** User approved and full documentation completed
+3. **⚠️ IMAGE FIDELITY** - Generated code matches original image EXACTLY (no additions, no improvements)
+4. RULE.md compliance (only where it doesn't conflict with image)
+5. Tailwind only (no custom CSS)
+6. Documentation follows format (after Phase 2)
+7. **Status set to `draft`** - All imported/edited components MUST have `status: draft`

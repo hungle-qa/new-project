@@ -298,7 +298,7 @@ name: {ComponentName}
 category: {buttons|cards|forms|layout|navigation|feedback}
 created: {YYYY-MM-DDTHH:mm:ss+07:00}
 updated: {YYYY-MM-DDTHH:mm:ss+07:00}
-status: {draft|reviewed|approved}
+status: draft
 ---
 
 # {ComponentName}
@@ -420,3 +420,4 @@ When user provides regular CSS, suggest Tailwind equivalents:
 4. User confirmation obtained before file creation
 5. Component documentation follows standard format
 6. Category correctly assigned
+7. **Status set to `draft`** - All imported/edited components MUST have `status: draft`

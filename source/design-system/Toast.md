@@ -2,8 +2,8 @@
 name: Toast
 category: feedback
 created: 2026-02-05T00:00:00.000Z
-updated: 2026-02-05T11:00:00+07:00
-status: draft
+updated: 2026-02-05T04:00:00.000Z
+status: approved
 ---
 
 # Toast

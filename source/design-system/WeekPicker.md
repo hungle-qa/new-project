@@ -3,7 +3,7 @@ name: WeekPicker
 category: forms
 created: 2026-02-04T07:30:00.000Z
 updated: 2026-02-05T10:45:00.000Z
-status: reviewed
+status: approved
 ---
 
 # WeekPicker

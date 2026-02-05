@@ -231,6 +231,12 @@ BA kit_v1/
 | `import-idea` | Import product ideas |
 | `import-spec-template` | Import spec templates |
 
+### Meta Agents
+| Agent | Purpose |
+|-------|---------|
+| `agia` | Audit and improve agents and system files |
+| `doc-writer` | Create user-friendly documentation for end users |
+
 ---
 
 ## File Reference

@@ -302,6 +302,53 @@ Then provide PDF file or Confluence URL.
 | `import-idea` | PDF/Confluence to idea | `source/product-idea/*.md` |
 | `import-spec-template` | PDF/Confluence to template | `source/spec-template/*.md` |
 
+### Meta Agents
+
+| Agent | Purpose | Output |
+|-------|---------|--------|
+| `agia` | Audit and improve agents/system files | Audit reports, refactored agents |
+| `doc-writer` | Create user-friendly documentation | User guides, how-to articles, quick references |
+
+---
+
+---
+
+## Meta Commands
+
+### AGIA - Agent Intelligence Architect (`@agia`)
+
+**Purpose:** Audit, refactor, and improve agents and system documentation.
+
+**Usage:**
+```
+@agia audit {agent-name}
+@agia audit all system files
+@agia sync after adding {agent-name}
+```
+
+**Capabilities:**
+
+| Task | Command |
+|------|---------|
+| Audit single agent | `@agia audit import-design` |
+| Audit all agents | `@agia audit all agents` |
+| Check system file consistency | `@agia audit system files` |
+| Sync docs after agent change | `@agia sync after adding {name}` |
+| Full system audit | `@agia full audit` |
+
+**Audit Output:**
+- Weakness identification with severity levels
+- Logic gap analysis with mitigations
+- Refactored agent code (ready to use)
+- Before/after comparison
+- Test case results
+
+**System File Checks:**
+- Agent references in README.md
+- Workflow references in CLAUDE.md
+- Command docs in user-guide.md
+- Agent chain validity in workflows
+
 ---
 
 ## Step-by-Step Walkthroughs

@@ -25,10 +25,51 @@ This file contains mandatory styling rules. Validate ALL imported code against R
 source/design-system/icons/
 ```
 
-1. List all `.svg` files in the icons folder
-2. Read the corresponding `.json` metadata files for tags/categories
-3. **PRIORITIZE** using icons from this folder over external icon libraries
-4. If component uses external icons (Lucide, Heroicons, etc.), check if equivalent exists in design system
+### Icon Detection Workflow (MANDATORY - REAL-TIME)
+
+**CRITICAL: Always detect icons dynamically. Never rely on cached/static lists.**
+
+**Step 1: Use Glob to Get REAL-TIME Icon List**
+```
+Glob pattern: source/design-system/icons/*.svg
+```
+**ALWAYS run Glob FIRST** to get the current list of available icons. This ensures you see newly added icons.
+
+**Step 2: Parse Icon Names from Glob Results**
+From the Glob output, extract icon filenames and match by keywords in the filename:
+
+| Filename Pattern | Common Keywords |
+|------------------|-----------------|
+| `*edit*` | edit, pencil, modify |
+| `*clone*`, `*duplicate*` | clone, duplicate |
+| `*delete*`, `*trash*`, `*remove*` | delete, remove, trash |
+| `*share*` | share, sharing |
+| `*save*` | save, store |
+| `*copy*` | copy, clipboard |
+| `*print*`, `*pdf*` | print, pdf, export |
+| `*search*` | search, find |
+| `*calendar*`, `*date*` | calendar, date |
+| `*close*`, `*cancel*` | close, cancel, x |
+| `*plus*`, `*add*` | add, plus, new |
+| `*arrow*`, `*left*`, `*right*` | arrow, navigation |
+| `*filter*` | filter, sort |
+| `*warning*`, `*alert*` | warning, alert |
+
+**Step 3: Read SVG Content**
+Once matched, **READ the .svg file** to get actual content for embedding.
+
+**Step 4: Embed with Proper Sizing**
+```html
+<!-- {filename}.svg -->
+<svg class="w-4 h-4" ...>{svg content}</svg>
+```
+
+**Step 5: (Optional) Check JSON Metadata for Tags**
+If filename matching is unclear, read the corresponding `.json` file for tags:
+```
+source/design-system/icons/{icon-name}.json
+```
+JSON contains `tags` array for additional keyword matching.
 
 ### Icon Validation Rules
 
@@ -42,14 +83,30 @@ source/design-system/icons/
 
 When validating code with external icons:
 1. Identify all icons used (Lucide, Heroicons, Font Awesome, etc.)
-2. Check `source/design-system/icons/` for matching icons by name or tags
-3. If found, replace with inline SVG from design system:
+2. **Run Glob FIRST** to get real-time list: `source/design-system/icons/*.svg`
+3. **Search Glob results** for matching keywords in filenames
+4. **Read the matched .svg file** to get actual SVG content
+5. Replace with inline SVG from design system:
    ```html
-   <!-- Replace external: <LucideIcon name="check" /> -->
-   <!-- With design system: -->
-   <svg class="w-5 h-5" ...>{svg content from icons folder}</svg>
+   <!-- Replace external: <LucideIcon name="edit" /> -->
+   <!-- With design system: edit-white.svg -->
+   <svg class="w-5 h-5" ...>{content from edit-white.svg}</svg>
    ```
-4. Add to validation report if icon replacement available
+6. Add to validation report if icon replacement available
+
+### Icon Naming Convention
+
+- `*-white.svg` or `*_white.svg` = White colored icons (for dark backgrounds)
+- `*_grey.svg` = Gray colored icons
+- `*_icon.svg` = General purpose icons
+- `*_blue.svg` = Blue colored icons (primary color)
+
+### Why Real-Time Detection Matters
+
+- New icons may be added at any time
+- Static lists become outdated quickly
+- Glob ensures you always see the latest icons
+- Prevents "icon not found" errors for newly added icons
 
 ## Principles
 
@@ -182,6 +239,59 @@ Options:
 - `## CSS` - Required (component styles with BEM naming)
 - Missing these sections will cause errors when opening the component!
 
+## ⚠️ STRICT FORMAT RULES (MUST FOLLOW)
+
+**The preview system uses regex to parse sections. Breaking these rules will cause "No HTML/CSS found" errors!**
+
+### Rule 1: `## HTML` MUST be immediately followed by code block
+```markdown
+## HTML
+\`\`\`html
+{code here}
+\`\`\`
+```
+**WRONG (will break):**
+```markdown
+## HTML
+### Some Subtitle      ← NO! Don't add anything between ## HTML and code block
+\`\`\`html
+```
+
+### Rule 2: `## CSS` MUST be immediately followed by code block
+```markdown
+## CSS
+\`\`\`css
+{code here}
+\`\`\`
+```
+
+### Rule 3: No sub-headers between section header and code block
+- ❌ `## HTML` → `### Variant Name` → ` ```html` (WRONG)
+- ✅ `## HTML` → ` ```html` (CORRECT)
+
+## Pre-Creation Validation Checklist
+
+**BEFORE writing the file, verify:**
+
+| Check | Requirement | Status |
+|-------|-------------|--------|
+| 1 | `## HTML` exists | ⬜ |
+| 2 | `## HTML` immediately followed by ` ```html` | ⬜ |
+| 3 | `## CSS` exists | ⬜ |
+| 4 | `## CSS` immediately followed by ` ```css` | ⬜ |
+| 5 | No sub-headers between section and code block | ⬜ |
+| 6 | Frontmatter has name, category, created, updated, status | ⬜ |
+
+**If ANY check fails, fix before creating file!**
+
+## Post-Creation Validation
+
+**AFTER writing the file, ALWAYS:**
+1. Read the file back using Read tool
+2. Verify `## HTML` section can be found
+3. Verify `## CSS` section can be found
+4. If validation fails, fix immediately
+
 ```markdown
 ---
 name: {ComponentName}
@@ -201,7 +311,7 @@ status: {draft|reviewed|approved}
 
 ## HTML
 \`\`\`html
-{validated HTML code with Tailwind classes}
+{validated HTML code with Tailwind classes - NO sub-headers before this!}
 \`\`\`
 
 ## CSS

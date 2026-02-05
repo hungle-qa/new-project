@@ -1,9 +1,9 @@
 ---
 name: ButtonWhite
 category: buttons
-created: 2026-02-04
-updated: 2026-02-04T10:30:00+07:00
-status: draft
+created: 2026-02-04T00:00:00.000Z
+updated: 2026-02-04T03:30:00.000Z
+status: approved
 ---
 
 # ButtonWhite

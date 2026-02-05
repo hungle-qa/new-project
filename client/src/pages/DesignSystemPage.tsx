@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { Eye, Code, FileCode, Copy, Check, Plus, Pencil, Trash2, Search, Palette, Layers, Settings } from 'lucide-react'
+import { Eye, Code, FileCode, Copy, Check, Plus, Pencil, Trash2, Search, Palette, Layers, Settings, RefreshCw } from 'lucide-react'
 import { ImportComponentModal, ComponentData } from '../components/ImportComponentModal'
 import { TailwindDevTools } from '../components/TailwindDevTools'
 import { IconManager } from '../components/IconManager'
@@ -37,13 +37,55 @@ export function DesignSystemPage() {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [componentStatuses, setComponentStatuses] = useState<Record<string, string>>({})
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+
+  // Auto-hide toast after 3 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [toast])
+
+  // Fetch component statuses for filtering
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      const statuses: Record<string, string> = {}
+      for (const name of components) {
+        try {
+          const res = await fetch(`/api/design-system/${name}`)
+          const data = await res.json()
+          statuses[name] = data.status || 'draft'
+        } catch {
+          statuses[name] = 'draft'
+        }
+      }
+      setComponentStatuses(statuses)
+    }
+    if (components.length > 0) {
+      fetchStatuses()
+    }
+  }, [components])
 
   const filteredComponents = useMemo(() => {
-    if (!searchQuery.trim()) return components
-    return components.filter(name =>
-      name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  }, [components, searchQuery])
+    let filtered = components
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(name =>
+        name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    }
+
+    // Filter by status
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(name => componentStatuses[name] === statusFilter)
+    }
+
+    return filtered
+  }, [components, searchQuery, statusFilter, componentStatuses])
 
   const loadComponents = () => {
     fetch('/api/design-system')
@@ -100,20 +142,20 @@ export function DesignSystemPage() {
     const descMatch = content.match(/## Preview\s*\n([\s\S]*?)(?=\n## |$)/)
     const description = descMatch ? descMatch[1].trim() : ''
 
-    // Extract HTML block
-    const htmlMatch = content.match(/## HTML\s*```html\s*([\s\S]*?)```/)
+    // Extract HTML block (allow content between header and code block)
+    const htmlMatch = content.match(/## HTML[\s\S]*?```html\s*([\s\S]*?)```/)
     const html = htmlMatch ? htmlMatch[1].trim() : ''
 
-    // Extract CSS block
-    const cssMatch = content.match(/## CSS\s*```css\s*([\s\S]*?)```/)
+    // Extract CSS block (allow content between header and code block)
+    const cssMatch = content.match(/## CSS[\s\S]*?```css\s*([\s\S]*?)```/)
     const css = cssMatch ? cssMatch[1].trim() : ''
 
-    // Extract Tailwind HTML block
-    const tailwindMatch = content.match(/## Tailwind CSS\s*```html\s*([\s\S]*?)```/)
+    // Extract Tailwind HTML block (allow content between header and code block)
+    const tailwindMatch = content.match(/## Tailwind CSS[\s\S]*?```html\s*([\s\S]*?)```/)
     const tailwindHtml = tailwindMatch ? tailwindMatch[1].trim() : ''
 
-    // Extract JavaScript block
-    const jsMatch = content.match(/## JavaScript\s*```javascript\s*([\s\S]*?)```/)
+    // Extract JavaScript block (allow content between header and code block)
+    const jsMatch = content.match(/## JavaScript[\s\S]*?```javascript\s*([\s\S]*?)```/)
     const javascript = jsMatch ? jsMatch[1].trim() : ''
 
     return { html, css, tailwindHtml, javascript, description }
@@ -225,13 +267,59 @@ export function DesignSystemPage() {
       padding: 30px;
       background: #f9fafb;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .component-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    /* Dynamic positioning: small components start at 1/3, large components start at top */
+    body.small-component {
+      padding-top: calc(100vh / 3 - 100px);
+    }
+    body.large-component {
+      padding-top: 30px;
     }
     ${css}
   </style>
 </head>
 <body>
-  ${componentHtml}
+  <div class="component-wrapper">${componentHtml}</div>
   ${javascript ? `<script>${javascript}</script>` : ''}
+  <script>
+    // Auto-detect component size and apply appropriate class
+    (function() {
+      const wrapper = document.querySelector('.component-wrapper');
+      if (!wrapper) return;
+
+      function updateBodyClass() {
+        const componentHeight = wrapper.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        const threshold = viewportHeight * 0.5; // 50% of viewport
+
+        if (componentHeight > threshold) {
+          document.body.classList.remove('small-component');
+          document.body.classList.add('large-component');
+        } else {
+          document.body.classList.remove('large-component');
+          document.body.classList.add('small-component');
+        }
+      }
+
+      // Initial check
+      updateBodyClass();
+
+      // Re-check on resize and mutations
+      window.addEventListener('resize', updateBodyClass);
+
+      // Observe DOM changes (for expanding components)
+      const observer = new MutationObserver(updateBodyClass);
+      observer.observe(wrapper, { childList: true, subtree: true, attributes: true });
+    })();
+  </script>
 </body>
 </html>`
   }, [html, css, tailwindHtml, javascript])
@@ -413,6 +501,18 @@ export function DesignSystemPage() {
           />
         </div>
 
+        {/* Status Filter */}
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="flex-shrink-0 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+        >
+          <option value="all">All Status</option>
+          <option value="draft">Draft</option>
+          <option value="reviewed">Reviewed</option>
+          <option value="approved">Approved</option>
+        </select>
+
         {/* Horizontal Component List */}
         <div className="flex gap-2 overflow-x-auto flex-1 pb-1">
           {filteredComponents.length === 0 ? (
@@ -510,7 +610,28 @@ export function DesignSystemPage() {
                   <div>
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-sm font-medium text-gray-700">Component Preview</h3>
-                      <span className="text-xs text-gray-500">Live render</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">Live render</span>
+                        <button
+                          onClick={async () => {
+                            if (!selected) return
+                            try {
+                              const res = await fetch(`/api/design-system/${selected.name}`)
+                              if (!res.ok) throw new Error('Failed to fetch')
+                              const data = await res.json()
+                              setSelected(data)
+                              setToast({ message: 'Component refreshed successfully', type: 'success' })
+                            } catch {
+                              setToast({ message: 'Failed to refresh component', type: 'error' })
+                            }
+                          }}
+                          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
+                          title="Refresh component"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                          Refresh
+                        </button>
+                      </div>
                     </div>
                     {previewHtml ? (
                       <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -644,6 +765,28 @@ export function DesignSystemPage() {
         /* Rules View */
         <div className="bg-white rounded-lg border border-gray-200 p-6" style={{ minHeight: '600px' }}>
           <RulesEditor />
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg transition-all ${
+          toast.type === 'success'
+            ? 'bg-green-600 text-white'
+            : 'bg-red-600 text-white'
+        }`}>
+          {toast.type === 'success' ? (
+            <Check className="w-4 h-4" />
+          ) : (
+            <span className="w-4 h-4 flex items-center justify-center">✕</span>
+          )}
+          <span className="text-sm font-medium">{toast.message}</span>
+          <button
+            onClick={() => setToast(null)}
+            className="ml-2 hover:opacity-80"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>

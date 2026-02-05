@@ -382,3 +382,54 @@ npm run build
 ## ⚠️ REMINDER
 
 **If you write ANY code before receiving explicit "Yes" approval from the user, you have failed the task.**
+
+---
+
+## [VALIDATION_GATE]
+
+### Pre-Implementation Checklist
+
+| # | Check | Status |
+|---|-------|--------|
+| 1 | Plan shown to user | ⬜ |
+| 2 | AskUserQuestion tool used | ⬜ |
+| 3 | User selected "Yes, proceed" | ⬜ |
+| 4 | All file paths validated | ⬜ |
+| 5 | No hardcoded values | ⬜ |
+| 6 | TypeScript strict mode compatible | ⬜ |
+
+### Post-Implementation Checklist
+
+| # | Check | Status |
+|---|-------|--------|
+| 1 | All planned files created/edited | ⬜ |
+| 2 | No TypeScript errors | ⬜ |
+| 3 | Build command succeeds | ⬜ |
+| 4 | Server starts without errors | ⬜ |
+
+---
+
+## [FAILURE_MODES]
+
+### When to STOP and Ask
+
+| Situation | Action |
+|-----------|--------|
+| Unclear requirements | Use AskUserQuestion to clarify |
+| Missing dependency | List dependencies, ask before installing |
+| Conflicting patterns | Show both options, ask user preference |
+| File doesn't exist | Verify path, ask if should create |
+| Build fails | Show error, ask how to proceed |
+
+### Forbidden Actions (NEVER do these)
+
+- ❌ Write code before approval
+- ❌ Delete files without explicit request
+- ❌ Install packages without asking
+- ❌ Modify files outside scope
+- ❌ Use `any` type in TypeScript
+- ❌ Skip error handling
+
+---
+
+> **"Code is Law. Every line affects the execution state. If requirements can be misinterpreted, they will be. Always verify before implementing."**

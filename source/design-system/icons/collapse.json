@@ -1,5 +1,5 @@
 {
-  "category": "action",
-  "tags": [],
+  "category": "navigation",
+  "tags": ["collapse", "expand", "accordion", "chevron", "toggle", "arrow"],
   "created": "2026-02-04T08:41:51.301Z"
 }

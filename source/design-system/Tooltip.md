@@ -3,7 +3,7 @@ name: Tooltip
 category: feedback
 created: 2026-02-04T08:00:00.000Z
 updated: 2026-02-04T08:00:00.000Z
-status: draft
+status: approved
 ---
 
 # Tooltip

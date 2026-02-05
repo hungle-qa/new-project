@@ -3,7 +3,7 @@ name: MoreOptionsHorizontal
 category: navigation
 created: 2026-02-04T08:00:00.000Z
 updated: 2026-02-04T08:00:00.000Z
-status: draft
+status: approved
 ---
 
 # MoreOptionsHorizontal

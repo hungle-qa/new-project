@@ -25,7 +25,7 @@ Use this component for:
     <!-- Year Header with Navigation -->
     <div class="flex items-center justify-center gap-4 mb-5">
       <!-- Previous Year Button -->
-      <button id="prevYear" type="button" class="p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Previous year">
+      <button id="prevYear" type="button" class="p-2 transition-all" aria-label="Previous year">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M6 11L1 6l5-5" stroke="#184EFF" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -37,7 +37,7 @@ Use this component for:
       </div>
 
       <!-- Next Year Button -->
-      <button id="nextYear" type="button" class="p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Next year">
+      <button id="nextYear" type="button" class="p-2 transition-all" aria-label="Next year">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M1 1l5 5-5 5" stroke="#184EFF" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -99,9 +99,7 @@ Use this component for:
   transition: all 0.2s ease;
 }
 
-.month-picker__nav:hover {
-  background-color: #f3f4f6;
-}
+/* Arrow buttons: NO background on hover */
 
 .month-picker__year {
   font-size: 20px;
@@ -170,7 +168,7 @@ Use this component for:
 |---------|------------------|-------------|
 | Default Month | `px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100` | Unselected month button |
 | Selected Month | `px-4 py-2.5 text-sm font-medium text-[#141414] bg-[#F0F1FF] rounded-lg hover:bg-[#E0E2FF]` | Currently selected month with light blue background |
-| Year Navigation | `p-2 hover:bg-gray-100 rounded-md` | Arrow buttons for year navigation |
+| Year Navigation | `p-2 transition-all` | Arrow buttons for year navigation (no hover bg) |
 
 ## Component States
 | State | Trigger | Visual Changes | Tailwind Classes |
@@ -179,7 +177,7 @@ Use this component for:
 | Hover (unselected) | Mouse over month | Gray background | `hover:bg-gray-100` |
 | Hover (selected) | Mouse over selected month | Slightly darker blue | `hover:bg-[#E0E2FF]` |
 | Selected | Click month | Light blue background | `bg-[#F0F1FF]` |
-| Arrow Hover | Mouse over arrow | Gray background | `hover:bg-gray-100` |
+| Arrow Hover | Mouse over arrow | Icon stays blue (no bg change) | - |
 
 ## JavaScript
 ```javascript

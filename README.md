@@ -133,9 +133,24 @@ Import source materials (independent of workflows):
 | Command | Purpose | Output |
 |---------|---------|--------|
 | `@import-design` | Import HTML/CSS component | `source/design-system/{name}.md` |
-| `@import-design-by-image` | Convert UI image to component | `source/design-system/{name}.md` |
+| `/import-design-by-image` | Convert UI image(s) to component | `source/design-system/{name}.md` |
 | `@import-idea` | Import product idea | `source/product-idea/{name}.md` |
 | `@import-spec-template` | Import spec template | `source/spec-template/{name}.md` |
+
+### Import Design By Image (Mode Detection)
+
+The `/import-design-by-image` command auto-detects single vs multi-image mode:
+
+| Mode | Detection | Agent |
+|------|-----------|-------|
+| SINGLE | 1 image attached | `import-design-by-image-single` |
+| MULTI | 2+ images (states) | `import-design-by-image-multi` |
+
+**Usage:**
+```
+/import-design-by-image [attach 1 image]      → Single mode
+/import-design-by-image [attach 2+ images]    → Multi mode (states)
+```
 
 ---
 
@@ -227,7 +242,8 @@ BA kit_v1/
 | Agent | Purpose |
 |-------|---------|
 | `import-design` | Import HTML/CSS components |
-| `import-design-by-image` | Convert UI images to HTML/CSS |
+| `import-design-by-image-single` | Convert single UI image to HTML/CSS |
+| `import-design-by-image-multi` | Convert multiple state images to HTML/CSS |
 | `import-idea` | Import product ideas |
 | `import-spec-template` | Import spec templates |
 

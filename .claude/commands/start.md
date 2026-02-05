@@ -67,23 +67,25 @@ Options:
 
 ## Execution
 
+**🚨 IMPLEMENTER ALWAYS ASKS APPROVAL BEFORE CODING.**
+
 **SIMPLE tasks:**
 ```
-→ implementer (direct)
+→ implementer → [APPROVAL] → code
 ```
-No scout, no plan file, no approval needed.
+No scout, no plan file. Implementer shows plan and asks before coding.
 
 **MEDIUM tasks:**
 ```
-→ quick-scout → implementer
+→ quick-scout → implementer → [APPROVAL] → code
 ```
-Inline plan shown (no file), no approval needed.
+Quick-scout finds files and shows inline plan, then implementer asks before coding.
 
 **COMPLEX tasks:**
 ```
-→ scout → planner → [APPROVAL] → designer → [APPROVAL] → implementer
+→ scout → planner → designer → implementer → [APPROVAL] → code
 ```
-Full workflow per `.claude/workflows/primary-workflow.md`.
+Full workflow. Implementer asks before coding.
 
 ---
 

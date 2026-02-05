@@ -541,30 +541,25 @@ export function DesignSystemPage() {
       <div>
           {selected ? (
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              {/* Header */}
-              <div className="p-4 border-b border-gray-200">
-                <div className="flex justify-between items-start">
-                  <div>
+              {/* Header - Component name with category and status inline */}
+              <div className="px-4 py-3 border-b border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3">
                     <h2 className="text-xl font-semibold text-gray-900">{selected.name}</h2>
-                    <div className="flex gap-2 mt-2 items-center">
-                      <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
-                        {selected.category}
-                      </span>
-                      <select
-                        value={selected.status}
-                        onChange={(e) => handleStatusChange(e.target.value)}
-                        className={`px-2 py-1 text-xs rounded border cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          statusColors[selected.status as Status] || 'bg-gray-100 text-gray-600 border-gray-200'
-                        }`}
-                      >
-                        <option value="draft">Draft</option>
-                        <option value="reviewed">Reviewed</option>
-                        <option value="approved">Approved</option>
-                      </select>
-                      <span className="px-2 py-1 bg-green-100 text-green-600 text-xs rounded">
-                        {selected.created}
-                      </span>
-                    </div>
+                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">
+                      {selected.category}
+                    </span>
+                    <select
+                      value={selected.status}
+                      onChange={(e) => handleStatusChange(e.target.value)}
+                      className={`px-2 py-0.5 text-xs rounded border cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        statusColors[selected.status as Status] || 'bg-gray-100 text-gray-600 border-gray-200'
+                      }`}
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="reviewed">Reviewed</option>
+                      <option value="approved">Approved</option>
+                    </select>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -585,13 +580,13 @@ export function DesignSystemPage() {
                 </div>
               </div>
 
-              {/* Tabs */}
+              {/* Tabs with Live render/Refresh on Preview tab */}
               <div className="flex border-b border-gray-200">
                 {tabs.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
                     onClick={() => setActiveTab(id)}
-                    className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                       activeTab === id
                         ? 'border-blue-500 text-blue-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -599,45 +594,47 @@ export function DesignSystemPage() {
                   >
                     <Icon className="w-4 h-4" />
                     {label}
+                    {id === 'preview' && activeTab === 'preview' && (
+                      <span className="ml-1 text-xs text-gray-400">• Live</span>
+                    )}
                   </button>
                 ))}
+                {/* Refresh button in tab bar when Preview is active */}
+                {activeTab === 'preview' && (
+                  <div className="ml-auto flex items-center pr-4">
+                    <button
+                      onClick={async () => {
+                        if (!selected) return
+                        try {
+                          const res = await fetch(`/api/design-system/${selected.name}`)
+                          if (!res.ok) throw new Error('Failed to fetch')
+                          const data = await res.json()
+                          setSelected(data)
+                          setToast({ message: 'Component refreshed', type: 'success' })
+                        } catch {
+                          setToast({ message: 'Failed to refresh', type: 'error' })
+                        }
+                      }}
+                      className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
+                      title="Refresh component"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      Refresh
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Tab Content */}
               <div className="p-4">
-                {/* Preview Tab */}
+                {/* Preview Tab - No header, direct preview for more space */}
                 {activeTab === 'preview' && (
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-medium text-gray-700">Component Preview</h3>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">Live render</span>
-                        <button
-                          onClick={async () => {
-                            if (!selected) return
-                            try {
-                              const res = await fetch(`/api/design-system/${selected.name}`)
-                              if (!res.ok) throw new Error('Failed to fetch')
-                              const data = await res.json()
-                              setSelected(data)
-                              setToast({ message: 'Component refreshed successfully', type: 'success' })
-                            } catch {
-                              setToast({ message: 'Failed to refresh component', type: 'error' })
-                            }
-                          }}
-                          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
-                          title="Refresh component"
-                        >
-                          <RefreshCw className="w-3 h-3" />
-                          Refresh
-                        </button>
-                      </div>
-                    </div>
                     {previewHtml ? (
                       <div className="border border-gray-200 rounded-lg overflow-hidden">
                         <iframe
                           srcDoc={previewHtml}
-                          className="w-full h-[600px] bg-gray-50"
+                          className="w-full h-[650px] bg-gray-50"
                           title="Component Preview"
                         />
                       </div>

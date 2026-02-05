@@ -1,5 +1,12 @@
 {
-  "category": "action",
-  "tags": ["discard", "undo", "revert", "cancel", "reset", "changes"],
+  "category": "status",
+  "tags": [
+    "discard",
+    "undo",
+    "revert",
+    "cancel",
+    "reset",
+    "changes"
+  ],
   "created": "2026-02-03T11:29:11.652Z"
 }

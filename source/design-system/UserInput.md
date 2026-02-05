@@ -2,7 +2,7 @@
 name: UserInput
 category: forms
 created: 2026-02-03T00:00:00.000Z
-status: reviewed
+status: approved
 ---
 
 # UserInput
@@ -29,7 +29,7 @@ Use this component for:
 ## CSS
 ```css
 .user-input {
-  width: 100%;
+  width: 320px;
   padding: 12px 16px;
   font-size: 16px;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -51,7 +51,7 @@ Use this component for:
 }
 
 .user-input:hover {
-  border-color: #9ca3af;
+  border-color: #184EFF;
 }
 ```
 
@@ -59,7 +59,7 @@ Use this component for:
 ```html
 <input
   type="text"
-  class="w-full px-4 py-3 text-[#141414] bg-white border border-gray-300 rounded-md placeholder-gray-400 focus:border-[#184EFF] focus:ring-2 focus:ring-[#184EFF]/10 focus:outline-none hover:border-gray-400 transition-colors font-['Open_Sans']"
+  class="w-80 px-4 py-3 text-[#141414] bg-white border border-gray-300 rounded-md placeholder-gray-400 focus:border-[#184EFF] focus:ring-2 focus:ring-[#184EFF]/10 focus:outline-none hover:border-[#184EFF] transition-colors font-['Open_Sans']"
   placeholder="Enter user..."
   aria-label="Enter user"
 />
@@ -81,3 +81,4 @@ Use this component for:
 ## Notes
 - Imported via web UI on 2026-02-03
 - Simple gray border for standard form inputs
+- Updated 2026-02-05: Width reduced to 320px (w-80), hover border fixed to #184EFF per RULE.md

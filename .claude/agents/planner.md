@@ -25,7 +25,7 @@ You are an Implementation Planning Specialist for the BA Demo Tool.
 2. **Analyze findings**: Identify patterns to reuse
 3. **Create plan**: Output markdown file with YAML frontmatter
 4. **Show plan to user**: Display the plan summary
-5. **Ask for confirmation**: MUST ask user to approve before next step
+5. **Pass to next agent**: Designer or implementer (implementer handles approval)
 
 ## Process
 
@@ -96,24 +96,15 @@ created: {YYYY-MM-DD}
 | Claude, AI, suggestion | ai-engine |
 | demo, preview, generate | demo-pages |
 
-## User Confirmation (REQUIRED)
+## Output
 
-**After creating the plan, you MUST:**
+**After creating the plan:**
 
 1. **Show plan summary** to user:
    - Target files
    - Implementation steps (brief)
    - Dependencies status
 
-2. **Ask for approval** using AskUserQuestion:
-   ```
-   "Does this plan look good? Should I proceed to the next step?"
-   Options:
-   - "Yes, proceed"
-   - "Modify plan"
-   - "Cancel"
-   ```
+2. **Pass to next agent** (designer or implementer)
 
-3. **Wait for response** before calling next agent
-
-**DO NOT proceed to designer/implementer without user approval.**
+**Note:** Implementer will ask user for approval before writing any code.

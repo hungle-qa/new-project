@@ -133,24 +133,15 @@ Show layout structure using ASCII art:
 3. Accessibility considered
 4. Missing components identified
 
-## User Confirmation (REQUIRED)
+## Output
 
-**After creating the design, you MUST:**
+**After creating the design:**
 
 1. **Show wireframe** to user:
    - ASCII layout diagram
    - Component list with placement
    - Key UI decisions
 
-2. **Ask for approval** using AskUserQuestion:
-   ```
-   "Does this UI design look good? Should I proceed to implementation?"
-   Options:
-   - "Yes, proceed"
-   - "Modify design"
-   - "Cancel"
-   ```
+2. **Pass to implementer**
 
-3. **Wait for response** before calling implementer
-
-**DO NOT proceed to implementer without user approval.**
+**Note:** Implementer will ask user for approval before writing any code.

@@ -207,143 +207,199 @@ const webAppSubTabContent: Record<WebAppSubTab, GuideSection> = {
 
 const guideContent: Record<Exclude<TabType, 'use-webapp'>, GuideSection> = {
   'train-agent': {
-    overview: 'Improve your AI agents with AGIA (Agent Intelligence Architect). This tool helps you find problems in agent instructions, fix unclear wording, and make agents work more reliably.',
+    overview: 'Improve your AI agents with AGIA (Agent Intelligence Architect). Find problems, fix unclear wording, make agents more reliable.',
     workflow: {
-      steps: ['Choose Agent', 'Run Audit', 'Review Report', 'Apply Fixes', 'Verify Results'],
-      description: 'How AGIA works: You select an agent → AGIA analyzes it → You get a detailed report → AGIA suggests improvements → You approve changes.'
+      steps: ['Choose Agent', 'Run Audit', 'Review Report', 'Apply Fixes', 'Verify'],
+      description: 'You select an agent → AGIA analyzes it → You review the report → You approve changes'
     },
     input: [
-      '1. Available Commands',
-      'Type these in the chat to use AGIA:',
+      '1. Commands',
       '',
-      'Audit one agent → @agia audit {agent-name}',
-      'Check all documentation → @agia audit system files',
-      'Update docs after adding agent → @agia sync after adding {agent-name}',
-      'Full system check → @agia full audit'
+      '• @agia audit {agent-name} → Check one agent',
+      '• @agia audit system files → Check all documentation',
+      '• @agia sync after adding {name} → Update docs for new agent',
+      '• @agia full audit → Complete system check'
     ],
     process: [
-      '2. What AGIA Does',
-      'When you run an audit, AGIA performs 5 steps automatically:',
+      '2. The 5 Audit Steps',
       '',
-      'Step 1 - Deconstruct: Breaks down the agent into parts (logic, rules, output format)',
-      'Step 2 - Audit: Finds problems like unclear instructions or missing error handling',
-      'Step 3 - Synthesize: Rewrites the agent with clear, structured instructions',
-      'Step 4 - Simulate: Tests the new version with different scenarios',
-      'Step 5 - Iterate: Fixes any remaining issues until all tests pass'
+      '📍 Step 1: Deconstruct',
+      '• Breaks agent into parts (logic, rules, format)',
+      '',
+      '📍 Step 2: Audit',
+      '• Finds unclear instructions',
+      '• Identifies missing error handling',
+      '',
+      '📍 Step 3: Synthesize',
+      '• Rewrites with clear structure',
+      '• Adds missing sections',
+      '',
+      '📍 Step 4: Simulate',
+      '• Tests with different scenarios',
+      '• Checks edge cases',
+      '',
+      '📍 Step 5: Iterate',
+      '• Fixes remaining issues',
+      '• Repeats until all tests pass'
     ],
     output: [
-      '3. What You Receive',
-      'After the audit completes, you get:',
+      '3. What You Get',
       '',
-      'Audit Report: List of problems found with severity levels (High/Medium/Low)',
-      'Improved Agent: The rewritten agent code, ready to use',
-      'Comparison Table: Side-by-side view of before and after changes',
-      'Test Results: Shows which scenarios pass or fail'
+      '• ✓ Audit Report (High/Medium/Low severity)',
+      '• ✓ Improved agent code (ready to use)',
+      '• ✓ Before/After comparison',
+      '• ✓ Test results (PASS/FAIL)'
     ],
     examples: [
-      '@agia audit import-design-by-image',
-      '@agia audit system files',
-      '@agia sync after adding doc-writer',
-      '@agia full audit'
+      '💡 Example: Auditing an Agent',
+      '',
+      'Command: @agia audit import-design-by-image',
+      '',
+      'AGIA finds → Missing Glob tool, unclear CSS rules',
+      'AGIA suggests → Add Glob, clarify CSS section',
+      'You approve → Changes applied',
+      '',
+      'Result: Agent works more reliably'
     ],
     note: [
-      '⚠️ Important Tips',
+      '⚠️ Tips',
       '',
-      'Always backup: AGIA creates a backup before making changes',
-      'Approval required: You must approve all changes before they are applied',
-      'Safe to use: AGIA never changes the core purpose of an agent without your permission'
+      '• Backup created: AGIA saves original before changes',
+      '• Approval required: You must say "Yes" to apply',
+      '• Safe: Core purpose never changed without permission'
     ]
   },
   'edit-app': {
     overview: 'Build new features or fix bugs in the main application. You describe what you want, and AI agents handle the coding automatically.',
     workflow: {
       steps: ['Scout', 'Planner', 'Designer', 'Implementer'],
-      description: 'How it works: You give a command → Scout finds relevant files → Planner creates a plan → Designer suggests UI (if needed) → Implementer writes the code.'
+      description: 'You give a command → 4 agents work in sequence → You get working code'
     },
     input: [
       '1. How to Start',
-      'Use this command to begin:',
       '',
-      '/start {describe what you want}',
+      '• Open your terminal',
+      '• Type: /start {describe what you want}',
+      '• Press Enter',
       '',
       '2. Example Commands',
-      'Add a feature → /start Add search to design system page',
-      'Fix a bug → /start Fix status toggle not updating',
-      'Backend change → /start Add pagination to API'
+      '',
+      '• /start Add search to design system page',
+      '• /start Fix status toggle not updating',
+      '• /start Add pagination to API'
     ],
     process: [
-      '3. What Happens Next',
-      'After you send the command, the system works automatically:',
+      '3. The 4 Phases',
       '',
-      'Scout Phase: Scans the codebase to find relevant files and understand the current setup',
-      'Planning Phase: Creates a plan file in the plans/ folder (you can review this)',
-      'Design Phase: Suggests UI layout if your request involves screens (skipped for backend-only changes)',
-      'Implementation Phase: Writes or updates TypeScript/React code in client/ or server/'
+      '📍 Scout Phase',
+      '• Scans client/src/ and server/ folders',
+      '• Finds files related to your request',
+      '• Output: List of relevant files',
+      '',
+      '📍 Planning Phase',
+      '• Creates step-by-step plan',
+      '• Saves plan to plans/ folder',
+      '• Output: Plan document you can review',
+      '',
+      '📍 Design Phase (UI only)',
+      '• Suggests layout and components',
+      '• Skipped for backend-only changes',
+      '• Output: UI recommendations',
+      '',
+      '📍 Implementation Phase',
+      '• Writes TypeScript/React code',
+      '• Updates existing files or creates new ones',
+      '• Output: Working code in client/ or server/'
     ],
     output: [
-      '4. Results',
-      'When finished, you receive:',
+      '4. What You Get',
       '',
-      'Updated Code: Your changes are applied to the relevant files',
-      'Plan Document: Saved in /plans for reference and auditing',
-      'Ready Components: New UI elements work immediately'
+      '• ✓ Updated source code files',
+      '• ✓ Plan document in /plans folder',
+      '• ✓ Ready-to-use components'
     ],
     examples: [
-      '/start Add search to design system page',
-      '/start Fix status toggle not updating',
-      '/start Add pagination to API'
+      '💡 Example: Adding Search Feature',
+      '',
+      'Command: /start Add search to design system page',
+      '',
+      'Scout finds → DesignSystemPage.tsx',
+      'Planner creates → plans/design-system-search.md',
+      'Designer suggests → Search input at top of page',
+      'Implementer adds → useState, filter logic, input component',
+      '',
+      'Result: Search box appears, filters components as you type'
     ],
     note: [
-      '⚠️ Best Practices',
+      '⚠️ Tips for Best Results',
       '',
-      'Be specific: "Fix Toggle button on Dashboard not changing color" is better than "Fix UI bug"',
-      'Main app only: Use this for client/ and server/ code, not for demo projects',
-      'Review plans: Check the /plans folder to see what the AI will do before it starts'
+      '• Be specific: "Fix Toggle on Dashboard not changing color" beats "Fix UI bug"',
+      '• Main app only: Use for client/ and server/, not demos',
+      '• Review first: Check /plans folder before implementation starts'
     ]
   },
   'create-demos': {
-    overview: 'Create demo projects quickly using your design system components. Demos are standalone HTML pages perfect for presentations, client reviews, or prototyping.',
+    overview: 'Create demo projects using your design system components. Demos are standalone HTML pages for presentations, client reviews, or prototyping.',
     workflow: {
-      steps: ['Create Folder', 'Scout Components', 'Plan Pages', 'Build HTML', 'Generate Spec'],
-      description: 'How it works: You name your project → System creates folder structure → Finds available components → Builds HTML pages → Creates documentation automatically.'
+      steps: ['Create Folder', 'Scout', 'Plan', 'Build', 'Generate Spec'],
+      description: 'You name project → System creates folders → Finds components → Builds HTML → Creates spec'
     },
     input: [
       '1. Commands',
-      'Use these commands to create or fix demos:',
       '',
-      'Create new demo → /create-demo {project-name}',
-      'Create from idea → /create-demo from @product-idea {idea-name}',
-      'Fix existing demo → /fix-demo {project-name}: {issue description}'
+      '• /create-demo {project-name} → Create new demo',
+      '• /create-demo from @product-idea {name} → Create from idea',
+      '• /fix-demo {name}: {issue} → Fix existing demo'
     ],
     process: [
-      '2. Creation Process',
-      'When you create a demo, the system:',
+      '2. The 5 Phases',
       '',
-      'Creates Folder: Sets up source/demo/{project-name}/ with subfolders',
-      'Finds Components: Scans your design system for available buttons, cards, forms, etc.',
-      'Plans Pages: Decides which pages to create and what components to use',
-      'Builds HTML: Creates standalone HTML files with Tailwind CSS styling',
-      'Writes Spec: Generates a specification document describing the demo'
+      '📍 Create Folder Phase',
+      '• Creates source/demo/{project-name}/',
+      '• Adds subfolders: pages/, spec/, components/',
+      '',
+      '📍 Scout Phase',
+      '• Scans source/design-system/',
+      '• Lists available buttons, cards, forms, etc.',
+      '',
+      '📍 Planning Phase',
+      '• Decides which pages to create',
+      '• Assigns components to each page',
+      '',
+      '📍 Build Phase',
+      '• Creates standalone HTML files',
+      '• Applies Tailwind CSS styling',
+      '',
+      '📍 Spec Phase',
+      '• Generates documentation',
+      '• Saves to spec/ folder'
     ],
     output: [
       '3. What You Get',
-      'After creation, your demo includes:',
       '',
-      'Project Folder: Located at source/demo/{project-name}/',
-      'HTML Pages: In the pages/ subfolder, ready to open in browser',
-      'Spec Document: In the spec/ subfolder for documentation'
+      '• ✓ Project folder at source/demo/{name}/',
+      '• ✓ HTML pages in pages/ subfolder',
+      '• ✓ Spec document in spec/ subfolder'
     ],
     examples: [
-      '/create-demo client-portal',
-      '/create-demo from @product-idea fitness-tracker',
-      '/fix-demo hello-world: button not aligned'
+      '💡 Example: Creating a Demo',
+      '',
+      'Command: /create-demo client-portal',
+      '',
+      'Folder created → source/demo/client-portal/',
+      'Scout finds → Button, Card, Navigation, Form',
+      'Planner creates → login.html, dashboard.html, settings.html',
+      'Builder outputs → 3 HTML pages with Tailwind',
+      'Spec written → client-portal-spec.md',
+      '',
+      'Result: Open pages/login.html in browser to preview'
     ],
     note: [
-      '⚠️ Good to Know',
+      '⚠️ Tips',
       '',
-      'HTML only: Demo files are plain HTML, not React components',
-      'Uses your design system: All demos use components from source/design-system/',
-      'Describe issues clearly: When fixing, include the specific problem like "button not aligned"'
+      '• HTML only: Demos are plain HTML, not React',
+      '• Design system: All demos use components from source/design-system/',
+      '• Be specific: When fixing, say "button not aligned" not just "broken"'
     ]
   }
 }

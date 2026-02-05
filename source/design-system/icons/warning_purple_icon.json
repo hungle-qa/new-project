@@ -1,5 +1,11 @@
 {
-  "category": "feedback",
-  "tags": ["warning", "alert", "caution", "attention", "purple"],
+  "category": "status",
+  "tags": [
+    "warning",
+    "alert",
+    "caution",
+    "attention",
+    "purple"
+  ],
   "created": "2026-02-03T11:29:00.856Z"
 }

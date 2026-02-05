@@ -15,12 +15,36 @@ interface DesignRulesData {
   rules: DesignRule[]
 }
 
+// Toast component
+function Toast({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000)
+    return () => clearTimeout(timer)
+  }, [onClose])
+
+  return (
+    <div className="fixed top-4 right-4 z-50 animate-slide-in">
+      <div className={`flex items-center gap-3 min-w-[320px] max-w-[400px] rounded-lg shadow-lg p-4 ${
+        type === 'error' ? 'bg-[#EA314A]' : 'bg-[#2D3748]'
+      }`}>
+        <p className="flex-1 text-white text-sm font-medium">{message}</p>
+        <button onClick={onClose} className="flex-shrink-0 focus:outline-none">
+          <svg className="w-3 h-3" width="11" height="11" viewBox="0 0 11 11" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.183 5.867L1.425 9.625a.483.483 0 11-.683-.683L4.5 5.183.742 1.425a.483.483 0 01.683-.683L5.183 4.5 8.942.742a.483.483 0 01.683.683L5.867 5.183l3.758 3.759a.483.483 0 01-.683.683L5.183 5.867z" fill="#FFF" stroke="#FFF" strokeWidth=".5" fillRule="evenodd" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export function RulesEditor() {
   const [rulesData, setRulesData] = useState<DesignRulesData | null>(null)
+  const [originalData, setOriginalData] = useState<DesignRulesData | null>(null) // Track original for change detection
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
   const [showAddForm, setShowAddForm] = useState(false)
   const [newRule, setNewRule] = useState<Omit<DesignRule, 'id' | 'isCore'>>({
@@ -29,6 +53,12 @@ export function RulesEditor() {
     usage: '',
     type: 'color'
   })
+
+  // Check if there are unsaved changes
+  const hasChanges = (): boolean => {
+    if (!rulesData || !originalData) return false
+    return JSON.stringify(rulesData) !== JSON.stringify(originalData)
+  }
 
   useEffect(() => {
     loadRules()
@@ -44,6 +74,7 @@ export function RulesEditor() {
       }
       const data = await res.json()
       setRulesData(data)
+      setOriginalData(JSON.parse(JSON.stringify(data))) // Deep copy for change detection
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load rules')
     } finally {
@@ -97,7 +128,6 @@ export function RulesEditor() {
     try {
       setSaving(true)
       setError(null)
-      setSuccessMessage(null)
 
       const res = await fetch('/api/design-system/rules', {
         method: 'PUT',
@@ -110,10 +140,10 @@ export function RulesEditor() {
         throw new Error(errorData.error || 'Failed to save rules')
       }
 
-      setSuccessMessage('Design rules updated successfully!')
-      setTimeout(() => setSuccessMessage(null), 3000)
+      setOriginalData(JSON.parse(JSON.stringify(rulesData))) // Update original after successful save
+      setToast({ message: 'Design rules updated successfully!', type: 'success' })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save rules')
+      setToast({ message: err instanceof Error ? err.message : 'Failed to save rules', type: 'error' })
     } finally {
       setSaving(false)
     }
@@ -146,7 +176,7 @@ export function RulesEditor() {
     }
   }
 
-  const handleAddRule = () => {
+  const handleAddRule = async () => {
     if (!rulesData) return
     if (!newRule.token.trim()) {
       setError('Token name is required')
@@ -154,13 +184,36 @@ export function RulesEditor() {
     }
 
     const id = `custom_${Date.now()}`
-    setRulesData({
+    const updatedData = {
       ...rulesData,
       rules: [...rulesData.rules, { ...newRule, id, isCore: false }]
-    })
+    }
+    setRulesData(updatedData)
     setNewRule({ token: '', value: '#000000', usage: '', type: 'color' })
     setShowAddForm(false)
     setError(null)
+
+    // Auto-save after adding new rule
+    try {
+      setSaving(true)
+      const res = await fetch('/api/design-system/rules', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || 'Failed to save rules')
+      }
+
+      setOriginalData(JSON.parse(JSON.stringify(updatedData)))
+      setToast({ message: 'New rule added and saved!', type: 'success' })
+    } catch (err) {
+      setToast({ message: err instanceof Error ? err.message : 'Failed to save new rule', type: 'error' })
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleDeleteRule = (id: string) => {
@@ -215,7 +268,7 @@ export function RulesEditor() {
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-6xl">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-gray-900">Design System Rules</h2>
@@ -224,19 +277,22 @@ export function RulesEditor() {
         </p>
       </div>
 
-      {/* Error/Success Messages */}
+      {/* Toast notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      {/* Error Messages */}
       {error && (
         <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-red-600" />
             <p className="text-sm text-red-700">{error}</p>
           </div>
-        </div>
-      )}
-
-      {successMessage && (
-        <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-sm text-green-700">{successMessage}</p>
         </div>
       )}
 
@@ -401,9 +457,9 @@ export function RulesEditor() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Token</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Usage</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-48">Token</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-48">Value</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase min-w-[300px]">Usage</th>
                   <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase w-20">Actions</th>
                 </tr>
               </thead>
@@ -518,8 +574,8 @@ export function RulesEditor() {
         <div className="pt-4 border-t border-gray-200">
           <button
             onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            disabled={saving || !hasChanges()}
+            className="flex items-center gap-2 px-6 py-2.5 bg-[#184EFF] text-white rounded-md hover:bg-[#184EFFE6] disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
             {saving ? (
               <>
@@ -533,6 +589,9 @@ export function RulesEditor() {
               </>
             )}
           </button>
+          {!hasChanges() && !saving && (
+            <p className="text-xs text-gray-400 mt-2">No changes to save</p>
+          )}
         </div>
       </div>
 

@@ -30,7 +30,7 @@ Use this component for uncategorized interactions.
     <p class="text-sm text-gray-500 leading-relaxed mb-6">Are you sure you want to go? Changes have not been saved yet.</p>
     <div class="gap-3 flex justify-end">
       <button class="px-6 py-2.5 text-sm font-medium text-[#141414] bg-white border border-gray-300 rounded-md hover:bg-[#F5F7F9]">Cancel</button>
-      <button class="px-6 py-2.5 text-sm font-medium text-white bg-[#184EFF] rounded-md hover:bg-[#1241CC]">Discard Changes</button>
+      <button class="px-6 py-2.5 text-sm font-medium text-white bg-[#EA314A] rounded-md hover:bg-[#EA314AE6]">Discard Changes</button>
     </div>
   </div>
 </div>
@@ -53,7 +53,7 @@ Use this component for uncategorized interactions.
     <p class="text-sm text-gray-500 leading-relaxed mb-6">Are you sure you want to go? Changes have not been saved yet.</p>
     <div class="gap-3 flex justify-end">
       <button class="px-6 py-2.5 text-sm font-medium text-[#141414] bg-white border border-gray-300 rounded-md hover:bg-[#F5F7F9]">Cancel</button>
-      <button class="px-6 py-2.5 text-sm font-medium text-white bg-[#184EFF] rounded-md hover:bg-[#1241CC]">Discard Changes</button>
+      <button class="px-6 py-2.5 text-sm font-medium text-white bg-[#EA314A] rounded-md hover:bg-[#EA314AE6]">Discard Changes</button>
     </div>
   </div>
 </div>

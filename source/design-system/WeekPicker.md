@@ -224,9 +224,7 @@ Use this component for:
   transition: all 0.2s ease;
 }
 
-.week-picker__nav:hover {
-  background-color: #f3f4f6;
-}
+/* Arrow buttons: NO background on hover, only icon color change */
 
 .week-picker__nav svg path {
   stroke: #728096;
@@ -411,7 +409,7 @@ Use this component for:
     <!-- Month/Year Header with Navigation -->
     <div class="flex items-center justify-between mb-5">
       <!-- Previous Month Button -->
-      <button id="prevMonthWeek" type="button" class="group p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Previous month">
+      <button id="prevMonthWeek" type="button" class="group p-2 transition-all" aria-label="Previous month">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M6 11L1 6l5-5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
         </svg>
@@ -423,7 +421,7 @@ Use this component for:
       </button>
 
       <!-- Next Month Button -->
-      <button id="nextMonthWeek" type="button" class="group p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Next month">
+      <button id="nextMonthWeek" type="button" class="group p-2 transition-all" aria-label="Next month">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M1 1l5 5-5 5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
         </svg>
@@ -452,7 +450,7 @@ Use this component for:
     <!-- Year Header with Navigation -->
     <div class="flex items-center justify-center gap-4 mb-5">
       <!-- Previous Year Button -->
-      <button id="prevYearWeek" type="button" class="group p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Previous year">
+      <button id="prevYearWeek" type="button" class="group p-2 transition-all" aria-label="Previous year">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M6 11L1 6l5-5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
         </svg>
@@ -464,7 +462,7 @@ Use this component for:
       </div>
 
       <!-- Next Year Button -->
-      <button id="nextYearWeek" type="button" class="group p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Next year">
+      <button id="nextYearWeek" type="button" class="group p-2 transition-all" aria-label="Next year">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M1 1l5 5-5 5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
         </svg>

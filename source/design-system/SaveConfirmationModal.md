@@ -149,7 +149,7 @@ Use this component for feedback interactions.
     <p class="text-sm text-gray-500 leading-relaxed mb-6">You have made changes that have not been saved yet. Would you like to save changes before leaving?</p>
     <div class="flex gap-3 justify-end">
       <button class="px-4 py-2.5 text-sm font-medium text-[#141414] bg-white border border-gray-300 rounded-md hover:bg-[#F5F7F9]">Exit without saving</button>
-      <button class="px-6 py-2.5 text-sm font-medium text-white bg-[#184EFF] rounded-md hover:bg-[#1241CC]">Save</button>
+      <button class="px-6 py-2.5 text-sm font-medium text-white bg-[#184EFF] rounded-md hover:bg-[#184EFFE6]">Save</button>
     </div>
   </div>
 </div>

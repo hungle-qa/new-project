@@ -385,6 +385,7 @@ This component follows all rules from `source/design-system/rule/RULE.md`:
 
 ## Related Components
 
+- **[Calendar](./Calendar.md)**: Uses NumberBadge-sm style for today indicator
 - **Chip**: For text labels with removable functionality
 - **Badge**: For status indicators and counts
 - **Button**: For interactive clickable elements

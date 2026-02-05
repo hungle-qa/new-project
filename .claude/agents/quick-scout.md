@@ -49,12 +49,11 @@ Grep: pattern="{keyword}" path="{scope}"
 Proceed with implementation? [Yes/Modify/Cancel]
 ```
 
-### Step 3: Wait for User Response
+### Step 3: Hand Off to Implementer
 
-After showing inline plan, ask user:
-- Yes → Signal ready for implementer
-- Modify → Adjust plan based on feedback
-- Cancel → Stop workflow
+After showing inline plan, pass to implementer agent.
+
+**Note:** Implementer will ask user for approval before writing any code.
 
 ## Output Format
 
@@ -96,7 +95,7 @@ Proceed? [Yes/Modify/Cancel]
 | Output | File list only | Files + inline plan |
 | Plan file | No | No |
 | Next step | planner | implementer |
-| Approval | Not needed | Inline (optional) |
+| Approval | At planner | At implementer (not here) |
 
 ## Quality Standards
 
@@ -112,4 +111,4 @@ Proceed? [Yes/Modify/Cancel]
 1. **No plan file** - plan shown inline only
 2. **Fast execution** - minimize tool calls
 3. **Actionable output** - clear next steps
-4. **Single approval** - ask once, not twice
+4. **No approval here** - implementer handles approval before coding

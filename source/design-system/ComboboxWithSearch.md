@@ -150,7 +150,7 @@ Use for selecting multiple clients or groups, such as assigning licenses, adding
   color: #FFFFFF;
 }
 
-.avatar-blue { background-color: #3B82F6; }
+.avatar-blue { background-color: #184EFF; }
 .avatar-orange { background-color: #FB923C; }
 .avatar-purple { background-color: #A855F7; }
 .avatar-green { background-color: #22C55E; }

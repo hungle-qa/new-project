@@ -165,9 +165,7 @@ Use this component for:
   transition: all 0.2s ease;
 }
 
-.date-picker__nav:hover {
-  background-color: #f3f4f6;
-}
+/* Arrow buttons: NO background on hover, only icon color change */
 
 .date-picker__nav svg path {
   stroke: #728096;
@@ -314,7 +312,7 @@ Use this component for:
     <!-- Month/Year Header with Navigation -->
     <div class="flex items-center justify-between mb-5">
       <!-- Previous Month Button -->
-      <button id="prevMonth" type="button" class="group p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Previous month">
+      <button id="prevMonth" type="button" class="group p-2 transition-all" aria-label="Previous month">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M6 11L1 6l5-5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
         </svg>
@@ -326,7 +324,7 @@ Use this component for:
       </button>
 
       <!-- Next Month Button -->
-      <button id="nextMonth" type="button" class="group p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Next month">
+      <button id="nextMonth" type="button" class="group p-2 transition-all" aria-label="Next month">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M1 1l5 5-5 5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
         </svg>
@@ -355,7 +353,7 @@ Use this component for:
     <!-- Year Header with Navigation -->
     <div class="flex items-center justify-center gap-4 mb-5">
       <!-- Previous Year Button -->
-      <button id="prevYear" type="button" class="group p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Previous year">
+      <button id="prevYear" type="button" class="group p-2 transition-all" aria-label="Previous year">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M6 11L1 6l5-5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
         </svg>
@@ -367,7 +365,7 @@ Use this component for:
       </div>
 
       <!-- Next Year Button -->
-      <button id="nextYear" type="button" class="group p-2 hover:bg-gray-100 rounded-md transition-all" aria-label="Next year">
+      <button id="nextYear" type="button" class="group p-2 transition-all" aria-label="Next year">
         <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
           <path d="M1 1l5 5-5 5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
         </svg>
@@ -540,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let classes = 'aspect-square flex items-center justify-center rounded-full text-sm font-medium transition-all min-w-[36px] min-h-[36px]';
 
     if (isSelected) {
-      classes += ' bg-[#184EFF] text-white hover:bg-[#1241CC]';
+      classes += ' bg-[#184EFF] text-white hover:bg-[#184EFFE6]';
       btn.setAttribute('aria-current', 'date');
     } else if (isOtherMonth) {
       classes += ' text-gray-400 hover:bg-gray-100';
@@ -612,7 +610,7 @@ document.addEventListener('DOMContentLoaded', function() {
 | MonthPicker Dropdown | `bg-white border border-gray-200 rounded-xl shadow-xl p-5 min-w-[320px]` | MonthPicker container with shadow |
 | Day (Default) | `text-[#141414] hover:bg-gray-100` | Default day button for current month |
 | Day (Other Month) | `text-gray-400 hover:bg-gray-100` | Gray text for previous/next month dates |
-| Day (Selected) | `bg-[#184EFF] text-white hover:bg-[#1241CC]` | Blue circle for selected date |
+| Day (Selected) | `bg-[#184EFF] text-white hover:bg-[#184EFFE6]` | Blue circle for selected date |
 | Navigation Arrow | `w-3.5 h-5 stroke-[#728096] group-hover:stroke-[#184EFF]` | Gray arrow icons (default), blue on hover |
 | Month Button | `px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100` | Month button in MonthPicker |
 | Month (Selected) | `bg-[#F0F1FF] hover:bg-[#E0E2FF]` | Selected month in MonthPicker |
@@ -626,7 +624,7 @@ document.addEventListener('DOMContentLoaded', function() {
 | Date Selected | Click date | Blue background, white text | `bg-[#184EFF] text-white` |
 | Date Hover | Mouse over date | Gray background | `hover:bg-gray-100` |
 | Month/Year Hover | Mouse over title | Blue text | `hover:text-[#184EFF]` |
-| Arrow Hover | Mouse over arrow | Gray background, blue stroke | `hover:bg-gray-100 group-hover:stroke-[#184EFF]` |
+| Arrow Hover | Mouse over arrow | Blue stroke only (no bg) | `group-hover:stroke-[#184EFF]` |
 
 ## Integration with MonthPicker
 

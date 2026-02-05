@@ -1,11 +1,12 @@
 ---
-name: MainPageWithList
+name: Header
 category: layout
-created: 2026-02-04
-status: draft
+created: 2026-02-04T00:00:00.000Z
+updated: 2026-02-04T00:00:00.000Z
+status: approved
 ---
 
-# MainPageWithList
+# Header
 
 ## Preview
 A complete page layout with data table. Features:
@@ -245,7 +246,7 @@ Use for list/table views in content management systems. Integrates with LeftSide
 
 ## JavaScript
 ```javascript
-// MainPageWithList - Page-level interactions (header only)
+// Header - Page-level interactions (header only)
 // TableWithList.md and Pagination.md handle their own interactions
 document.addEventListener('DOMContentLoaded', function() {
   const mainPage = document.querySelector('.main-page');
@@ -253,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('searchInput');
 
   if (!mainPage) {
-    console.log('MainPageWithList: Element not found');
+    console.log('Header: Element not found');
     return;
   }
 
@@ -266,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const toggleEvent = new CustomEvent('toggleSidebar');
       document.dispatchEvent(toggleEvent);
 
-      console.log('MainPageWithList: Sidebar toggled');
+      console.log('Header: Sidebar toggled');
     });
   }
 
@@ -288,14 +289,14 @@ document.addEventListener('DOMContentLoaded', function() {
         row.style.display = matches ? '' : 'none';
       });
 
-      console.log('MainPageWithList: Search term:', searchTerm);
+      console.log('Header: Search term:', searchTerm);
     });
   }
 
   // --- 3. TABLE COMPONENT: TableWithList.md handles sorting and checkbox interactions ---
   // --- 4. PAGINATION COMPONENT: Pagination.md handles navigation ---
 
-  console.log('MainPageWithList: Initialized');
+  console.log('Header: Initialized');
 });
 ```
 
@@ -340,7 +341,7 @@ This layout integrates:
 
 ## Notes
 - Created on 2026-02-04
-- Updated: Refactored into modular components
+- Updated: 2026-02-04 - Renamed from MainPageWithList to Header
 - Two-line header: hamburger + title, then search + button
 - **Table and pagination extracted to separate reusable components:**
   - TableWithList.md - handles sorting, selection, row actions

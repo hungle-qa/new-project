@@ -1,8 +1,9 @@
 ---
 name: LeftSidebar
 category: navigation
-created: 2026-02-04
-status: draft
+created: 2026-02-04T00:00:00.000Z
+updated: 2026-02-04T08:30:00.000Z
+status: approved
 ---
 
 # LeftSidebar
@@ -10,10 +11,11 @@ status: draft
 ## Preview
 A hierarchical navigation sidebar with main sections and sub-sections. Features:
 - Title "Library" at top
-- Main sections (Exercises, Workouts, Programs, etc.)
-- Sub-sections indented under parent sections
+- Realistic menu structure with 12+ sections (Dashboard, Clients, Programs, Exercises, Nutrition, etc.)
+- Sub-sections indented under parent sections (NO connector lines)
 - Hover state with gray background and shadow
 - Selected state with white background and shadow
+- Click behavior: Shows wireframe placeholder on right side (NO page navigation)
 - Collapsible via external trigger (hamburger button in header)
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
@@ -26,10 +28,23 @@ A hierarchical navigation sidebar with main sections and sub-sections. Features:
 ```
 
 ## Usage
-Use for main navigation in content management systems. Supports hierarchical structure with main sections and sub-sections. Collapses when triggered by external hamburger button.
+Use for main navigation in content management systems. Supports hierarchical structure with main sections and sub-sections. Clicking items displays wireframe placeholder instead of navigating to new pages. Collapses when triggered by external hamburger button.
 
 ## HTML
 ```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeftSidebar Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Left Sidebar -->
 <aside class="sidebar" id="leftSidebar">
   <div class="sidebar-header">
     <h2 class="sidebar-title">Library</h2>
@@ -37,60 +52,113 @@ Use for main navigation in content management systems. Supports hierarchical str
 
   <nav class="sidebar-nav">
     <ul class="sidebar-menu">
-      <!-- Main Section -->
+      <!-- Dashboard -->
       <li class="sidebar-item">
-        <a href="#exercises" class="sidebar-link">Exercises</a>
+        <a class="sidebar-link" data-section="Dashboard">Dashboard</a>
       </li>
 
-      <!-- Main Section with Sub-sections -->
+      <!-- Clients with Sub-sections -->
       <li class="sidebar-item">
-        <a href="#workouts" class="sidebar-link">Workouts</a>
+        <a class="sidebar-link" data-section="Clients">Clients</a>
         <ul class="sidebar-submenu">
           <li class="sidebar-subitem">
-            <a href="#workouts-sections" class="sidebar-sublink">Sections</a>
+            <a class="sidebar-sublink" data-section="Active Clients">Active Clients</a>
+          </li>
+          <li class="sidebar-subitem">
+            <a class="sidebar-sublink" data-section="Archived Clients">Archived Clients</a>
           </li>
         </ul>
       </li>
 
-      <!-- Main Section -->
+      <!-- Programs with Sub-sections -->
       <li class="sidebar-item">
-        <a href="#programs" class="sidebar-link">Programs</a>
-      </li>
-
-      <li class="sidebar-item">
-        <a href="#tasks" class="sidebar-link">Tasks</a>
-      </li>
-
-      <li class="sidebar-item">
-        <a href="#forms" class="sidebar-link">Forms &amp; Questionnaires</a>
-      </li>
-
-      <!-- Main Section with Sub-sections -->
-      <li class="sidebar-item">
-        <a href="#meal-plans" class="sidebar-link">Meal Plan Templates</a>
+        <a class="sidebar-link" data-section="Programs">Programs</a>
         <ul class="sidebar-submenu">
           <li class="sidebar-subitem">
-            <a href="#recipes" class="sidebar-sublink">Recipes</a>
+            <a class="sidebar-sublink" data-section="Templates">Templates</a>
           </li>
           <li class="sidebar-subitem">
-            <a href="#ingredients" class="sidebar-sublink sidebar-sublink-selected">Ingredients</a>
-          </li>
-          <li class="sidebar-subitem">
-            <a href="#recipe-books" class="sidebar-sublink">Recipe Books</a>
+            <a class="sidebar-sublink" data-section="Active Programs">Active Programs</a>
           </li>
         </ul>
       </li>
 
+      <!-- Exercises with Sub-sections -->
       <li class="sidebar-item">
-        <a href="#metric-groups" class="sidebar-link">Metric Groups</a>
+        <a class="sidebar-link" data-section="Exercises">Exercises</a>
+        <ul class="sidebar-submenu">
+          <li class="sidebar-subitem">
+            <a class="sidebar-sublink" data-section="Exercise Library">Exercise Library</a>
+          </li>
+          <li class="sidebar-subitem">
+            <a class="sidebar-sublink" data-section="Custom Exercises">Custom Exercises</a>
+          </li>
+        </ul>
       </li>
 
+      <!-- Workouts -->
       <li class="sidebar-item">
-        <a href="#knowledge-base" class="sidebar-link">Knowledge Base (FAQ)</a>
+        <a class="sidebar-link" data-section="Workouts">Workouts</a>
+      </li>
+
+      <!-- Nutrition with Sub-sections -->
+      <li class="sidebar-item">
+        <a class="sidebar-link" data-section="Nutrition">Nutrition</a>
+        <ul class="sidebar-submenu">
+          <li class="sidebar-subitem">
+            <a class="sidebar-sublink" data-section="Meal Plans">Meal Plans</a>
+          </li>
+          <li class="sidebar-subitem">
+            <a class="sidebar-sublink active" data-section="Recipes">Recipes</a>
+          </li>
+          <li class="sidebar-subitem">
+            <a class="sidebar-sublink" data-section="Ingredients">Ingredients</a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Tasks -->
+      <li class="sidebar-item">
+        <a class="sidebar-link" data-section="Tasks">Tasks</a>
+      </li>
+
+      <!-- Forms & Questionnaires -->
+      <li class="sidebar-item">
+        <a class="sidebar-link" data-section="Forms & Questionnaires">Forms &amp; Questionnaires</a>
+      </li>
+
+      <!-- Reports -->
+      <li class="sidebar-item">
+        <a class="sidebar-link" data-section="Reports">Reports</a>
+      </li>
+
+      <!-- Metric Groups -->
+      <li class="sidebar-item">
+        <a class="sidebar-link" data-section="Metric Groups">Metric Groups</a>
+      </li>
+
+      <!-- Knowledge Base -->
+      <li class="sidebar-item">
+        <a class="sidebar-link" data-section="Knowledge Base">Knowledge Base (FAQ)</a>
+      </li>
+
+      <!-- Settings -->
+      <li class="sidebar-item">
+        <a class="sidebar-link" data-section="Settings">Settings</a>
       </li>
     </ul>
   </nav>
 </aside>
+
+<!-- Content Area (Right Side) -->
+<div class="content-area" id="contentArea">
+  <div class="wireframe-placeholder" id="wireframePlaceholder">
+    [Recipes]
+  </div>
+</div>
+
+</body>
+</html>
 ```
 
 ## CSS
@@ -98,10 +166,17 @@ Use for main navigation in content management systems. Supports hierarchical str
 :root {
   --font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --color-text-primary: #141414;
+  --color-text-secondary: #222222;
   --color-bg-white: #FFFFFF;
   --color-btn-action: #184EFF;
   --color-btn-cancel-hover: #F5F7F9;
   --color-bg-button-hover: #F0F1FF;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  display: flex;
 }
 
 /* Sidebar Container */
@@ -161,11 +236,12 @@ Use for main navigation in content management systems. Supports hierarchical str
   padding: 10px 16px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
   text-decoration: none;
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
   border-radius: 8px;
   margin: 2px 8px;
+  cursor: pointer;
 }
 
 .sidebar-link:hover {
@@ -173,7 +249,14 @@ Use for main navigation in content management systems. Supports hierarchical str
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Submenu */
+.sidebar-link.active {
+  background-color: var(--color-bg-white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  border: 1px solid #E5E7EB;
+  font-weight: 600;
+}
+
+/* Submenu - NO CONNECTOR LINES */
 .sidebar-submenu {
   list-style: none;
   margin: 0;
@@ -186,24 +269,15 @@ Use for main navigation in content management systems. Supports hierarchical str
 
 .sidebar-sublink {
   display: block;
-  padding: 8px 16px 8px 36px; /* 36px left padding for indent */
+  padding: 8px 16px 8px 36px; /* Indented only, no connector lines */
   font-size: 14px;
   font-weight: 400;
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
   text-decoration: none;
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
   border-radius: 8px;
   margin: 2px 8px;
-  position: relative;
-}
-
-/* Indent indicator */
-.sidebar-sublink::before {
-  content: '└─';
-  position: absolute;
-  left: 20px;
-  color: #9CA3AF;
-  font-size: 12px;
+  cursor: pointer;
 }
 
 .sidebar-sublink:hover {
@@ -211,17 +285,11 @@ Use for main navigation in content management systems. Supports hierarchical str
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Selected State */
-.sidebar-sublink-selected {
+.sidebar-sublink.active {
   background-color: var(--color-bg-white);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   border: 1px solid #E5E7EB;
   font-weight: 500;
-}
-
-.sidebar-sublink-selected:hover {
-  background-color: var(--color-bg-white);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* Scrollbar Styling */
@@ -241,22 +309,77 @@ Use for main navigation in content management systems. Supports hierarchical str
 .sidebar::-webkit-scrollbar-thumb:hover {
   background-color: #9CA3AF;
 }
+
+/* Content Area (Right Side) */
+.content-area {
+  margin-left: 240px;
+  width: calc(100% - 240px);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F9FAFB;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.content-area.expanded {
+  margin-left: 0;
+  width: 100%;
+}
+
+.wireframe-placeholder {
+  text-align: center;
+  color: #9CA3AF;
+  font-size: 48px;
+  font-weight: 300;
+  padding: 40px;
+  border: 2px dashed #D1D5DB;
+  border-radius: 12px;
+  background-color: white;
+  min-width: 400px;
+}
 ```
 
 ## JavaScript
 ```javascript
-// LeftSidebar - Collapsible sidebar controlled by external trigger
+// LeftSidebar - NO navigation, show wireframe on click
 document.addEventListener('DOMContentLoaded', function() {
   const sidebar = document.getElementById('leftSidebar');
+  const contentArea = document.getElementById('contentArea');
+  const placeholder = document.getElementById('wireframePlaceholder');
+  const allLinks = sidebar?.querySelectorAll('.sidebar-link, .sidebar-sublink');
 
   if (!sidebar) {
     console.log('LeftSidebar: Element not found');
     return;
   }
 
+  // Handle click on any link
+  allLinks?.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent navigation
+
+      const sectionName = this.getAttribute('data-section');
+
+      // Remove active class from all links
+      allLinks.forEach(l => l.classList.remove('active'));
+
+      // Add active class to clicked link
+      this.classList.add('active');
+
+      // Update wireframe placeholder
+      if (placeholder) {
+        placeholder.textContent = `[${sectionName}]`;
+      }
+
+      console.log('LeftSidebar: Clicked', sectionName);
+    });
+  });
+
   // Listen for custom event from hamburger button
   document.addEventListener('toggleSidebar', function(e) {
     sidebar.classList.toggle('collapsed');
+    contentArea?.classList.toggle('expanded');
     console.log('LeftSidebar: Toggled', sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded');
   });
 
@@ -265,6 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.innerWidth < 768) {
       if (!sidebar.contains(e.target) && !e.target.closest('.hamburger-btn')) {
         sidebar.classList.add('collapsed');
+        contentArea?.classList.add('expanded');
       }
     }
   });
@@ -277,9 +401,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 | State | Trigger | Visual Changes | CSS Classes |
 |-------|---------|----------------|-------------|
-| Default | - | White background, no border | `.sidebar-link` |
+| Default | - | Transparent background | `.sidebar-link` |
 | Hover | Mouse over | Gray bg #F5F7F9, shadow | `.sidebar-link:hover` |
-| Selected | Active page | White bg, border, shadow | `.sidebar-sublink-selected` |
+| Active | Clicked | White bg, border, shadow | `.sidebar-link.active` |
 | Collapsed | External trigger | Hidden (translateX -240px) | `.sidebar.collapsed` |
 
 ## Props/Variants
@@ -287,24 +411,60 @@ document.addEventListener('DOMContentLoaded', function() {
 | Variant | Class | Description |
 |---------|-------|-------------|
 | Main item | `.sidebar-link` | Top-level navigation item |
-| Sub item | `.sidebar-sublink` | Indented child item (20px left) |
-| Selected | `.sidebar-sublink-selected` | Active/current page indicator |
+| Sub item | `.sidebar-sublink` | Indented child item (36px left padding, NO connector lines) |
+| Active | `.active` | Selected item indicator (white bg + border + shadow) |
 | Collapsed | `.sidebar.collapsed` | Hidden state |
+
+## Menu Structure
+
+### Main Sections (12 items):
+1. **Dashboard** - Single item
+2. **Clients** - Has 2 sub-sections
+   - Active Clients
+   - Archived Clients
+3. **Programs** - Has 2 sub-sections
+   - Templates
+   - Active Programs
+4. **Exercises** - Has 2 sub-sections
+   - Exercise Library
+   - Custom Exercises
+5. **Workouts** - Single item
+6. **Nutrition** - Has 3 sub-sections (Recipes is active by default)
+   - Meal Plans
+   - Recipes
+   - Ingredients
+7. **Tasks** - Single item
+8. **Forms & Questionnaires** - Single item
+9. **Reports** - Single item
+10. **Metric Groups** - Single item
+11. **Knowledge Base (FAQ)** - Single item
+12. **Settings** - Single item
+
+## Click Behavior
+
+- **NO page navigation** - Clicking any link prevents default navigation
+- **Shows wireframe** - Displays `[Section Name]` in placeholder on right side
+- **Active state** - Clicked item gets active styling (white bg, border, shadow)
+- **Previous active cleared** - Only one item can be active at a time
 
 ## Accessibility
 - Semantic HTML with `<nav>`, `<ul>`, `<li>` structure
-- Links use proper `<a>` tags with href attributes
+- Links use proper `<a>` tags with data-section attributes
 - Clear visual focus states
 - Keyboard navigable
 - ARIA labels can be added for screen readers
+- Cursor pointer on interactive elements
 
 ## Notes
 - Created on 2026-02-04
-- No collapse button in sidebar (controlled externally)
+- Updated on 2026-02-04 (GMT+7)
+- NO collapse button in sidebar (controlled externally)
 - Listens to `toggleSidebar` custom event
-- Submenu items indented 20px with └─ indicator
-- Selected state: white bg + border + shadow
+- Submenu items indented with padding only (NO tree connector lines └─ or ├─)
+- Active state: white bg + border + shadow
 - Hover state: gray bg #F5F7F9 + shadow
 - Fixed position, full height
 - Smooth collapse animation (0.3s)
 - Custom scrollbar styling
+- Click behavior: Shows wireframe placeholder instead of navigating
+- Content area expands when sidebar collapses

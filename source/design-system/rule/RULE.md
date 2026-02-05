@@ -51,8 +51,8 @@ font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 | `--color-bg-combobox-hover` | `#F0F1FF` | Hover on the item on the combobox, dropdown | color |
 | `--color-border-textbox-hover` | `#184EFF` | border when hovering the textbox, search box, datebox... Always 1px. | color |
 | `--color-text-blue` | `#184EFF` | Hovering the button with text is black | color |
-| `--color-bg-button-hover` | `#F0F1FF` | Hovering the button color is white | color |
-| `--color-text-secondary` | `#222222` | Main section, Sub section, text in the item (list, dropdownlist) | color |
+| `--color-bg-buttonwhite-hover` | `#F0F1FF` | Hovering the button color is white | color |
+| `--color-text-secondary` | `#222222` | Left sidebar: Main section, Sub section; text in the item (list, dropdownlist) | color |
 
 ---
 
@@ -77,7 +77,7 @@ Include these variables in your component styles:
   --color-bg-combobox-hover: #F0F1FF;
   --color-border-textbox-hover: #184EFF;
   --color-text-blue: #184EFF;
-  --color-bg-button-hover: #F0F1FF;
+  --color-bg-buttonwhite-hover: #F0F1FF;
   --color-text-secondary: #222222;
 }
 ```

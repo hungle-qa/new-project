@@ -1,8 +1,8 @@
 ---
 name: SearchBasic
 category: forms
-created: 2026-02-04
-status: draft
+created: 2026-02-04T00:00:00.000Z
+status: approved
 ---
 
 # SearchBasic

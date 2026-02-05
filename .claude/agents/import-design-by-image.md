@@ -51,6 +51,27 @@ When you identify icons needed in the component:
 - **Multi-Image Support**: Analyze multiple images to capture all component states
 - **Interactive JavaScript**: Generate JavaScript for components requiring user interaction
 - **MANDATORY PREVIEW**: Always show complete mock-up layout and get user approval BEFORE creating any .md file
+- **Date Handling**: Use both `created` and `updated` fields in GMT+7 format (`YYYY-MM-DDTHH:mm:ss+07:00`)
+
+## Date Field Requirements
+
+**MANDATORY for all component documentation:**
+
+1. **Format**: `YYYY-MM-DDTHH:mm:ss+07:00` (GMT+7 timezone with date AND time)
+   - Example: `2026-02-04T14:30:00+07:00`
+
+2. **Creating New Component**:
+   - Set both `created` and `updated` to the SAME current timestamp
+   - Both fields MUST be identical on initial creation
+
+3. **Updating Existing Component**:
+   - Keep `created` field unchanged (preserve original creation date)
+   - Update ONLY the `updated` field to current timestamp
+   - Never modify `created` after initial creation
+
+4. **List Sorting**:
+   - Components are sorted by `updated` field (newest updates first)
+   - This allows recently modified components to appear at the top
 
 ## CRITICAL: Mock-up Preview & Approval Required
 
@@ -289,7 +310,8 @@ Options:
 ---
 name: {ComponentName}
 category: {buttons|cards|forms|layout|navigation|feedback}
-created: {YYYY-MM-DD}
+created: {YYYY-MM-DDTHH:mm:ss+07:00}
+updated: {YYYY-MM-DDTHH:mm:ss+07:00}
 status: draft
 ---
 
@@ -399,6 +421,11 @@ document.addEventListener('DOMContentLoaded', function() {
 ## Notes
 - Generated from image on {date}
 - {any assumptions made during conversion}
+- **Date Handling:**
+  - `created`: Set once when component is first generated (GMT+7 format)
+  - `updated`: Initially same as `created`, changes on subsequent edits
+  - Format: `YYYY-MM-DDTHH:mm:ss+07:00` (e.g., 2026-02-04T14:30:00+07:00)
+  - List sorting uses `updated` field (newest updates first)
 ```
 
 ## Color to Tailwind Mapping

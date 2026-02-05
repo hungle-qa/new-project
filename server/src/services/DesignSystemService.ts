@@ -76,6 +76,7 @@ export interface IDesignComponent {
   name: string
   category: string
   created: string
+  updated: string
   status: string
   content: string
 }
@@ -121,7 +122,7 @@ export class DesignSystemService {
       const files = await fs.readdir(SOURCE_DIR)
       const mdFiles = files.filter(f => f.endsWith('.md'))
 
-      // Read frontmatter from each file to get created date
+      // Read frontmatter from each file to get updated date (or created as fallback)
       const componentsWithDates = await Promise.all(
         mdFiles.map(async (file) => {
           const name = file.replace('.md', '')
@@ -129,18 +130,20 @@ export class DesignSystemService {
             const filePath = path.join(SOURCE_DIR, file)
             const content = await fs.readFile(filePath, 'utf-8')
             const { data } = matter(content)
+            // Use updated date for sorting, fall back to created if updated doesn't exist
+            const sortDate = data.updated || data.created
             return {
               name,
-              created: data.created ? new Date(data.created).getTime() : 0
+              updated: sortDate ? new Date(sortDate).getTime() : 0
             }
           } catch {
-            return { name, created: 0 }
+            return { name, updated: 0 }
           }
         })
       )
 
-      // Sort by created date descending (newest first)
-      componentsWithDates.sort((a, b) => b.created - a.created)
+      // Sort by updated date descending (newest updates first)
+      componentsWithDates.sort((a, b) => b.updated - a.updated)
 
       // Extract just the names
       const result = componentsWithDates.map(c => c.name)
@@ -167,6 +170,7 @@ export class DesignSystemService {
         name,
         category: data.category || 'uncategorized',
         created: data.created || '',
+        updated: data.updated || data.created || '',
         status: data.status || 'draft',
         content
       }
@@ -180,10 +184,20 @@ export class DesignSystemService {
     }
   }
 
+  // Helper to get current timestamp in GMT+7 format
+  private static getGMT7Timestamp(): string {
+    const now = new Date()
+    // Adjust to GMT+7
+    const gmt7Offset = 7 * 60 * 60 * 1000
+    const gmt7Time = new Date(now.getTime() + gmt7Offset)
+    const isoString = gmt7Time.toISOString().replace('Z', '')
+    return `${isoString.split('.')[0]}+07:00`
+  }
+
   static async create(data: CreateComponentData | Partial<IDesignComponent>): Promise<{ name: string; path: string }> {
     const name = data.name || 'untitled'
     const filePath = path.join(SOURCE_DIR, `${name}.md`)
-    const today = new Date().toISOString().split('T')[0]
+    const timestamp = this.getGMT7Timestamp()
 
     // Check if this is structured data (from import modal) or legacy format
     if ('html' in data && data.html) {
@@ -195,7 +209,8 @@ export class DesignSystemService {
         html: data.html,
         css: data.css || '',
         tailwindHtml: data.tailwindHtml || '',
-        created: today
+        created: timestamp,
+        updated: timestamp
       })
       await fs.writeFile(filePath, output)
     } else {
@@ -204,7 +219,8 @@ export class DesignSystemService {
         '---',
         `name: ${name}`,
         `category: ${(data as Partial<IDesignComponent>).category || 'uncategorized'}`,
-        `created: ${today}`,
+        `created: ${timestamp}`,
+        `updated: ${timestamp}`,
         `status: draft`,
         '---'
       ].join('\n')
@@ -228,8 +244,9 @@ export class DesignSystemService {
     css: string
     tailwindHtml: string
     created: string
+    updated: string
   }): string {
-    const { name, category, description, html, css, tailwindHtml, created } = data
+    const { name, category, description, html, css, tailwindHtml, created, updated } = data
 
     // Extract the main class name from HTML for the variants table
     const classMatch = html.match(/class=["']([^"'\s]+)/)
@@ -242,6 +259,7 @@ export class DesignSystemService {
 name: ${name}
 category: ${category}
 created: ${created}
+updated: ${updated}
 status: draft
 ---`)
 
@@ -307,9 +325,11 @@ ${tailwindHtml}
       throw new Error('Component not found')
     }
 
-    // Get the original created date
+    // Get the original created date (preserve it)
     const existing = await this.getByName(name)
-    const createdDate = existing?.created || new Date().toISOString().split('T')[0]
+    const createdDate = existing?.created || this.getGMT7Timestamp()
+    // Set updated to current timestamp
+    const updatedDate = this.getGMT7Timestamp()
 
     // If name changed, we need to rename the file
     const newName = data.name || name
@@ -323,7 +343,8 @@ ${tailwindHtml}
       html: data.html,
       css: data.css || '',
       tailwindHtml: data.tailwindHtml || '',
-      created: createdDate
+      created: createdDate,
+      updated: updatedDate
     })
 
     // If name changed, delete old file

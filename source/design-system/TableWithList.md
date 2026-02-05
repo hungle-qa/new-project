@@ -1,20 +1,23 @@
 ---
 name: TableWithList
 category: layout
-created: 2026-02-04
-status: draft
+created: 2026-02-04T00:00:00.000Z
+updated: 2026-02-04T09:45:00.000Z
+status: approved
 ---
 
 # TableWithList
 
 ## Preview
-A data table component with sortable columns, thumbnail/checkbox hover interaction, scrollable area with custom scrollbar, and three-dots action menu. Features:
-- Table header with sortable columns (Thumbnail, Name, Category, Unit, Most recent, Actions)
+A data table component with sortable columns, select-all checkbox, thumbnail/checkbox hover interaction, scrollable area with custom scrollbar, and three-dots action menu. Features:
+- Table header with select-all checkbox and sortable columns (Name, Category, Unit, Most recent)
 - "Most recent" column default sort with blue text (#184EFF)
-- 10 table rows with realistic ingredient data
+- 10 table rows with realistic ingredient data (includes long names with text wrapping)
 - Thumbnail → checkbox on hover behavior (absolute positioning)
 - Scrollable table area with custom scrollbar
 - Three dots menu (⋮) for each row
+- Click column headers to sort with visual indicators (↑ ascending, ↓ descending)
+- Active sorted column header text = blue (#184EFF)
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
@@ -36,13 +39,13 @@ Use in list/table views where data needs to be displayed with sorting, selection
     <thead class="table-header">
       <tr>
         <th class="th-thumbnail">
-          <span class="th-content">Thumbnail</span>
+          <input type="checkbox" id="select-all-checkbox" class="select-all-checkbox" aria-label="Select all">
         </th>
         <th class="th-sortable" data-column="name">
           <button class="sort-btn">
-            <span class="th-content">Ingredients (42)</span>
-            <svg class="sort-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 4v8M4 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <span class="th-content">Ingredients (10)</span>
+            <svg class="sort-icon-inactive" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3l3 3M8 3L5 6M8 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
         </th>
@@ -70,15 +73,13 @@ Use in list/table views where data needs to be displayed with sorting, selection
             </svg>
           </button>
         </th>
-        <th class="th-actions">
-          <span class="th-content">Actions</span>
-        </th>
+        <th class="th-actions"></th>
       </tr>
     </thead>
 
     <tbody class="table-body">
       <!-- Row 1 -->
-      <tr class="table-row">
+      <tr class="table-row" data-name="Chicken Breast (Skinless, Boneless)" data-category="Protein" data-unit="Gram (g)" data-recent="2w" data-recent-value="2">
         <td class="td-thumbnail">
           <div class="thumbnail-wrapper">
             <div class="thumbnail">
@@ -88,242 +89,10 @@ Use in list/table views where data needs to be displayed with sorting, selection
                 <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select nước mắm">
+            <input type="checkbox" class="row-checkbox" aria-label="Select Chicken Breast (Skinless, Boneless)">
           </div>
         </td>
-        <td class="td-name">nước mắm</td>
-        <td class="td-category">Seafood</td>
-        <td class="td-unit">Milligram (mg)</td>
-        <td class="td-recent">25w</td>
-        <td class="td-actions">
-          <button class="actions-btn" aria-label="More actions">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
-            </svg>
-          </button>
-        </td>
-      </tr>
-
-      <!-- Row 2 -->
-      <tr class="table-row">
-        <td class="td-thumbnail">
-          <div class="thumbnail-wrapper">
-            <div class="thumbnail">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
-                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select may29 ingredient">
-          </div>
-        </td>
-        <td class="td-name">may29 ingredient</td>
-        <td class="td-category">Seafood</td>
-        <td class="td-unit">Teaspoon (tsp)</td>
-        <td class="td-recent">35w</td>
-        <td class="td-actions">
-          <button class="actions-btn" aria-label="More actions">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
-            </svg>
-          </button>
-        </td>
-      </tr>
-
-      <!-- Row 3 -->
-      <tr class="table-row">
-        <td class="td-thumbnail">
-          <div class="thumbnail-wrapper">
-            <div class="thumbnail">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
-                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select test 1">
-          </div>
-        </td>
-        <td class="td-name">test 1</td>
-        <td class="td-category">Produce</td>
-        <td class="td-unit">Small</td>
-        <td class="td-recent">45w</td>
-        <td class="td-actions">
-          <button class="actions-btn" aria-label="More actions">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
-            </svg>
-          </button>
-        </td>
-      </tr>
-
-      <!-- Row 4 -->
-      <tr class="table-row">
-        <td class="td-thumbnail">
-          <div class="thumbnail-wrapper">
-            <div class="thumbnail">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
-                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select aa">
-          </div>
-        </td>
-        <td class="td-name">aa</td>
-        <td class="td-category">Produce</td>
-        <td class="td-unit">Teaspoon (tsp)</td>
-        <td class="td-recent">51w</td>
-        <td class="td-actions">
-          <button class="actions-btn" aria-label="More actions">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
-            </svg>
-          </button>
-        </td>
-      </tr>
-
-      <!-- Row 5 -->
-      <tr class="table-row">
-        <td class="td-thumbnail">
-          <div class="thumbnail-wrapper">
-            <div class="thumbnail">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
-                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select bb">
-          </div>
-        </td>
-        <td class="td-name">bb</td>
-        <td class="td-category">Produce</td>
-        <td class="td-unit">Teaspoon (tsp)</td>
-        <td class="td-recent">51w</td>
-        <td class="td-actions">
-          <button class="actions-btn" aria-label="More actions">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
-            </svg>
-          </button>
-        </td>
-      </tr>
-
-      <!-- Row 6 -->
-      <tr class="table-row">
-        <td class="td-thumbnail">
-          <div class="thumbnail-wrapper">
-            <div class="thumbnail">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
-                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select Avocado">
-          </div>
-        </td>
-        <td class="td-name">Avocado</td>
-        <td class="td-category">Produce</td>
-        <td class="td-unit">Gram (g)</td>
-        <td class="td-recent">51w</td>
-        <td class="td-actions">
-          <button class="actions-btn" aria-label="More actions">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
-            </svg>
-          </button>
-        </td>
-      </tr>
-
-      <!-- Row 7 -->
-      <tr class="table-row">
-        <td class="td-thumbnail">
-          <div class="thumbnail-wrapper">
-            <div class="thumbnail">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
-                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select Chia seeds">
-          </div>
-        </td>
-        <td class="td-name">Chia seeds</td>
-        <td class="td-category">Health</td>
-        <td class="td-unit">Gram (g)</td>
-        <td class="td-recent">51w</td>
-        <td class="td-actions">
-          <button class="actions-btn" aria-label="More actions">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
-            </svg>
-          </button>
-        </td>
-      </tr>
-
-      <!-- Row 8 -->
-      <tr class="table-row">
-        <td class="td-thumbnail">
-          <div class="thumbnail-wrapper">
-            <div class="thumbnail">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
-                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select Cá">
-          </div>
-        </td>
-        <td class="td-name">Cá</td>
-        <td class="td-category">Seafood</td>
-        <td class="td-unit">Gram (g)</td>
-        <td class="td-recent">1y</td>
-        <td class="td-actions">
-          <button class="actions-btn" aria-label="More actions">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
-            </svg>
-          </button>
-        </td>
-      </tr>
-
-      <!-- Row 9 -->
-      <tr class="table-row">
-        <td class="td-thumbnail">
-          <div class="thumbnail-wrapper">
-            <div class="thumbnail">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
-                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select Chicken Breast">
-          </div>
-        </td>
-        <td class="td-name">Chicken Breast</td>
+        <td class="td-name">Chicken Breast (Skinless, Boneless)</td>
         <td class="td-category">Protein</td>
         <td class="td-unit">Gram (g)</td>
         <td class="td-recent">2w</td>
@@ -338,8 +107,8 @@ Use in list/table views where data needs to be displayed with sorting, selection
         </td>
       </tr>
 
-      <!-- Row 10 -->
-      <tr class="table-row">
+      <!-- Row 2 -->
+      <tr class="table-row" data-name="Organic Brown Rice (Long Grain)" data-category="Grains" data-unit="Cup" data-recent="5w" data-recent-value="5">
         <td class="td-thumbnail">
           <div class="thumbnail-wrapper">
             <div class="thumbnail">
@@ -349,13 +118,245 @@ Use in list/table views where data needs to be displayed with sorting, selection
                 <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <input type="checkbox" class="row-checkbox" aria-label="Select Olive Oil">
+            <input type="checkbox" class="row-checkbox" aria-label="Select Organic Brown Rice (Long Grain)">
           </div>
         </td>
-        <td class="td-name">Olive Oil</td>
+        <td class="td-name">Organic Brown Rice (Long Grain)</td>
+        <td class="td-category">Grains</td>
+        <td class="td-unit">Cup</td>
+        <td class="td-recent">5w</td>
+        <td class="td-actions">
+          <button class="actions-btn" aria-label="More actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>
+        </td>
+      </tr>
+
+      <!-- Row 3 -->
+      <tr class="table-row" data-name="Organic Extra Virgin Olive Oil (Cold Pressed, Italian Import, First Harvest)" data-category="Fats" data-unit="Tablespoon (tbsp)" data-recent="1m" data-recent-value="4">
+        <td class="td-thumbnail">
+          <div class="thumbnail-wrapper">
+            <div class="thumbnail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
+                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <input type="checkbox" class="row-checkbox" aria-label="Select Organic Extra Virgin Olive Oil (Cold Pressed, Italian Import, First Harvest)">
+          </div>
+        </td>
+        <td class="td-name">Organic Extra Virgin Olive Oil (Cold Pressed, Italian Import, First Harvest)</td>
         <td class="td-category">Fats</td>
-        <td class="td-unit">Milliliter (ml)</td>
-        <td class="td-recent">8w</td>
+        <td class="td-unit">Tablespoon (tbsp)</td>
+        <td class="td-recent">1m</td>
+        <td class="td-actions">
+          <button class="actions-btn" aria-label="More actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>
+        </td>
+      </tr>
+
+      <!-- Row 4 -->
+      <tr class="table-row" data-name="Wild-Caught Atlantic Salmon Fillet (Fresh, Never Frozen, Sustainably Sourced)" data-category="Protein" data-unit="Gram (g)" data-recent="3m" data-recent-value="12">
+        <td class="td-thumbnail">
+          <div class="thumbnail-wrapper">
+            <div class="thumbnail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
+                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <input type="checkbox" class="row-checkbox" aria-label="Select Wild-Caught Atlantic Salmon Fillet (Fresh, Never Frozen, Sustainably Sourced)">
+          </div>
+        </td>
+        <td class="td-name">Wild-Caught Atlantic Salmon Fillet (Fresh, Never Frozen, Sustainably Sourced)</td>
+        <td class="td-category">Protein</td>
+        <td class="td-unit">Gram (g)</td>
+        <td class="td-recent">3m</td>
+        <td class="td-actions">
+          <button class="actions-btn" aria-label="More actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>
+        </td>
+      </tr>
+
+      <!-- Row 5 -->
+      <tr class="table-row" data-name="Greek Yogurt (Non-Fat, Plain, Probiotic, Organic)" data-category="Dairy" data-unit="Cup" data-recent="2w" data-recent-value="2">
+        <td class="td-thumbnail">
+          <div class="thumbnail-wrapper">
+            <div class="thumbnail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
+                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <input type="checkbox" class="row-checkbox" aria-label="Select Greek Yogurt (Non-Fat, Plain, Probiotic, Organic)">
+          </div>
+        </td>
+        <td class="td-name">Greek Yogurt (Non-Fat, Plain, Probiotic, Organic)</td>
+        <td class="td-category">Dairy</td>
+        <td class="td-unit">Cup</td>
+        <td class="td-recent">2w</td>
+        <td class="td-actions">
+          <button class="actions-btn" aria-label="More actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>
+        </td>
+      </tr>
+
+      <!-- Row 6 -->
+      <tr class="table-row" data-name="Raw Almonds (Unsalted)" data-category="Nuts" data-unit="Ounce (oz)" data-recent="6m" data-recent-value="24">
+        <td class="td-thumbnail">
+          <div class="thumbnail-wrapper">
+            <div class="thumbnail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
+                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <input type="checkbox" class="row-checkbox" aria-label="Select Raw Almonds (Unsalted)">
+          </div>
+        </td>
+        <td class="td-name">Raw Almonds (Unsalted)</td>
+        <td class="td-category">Nuts</td>
+        <td class="td-unit">Ounce (oz)</td>
+        <td class="td-recent">6m</td>
+        <td class="td-actions">
+          <button class="actions-btn" aria-label="More actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>
+        </td>
+      </tr>
+
+      <!-- Row 7 -->
+      <tr class="table-row" data-name="Baby Spinach Leaves (Organic)" data-category="Vegetables" data-unit="Gram (g)" data-recent="1w" data-recent-value="1">
+        <td class="td-thumbnail">
+          <div class="thumbnail-wrapper">
+            <div class="thumbnail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
+                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <input type="checkbox" class="row-checkbox" aria-label="Select Baby Spinach Leaves (Organic)">
+          </div>
+        </td>
+        <td class="td-name">Baby Spinach Leaves (Organic)</td>
+        <td class="td-category">Vegetables</td>
+        <td class="td-unit">Gram (g)</td>
+        <td class="td-recent">1w</td>
+        <td class="td-actions">
+          <button class="actions-btn" aria-label="More actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>
+        </td>
+      </tr>
+
+      <!-- Row 8 -->
+      <tr class="table-row" data-name="Hass Avocado (Ripe)" data-category="Fats" data-unit="Piece" data-recent="3w" data-recent-value="3">
+        <td class="td-thumbnail">
+          <div class="thumbnail-wrapper">
+            <div class="thumbnail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
+                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <input type="checkbox" class="row-checkbox" aria-label="Select Hass Avocado (Ripe)">
+          </div>
+        </td>
+        <td class="td-name">Hass Avocado (Ripe)</td>
+        <td class="td-category">Fats</td>
+        <td class="td-unit">Piece</td>
+        <td class="td-recent">3w</td>
+        <td class="td-actions">
+          <button class="actions-btn" aria-label="More actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>
+        </td>
+      </tr>
+
+      <!-- Row 9 -->
+      <tr class="table-row" data-name="Tri-Color Quinoa (Pre-Washed)" data-category="Grains" data-unit="Cup" data-recent="4w" data-recent-value="4">
+        <td class="td-thumbnail">
+          <div class="thumbnail-wrapper">
+            <div class="thumbnail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
+                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <input type="checkbox" class="row-checkbox" aria-label="Select Tri-Color Quinoa (Pre-Washed)">
+          </div>
+        </td>
+        <td class="td-name">Tri-Color Quinoa (Pre-Washed)</td>
+        <td class="td-category">Grains</td>
+        <td class="td-unit">Cup</td>
+        <td class="td-recent">4w</td>
+        <td class="td-actions">
+          <button class="actions-btn" aria-label="More actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="5" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="15" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>
+        </td>
+      </tr>
+
+      <!-- Row 10 -->
+      <tr class="table-row" data-name="Free-Range Eggs (Large, Grade A)" data-category="Protein" data-unit="Piece" data-recent="1w" data-recent-value="1">
+        <td class="td-thumbnail">
+          <div class="thumbnail-wrapper">
+            <div class="thumbnail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#D1D5DB" stroke-width="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#D1D5DB"/>
+                <path d="M21 15l-5-5L5 21" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <input type="checkbox" class="row-checkbox" aria-label="Select Free-Range Eggs (Large, Grade A)">
+          </div>
+        </td>
+        <td class="td-name">Free-Range Eggs (Large, Grade A)</td>
+        <td class="td-category">Protein</td>
+        <td class="td-unit">Piece</td>
+        <td class="td-recent">1w</td>
         <td class="td-actions">
           <button class="actions-btn" aria-label="More actions">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -440,13 +441,22 @@ Use in list/table views where data needs to be displayed with sorting, selection
 
 .th-thumbnail {
   width: 60px;
+  text-align: center;
+}
+
+.select-all-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
 }
 
 .th-sortable {
   cursor: pointer;
 }
 
-.th-sortable-active {
+.th-sortable-active .th-content {
   color: var(--color-btn-action);
 }
 
@@ -462,6 +472,10 @@ Use in list/table views where data needs to be displayed with sorting, selection
   font-weight: 600;
   color: inherit;
   padding: 0;
+}
+
+.th-content {
+  color: #A3A3B5;
 }
 
 .sort-icon,
@@ -560,6 +574,11 @@ Use in list/table views where data needs to be displayed with sorting, selection
 /* Table Columns */
 .td-name {
   font-weight: 500;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 250px;
+  line-height: 1.4;
 }
 
 .td-category,
@@ -597,7 +616,7 @@ Use in list/table views where data needs to be displayed with sorting, selection
 
 ## JavaScript
 ```javascript
-// TableWithList - Sorting and checkbox interactions
+// TableWithList - Sorting, checkbox interactions, and select-all functionality
 document.addEventListener('DOMContentLoaded', function() {
   const tableContainer = document.querySelector('.table-container');
 
@@ -606,10 +625,28 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
+  const tableBody = tableContainer.querySelector('.table-body');
   const tableRows = tableContainer.querySelectorAll('.table-row');
   const sortBtns = tableContainer.querySelectorAll('.th-sortable');
+  const selectAllCheckbox = tableContainer.querySelector('#select-all-checkbox');
 
-  // --- 1. THUMBNAIL HOVER: Show Checkbox ---
+  // --- 1. SELECT ALL CHECKBOX ---
+  if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener('change', function() {
+      const rowCheckboxes = tableContainer.querySelectorAll('.row-checkbox');
+      rowCheckboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+        const row = checkbox.closest('.table-row');
+        if (this.checked) {
+          row.classList.add('row-checked');
+        } else {
+          row.classList.remove('row-checked');
+        }
+      });
+    });
+  }
+
+  // --- 2. INDIVIDUAL ROW CHECKBOX ---
   tableRows.forEach(row => {
     const checkbox = row.querySelector('.row-checkbox');
 
@@ -620,11 +657,19 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
           row.classList.remove('row-checked');
         }
+
+        // Update select-all checkbox state
+        const allCheckboxes = tableContainer.querySelectorAll('.row-checkbox');
+        const checkedCheckboxes = tableContainer.querySelectorAll('.row-checkbox:checked');
+        if (selectAllCheckbox) {
+          selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length;
+          selectAllCheckbox.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < allCheckboxes.length;
+        }
       });
     }
   });
 
-  // --- 2. SORT: Click Column Header ---
+  // --- 3. SORT: Click Column Header ---
   let currentSort = { column: 'recent', direction: 'desc' };
 
   sortBtns.forEach(btn => {
@@ -637,12 +682,13 @@ document.addEventListener('DOMContentLoaded', function() {
         currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
       } else {
         currentSort.column = column;
-        currentSort.direction = 'desc';
+        currentSort.direction = 'asc';
       }
 
       // Update visual state
       sortBtns.forEach(b => {
-        b.closest('th').classList.remove('th-sortable-active');
+        const headerTh = b.closest('th');
+        headerTh.classList.remove('th-sortable-active');
         const icon = b.querySelector('svg');
         if (icon) {
           icon.classList.remove('sort-icon-active');
@@ -655,7 +701,19 @@ document.addEventListener('DOMContentLoaded', function() {
       if (activeIcon) {
         activeIcon.classList.remove('sort-icon-inactive');
         activeIcon.classList.add('sort-icon-active');
+
+        // Update arrow direction
+        if (currentSort.direction === 'asc') {
+          // Up arrow (ascending)
+          activeIcon.innerHTML = '<path d="M8 3l3 3M8 3L5 6M8 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>';
+        } else {
+          // Down arrow (descending)
+          activeIcon.innerHTML = '<path d="M8 13l-3-3M8 13l3-3M8 13V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>';
+        }
       }
+
+      // Sort rows
+      sortTable(column, currentSort.direction);
 
       // Emit custom event for external handling
       const sortEvent = new CustomEvent('tableSort', {
@@ -666,6 +724,32 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('TableWithList: Sorting by', column, currentSort.direction);
     });
   });
+
+  // --- 4. SORT FUNCTION: Reorder DOM rows ---
+  function sortTable(column, direction) {
+    const rowsArray = Array.from(tableRows);
+
+    rowsArray.sort((a, b) => {
+      let aValue, bValue;
+
+      if (column === 'recent') {
+        // Sort by time value (1w, 2w, 1m, etc.)
+        aValue = parseInt(a.dataset.recentValue) || 0;
+        bValue = parseInt(b.dataset.recentValue) || 0;
+      } else {
+        // Sort alphabetically for name, category, unit
+        aValue = a.dataset[column]?.toLowerCase() || '';
+        bValue = b.dataset[column]?.toLowerCase() || '';
+      }
+
+      if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    // Reorder DOM
+    rowsArray.forEach(row => tableBody.appendChild(row));
+  }
 
   console.log('TableWithList: Initialized');
 });
@@ -678,6 +762,7 @@ document.addEventListener('DOMContentLoaded', function() {
 | Default | - | White background, all rows visible | `.table-row` |
 | Row hover | Mouse over row | Light gray background | `.table-row:hover` |
 | Row checked | Check checkbox | Light blue background | `.row-checked` |
+| All selected | Check select-all checkbox | All row checkboxes checked, all rows blue bg | `.row-checked` |
 | Thumbnail hover | Mouse over thumbnail cell | Thumbnail fades, checkbox appears | `.thumbnail-wrapper:hover` |
 | Sort active | Click column header | Blue text and active arrow icon | `.th-sortable-active` |
 | Actions hover | Mouse over three dots | Gray background | `.actions-btn:hover` |
@@ -686,8 +771,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 | Variant | Description |
 |---------|-------------|
-| Sortable columns | Click headers to sort (emits `tableSort` event) |
-| Selectable rows | Thumbnail → checkbox on hover, persistent when checked |
+| Sortable columns | Click headers to sort, toggle asc/desc, reorder rows |
+| Selectable rows | Individual checkboxes + select-all checkbox |
+| Text wrapping | Long names wrap properly with max-width: 250px |
 | Scrollable | Fixed height with custom scrollbar |
 | Sticky header | Header stays visible when scrolling |
 
@@ -701,16 +787,22 @@ This component works with:
 ## Accessibility
 - Semantic HTML table structure
 - ARIA labels on checkboxes and action buttons
+- Select-all checkbox with indeterminate state support
 - Keyboard accessible (Tab, Space for checkboxes, Enter for buttons)
 - Clear visual feedback on hover and selection
 - Sticky header maintains context during scroll
 
 ## Notes
 - Created on 2026-02-04
-- Extracted from MainPageWithList.md
-- 10 table rows with realistic ingredient data
+- Updated on 2026-02-04T16:45:00+07:00 (fixed checkbox alignment, column title colors, added 2-line names)
+- 10 table rows with realistic long ingredient names (3 items with 2-line names)
 - Thumbnail → checkbox transition using absolute positioning
-- Default sort: "Most recent" (blue text, down arrow = descending)
-- Sort arrows: down = descending, up = ascending
+- Default sort: "Most recent" (blue text #184EFF, down arrow ↓ = descending)
+- Sort arrows: up ↑ = ascending, down ↓ = descending
+- Column titles: gray (#A3A3B5) by default, blue (#184EFF) when sorted
+- Select-all checkbox centered and aligned with row checkboxes
+- Actions column header text removed (column kept for three-dots menu)
+- Text wrapping for long names: word-wrap, overflow-wrap, white-space: normal, max-width: 250px
+- Actual DOM row reordering on sort (not just visual)
 - Emits `tableSort` event for external handling
 - Custom scrollbar styling for webkit browsers

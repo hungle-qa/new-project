@@ -2,7 +2,8 @@
 name: Calendar
 category: layout
 created: 2026-02-03T00:00:00.000Z
-status: approved
+updated: 2026-02-04T07:30:00.000Z
+status: reviewed
 ---
 
 # Calendar
@@ -396,11 +397,29 @@ Use this component for:
 - Today's date should have `aria-current="date"`
 - Keyboard navigation support for date selection
 
+## Related Components
+
+### WeekPicker Integration
+For week-based selection with date range display and navigation arrows, see the [WeekPicker](./WeekPicker.md) component. WeekPicker provides:
+- Date range display with format "Feb 2 - Feb 15"
+- Arrow navigation for previous/next week
+- Calendar dropdown for week selection
+- MonthPicker integration for quick month navigation
+- Hover states: text and arrows turn blue (#184EFF)
+
+**See also:** [WeekPicker.md](./WeekPicker.md) for week-based date selection.
+
+### DatePicker Integration
+For single date selection, see the [DatePicker](./DatePicker.md) component with calendar dropdown and MonthPicker integration.
+
+**See also:** [DatePicker.md](./DatePicker.md) for single date selection.
+
 ## Notes
-- Generated from image on 2026-02-03
+- Generated from image on 2026-02-03, updated 2026-02-04
 - Week view selector uses pill-style toggle buttons
 - Active view has white background with subtle shadow
 - Grid uses CSS Grid with 7 equal columns
 - **Interactive:** JavaScript handles view switching and grid rendering
 - **Responsive cells:** Height uses `calc((100vh - 120px) / rows)` with minimum heights
 - Cells animate smoothly when view changes
+- For week range selection with navigation, use WeekPicker component

@@ -12,13 +12,6 @@ A removable chip/tag component used for displaying selected items. Features a la
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
-**Google Fonts Import:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-```
-
 ## Usage
 Use chips to display selected items in multi-select comboboxes, applied filters, or tags. Each chip can be removed by clicking the X button. All chips now use the same unified blue style regardless of whether they represent groups or individual clients.
 
@@ -27,7 +20,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
 <!-- Multiple Chips in Container (Mixed: Groups + Clients) -->
 <div class="chip-container flex flex-wrap gap-1 p-2 border border-[#184EFF] rounded-md bg-white max-h-[84px] overflow-y-auto">
   <!-- Group chips (blue background - same as client style) -->
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414]">
+  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414]">
     Marketing Team (12 members)
     <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
       <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -35,7 +28,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
       </svg>
     </button>
   </span>
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414]">
+  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414]">
     Sales Department (23 members)
     <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
       <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -45,7 +38,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
   </span>
 
   <!-- Client chips (blue background) -->
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414]">
+  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414]">
     Sarah Mitchell
     <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
       <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -53,7 +46,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
       </svg>
     </button>
   </span>
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414]">
+  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414]">
     James Rodriguez
     <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
       <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -61,7 +54,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
       </svg>
     </button>
   </span>
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414]">
+  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414]">
     Emily Chen
     <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
       <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -69,7 +62,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
       </svg>
     </button>
   </span>
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414]">
+  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414]">
     Michael O'Brien
     <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
       <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -77,7 +70,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
       </svg>
     </button>
   </span>
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414]">
+  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414]">
     Jessica Taylor
     <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
       <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -85,7 +78,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
       </svg>
     </button>
   </span>
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414]">
+  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414]">
     David Park
     <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
       <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -100,7 +93,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
 
 ### Single Group Chip (Blue Background)
 ```html
-<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414] font-['Open_Sans']">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414] font-['Open_Sans']">
   Marketing Team (12 members)
   <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
     <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -112,7 +105,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
 
 ### Single Client Chip (Blue Background)
 ```html
-<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414] font-['Open_Sans']">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-[13px] text-[#141414] font-['Open_Sans']">
   Sarah Mitchell
   <button type="button" class="ml-1 text-[#184EFF] hover:text-[#1241CC] focus:outline-none">
     <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none">
@@ -139,7 +132,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
   gap: 4px;
   padding: 2px 8px;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--color-text-primary);
   font-family: var(--font-family);
   white-space: nowrap;
@@ -235,28 +228,6 @@ document.addEventListener('DOMContentLoaded', function() {
 | Default | Light blue bg, dark text | `bg-[#EBF3FF] text-[#141414]` |
 | X Default | Blue icon | `text-[#184EFF]` |
 | X Hover | Darker blue icon | `hover:text-[#1241CC]` |
-
-## Specifications
-
-### All Chips (Unified Blue Style)
-| Property | Value |
-|----------|-------|
-| Background | `#EBF3FF` |
-| Text color | `#141414` |
-| Font size | 14px (text-sm) |
-| Padding | 2px 8px |
-| Border radius | 4px |
-| Gap (icon) | 4px |
-| X icon size | 16px (w-4 h-4) |
-| X color | `#184EFF` |
-| X hover | `#1241CC` |
-
-## Props/Variants
-
-| Variant | Description | Background Classes | X Button Classes |
-|---------|-------------|-------------------|------------------|
-| Default | All chips (groups and clients) | `bg-[#EBF3FF]` | `text-[#184EFF] hover:text-[#1241CC]` |
-| In container | With blue border container | Container: `border-[#184EFF]` | - |
 
 ## Accessibility
 - X button is focusable with `button` element

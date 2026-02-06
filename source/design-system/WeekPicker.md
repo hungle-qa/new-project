@@ -19,16 +19,6 @@ Use this component for:
 - Week range filtering in analytics
 - Booking systems with weekly intervals
 
-## Features
-- **Week Navigation**: Click `<` and `>` arrows to navigate previous/next week
-- **Date Range Display**: Shows "Feb 2 - Feb 15" format (Monday-Sunday)
-- **Calendar Dropdown**: Click date range to open calendar for week selection
-- **Seamless Week Selection**: Click any date in calendar → selects entire week (Mon-Sun) with seamless light blue highlight (no gaps)
-- **Cross-Month Support**: Week highlighting continues seamlessly across 2 months (e.g., Jan 27 - Feb 2)
-- **MonthPicker Integration**: Click month/year title to open MonthPicker for quick month navigation
-- **Hover States**: Date range text and arrows turn blue (#184EFF) on hover
-- **Keyboard Support**: Arrow keys for navigation, Enter to select, Escape to close
-
 ## HTML
 ```html
 <div class="week-picker">
@@ -132,6 +122,7 @@ Use this component for:
   position: relative;
   display: inline-block;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin-bottom: 380px; /* Space for dropdown to display below input */
 }
 
 /* Week Display */
@@ -172,7 +163,7 @@ Use this component for:
 }
 
 .week-picker__date-range {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #141414;
   background: none;
@@ -292,7 +283,7 @@ Use this component for:
   justify-content: center;
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #141414;
   cursor: pointer;
@@ -354,7 +345,7 @@ Use this component for:
   background: none;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #141414;
   cursor: pointer;
@@ -374,122 +365,6 @@ Use this component for:
 }
 ```
 
-## Tailwind CSS
-```html
-<div class="relative inline-block font-['Open_Sans']">
-  <!-- Week Input Display -->
-  <div class="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-md">
-    <!-- Previous Week Arrow -->
-    <button id="prevWeek" type="button" class="group p-1 hover:opacity-100 transition-all" aria-label="Previous week">
-      <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 11L1 6l5-5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
-      </svg>
-    </button>
-
-    <!-- Calendar Icon -->
-    <svg class="w-[18px] h-[18px] flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" fill="#728096"/>
-    </svg>
-
-    <!-- Date Range (Clickable) -->
-    <button id="weekDateRange" type="button" class="text-sm font-medium text-[#141414] hover:text-[#184EFF] transition-colors whitespace-nowrap">
-      Feb 2 - Feb 15
-    </button>
-
-    <!-- Next Week Arrow -->
-    <button id="nextWeek" type="button" class="group p-1 hover:opacity-100 transition-all" aria-label="Next week">
-      <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 1l5 5-5 5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
-      </svg>
-    </button>
-  </div>
-
-  <!-- Calendar Dropdown -->
-  <div id="weekCalendarDropdown" class="hidden absolute top-full mt-2 left-0 bg-white border border-gray-200 rounded-xl shadow-xl p-5 min-w-[320px] z-50">
-    <!-- Month/Year Header with Navigation -->
-    <div class="flex items-center justify-between mb-5">
-      <!-- Previous Month Button -->
-      <button id="prevMonthWeek" type="button" class="group p-2 transition-all" aria-label="Previous month">
-        <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 11L1 6l5-5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
-        </svg>
-      </button>
-
-      <!-- Month/Year Title (Clickable to open MonthPicker) -->
-      <button id="monthYearTitleWeek" type="button" class="text-base font-semibold text-[#141414] hover:text-[#184EFF] transition-colors">
-        February 2026
-      </button>
-
-      <!-- Next Month Button -->
-      <button id="nextMonthWeek" type="button" class="group p-2 transition-all" aria-label="Next month">
-        <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
-          <path d="M1 1l5 5-5 5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
-        </svg>
-      </button>
-    </div>
-
-    <!-- Day Headers -->
-    <div class="grid grid-cols-7 gap-0 mb-2">
-      <div class="text-center text-xs font-semibold text-gray-500 uppercase py-2">MO</div>
-      <div class="text-center text-xs font-semibold text-gray-500 uppercase py-2">TU</div>
-      <div class="text-center text-xs font-semibold text-gray-500 uppercase py-2">WE</div>
-      <div class="text-center text-xs font-semibold text-gray-500 uppercase py-2">TH</div>
-      <div class="text-center text-xs font-semibold text-gray-500 uppercase py-2">FR</div>
-      <div class="text-center text-xs font-semibold text-gray-500 uppercase py-2">SA</div>
-      <div class="text-center text-xs font-semibold text-gray-500 uppercase py-2">SU</div>
-    </div>
-
-    <!-- Calendar Grid (gap-0 for seamless week highlighting) -->
-    <div id="weekCalendarGrid" class="grid grid-cols-7 gap-0">
-      <!-- Days will be dynamically generated by JavaScript -->
-    </div>
-  </div>
-
-  <!-- MonthPicker Dropdown -->
-  <div id="weekMonthPickerDropdown" class="hidden absolute top-full mt-2 left-0 bg-white border border-gray-200 rounded-xl shadow-xl p-5 min-w-[320px] z-50">
-    <!-- Year Header with Navigation -->
-    <div class="flex items-center justify-center gap-4 mb-5">
-      <!-- Previous Year Button -->
-      <button id="prevYearWeek" type="button" class="group p-2 transition-all" aria-label="Previous year">
-        <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 11L1 6l5-5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
-        </svg>
-      </button>
-
-      <!-- Year Title -->
-      <div id="yearTitleWeek" class="text-xl font-semibold text-[#141414] min-w-[80px] text-center">
-        2026
-      </div>
-
-      <!-- Next Year Button -->
-      <button id="nextYearWeek" type="button" class="group p-2 transition-all" aria-label="Next year">
-        <svg class="w-3.5 h-5" viewBox="0 0 7 12" xmlns="http://www.w3.org/2000/svg">
-          <path d="M1 1l5 5-5 5" stroke="#728096" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-[#184EFF] transition-colors"/>
-        </svg>
-      </button>
-    </div>
-
-    <!-- Month Grid (4 columns × 3 rows) -->
-    <div class="grid grid-cols-4 gap-2">
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="0">Jan</button>
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] bg-[#F0F1FF] rounded-lg hover:bg-[#E0E2FF] transition-colors" data-month="1">Feb</button>
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="2">Mar</button>
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="3">Apr</button>
-
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="4">May</button>
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="5">Jun</button>
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="6">Jul</button>
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="7">Aug</button>
-
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="8">Sep</button>
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="9">Oct</button>
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="10">Nov</button>
-      <button class="week-month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="11">Dec</button>
-    </div>
-  </div>
-</div>
-```
-
 ## JavaScript
 ```javascript
 document.addEventListener('DOMContentLoaded', function() {
@@ -498,33 +373,44 @@ document.addEventListener('DOMContentLoaded', function() {
   let displayMonth = 1; // February (0-indexed)
   let displayYear = 2026;
 
-  // DOM Elements
-  const weekDateRange = document.getElementById('weekDateRange');
-  const prevWeek = document.getElementById('prevWeek');
-  const nextWeek = document.getElementById('nextWeek');
-  const weekCalendarDropdown = document.getElementById('weekCalendarDropdown');
-  const weekMonthPickerDropdown = document.getElementById('weekMonthPickerDropdown');
-  const monthYearTitleWeek = document.getElementById('monthYearTitleWeek');
-  const yearTitleWeek = document.getElementById('yearTitleWeek');
-  const weekCalendarGrid = document.getElementById('weekCalendarGrid');
+  // DOM Elements (using CSS class selectors matching ## HTML)
+  const picker = document.querySelector('.week-picker');
+  const display = picker.querySelector('.week-picker__display');
+  const arrows = display.querySelectorAll('.week-picker__arrow');
+  const prevWeekBtn = arrows[0];
+  const dateRangeBtn = display.querySelector('.week-picker__date-range');
+  const nextWeekBtn = arrows[1];
 
-  const prevMonthWeek = document.getElementById('prevMonthWeek');
-  const nextMonthWeek = document.getElementById('nextMonthWeek');
-  const prevYearWeek = document.getElementById('prevYearWeek');
-  const nextYearWeek = document.getElementById('nextYearWeek');
+  const calendarDropdown = picker.querySelector('.week-picker__dropdown');
+  const monthPickerDropdown = picker.querySelector('.week-picker__month-picker');
+  const calendarGrid = picker.querySelector('.week-picker__grid');
+
+  // Calendar header elements
+  const calendarHeader = calendarDropdown.querySelector('.week-picker__header');
+  const calendarNavs = calendarHeader.querySelectorAll('.week-picker__nav');
+  const prevMonthBtn = calendarNavs[0];
+  const monthYearTitle = calendarHeader.querySelector('.week-picker__title');
+  const nextMonthBtn = calendarNavs[1];
+
+  // MonthPicker header elements
+  const monthPickerHeader = monthPickerDropdown.querySelector('.week-picker__header');
+  const monthPickerNavs = monthPickerHeader.querySelectorAll('.week-picker__nav');
+  const prevYearBtn = monthPickerNavs[0];
+  const yearTitle = monthPickerHeader.querySelector('.week-picker__year-title');
+  const nextYearBtn = monthPickerNavs[1];
 
   // Helper: Get Monday of week
   function getMondayOfWeek(date) {
     const d = new Date(date);
     const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
     return new Date(d.setDate(diff));
   }
 
   // Helper: Format date range
   function formatWeekRange(startDate) {
     const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 6); // Sunday
+    endDate.setDate(endDate.getDate() + 6);
 
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -543,33 +429,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Update date range display
   function updateDateRange() {
-    weekDateRange.textContent = formatWeekRange(currentWeekStart);
+    dateRangeBtn.textContent = formatWeekRange(currentWeekStart);
   }
 
   // Previous week
-  prevWeek.addEventListener('click', function() {
+  prevWeekBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
     currentWeekStart.setDate(currentWeekStart.getDate() - 7);
     updateDateRange();
-    if (!weekCalendarDropdown.classList.contains('hidden')) {
+    if (calendarDropdown.classList.contains('visible')) {
       renderCalendar();
     }
   });
 
   // Next week
-  nextWeek.addEventListener('click', function() {
+  nextWeekBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
     currentWeekStart.setDate(currentWeekStart.getDate() + 7);
     updateDateRange();
-    if (!weekCalendarDropdown.classList.contains('hidden')) {
+    if (calendarDropdown.classList.contains('visible')) {
       renderCalendar();
     }
   });
 
   // Toggle calendar dropdown
-  weekDateRange.addEventListener('click', function() {
-    const isHidden = weekCalendarDropdown.classList.contains('hidden');
-    weekCalendarDropdown.classList.toggle('hidden', !isHidden);
-    weekMonthPickerDropdown.classList.add('hidden');
-    if (isHidden) {
+  dateRangeBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const isVisible = calendarDropdown.classList.contains('visible');
+    if (isVisible) {
+      calendarDropdown.classList.remove('visible');
+    } else {
+      monthPickerDropdown.classList.remove('visible');
+      calendarDropdown.classList.add('visible');
       displayMonth = currentWeekStart.getMonth();
       displayYear = currentWeekStart.getFullYear();
       renderCalendar();
@@ -577,15 +468,15 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Toggle month picker
-  monthYearTitleWeek.addEventListener('click', function(e) {
+  monthYearTitle.addEventListener('click', function(e) {
     e.stopPropagation();
-    weekCalendarDropdown.classList.add('hidden');
-    weekMonthPickerDropdown.classList.remove('hidden');
-    yearTitleWeek.textContent = displayYear;
+    calendarDropdown.classList.remove('visible');
+    monthPickerDropdown.classList.add('visible');
+    yearTitle.textContent = displayYear;
   });
 
   // Month navigation - Previous
-  prevMonthWeek.addEventListener('click', function() {
+  prevMonthBtn.addEventListener('click', function() {
     displayMonth--;
     if (displayMonth < 0) {
       displayMonth = 11;
@@ -595,7 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Month navigation - Next
-  nextMonthWeek.addEventListener('click', function() {
+  nextMonthBtn.addEventListener('click', function() {
     displayMonth++;
     if (displayMonth > 11) {
       displayMonth = 0;
@@ -605,37 +496,33 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Year navigation - Previous
-  prevYearWeek.addEventListener('click', function() {
+  prevYearBtn.addEventListener('click', function() {
     displayYear--;
-    yearTitleWeek.textContent = displayYear;
+    yearTitle.textContent = displayYear;
   });
 
   // Year navigation - Next
-  nextYearWeek.addEventListener('click', function() {
+  nextYearBtn.addEventListener('click', function() {
     displayYear++;
-    yearTitleWeek.textContent = displayYear;
+    yearTitle.textContent = displayYear;
   });
 
   // Month selection in MonthPicker
-  const monthButtons = document.querySelectorAll('.week-month-btn');
+  const monthButtons = monthPickerDropdown.querySelectorAll('.week-picker__month');
   monthButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       // Remove selected state from all
-      monthButtons.forEach(b => {
-        b.classList.remove('bg-[#F0F1FF]', 'hover:bg-[#E0E2FF]');
-        b.classList.add('hover:bg-gray-100');
-      });
+      monthButtons.forEach(b => b.classList.remove('week-picker__month--selected'));
 
       // Add selected state
-      this.classList.add('bg-[#F0F1FF]', 'hover:bg-[#E0E2FF]');
-      this.classList.remove('hover:bg-gray-100');
+      this.classList.add('week-picker__month--selected');
 
       // Update display month
       displayMonth = parseInt(this.dataset.month);
 
       // Close month picker and show calendar
-      weekMonthPickerDropdown.classList.add('hidden');
-      weekCalendarDropdown.classList.remove('hidden');
+      monthPickerDropdown.classList.remove('visible');
+      calendarDropdown.classList.add('visible');
       renderCalendar();
     });
   });
@@ -645,7 +532,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
                         'July', 'August', 'September', 'October', 'November', 'December'];
 
-    monthYearTitleWeek.textContent = `${monthNames[displayMonth]} ${displayYear}`;
+    monthYearTitle.textContent = `${monthNames[displayMonth]} ${displayYear}`;
 
     // Calculate first day and days in month
     const firstDay = new Date(displayYear, displayMonth, 1).getDay();
@@ -656,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const startDay = firstDay === 0 ? 6 : firstDay - 1;
 
     // Clear grid
-    weekCalendarGrid.innerHTML = '';
+    calendarGrid.innerHTML = '';
 
     // Get selected week Monday and Sunday
     const selectedMonday = getMondayOfWeek(currentWeekStart);
@@ -671,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const isWeekStart = date.getTime() === selectedMonday.getTime();
       const isWeekEnd = date.getTime() === selectedSunday.getTime();
       const btn = createDayButton(day, date, true, isInSelectedWeek, isWeekStart, isWeekEnd);
-      weekCalendarGrid.appendChild(btn);
+      calendarGrid.appendChild(btn);
     }
 
     // Current month days
@@ -681,11 +568,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const isWeekStart = date.getTime() === selectedMonday.getTime();
       const isWeekEnd = date.getTime() === selectedSunday.getTime();
       const btn = createDayButton(day, date, false, isInSelectedWeek, isWeekStart, isWeekEnd);
-      weekCalendarGrid.appendChild(btn);
+      calendarGrid.appendChild(btn);
     }
 
     // Next month days
-    const totalCells = weekCalendarGrid.children.length;
+    const totalCells = calendarGrid.children.length;
     const remainingCells = 42 - totalCells; // 6 rows × 7 days
     for (let day = 1; day <= remainingCells; day++) {
       const date = new Date(displayYear, displayMonth + 1, day);
@@ -693,38 +580,26 @@ document.addEventListener('DOMContentLoaded', function() {
       const isWeekStart = date.getTime() === selectedMonday.getTime();
       const isWeekEnd = date.getTime() === selectedSunday.getTime();
       const btn = createDayButton(day, date, true, isInSelectedWeek, isWeekStart, isWeekEnd);
-      weekCalendarGrid.appendChild(btn);
+      calendarGrid.appendChild(btn);
     }
   }
 
   // Create day button with seamless selection support
-  function createDayButton(day, date, isOtherMonth, isSelected = false, isWeekStart = false, isWeekEnd = false) {
+  function createDayButton(day, date, isOtherMonth, isSelected, isWeekStart, isWeekEnd) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.textContent = day;
+    btn.className = 'week-picker__day';
 
-    let classes = 'aspect-square flex items-center justify-center text-sm font-medium transition-all min-w-[40px] min-h-[40px] relative';
-
-    if (isSelected) {
-      classes += ' week-picker__day--selected bg-[#F0F1FF] text-[#141414] hover:bg-[#E0E2FF]';
-      if (isWeekStart) {
-        classes += ' week-picker__day--start rounded-l-md';
-      }
-      if (isWeekEnd) {
-        classes += ' week-picker__day--end rounded-r-md';
-      }
-      if (!isWeekStart && !isWeekEnd) {
-        classes += ' rounded-none';
-      }
-    } else {
-      if (isOtherMonth) {
-        classes += ' text-gray-400 hover:bg-gray-100 hover:rounded-md';
-      } else {
-        classes += ' text-[#141414] hover:bg-gray-100 hover:rounded-md';
-      }
+    if (isOtherMonth) {
+      btn.classList.add('week-picker__day--other-month');
     }
 
-    btn.className = classes;
+    if (isSelected) {
+      btn.classList.add('week-picker__day--selected');
+      if (isWeekStart) btn.classList.add('week-picker__day--start');
+      if (isWeekEnd) btn.classList.add('week-picker__day--end');
+    }
 
     // Add click handler - select entire week
     btn.addEventListener('click', function() {
@@ -747,22 +622,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Close on outside click
   document.addEventListener('click', function(e) {
-    const picker = weekDateRange.closest('.relative') || weekDateRange.parentElement;
     if (!picker.contains(e.target)) {
-      weekCalendarDropdown.classList.add('hidden');
-      weekMonthPickerDropdown.classList.add('hidden');
+      calendarDropdown.classList.remove('visible');
+      monthPickerDropdown.classList.remove('visible');
     }
   });
 
   // Keyboard navigation
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-      weekCalendarDropdown.classList.add('hidden');
-      weekMonthPickerDropdown.classList.add('hidden');
-    } else if (e.key === 'ArrowLeft' && !weekCalendarDropdown.classList.contains('hidden')) {
-      prevWeek.click();
-    } else if (e.key === 'ArrowRight' && !weekCalendarDropdown.classList.contains('hidden')) {
-      nextWeek.click();
+      calendarDropdown.classList.remove('visible');
+      monthPickerDropdown.classList.remove('visible');
+    } else if (e.key === 'ArrowLeft' && calendarDropdown.classList.contains('visible')) {
+      prevWeekBtn.click();
+    } else if (e.key === 'ArrowRight' && calendarDropdown.classList.contains('visible')) {
+      nextWeekBtn.click();
     }
   });
 
@@ -772,59 +646,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 ```
 
-## Props/Variants
-| Variant | Tailwind Classes | Description |
-|---------|------------------|-------------|
-| Date Range Display | `flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-md` | Input container with arrows and calendar icon |
-| Date Range Text | `text-sm font-medium text-[#141414] hover:text-[#184EFF]` | Black text, blue on hover |
-| Navigation Arrow | `w-3.5 h-5 stroke-[#728096] group-hover:stroke-[#184EFF]` | Gray arrows, blue on hover |
-| Calendar Icon | `w-[18px] h-[18px]` | Calendar icon with gray fill |
-| Calendar Dropdown | `bg-white border border-gray-200 rounded-xl shadow-xl p-5 min-w-[320px]` | Calendar container |
-| Day (Default) | `text-[#141414] hover:bg-gray-100` | Default day button |
-| Day (Other Month) | `text-gray-400 hover:bg-gray-100` | Gray text for previous/next month dates |
-| Day (Selected Week) | `bg-[#F0F1FF] text-[#141414] hover:bg-[#E0E2FF]` | Light blue background for selected week |
-| Month Button | `px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100` | Month button in MonthPicker |
-| Month (Selected) | `bg-[#F0F1FF] hover:bg-[#E0E2FF]` | Selected month in MonthPicker |
-
 ## Component States
 | State | Trigger | Visual Changes | Tailwind Classes |
 |-------|---------|----------------|------------------|
 | Default | - | Black text, gray arrows and icon | `text-[#141414]` arrows `stroke-[#728096]` |
 | Date Range Hover | Mouse over date range | Blue text | `hover:text-[#184EFF]` |
 | Arrow Hover | Mouse over arrows | Blue stroke | `group-hover:stroke-[#184EFF]` |
-| Calendar Open | Click date range | Show calendar dropdown | `weekCalendarDropdown.classList.remove('hidden')` |
+| Calendar Open | Click date range | Show calendar dropdown | `.week-picker__dropdown.visible` |
 | Week Selected | Click any date in calendar | Entire week (Mon-Sun) highlighted | `bg-[#F0F1FF]` |
 | Month/Year Hover | Mouse over title | Blue text | `hover:text-[#184EFF]` |
-| MonthPicker Open | Click month/year title | Show MonthPicker | `weekMonthPickerDropdown.classList.remove('hidden')` |
-
-## Tailwind Classes Used
-| Class | Purpose |
-|-------|---------|
-| `bg-white` | Component background (from RULE.md) |
-| `text-[#141414]` | Primary text color (from RULE.md) |
-| `text-[#184EFF]` | Blue hover color (from RULE.md) |
-| `stroke-[#728096]` | Gray arrow stroke (default) |
-| `stroke-[#184EFF]` | Blue arrow stroke (hover) |
-| `bg-[#F0F1FF]` | Selected week/month background (from RULE.md) |
-| `bg-[#E0E2FF]` | Selected week/month hover |
-| `border-gray-200` | Light border |
-| `rounded-md` | Input border radius |
-| `rounded-xl` | Dropdown border radius |
-| `shadow-xl` | Dropdown shadow |
-| `hover:bg-gray-100` | Hover state for unselected items |
-| `transition-colors` | Smooth color transitions |
-
-## Integration with MonthPicker
-
-WeekPicker integrates with the [MonthPicker](./MonthPicker.md) component. When the user clicks the month/year title in the calendar dropdown, MonthPicker opens for quick month selection.
-
-**MonthPicker behavior:**
-- Click month/year title → opens MonthPicker
-- Selected month: background #F0F1FF
-- Hover month: background gray (#F3F4F6)
-- After selecting month → calendar updates and closes MonthPicker
-
-**See also:** [MonthPicker.md](./MonthPicker.md) for standalone MonthPicker documentation.
+| MonthPicker Open | Click month/year title | Show MonthPicker | `.week-picker__month-picker.visible` |
 
 ## Accessibility
 - Use `aria-label` on navigation buttons ("Previous week", "Next week", "Previous month", "Next month", "Previous year", "Next year")
@@ -833,18 +664,6 @@ WeekPicker integrates with the [MonthPicker](./MonthPicker.md) component. When t
 - Ensure sufficient color contrast (WCAG AA compliant)
 - Announce week range changes to screen readers
 - Use `role="dialog"` on dropdown with `aria-label="Choose week"`
-
-## Design Specs
-| Element | Dimensions | Colors | Font |
-|---------|-----------|--------|------|
-| Display Container | Auto width | `#FFFFFF` background, `#E5E7EB` border | Open Sans |
-| Date Range Text | 14px | `#141414` default, `#184EFF` hover | 14px medium |
-| Calendar Icon | 18px × 18px | `#728096` fill | - |
-| Arrow Icon | 14px × 20px | `#728096` stroke, `#184EFF` hover | - |
-| Selected Week | Seamless (no gaps) | `#F0F1FF` background | - |
-| Calendar Dropdown | 320px min-width | `#FFFFFF` background | Open Sans |
-| Day Button | 40px × 40px | - | 14px medium |
-| Week Grid Gap | 0px | Seamless highlighting | - |
 
 ## Notes
 - Generated on 2026-02-04 (GMT+7)

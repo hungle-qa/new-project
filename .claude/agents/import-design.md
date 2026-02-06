@@ -57,32 +57,71 @@ Detect mode and load the matching skill file. Execute its unique steps. All shar
 
 ---
 
-## SHARED SECTION 1: Read RULE.md (P0 - CRITICAL)
+## SHARED SECTION 1: Read RULE.md + Existing Components (P0 - CRITICAL)
 
-**BEFORE generating or validating any code, ALWAYS read:**
+**BEFORE generating or validating any code, ALWAYS:**
 
+### Step 1: Read RULE.md
 ```
-source/design-system/rule/RULE.md
+Read: source/design-system/rule/RULE.md
 ```
-
 Apply ALL styles from RULE.md. Flag non-compliant colors/fonts as errors.
+
+### Step 2: Read ALL Existing Components (MANDATORY for CREATE)
+
+```
+Glob: source/design-system/*.md
+```
+
+For each component found, read its `## HTML` section. Extract:
+- **Patterns**: Common HTML structures, class naming, layout approaches
+- **Tailwind classes**: Shared utility patterns (borders, shadows, spacing, colors)
+- **Interactive patterns**: Dropdown, toggle, hover behaviors already established
+- **Naming conventions**: data attributes, CSS class prefixes
+
+### Step 3: Ensure Reuse & Consistency
+
+| Check | Rule |
+|-------|------|
+| **Reuse existing patterns** | If a similar component exists (e.g., dropdown, button), match its structure and class patterns |
+| **Consistent colors** | Use same Tailwind color tokens as existing components (e.g., `text-[#184EFF]`, `hover:bg-[#F0F1FF]`) |
+| **Consistent spacing** | Match padding/margin patterns from similar components (e.g., `px-3 py-2` for list items) |
+| **Consistent borders** | Match border styles (e.g., `border-gray-300`, `hover:border-[#184EFF]`) |
+| **Consistent interactions** | Match hover/focus/active patterns from similar components |
+| **Consistent data attributes** | Reuse `data-*` naming patterns (e.g., `data-combobox-*`, `data-selected`) |
+| **No duplication** | If an existing component already handles the use case, inform user instead of creating duplicate |
+
+**If similar component exists, note in output:**
+```
+"Existing similar component: {name}. Reusing patterns: {list of reused patterns}."
+```
 
 ---
 
-## SHARED SECTION 2: Icon Detection Workflow (MANDATORY)
+## SHARED SECTION 2: Icon Detection Workflow (P0 - MANDATORY)
 
-**BEFORE finalizing HTML with icons, ALWAYS check:**
+**HARD RULE: You MUST read existing icons BEFORE creating ANY inline SVG. NEVER hand-craft SVG icons. This is NON-NEGOTIABLE.**
 
-### Step 1: Glob for Real-Time Icon List
+### Step 1: Glob for Real-Time Icon List (DO FIRST)
 ```
 Glob pattern: source/design-system/icons/*.svg
 ```
-ALWAYS run Glob FIRST. Never rely on cached/static lists.
+ALWAYS run Glob FIRST. Never rely on cached/static lists. Store the full list for reference.
 
-### Step 2: Match Keywords in Filenames
+### Step 2: Identify ALL Icons Needed
+Before writing ANY HTML, list every icon the component needs:
+```
+Icons needed:
+1. {description} - e.g., "close/cancel button"
+2. {description} - e.g., "media/image icon"
+3. ...
+```
+
+### Step 3: Match Keywords in Filenames
 
 | Pattern | Keywords |
 |---------|----------|
+| `*media*` | media, image, photo, picture, upload |
 | `*edit*` | edit, pencil, modify |
 | `*clone*`, `*duplicate*` | clone, duplicate |
 | `*delete*`, `*trash*` | delete, remove, trash |
@@ -97,31 +136,43 @@ ALWAYS run Glob FIRST. Never rely on cached/static lists.
 | `*arrow*` | arrow, navigation |
 | `*filter*` | filter, sort |
 | `*warning*` | warning, alert |
+| `*document*` | document, file, doc |
+| `*link*` | link, url |
+| `*collapse*` | collapse, expand |
+| `*manage*` | manage, settings |
 
-### Step 3: Read SVG Content
-Read matched `.svg` file for embedding.
+### Step 4: Read EVERY Matched SVG (MANDATORY)
+For EACH icon needed, read the matched `.svg` file content using Read tool. Do NOT skip this step.
 
-### Step 4: Embed with Comment
+### Step 5: Embed with Source Comment
 ```html
 <!-- {filename}.svg -->
-<svg class="w-4 h-4" ...>{svg content}</svg>
+<svg ...>{exact SVG content from file}</svg>
 ```
+- Keep original `viewBox`, `width`, `height` from the file
+- Add CSS class for sizing (e.g., `class="media-upload__icon"`)
+- You may adjust `fill`/`stroke` colors via CSS `currentColor` ONLY if the icon uses a single color
+- Do NOT redraw, simplify, or hand-modify SVG paths
 
-### Step 5 (Optional): Check JSON for Tags
+### Step 6 (Optional): Check JSON for Tags
 Read `source/design-system/icons/{icon-name}.json` for tag matching.
 
 ### Icon Naming Convention
 - `*-white.svg` = White (dark backgrounds)
 - `*_grey.svg` = Gray
 - `*_blue.svg` = Blue (primary)
+- `*_medium.svg` = Medium size variant
+- `*_icon.svg` = Standard icon
 
-### How to Replace External Icons
-1. Identify all icons used (Lucide, Heroicons, Font Awesome, etc.)
-2. Run Glob FIRST: `source/design-system/icons/*.svg`
-3. Search results for matching keywords
-4. Read matched `.svg` file
-5. Replace with inline SVG
-6. Document replacement in validation report
+### Enforcement: What to Do When No Match Found
+| Situation | Action |
+|-----------|--------|
+| Exact match found | Read SVG → embed with comment |
+| Partial match found | Read SVG → check visually → use if close enough |
+| No match at all | Create MINIMAL inline SVG (simple shapes only) AND add to `## Notes`: "Icon needed: {description} — no match in icons/" |
+| Multiple matches | Read ALL candidates → pick best fit → document choice |
+
+**VIOLATION: Creating hand-crafted complex SVGs (paths, transforms, clip-paths) when an existing icon could be used = REJECT the output.**
 
 ---
 
@@ -193,7 +244,7 @@ updated: {timestamp}
 \`\`\`
 ```
 
-**EDIT mode:** Use Edit tool to replace BOTH `## HTML` and `## CSS` code blocks. DO NOT touch other sections yet.
+**EDIT mode:** Use Edit tool on the EXACT file read in Step 0b (the `TARGET_FILE`). Replace BOTH `## HTML` and `## CSS` code blocks. DO NOT touch other sections yet. NEVER edit a different component file.
 
 **Tell user:**
 ```
@@ -213,7 +264,7 @@ Options:
 - "Cancel - Revert changes"
 ```
 
-**Only if approved:** Complete all 16 sections (see Output Documentation Format).
+**Only if approved:** Complete all 9 sections (see Output Documentation Format).
 
 **MANDATORY: Set `status: draft`** after ANY import or edit.
 
@@ -308,7 +359,7 @@ Flag non-compliant values as **Errors**.
 
 ---
 
-## SHARED SECTION 9: Output Documentation Format (16 Sections)
+## SHARED SECTION 9: Output Documentation Format (9 Sections)
 
 **Output:** `source/design-system/{ComponentName}.md`
 
@@ -331,7 +382,7 @@ status: draft
 
 ## HTML
 \`\`\`html
-{HTML with Tailwind - NO sub-headers before this!}
+{HTML with Tailwind - NO sub-headers before this! NO Google Fonts <link> - loaded globally.}
 \`\`\`
 
 ## CSS
@@ -340,14 +391,6 @@ status: draft
   font-family: 'Open Sans', sans-serif;
 }
 \`\`\`
-
-## Tailwind Classes Used
-| Class | Purpose |
-|-------|---------|
-
-## Props/Variants
-| Variant | Tailwind Classes | Description |
-|---------|------------------|-------------|
 
 ## Component States
 | State | Trigger | Visual Changes | Tailwind Classes |
@@ -364,10 +407,7 @@ document.addEventListener('DOMContentLoaded', function() {
 - {considerations}
 
 ## Notes
-- {important notes}
-- **Date Handling:**
-  - `created`: Set once when component is first imported (GMT+7 format)
-  - `updated`: Initially same as `created`, changes on subsequent edits
+- {critical insights only — no date handling boilerplate, no font import notes}
 ```
 
 ---
@@ -454,7 +494,8 @@ document.addEventListener('DOMContentLoaded', function() {
 - Convert UI images to HTML + Tailwind
 - Validate pasted HTML/CSS code
 - Create/update docs in `source/design-system/`
-- Use icons from `source/design-system/icons/`
+- **ALWAYS** read icons from `source/design-system/icons/` before embedding ANY SVG
+- Embed existing icon SVG content exactly as-is (adjust only CSS class and `currentColor`)
 
 ### DO NOT
 - Create files outside `source/design-system/`
@@ -462,6 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
 - Generate backend code
 - Install npm packages
 - Create new icon SVG files
+- **NEVER** hand-craft complex SVG paths when an existing icon in `icons/` could be used
 
 ---
 
@@ -478,9 +520,10 @@ document.addEventListener('DOMContentLoaded', function() {
 ### Icon Detection Failures
 | Situation | Action |
 |-----------|--------|
-| No match | Note "Icon needed: {description}" |
-| Glob empty | Inform user |
-| SVG unreadable | Skip, document in Notes |
+| No match found | Create MINIMAL inline SVG (simple shapes only) + document in `## Notes`: "Icon needed: {description}" |
+| Glob returns empty | STOP — ask user if icons directory is missing |
+| SVG unreadable | Skip icon, document in Notes, ask user |
+| Used hand-crafted SVG without checking icons/ | VIOLATION — re-run icon detection workflow |
 
 ### General Failures
 | Situation | Action |
@@ -500,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
 3. Image fidelity maintained (SINGLE/MULTI modes)
 4. Minimal changes only (UPDATE mode)
 5. User confirmation obtained before file creation/modification
-6. Component documentation follows 16-section format
+6. Component documentation follows 9-section format
 7. Category correctly assigned
 8. **Status set to `draft`** after ANY import or edit
 9. Pre/post creation validation passed

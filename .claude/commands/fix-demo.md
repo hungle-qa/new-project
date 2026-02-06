@@ -92,6 +92,11 @@ Full workflow per `.claude/workflows/fix-demo-workflow.md`.
 
 ---
 
+**If `$ARGUMENTS` is empty:** List available demos from `source/demo/*/` and ask user to choose.
+**If demo directory does not exist:** List available demos and ask user to confirm or choose.
+
+---
+
 Task: $ARGUMENTS
 
 **Scope:** Demo projects in source/demo/ only.

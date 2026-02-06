@@ -16,13 +16,6 @@ A simple search input with search icon. Features:
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
-**Google Fonts Import:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-```
-
 ## Usage
 Use for simple search functionality in lists, tables, or data grids. Provides real-time filtering with visual feedback on hover and focus.
 
@@ -89,7 +82,7 @@ Use for simple search functionality in lists, tables, or data grids. Provides re
   border: none;
   outline: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--color-text-primary);
   font-family: var(--font-family);
@@ -155,25 +148,6 @@ document.addEventListener('DOMContentLoaded', function() {
 | Hover | Mouse over | Blue border #184EFF | `.search-basic:hover` |
 | Focus | Click/Tab into input | Blue border #184EFF | `.search-basic:focus-within` |
 | Typing | Input text | Border stays blue | - |
-
-## Props/Variants
-
-| Variant | Attribute | Description |
-|---------|-----------|-------------|
-| Placeholder | `placeholder` | Placeholder text shown when empty |
-| Width | `max-width` | Default 400px, can be adjusted |
-| Size | CSS padding | Adjust height with padding values |
-
-## Integration
-
-This component emits a custom `searchInput` event that other components can listen to:
-
-```javascript
-document.addEventListener('searchInput', function(e) {
-  const searchTerm = e.detail.searchTerm;
-  // Filter your list/table based on searchTerm
-});
-```
 
 ## Accessibility
 - Input has `aria-label` for screen readers

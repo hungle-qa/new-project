@@ -19,7 +19,7 @@ Use for multi-line text input where content length varies. Suitable for descript
 <div id="textarea-wrapper" class="bg-white font-['Open_Sans'] w-full">
   <!-- Display mode (DEFAULT): plain div, shown on load -->
   <div id="textarea-display" class="relative w-full border-b border-gray-200 cursor-pointer">
-    <div class="w-full px-3 py-2 text-sm leading-5 text-gray-400">Add Description</div>
+    <div class="w-full px-3 py-2 text-[13px] leading-5 text-gray-400">Add Description</div>
     <span class="absolute top-3 right-3 w-2 h-2 rounded-full bg-teal-500"></span>
   </div>
   <!-- Edit mode: textarea, hidden by default -->
@@ -28,14 +28,14 @@ Use for multi-line text input where content length varies. Suitable for descript
       id="auto-textarea"
       placeholder="Add Description"
       rows="1"
-      class="w-full px-3 py-2 text-sm leading-5 text-[#141414] placeholder-gray-400 bg-white border border-[#184EFF] rounded outline-none resize-none overflow-hidden box-border"
+      class="w-full px-3 py-2 text-[13px] leading-5 text-[#141414] placeholder-gray-400 bg-white border border-[#184EFF] rounded outline-none resize-none overflow-hidden box-border"
     ></textarea>
     <span class="absolute top-3 right-3 w-2 h-2 rounded-full bg-teal-500"></span>
   </div>
   <!-- Preview mode: truncated content + see more -->
   <div id="textarea-preview" class="hidden w-full border-b border-gray-200">
-    <div id="preview-text" class="w-full px-3 pt-2 text-sm leading-5 text-[#141414] cursor-pointer whitespace-pre-line"></div>
-    <button id="see-more-btn" class="hidden px-3 pb-2 text-sm font-semibold text-[#184EFF] hover:underline cursor-pointer">See more</button>
+    <div id="preview-text" class="w-full px-3 pt-2 text-[13px] leading-5 text-[#141414] cursor-pointer whitespace-pre-line"></div>
+    <button id="see-more-btn" class="hidden px-3 pb-2 text-[13px] font-semibold text-[#184EFF] hover:underline cursor-pointer">See more</button>
   </div>
 </div>
 
@@ -142,35 +142,6 @@ document.addEventListener('DOMContentLoaded', function() {
   cursor: pointer;
 }
 ```
-
-## Tailwind Classes Used
-| Class | Purpose |
-|-------|---------|
-| `bg-white` | Component background (RULE.md) |
-| `font-['Open_Sans']` | Font family (RULE.md) |
-| `text-sm` | Text size for content and placeholder |
-| `leading-5` | Line height (20px) for consistent auto-resize |
-| `text-[#141414]` | Primary text color (RULE.md) |
-| `text-gray-400` | Placeholder text color |
-| `border-b border-gray-200` | Bottom border for display/preview modes |
-| `border border-[#184EFF]` | Full blue border for edit mode (RULE.md) |
-| `rounded` | Border radius on edit mode |
-| `resize-none` | Disable manual resize handle |
-| `overflow-hidden` | Hide overflow (JS manages scroll) |
-| `box-border` | Include border in width calculation |
-| `whitespace-pre-line` | Preserve line breaks in preview |
-| `cursor-pointer` | Pointer cursor on clickable areas |
-| `bg-teal-500` | Required indicator dot |
-| `text-[#184EFF]` | "See more" link color (RULE.md primary) |
-| `font-semibold` | "See more" link weight |
-
-## Props/Variants
-| Variant | Tailwind Classes | Description |
-|---------|------------------|-------------|
-| Display (default) | `border-b border-gray-200 text-gray-400` | Placeholder text with bottom border |
-| Edit (focused) | `border border-[#184EFF] rounded` | Full blue border textarea |
-| Preview (blurred) | `border-b border-gray-200 text-[#141414]` | Truncated content with bottom border |
-| With "See more" | `text-[#184EFF] font-semibold` | Blue link shown when >= 3 lines |
 
 ## Component States
 | State | Trigger | Visual Changes | Tailwind Classes |

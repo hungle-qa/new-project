@@ -21,13 +21,6 @@ A data table component with sortable columns, select-all checkbox, thumbnail/che
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
-**Google Fonts Import:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-```
-
 ## Usage
 Use in list/table views where data needs to be displayed with sorting, selection, and row actions. Integrates with pagination components for large datasets.
 
@@ -430,7 +423,7 @@ Use in list/table views where data needs to be displayed with sorting, selection
 .table-header th {
   padding: 12px 16px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--color-text-primary);
   white-space: nowrap;
@@ -465,7 +458,7 @@ Use in list/table views where data needs to be displayed with sorting, selection
   border: none;
   cursor: pointer;
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: inherit;
   padding: 0;
@@ -514,7 +507,7 @@ Use in list/table views where data needs to be displayed with sorting, selection
 
 .table-row td {
   padding: 12px 16px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--color-text-primary);
 }
 
@@ -773,23 +766,6 @@ document.addEventListener('DOMContentLoaded', function() {
 | Thumbnail hover | Mouse over thumbnail cell | Thumbnail fades, checkbox appears | `.thumbnail-wrapper:hover` |
 | Sort active | Click column header | Blue text and active arrow icon | `.th-sortable-active` |
 | Actions hover | Mouse over three dots | Gray background | `.actions-btn:hover` |
-
-## Props/Variants
-
-| Variant | Description |
-|---------|-------------|
-| Sortable columns | Click headers to sort, toggle asc/desc, reorder rows |
-| Selectable rows | Individual checkboxes + select-all checkbox |
-| Text wrapping | Long names wrap properly with max-width: 250px |
-| Scrollable | Fixed height with custom scrollbar |
-| Sticky header | Header stays visible when scrolling |
-
-## Integration
-
-This component works with:
-- **Pagination.md**: Use together for paginated lists
-- **MainPageWithList.md**: Embedded as the main table section
-- External handlers can listen to `tableSort` custom event
 
 ## Accessibility
 - Semantic HTML table structure

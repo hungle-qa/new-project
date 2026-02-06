@@ -46,20 +46,20 @@ Use this component for:
 
     <!-- Month Grid (4 columns × 3 rows) -->
     <div class="grid grid-cols-4 gap-2">
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="0">Jan</button>
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] bg-[#F0F1FF] rounded-lg hover:bg-[#E0E2FF] transition-colors" data-month="1">Feb</button>
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="2">Mar</button>
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="3">Apr</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="0">Jan</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] bg-[#F0F1FF] rounded-lg hover:bg-[#E0E2FF] transition-colors" data-month="1">Feb</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="2">Mar</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="3">Apr</button>
 
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="4">May</button>
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="5">Jun</button>
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="6">Jul</button>
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="7">Aug</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="4">May</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="5">Jun</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="6">Jul</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="7">Aug</button>
 
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="8">Sep</button>
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="9">Oct</button>
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="10">Nov</button>
-      <button class="month-btn px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="11">Dec</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="8">Sep</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="9">Oct</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="10">Nov</button>
+      <button class="month-btn px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg hover:bg-gray-100 transition-colors" data-month="11">Dec</button>
     </div>
   </div>
 </div>
@@ -117,7 +117,7 @@ Use this component for:
 
 .month-picker__month {
   padding: 10px 16px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #141414;
   background: none;
@@ -139,36 +139,6 @@ Use this component for:
   background-color: #E0E2FF;
 }
 ```
-
-## Tailwind Classes Used
-| Class | Purpose |
-|-------|---------|
-| `bg-white` | Component background (from RULE.md) |
-| `border-gray-200` | Light border |
-| `rounded-xl` | Large rounded corners |
-| `shadow-xl` | Dropdown shadow |
-| `p-5` | Container padding |
-| `min-w-[320px]` | Minimum width |
-| `grid-cols-4` | 4-column grid layout |
-| `gap-2` | Grid gap spacing |
-| `px-4 py-2.5` | Month button padding |
-| `text-sm` | Small text size |
-| `font-medium` | Medium font weight |
-| `text-[#141414]` | Primary text color (from RULE.md) |
-| `bg-[#F0F1FF]` | Selected month background (from RULE.md) |
-| `hover:bg-gray-100` | Hover state background |
-| `hover:bg-[#E0E2FF]` | Selected month hover state |
-| `rounded-lg` | Month button border radius |
-| `transition-colors` | Smooth color transitions |
-| `text-xl` | Year text size |
-| `font-semibold` | Year text weight |
-
-## Props/Variants
-| Variant | Tailwind Classes | Description |
-|---------|------------------|-------------|
-| Default Month | `px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg hover:bg-gray-100` | Unselected month button |
-| Selected Month | `px-4 py-2.5 text-sm font-medium text-[#141414] bg-[#F0F1FF] rounded-lg hover:bg-[#E0E2FF]` | Currently selected month with light blue background |
-| Year Navigation | `p-2 transition-all` | Arrow buttons for year navigation (no hover bg) |
 
 ## Component States
 | State | Trigger | Visual Changes | Tailwind Classes |
@@ -282,30 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 ```
 
-## Integration with DatePicker
-
-MonthPicker is designed to integrate seamlessly with DatePicker. Listen for custom events:
-
-```javascript
-// Listen for month selection
-document.addEventListener('monthpicker:month-selected', function(e) {
-  const { month, year, monthName } = e.detail;
-  console.log(`Selected: ${monthName} ${year}`);
-  // Update DatePicker calendar view
-});
-
-// Listen for year changes
-document.addEventListener('monthpicker:year-changed', function(e) {
-  const { year } = e.detail;
-  console.log(`Year changed to: ${year}`);
-});
-
-// Listen for close event
-document.addEventListener('monthpicker:close', function() {
-  // Hide MonthPicker, show DatePicker calendar
-});
-```
-
 ## Accessibility
 - Use `aria-label` on navigation buttons ("Previous year", "Next year")
 - Month buttons have `data-month` attribute for semantic meaning
@@ -313,18 +259,6 @@ document.addEventListener('monthpicker:close', function() {
 - Ensure sufficient color contrast for text
 - Use semantic button elements
 - Emit custom events for screen reader announcements
-
-## Design Specs
-| Element | Dimensions | Colors | Font |
-|---------|-----------|--------|------|
-| Container | 320px min-width | `#FFFFFF` background | Open Sans |
-| Month Button | 70px × 40px | `#141414` text | 14px medium |
-| Selected Month | - | `#F0F1FF` background | 14px medium |
-| Hover (unselected) | - | `#F3F4F6` background | - |
-| Hover (selected) | - | `#E0E2FF` background | - |
-| Year Text | - | `#141414` text | 20px semibold |
-| Navigation Arrow | 7px × 12px | `#184EFF` stroke | - |
-| Grid | 4 columns × 3 rows | 8px gap | - |
 
 ## Notes
 - Generated on 2026-02-04

@@ -49,7 +49,7 @@ Use this component for:
     </svg>
 
     <!-- Date Range Display (Clickable - opens WeekPicker dropdown) -->
-    <button id="dateRange" type="button" class="text-sm font-medium text-[#141414] hover:text-[#184EFF] transition-colors">
+    <button id="dateRange" type="button" class="text-[13px] font-medium text-[#141414] hover:text-[#184EFF] transition-colors">
       Feb 2 - Mar 1
     </button>
 
@@ -121,13 +121,13 @@ Use this component for:
 
     <!-- Week View Selector -->
     <div class="flex items-center ml-auto bg-gray-100 rounded-md p-0.5">
-      <button onclick="setView(1)" data-weeks="1" class="view-btn px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-[#141414] rounded transition-all">
+      <button onclick="setView(1)" data-weeks="1" class="view-btn px-3 py-1.5 text-[13px] font-medium text-gray-500 hover:text-[#141414] rounded transition-all">
         1 Week
       </button>
-      <button onclick="setView(2)" data-weeks="2" class="view-btn px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-[#141414] rounded transition-all">
+      <button onclick="setView(2)" data-weeks="2" class="view-btn px-3 py-1.5 text-[13px] font-medium text-gray-500 hover:text-[#141414] rounded transition-all">
         2 Week
       </button>
-      <button onclick="setView(4)" data-weeks="4" class="view-btn px-3 py-1.5 text-sm font-medium text-[#141414] bg-white rounded shadow-sm transition-all">
+      <button onclick="setView(4)" data-weeks="4" class="view-btn px-3 py-1.5 text-[13px] font-medium text-[#141414] bg-white rounded shadow-sm transition-all">
         4 Week
       </button>
     </div>
@@ -178,26 +178,6 @@ Use this component for:
   font-weight: 600;
 }
 ```
-
-## Tailwind Classes Used
-| Class | Purpose |
-|-------|---------|
-| `w-full` | Full width container |
-| `p-[30px]` | 30px padding all around |
-| `gap-2` | 8px gap between cells |
-| `bg-[#F5F7F9]` | Gray cell background |
-| `rounded-lg` | Rounded corners on cells |
-| `w-8 h-8 bg-[#184EFF] rounded-full` | Today indicator (NumberBadge-sm style) |
-| `group-hover:stroke-[#184EFF]` | Arrow hover effect |
-| `hover:bg-[#F5F7F9]` | Button hover state |
-
-## Props/Variants
-| Variant | Attribute | Description |
-|---------|-----------|-------------|
-| 1 Week | `data-view="1"` | Single week view, cell height 280px |
-| 2 Week | `data-view="2"` | Two week view, cell height 160px |
-| 4 Week | `data-view="4"` | Four week view, cell height 120px |
-| Today | `w-8 h-8 bg-[#184EFF] text-white rounded-full font-semibold` | Highlighted current date (NumberBadge-sm style) |
 
 ## Component States
 | State | Trigger | Visual Changes | Tailwind Classes |
@@ -301,9 +281,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const dateSpan = document.createElement('span');
       if (isToday) {
-        dateSpan.className = 'inline-flex items-center justify-center w-8 h-8 text-sm font-semibold text-white bg-[#184EFF] rounded-full';
+        dateSpan.className = 'inline-flex items-center justify-center w-8 h-8 text-[13px] font-semibold text-white bg-[#184EFF] rounded-full';
       } else {
-        dateSpan.className = 'inline-flex items-center justify-center text-sm font-medium text-[#141414]';
+        dateSpan.className = 'inline-flex items-center justify-center text-[13px] font-medium text-[#141414]';
       }
 
       if (showMonth) {
@@ -367,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const isWeekStart = date.getTime() === selectedMonday.getTime();
     const isWeekEnd = date.getTime() === selectedSunday.getTime();
 
-    let classes = 'aspect-square flex items-center justify-center text-sm font-medium transition-all min-w-[40px] min-h-[40px]';
+    let classes = 'aspect-square flex items-center justify-center text-[13px] font-medium transition-all min-w-[40px] min-h-[40px]';
 
     if (isInSelectedWeek) {
       classes += ' bg-[#F0F1FF] text-[#141414] hover:bg-[#E0E2FF]';
@@ -406,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
       btn.dataset.month = index;
 
       const isSelected = index === displayMonth;
-      let classes = 'px-4 py-2.5 text-sm font-medium text-[#141414] rounded-lg transition-colors';
+      let classes = 'px-4 py-2.5 text-[13px] font-medium text-[#141414] rounded-lg transition-colors';
       classes += isSelected ? ' bg-[#F0F1FF] hover:bg-[#E0E2FF]' : ' hover:bg-gray-100';
 
       btn.className = classes;
@@ -429,9 +409,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     viewBtns.forEach(btn => {
       if (parseInt(btn.dataset.weeks) === weeks) {
-        btn.className = 'view-btn px-3 py-1.5 text-sm font-medium text-[#141414] bg-white rounded shadow-sm transition-all';
+        btn.className = 'view-btn px-3 py-1.5 text-[13px] font-medium text-[#141414] bg-white rounded shadow-sm transition-all';
       } else {
-        btn.className = 'view-btn px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-[#141414] rounded transition-all';
+        btn.className = 'view-btn px-3 py-1.5 text-[13px] font-medium text-gray-500 hover:text-[#141414] rounded transition-all';
       }
     });
 
@@ -522,26 +502,6 @@ document.addEventListener('DOMContentLoaded', function() {
 - Keyboard navigation support (Arrow keys)
 - Today's date has `aria-current="date"`
 - High contrast colors for visibility
-
-## Related Components
-
-### WeekPicker Integration
-Calendar uses WeekPicker-style navigation with:
-- Arrow navigation for previous/next periods
-- Date range display showing current view range
-- Arrows turn blue (#184EFF) on hover
-
-**See also:** [WeekPicker.md](./WeekPicker.md) for standalone week selection.
-
-### DatePicker Integration
-For single date selection, see the [DatePicker](./DatePicker.md) component.
-
-**See also:** [DatePicker.md](./DatePicker.md) for single date selection.
-
-### NumberBadge Integration
-The today indicator uses **NumberBadge-sm** styling (32px, rounded-full, font-semibold). This ensures consistency across the design system.
-
-**See also:** [NumberBadge.md](./NumberBadge.md) for circular number indicators.
 
 ## Notes
 - Updated on 2026-02-05 with new design

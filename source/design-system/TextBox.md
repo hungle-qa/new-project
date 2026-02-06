@@ -1,11 +1,11 @@
 ---
-name: UserInput
+name: TextBox
 category: forms
 created: 2026-02-03T00:00:00.000Z
 status: approved
 ---
 
-# UserInput
+# TextBox
 
 ## Preview
 A simple text input field with a solid gray border, used for user entry fields.
@@ -20,7 +20,7 @@ Use this component for:
 ```html
 <input
   type="text"
-  class="user-input"
+  class="text-box"
   placeholder="Enter user..."
   aria-label="Enter user"
 />
@@ -28,10 +28,10 @@ Use this component for:
 
 ## CSS
 ```css
-.user-input {
+.text-box {
   width: 320px;
   padding: 12px 16px;
-  font-size: 16px;
+  font-size: 13px;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #141414;
   background-color: #ffffff;
@@ -41,36 +41,19 @@ Use this component for:
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.user-input::placeholder {
+.text-box::placeholder {
   color: #9ca3af;
 }
 
-.user-input:focus {
+.text-box:focus {
   border-color: #184EFF;
   box-shadow: 0 0 0 3px rgba(24, 78, 255, 0.1);
 }
 
-.user-input:hover {
+.text-box:hover {
   border-color: #184EFF;
 }
 ```
-
-## Tailwind CSS
-```html
-<input
-  type="text"
-  class="w-80 px-4 py-3 text-[#141414] bg-white border border-gray-300 rounded-md placeholder-gray-400 focus:border-[#184EFF] focus:ring-2 focus:ring-[#184EFF]/10 focus:outline-none hover:border-[#184EFF] transition-colors font-['Open_Sans']"
-  placeholder="Enter user..."
-  aria-label="Enter user"
-/>
-```
-
-## Props/Variants
-| Variant | Class | Description |
-|---------|-------|-------------|
-| default | `.user-input` | Standard gray border input |
-| focused | `.user-input:focus` | Focused state with blue ring |
-| disabled | `.user-input:disabled` | Disabled state with reduced opacity |
 
 ## Accessibility
 - Include `aria-label` for screen readers when no visible label is present
@@ -82,3 +65,4 @@ Use this component for:
 - Imported via web UI on 2026-02-03
 - Simple gray border for standard form inputs
 - Updated 2026-02-05: Width reduced to 320px (w-80), hover border fixed to #184EFF per RULE.md
+- Renamed from UserInput to TextBox

@@ -23,13 +23,6 @@ This layout integrates the following components:
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
-**Google Fonts Import:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-```
-
 ## Usage
 Use for list/table views in content management systems. Integrates with LeftSidebar (collapse trigger), SearchBasic (filtering), and ButtonWhite (add action). The table and pagination are now separate reusable components.
 
@@ -191,7 +184,7 @@ Use for list/table views in content management systems. Integrates with LeftSide
   border: none;
   outline: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--color-text-primary);
   font-family: var(--font-family);
@@ -211,12 +204,12 @@ Use for list/table views in content management systems. Integrates with LeftSide
   border: 1px solid #E5E7EB;
   border-radius: 8px;
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--color-text-primary);
   cursor: pointer;
   transition: background-color 0.15s ease;
-  height: 40px;
+  height: 30px;
   white-space: nowrap;
 }
 
@@ -311,25 +304,6 @@ document.addEventListener('DOMContentLoaded', function() {
 | Thumbnail hover | Mouse over thumbnail | Show checkbox | `.thumbnail-wrapper:hover` |
 | Sort active | Click column header | Blue text, active arrow | `.th-sortable-active` |
 | Search active | Type in search | Filter rows | `display: none` |
-
-## Props/Variants
-
-| Variant | Description |
-|---------|-------------|
-| With sidebar | Default layout with left sidebar (240px margin) |
-| Collapsed sidebar | Full width when sidebar hidden |
-| Sortable columns | Click headers to sort (visual only in demo) |
-| Searchable | Real-time filtering by name/category/unit |
-| Paginated | Navigate between pages |
-
-## Integration
-
-This layout integrates:
-- **TableWithList.md**: Data table component (handles sorting, selection, actions)
-- **Pagination.md**: Navigation component (handles page changes)
-- **LeftSidebar.md**: Emits `toggleSidebar` event when hamburger clicked
-- **SearchBasic.md**: Embedded in header line 2
-- **ButtonWhite.md**: Embedded in header line 2
 
 ## Accessibility
 - Semantic HTML structure

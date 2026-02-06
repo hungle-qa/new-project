@@ -13,25 +13,26 @@ Custom styled scrollbar for dropdown lists, modals, and scrollable containers. F
 ## Usage
 Apply to any scrollable container like dropdown lists, modal content, sidebars, or any element with `overflow-y: auto`.
 
-## Tailwind CSS
+## HTML
 ```html
-<style>
-  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; border-radius: 3px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #e1e1ea; border-radius: 3px; }
-  .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #e1e1ea transparent; }
-</style>
-<!-- Container with custom scrollbar -->
-<div class="custom-scrollbar max-h-[300px] overflow-y-auto">
-  <!-- Scrollable content here -->
-  <div class="p-4">Content 1</div>
-  <div class="p-4">Content 2</div>
-  <div class="p-4">Content 3</div>
-  <div class="p-4">Content 4</div>
-  <div class="p-4">Content 5</div>
-  <div class="p-4">Content 6</div>
-  <div class="p-4">Content 7</div>
-  <div class="p-4">Content 8</div>
+<div class="custom-scrollbar" style="max-height: 300px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; width: 280px; font-family: 'Open Sans', sans-serif;">
+  <div style="color: #141414; font-size: 13px; line-height: 2;">
+    <p>Item 1</p>
+    <p>Item 2</p>
+    <p>Item 3</p>
+    <p>Item 4</p>
+    <p>Item 5</p>
+    <p>Item 6</p>
+    <p>Item 7</p>
+    <p>Item 8</p>
+    <p>Item 9</p>
+    <p>Item 10</p>
+    <p>Item 11</p>
+    <p>Item 12</p>
+    <p>Item 13</p>
+    <p>Item 14</p>
+    <p>Item 15</p>
+  </div>
 </div>
 ```
 
@@ -64,58 +65,12 @@ Apply to any scrollable container like dropdown lists, modal content, sidebars, 
 }
 ```
 
-## Tailwind Plugin (if using tailwind-scrollbar)
-```html
-<!-- Requires: npm install tailwind-scrollbar -->
-<div class="overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#e1e1ea]">
-  <!-- Content -->
-</div>
-```
-
-## Pure CSS Implementation
-```html
-<style>
-  .scroll-container {
-    max-height: 300px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #e1e1ea transparent;
-  }
-
-  .scroll-container::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .scroll-container::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .scroll-container::-webkit-scrollbar-thumb {
-    background-color: #e1e1ea;
-    border-radius: 3px;
-  }
-</style>
-
-<div class="scroll-container">
-  <!-- Your scrollable content -->
-</div>
-```
-
 ## Component States
 
 | State | Visual | CSS |
 |-------|--------|-----|
 | Default | Light gray thumb | `#e1e1ea` |
 | Track | Transparent | `transparent` |
-
-## Specifications
-
-| Property | Value |
-|----------|-------|
-| Width | 6px |
-| Border radius | 3px |
-| Thumb color | `#e1e1ea` |
-| Track color | transparent |
 
 ## Accessibility
 - Scrollbar remains functional for keyboard/mouse users

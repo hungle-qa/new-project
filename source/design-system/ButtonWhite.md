@@ -18,13 +18,6 @@ A white button with border and icon. Features:
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
-**Google Fonts Import:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-```
-
 ## Usage
 Use for secondary actions like "Add New", "Create", or "Upload". Provides clear visual distinction from primary action buttons while maintaining prominence.
 
@@ -58,12 +51,12 @@ Use for secondary actions like "Add New", "Create", or "Upload". Provides clear 
   border: 1px solid #E5E7EB;
   border-radius: 8px;
   font-family: var(--font-family);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--color-text-primary);
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-  height: 40px;
+  height: 30px;
   white-space: nowrap;
 }
 
@@ -151,52 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
 | Active | Click/press | Darker purple bg #E0EAFF | `.btn-white:active` |
 | Focus | Tab key | Blue outline ring | `.btn-white:focus` |
 | Disabled | disabled attr | 50% opacity, no hover | `.btn-white:disabled` |
-
-## Props/Variants
-
-| Variant | HTML | Description |
-|---------|------|-------------|
-| With icon | `<svg class="btn-icon">` | Plus icon on left |
-| Text only | Remove `<svg>` | Button without icon |
-| Custom text | Change `.btn-text` content | Any label text |
-| Disabled | Add `disabled` attribute | Non-interactive state |
-
-## Icon Variants
-
-Common icons for white buttons:
-
-### Plus Icon (Add)
-```html
-<svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-  <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-```
-
-### Upload Icon
-```html
-<svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-  <path d="M17 13v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4M13 6l-3-3m0 0L7 6m3-3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-```
-
-### Download Icon
-```html
-<svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-  <path d="M17 13v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4M7 10l3 3m0 0l3-3m-3 3V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-```
-
-## Integration
-
-This component emits a custom `buttonWhiteClick` event:
-
-```javascript
-document.addEventListener('buttonWhiteClick', function(e) {
-  const buttonText = e.detail.text;
-  // Handle button click action
-  console.log('Button clicked:', buttonText);
-});
-```
 
 ## Accessibility
 - Uses semantic `<button>` element

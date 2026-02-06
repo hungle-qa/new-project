@@ -2,88 +2,44 @@
 
 **Purpose:** Build demo projects in `source/demo/{project-name}/`.
 
+**Guardrails and scope rules are defined in the command file** (`.claude/commands/create-demo.md`).
+
 ---
 
 ## Agent Data Flow
 
+### SIMPLE Tier
 ```
-[User Request: /create-demo {name}]
+[User Request] → demo-folder-creator → implementer → Done
+```
+
+### MEDIUM Tier
+```
+[User Request] → demo-folder-creator → quick-scout → implementer → Done
+```
+
+### COMPLEX Tier
+```
+[User Request]
       ↓
-  ┌───────────────────┐
-  │ demo-folder-creator│
-  └───────────────────┘
-  📥 project_name (kebab-case)
-  ⚙️ Validate → Create folder
-  📤 source/demo/{name}/README.md
+  demo-folder-creator
       ↓
-  ┌─────────┐   file list   ┌─────────┐   plan      ┌──────────┐
-  │  scout  │ ────────────→ │ planner │ ──────────→ │ designer │
-  └─────────┘               └─────────┘             └──────────┘
-  📥 demo + design-system   📥 Scout findings       📥 Plan
-  ⚙️ Find components        ⚙️ Plan pages           ⚙️ Compose UI
-  📤 Available components   📤 Page structure       📤 Component selection
-      ↓
-  ┌─────────────┐               ┌────────────┐
-  │ implementer │ ────────────→ │ write-spec │
-  └─────────────┘               └────────────┘
-  📥 Plan + Designer            📥 Demo project path
-  ⚙️ Build HTML pages           ⚙️ Generate spec doc
-  📤 pages/*.html               📤 spec/{name}.md
+    scout ──→ planner ──→ designer ──→ implementer → Done
 ```
 
 ---
 
-## CRITICAL RULES
+## Tier Agent Chains
 
-**ONLY create/modify files in:** `source/demo/{project-name}/`
+| Tier | Agent Chain | When |
+|------|-------------|------|
+| SIMPLE | `demo-folder-creator` → `implementer` | Single page, clear component |
+| MEDIUM | `demo-folder-creator` → `quick-scout` → `implementer` | 2-3 pages, known components |
+| COMPLEX | `demo-folder-creator` → `scout` → `planner` → `designer` → `implementer` | Multi-page, product-idea, custom components |
 
-**NEVER modify:**
-- `source/design-system/*.md` - Design system documentation (READ ONLY)
-- `source/product-idea/*.md` - Product ideas (READ ONLY)
-- `source/spec-template/*.md` - Spec templates (READ ONLY)
-- `client/src/*` - Main app frontend
-- `server/src/*` - Main app backend
+**Tier detection rules are in the command file.**
 
-**ONLY USE APPROVED COMPONENTS:**
-- Only use design system components with `status: approved` in frontmatter
-- Check the frontmatter of each `.md` file before using:
-  ```yaml
-  ---
-  status: approved  # ✅ Can use
-  ---
-  ```
-- Do NOT use components with `status: draft`, `status: pending`, or `status: rejected`
-- If a required component is not approved, ask user for alternative or approval
-
-**IF CONFUSED:** Ask the user to clarify before making any changes.
-
-## Demo Name Recognition
-
-When user types `@source/demo/{name}/` or `@{name}`, it refers to:
-- Demo project at: `source/demo/{name}/`
-- Example: `@client-portal` = `source/demo/client-portal/`
-
-## Scope
-
-This workflow handles:
-- Creating demo project folder structure in `source/demo/{name}/`
-- Building demo pages using design system components (HTML files)
-- Generating spec documents inside demo folder (`source/demo/{name}/spec/`)
-
-## Agent Chain
-
-```
-demo-folder-creator.md → scout.md → planner.md → designer.md → implementer.md → write-spec.md
-```
-
-| Step | Agent | Purpose | Output |
-|------|-------|---------|--------|
-| 1 | `demo-folder-creator` | Create folder structure | `source/demo/{name}/` |
-| 2 | `scout` | Scout demo + design-system only | Available components |
-| 3 | `planner` | Plan demo pages | Page structure plan |
-| 4 | `designer` | Suggest UI composition | Component selection |
-| 5 | `implementer` | Build HTML pages | `pages/*.html` |
-| 6 | `write-spec` | Generate specification | `spec/{name}.md` |
+---
 
 ## Orchestration
 
@@ -91,8 +47,9 @@ demo-folder-creator.md → scout.md → planner.md → designer.md → implement
 
 **If name provided:** Confirm project name
 **If no name:** Ask user for demo project name
+**If `$ARGUMENTS` is empty:** Ask user for demo name before proceeding
 
-### Step 1: Demo Folder Creator
+### Step 1: Demo Folder Creator (All Tiers)
 
 Call `.claude/agents/demo-folder-creator.md` with:
 - **project_name**: Demo name (kebab-case)
@@ -100,7 +57,15 @@ Call `.claude/agents/demo-folder-creator.md` with:
 
 **Output**: Created folder structure at `source/demo/{project-name}/`
 
-### Step 2: Scout (Demo Scope Only)
+### Step 2a: Quick Scout (MEDIUM Tier Only)
+
+Call `.claude/agents/quick-scout.md` with:
+- **scope**: `source/demo/{project-name}/`, `source/design-system/`
+- **task**: Demo requirements
+
+**Output**: Found files + inline plan → hand off to implementer
+
+### Step 2b: Scout (COMPLEX Tier Only)
 
 Call `.claude/agents/scout.md` with:
 - **workflow**: "demo"
@@ -110,7 +75,7 @@ Call `.claude/agents/scout.md` with:
 
 **Output**: Available design components, product idea requirements
 
-### Step 3: Planner
+### Step 3: Planner (COMPLEX Only)
 
 Call `.claude/agents/planner.md` with:
 - **scout_findings**: Output from scout
@@ -119,7 +84,7 @@ Call `.claude/agents/planner.md` with:
 
 **Output**: Page plan with component mapping
 
-### Step 4: Designer
+### Step 4: Designer (COMPLEX Only)
 
 Call `.claude/agents/designer.md` with:
 - **plan**: Output from planner
@@ -128,23 +93,17 @@ Call `.claude/agents/designer.md` with:
 
 **Output**: UI composition for each page
 
-### Step 5: Implementer
+### Step 5: Implementer (All Tiers)
 
 Call `.claude/agents/implementer.md` with:
-- **plan**: Output from planner
-- **designer_suggestions**: Output from designer
+- **plan**: Output from planner/quick-scout (or direct from command for SIMPLE)
+- **designer_suggestions**: Output from designer (COMPLEX only)
 - **workflow**: "demo"
 - **output_path**: `source/demo/{project-name}/pages/`
 
 **Output**: HTML files in `source/demo/{project-name}/pages/`
 
-### Step 6: Write Spec
-
-Call `.claude/agents/write-spec.md` with:
-- **demo_path**: `source/demo/{project-name}/`
-- **workflow**: "demo"
-
-**Output**: `source/demo/{project-name}/spec/{spec-name}.md`
+---
 
 ## File Structure
 
@@ -157,10 +116,8 @@ source/demo/{project-name}/
 │   ├── home.html
 │   ├── dashboard.html
 │   └── settings.html
-├── assets/             # Images, icons
-│   └── {name}.{ext}
-└── spec/               # Generated specifications
-    └── {feature}.md
+└── assets/             # Images, icons
+    └── {name}.{ext}
 ```
 
 ## Demo Page Template
@@ -186,36 +143,13 @@ source/demo/{project-name}/
 </html>
 ```
 
-## Examples
-
-### Example 1: New Demo from Scratch
-```
-/create-demo client-portal
-```
-Flow: create folder → scout design system → plan pages → design UI → build pages → write spec
-
-### Example 2: Demo from Product Idea
-```
-/create-demo from @product-idea fitness-tracker
-```
-Flow: create folder (linked to idea) → scout idea + design system → plan based on requirements → design → build → spec
-
 ## Rules
 
 1. **Ask name first**: Always confirm project name before creating
 2. **DEMO FILES ONLY**: All files stay in `source/demo/{project-name}/`
-3. **READ ONLY sources**: Design system, product ideas, spec templates are READ ONLY - never modify
-4. **Ask if confused**: If task seems to require modifying files outside demo folder, ASK user to clarify
+3. **READ ONLY sources**: Design system, product ideas, spec templates are READ ONLY
+4. **Ask if confused**: If task requires modifying files outside demo folder, ASK user
 5. **Scout limitation**: Only scout demo folder and source materials
 6. **Standalone pages**: Each HTML page works independently
 7. **Use design system**: Copy/use components from `source/design-system/` (don't modify originals)
-8. **Generate spec**: Always end with spec generation inside demo folder
-9. **Approved only**: Only use design system components with `status: approved` - reject draft/pending/rejected
-
-## What This Workflow Does NOT Do
-
-- Does NOT update `source/design-system/*.md` files
-- Does NOT update `source/product-idea/*.md` files
-- Does NOT update `client/src/*` (main app)
-- Does NOT update `server/src/*` (main app)
-- Does NOT create documentation outside demo folder
+8. **Approved only**: Only use design system components with `status: approved`

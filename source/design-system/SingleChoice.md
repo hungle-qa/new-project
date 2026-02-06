@@ -1,9 +1,9 @@
 ---
 name: SingleChoice
 category: forms
-status: draft
-created: 2026-02-06T14:30:00+07:00
-updated: 2026-02-06T14:30:00+07:00
+status: approved
+created: 2026-02-06T07:30:00.000Z
+updated: 2026-02-06T07:30:00.000Z
 ---
 
 # SingleChoice
@@ -27,11 +27,11 @@ Use for single-selection choices where user must pick exactly one option from a 
   <div class="flex flex-col gap-2.5">
     <label class="flex items-center gap-2.5 cursor-pointer">
       <input type="radio" name="header-display" value="meal-plan" checked class="w-4 h-4 accent-[#184EFF]" />
-      <span class="text-sm font-semibold text-[#141414]">Meal Plan</span>
+      <span class="text-[13px] font-semibold text-[#141414]">Meal Plan</span>
     </label>
     <label class="flex items-center gap-2.5 cursor-pointer">
       <input type="radio" name="header-display" value="meal-guidance" class="w-4 h-4 accent-[#184EFF]" />
-      <span class="text-sm text-[#7B7E91]">Meal Guidance</span>
+      <span class="text-[13px] text-[#7B7E91]">Meal Guidance</span>
     </label>
   </div>
 </div>
@@ -43,35 +43,6 @@ Use for single-selection choices where user must pick exactly one option from a 
   font-family: 'Open Sans', sans-serif;
 }
 ```
-
-## Tailwind Classes Used
-| Class | Purpose |
-|-------|---------|
-| `bg-white` | Component background (RULE.md) |
-| `font-['Open_Sans']` | Font family (RULE.md) |
-| `text-xs` | Header label font size |
-| `font-semibold` | Header label and selected option weight |
-| `tracking-wide` | Header label letter spacing |
-| `uppercase` | Header label capitalization |
-| `text-[#7B7E91]` | Gray text for label and unselected option (RULE.md) |
-| `text-[#141414]` | Primary text for selected option (RULE.md) |
-| `text-sm` | Option label font size |
-| `accent-[#184EFF]` | Radio button fill color (RULE.md primary) |
-| `w-4 h-4` | Radio button size |
-| `gap-1.5` | Spacing between header label and info icon |
-| `gap-2.5` | Spacing between radio options and between radio and label |
-| `mb-3` | Margin below header section |
-| `cursor-pointer` | Pointer cursor on label hover |
-| `flex`, `items-center` | Horizontal alignment |
-| `flex-col` | Vertical stacking of options |
-
-## Props/Variants
-| Variant | Tailwind Classes | Description |
-|---------|------------------|-------------|
-| Selected option | `font-semibold text-[#141414]` | Bold dark text for active choice |
-| Unselected option | `text-[#7B7E91]` | Gray text for inactive choice |
-| With info icon | SVG inline after label | Optional tooltip trigger |
-| Without info icon | Remove SVG element | Simpler header |
 
 ## Component States
 | State | Trigger | Visual Changes | Tailwind Classes |
@@ -110,6 +81,3 @@ document.addEventListener('DOMContentLoaded', function() {
 - Selected option uses `font-semibold` + `text-[#141414]`; unselected uses `text-[#7B7E91]`
 - Info icon is inline SVG (no external dependency)
 - Radio accent color `#184EFF` matches RULE.md primary action color
-- **Date Handling:**
-  - `created`: Set once when component is first imported (GMT+7 format)
-  - `updated`: Initially same as `created`, changes on subsequent edits

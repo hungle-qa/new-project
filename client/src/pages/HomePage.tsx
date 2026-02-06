@@ -36,7 +36,7 @@ export function HomePage() {
   return (
     <div>
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">BA Demo Tool</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Internal Demo Tool</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Create demo pages from product ideas and generate specs.
           Import design components, build demos, and export documentation.

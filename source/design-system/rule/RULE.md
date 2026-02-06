@@ -59,6 +59,17 @@ font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 | `--color-text-gray` | `#7B7E91` | Gray text | color |
 | `--arrow-btn-hover` | `icon only` | Arrow buttons: hover changes icon to blue (#184EFF), NO background change | text |
 | `--color-btn-add-hover` | `#1649ED` | Hovering on the CREATE/ADD button with blue background | color |
+| `--text-hyperlink-hover` | `Underline` | The blue text is clickable (hyperlink, choose a file, add video link...) | text |
+| `--dashline` | `always 1px, color #E5E7EB` | The dashline | text |
+| `--fontsize-btn-action-text` | `text always 13px` | Primary/action button in a form | text |
+| `--close-icon-size` | `18x18` | X (close) icon using `close_circle.svg`, always `width="18" height="18" viewBox="0 0 22 22"`. Circle fill: `#111` (dark bg) or `#6B7280` (gray bg). | icon |
+| `--close-icon-position` | `absolute, top: -8px, right: -8px` | X icon overlaps top-right corner of container. Parent must have `position: relative`. | position |
+| `--height-btn-action-popup` | `34px` | Action button (Save, Save & Close, etc.) in pop-up/modal/form always height 34px | size |
+| `--height-btn-add` | `30px` | Create/Add button always height 30px | size |
+| `--fontsize-btn-add` | `12px` | Create/Add button always font-size 12px | text |
+| `--fontsize-content` | `13px` | All content text always 13px EXCEPT header, title, heading. Applies to: combobox, dropdown list, placeholder, single choice, multiple choice, datetime picker, toast message, tab text, text in any frame, description, body, label, link, list item. | text |
+| `--icon-warning-size` | `25x25` | Warning icon (`warning_purple_icon.svg`) in modals always `width="25" height="25"` | icon |
+| `--icon-discard-size` | `25x25` | Discard changes icon (`discard_changes_icon.svg`) in modals always `width="25" height="25"` | icon |
 
 ---
 
@@ -91,6 +102,16 @@ Include these variables in your component styles:
   --color-text-gray: #7B7E91;
   --arrow-btn-hover: icon only;
   --color-btn-add-hover: #1649ED;
+  --text-hyperlink-hover: Underline;
+  --dashline: always 1px, color #E5E7EB;
+  --fontsize-btn-action-text: text always 13px;
+  --close-icon-size: 18x18;
+  --height-btn-action-popup: 34px;
+  --height-btn-add: 30px;
+  --fontsize-btn-add: 12px;
+  --fontsize-content: 13px;
+  --icon-warning-size: 25x25;
+  --icon-discard-size: 25x25;
 }
 ```
 

@@ -39,9 +39,11 @@ If file EXISTS:
 ### Step 0b: Read Existing Component
 
 ```
-Read: source/design-system/{ComponentName}.md
+TARGET_FILE = source/design-system/{ComponentName}.md
+Read: {TARGET_FILE}
 
 Extract and store:
+- TARGET_FILE: The exact file path (use this for ALL subsequent Edit/Write operations)
 - BEFORE_FRONTMATTER: name, category, status, created, updated
 - BEFORE_HTML: Complete HTML section
 - BEFORE_CSS: Complete CSS section
@@ -49,6 +51,8 @@ Extract and store:
 - BEFORE_TAILWIND: Tailwind Classes Used table (if exists)
 - ALL_SECTIONS: Complete file content for reference
 ```
+
+**CRITICAL:** All subsequent Edit/Write operations MUST target `{TARGET_FILE}`. NEVER edit a different component file.
 
 ---
 
@@ -92,6 +96,7 @@ Generate: AFTER_HTML, AFTER_CSS
 
 ```markdown
 ## Component: {ComponentName}
+**File:** `{TARGET_FILE}`
 
 ### BEFORE (Current)
 
@@ -122,8 +127,9 @@ Generate: AFTER_HTML, AFTER_CSS
 ## Phase 1 & Phase 2
 
 Follow master agent's two-phase workflow:
-- **Phase 1:** Update HTML + CSS sections only -> user tests
-- **Phase 2:** After approval -> update affected documentation sections
+- **Phase 1:** Edit `{TARGET_FILE}` — update HTML + CSS sections only -> user tests
+- **CRITICAL:** Always use the exact `TARGET_FILE` path from Step 0b. NEVER edit a different file.
+- **Phase 2:** After approval -> update affected documentation sections in `{TARGET_FILE}` only
 
 **Phase 2 specifics for UPDATE:**
 - Update only sections affected by changes (Tailwind Classes, Component States, etc.)

@@ -20,13 +20,6 @@ A minimal toast notification component for displaying action feedback messages. 
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
-**Google Fonts Import:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-```
-
 ## Usage
 Use toast notifications to provide temporary feedback after user actions such as:
 - Successfully saving data ("Workout has been saved")
@@ -43,9 +36,6 @@ Use toast notifications to provide temporary feedback after user actions such as
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Toast Notification Component</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100 p-8 font-['Open_Sans']">
 
@@ -78,7 +68,7 @@ Use toast notifications to provide temporary feedback after user actions such as
     <div class="toast-notification flex items-center gap-3 min-w-[320px] max-w-[400px] bg-[#2D3748] rounded-lg shadow-lg p-4 transform translate-x-0 opacity-100 transition-all duration-300 ease-in-out">
       <!-- Content -->
       <div class="flex-1 min-w-0">
-        <p class="toast-message text-white text-sm font-medium leading-relaxed">
+        <p class="toast-message text-white text-[13px] font-medium leading-relaxed">
           Workout has been saved
         </p>
       </div>
@@ -100,26 +90,6 @@ Use toast notifications to provide temporary feedback after user actions such as
   font-family: 'Open Sans', sans-serif;
 }
 ```
-
-## Tailwind Classes Used
-| Class | Purpose |
-|-------|---------|
-| `fixed top-4 right-4` | Fixed positioning in top-right corner |
-| `z-50` | High z-index to appear above other content |
-| `bg-[#2D3748]` | Dark gray/charcoal background |
-| `rounded-lg` | Rounded corners |
-| `shadow-lg` | Large shadow for elevation |
-| `p-4` | Inner padding |
-| `text-white` | White text for contrast |
-| `text-sm` | Small text size (14px) |
-| `font-medium` | Medium font weight |
-| `transition-all duration-300` | Smooth animation |
-
-## Props/Variants
-| Variant | Tailwind Classes | Description |
-|---------|------------------|-------------|
-| default | `bg-[#2D3748]` | Dark gray background for general notifications |
-| error | `bg-[#EA314A]` | Red background for error messages (per RULE.md) |
 
 ## Component States
 | State | Trigger | Visual Changes | Tailwind Classes |
@@ -206,45 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('Toast notification system initialized');
 });
 ```
-
-## Usage Examples
-
-### Basic Usage
-```javascript
-// Show default toast (auto-dismiss after 3 seconds)
-showToast('Workout has been saved');
-
-// Show with custom duration (5 seconds)
-showToast('Item deleted successfully', 'default', 5000);
-
-// Show without auto-dismiss (must close manually)
-showToast('Important message', 'default', 0);
-```
-
-### Error Toast
-```javascript
-// Show error toast with red background
-showToast('Failed to save changes', 'error');
-
-// Error toast with custom duration
-showToast('Connection failed', 'error', 5000);
-```
-
-## Specifications
-| Property | Value |
-|----------|-------|
-| Background (default) | `#2D3748` (dark gray/charcoal) |
-| Background (error) | `#EA314A` (per RULE.md --color-bg-red) |
-| Text color | `#FFFFFF` (white) |
-| Font size | 14px (text-sm) |
-| Font weight | 500 (font-medium) |
-| Padding | 16px (p-4) |
-| Border radius | 8px (rounded-lg) |
-| Min width | 320px |
-| Max width | 400px |
-| Position | Fixed top-right (top: 16px, right: 16px) |
-| Auto-dismiss | 3 seconds (default) |
-| Animation | 300ms ease-in-out |
 
 ## Accessibility
 - Close button is keyboard focusable

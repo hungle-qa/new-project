@@ -78,9 +78,9 @@ Use Primary Workflow for:
 
 **Purpose:** Build demo projects with HTML pages in `source/demo/`.
 
-### Agent Chain
+### Agent Chain (COMPLEX Tier)
 ```
-demo-folder-creator.md → scout.md → planner.md → designer.md → implementer.md → write-spec.md
+demo-folder-creator.md → scout.md → planner.md → designer.md → implementer.md
 ```
 
 | Step | Agent | What It Does | Output |
@@ -90,7 +90,8 @@ demo-folder-creator.md → scout.md → planner.md → designer.md → implement
 | 3 | `planner` | Plan demo pages | Page structure |
 | 4 | `designer` | Suggest UI composition | Layout recommendations |
 | 5 | `implementer` | Build HTML pages | `pages/*.html` |
-| 6 | `write-spec` | Generate specification | `spec/{name}.md` |
+
+**Tiered execution:** SIMPLE skips scout/planner/designer. MEDIUM uses `quick-scout` instead of full scout+planner+designer.
 
 ### How to Run
 ```
@@ -235,6 +236,7 @@ BA kit_v1/
 | Agent | Purpose | Used By |
 |-------|---------|---------|
 | `scout` | Search codebase for context | Both workflows |
+| `quick-scout` | Fast scout + inline plan for MEDIUM tasks | Demo workflows (MEDIUM tier) |
 | `planner` | Create implementation plans | Both workflows |
 | `designer` | Suggest UI composition | Both workflows |
 | `implementer` | Write code | Both workflows |
@@ -247,6 +249,16 @@ BA kit_v1/
 | `import-design` | Unified import agent (validate code, single/multi image, update existing) |
 | `import-idea` | Import product ideas |
 | `import-spec-template` | Import spec templates |
+
+### Commands (Slash Commands)
+| Command | Purpose |
+|---------|---------|
+| `/start` | Start primary workflow for main app development |
+| `/create-demo` | Create a demo project with tiered execution |
+| `/fix-demo` | Fix issues in an existing demo project |
+| `/import-design-by-image` | Convert UI images to design system components |
+| `/build-feature` | Build features using file-based storage |
+| `/agent-audit` | Audit, update, test, or optimize agents via AGIA |
 
 ### Meta Agents
 | Agent | Purpose |

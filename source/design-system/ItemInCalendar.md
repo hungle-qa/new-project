@@ -2,23 +2,12 @@
 name: ItemInCalendar
 category: Data Display
 created: 2026-02-05T00:00:00.000Z
-status: reviewed
+status: approved
 ---
 
 # ItemInCalendar
 
 A card component for displaying items within a calendar view. Features a header with blue title (truncated with tooltip for long text), checkbox, and MoreOptions menu, plus a content section in a sub-frame with shadow.
-
-## Component Structure
-
-| Section | Element | Description |
-|---------|---------|-------------|
-| Header | Title | Blue text, truncate with tooltip for long text |
-| Header | Checkbox | Optional selection checkbox |
-| Header | MoreOptions | Three-dot menu (Edit, Copy, Remove) |
-| Content | Sub-frame | Padding + shadow container |
-| Content | Heading | Bold label |
-| Content | Description | Value and details (truncate, no tooltip) |
 
 ## Component States
 
@@ -39,11 +28,6 @@ A card component for displaying items within a calendar view. Features a header 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ItemInCalendar - Responsive</title>
-
-  <!-- Google Fonts - Open Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -178,7 +162,7 @@ A card component for displaying items within a calendar view. Features a header 
         <div class="flex items-center justify-between px-3 py-2 gap-2">
           <!-- Title with tooltip wrapper -->
           <div class="title-wrapper relative flex-1 min-w-0">
-            <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="1RM">1RM</span>
+            <span class="item-title text-[13px] font-medium text-[#184EFF] truncate block" data-full-title="1RM">1RM</span>
             <div class="title-tooltip">1RM</div>
           </div>
 
@@ -199,20 +183,20 @@ A card component for displaying items within a calendar view. Features a header 
               <span class="more-options-tooltip-inline">More options</span>
               <!-- Dropdown -->
               <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                   <span>Edit</span>
                 </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                   <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF">
                     <path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/>
                     <path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/>
                   </svg>
                   <span>Copy</span>
                 </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                   <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2">
                     <path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/>
                   </svg>
@@ -227,8 +211,8 @@ A card component for displaying items within a calendar view. Features a header 
         <div class="px-3 pb-3">
           <!-- Sub-frame with padding and shadow -->
           <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-            <div class="text-sm font-semibold text-[#141414] mb-1">weight</div>
-            <div class="text-sm text-[#7B7E91]">
+            <div class="text-[13px] font-semibold text-[#141414] mb-1">weight</div>
+            <div class="text-[13px] text-[#7B7E91]">
               <div class="truncate">1x</div>
               <div class="truncate">100 %1RM x 1</div>
             </div>
@@ -247,7 +231,7 @@ A card component for displaying items within a calendar view. Features a header 
         <div class="flex items-center justify-between px-3 py-2 gap-2">
           <!-- Title with tooltip wrapper -->
           <div class="title-wrapper relative flex-1 min-w-0">
-            <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="Title long text that should be truncated when it exceeds the available space">Title long text that should be truncated when it exceeds the available space</span>
+            <span class="item-title text-[13px] font-medium text-[#184EFF] truncate block" data-full-title="Title long text that should be truncated when it exceeds the available space">Title long text that should be truncated when it exceeds the available space</span>
             <div class="title-tooltip show-tooltip">Title long text that should be truncated when it exceeds the available space</div>
           </div>
 
@@ -268,20 +252,20 @@ A card component for displaying items within a calendar view. Features a header 
               <span class="more-options-tooltip-inline">More options</span>
               <!-- Dropdown -->
               <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                   <span>Edit</span>
                 </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                   <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF">
                     <path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/>
                     <path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/>
                   </svg>
                   <span>Copy</span>
                 </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                   <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2">
                     <path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/>
                   </svg>
@@ -296,8 +280,8 @@ A card component for displaying items within a calendar view. Features a header 
         <div class="px-3 pb-3">
           <!-- Sub-frame with padding and shadow -->
           <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-            <div class="text-sm font-semibold text-[#141414] mb-1">Description heading</div>
-            <div class="text-sm text-[#7B7E91]">
+            <div class="text-[13px] font-semibold text-[#141414] mb-1">Description heading</div>
+            <div class="text-[13px] text-[#7B7E91]">
               <div class="truncate">This is a very long description text that will be truncated</div>
               <div class="truncate">More content here that also gets truncated if too long</div>
             </div>
@@ -316,7 +300,7 @@ A card component for displaying items within a calendar view. Features a header 
         <div class="item-in-calendar w-full bg-white rounded-lg shadow-sm border border-gray-200 hover:border-[#184EFF] transition-colors cursor-pointer">
           <div class="flex items-center justify-between px-3 py-2 gap-2">
             <div class="title-wrapper relative flex-1 min-w-0">
-              <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="Warm-up Exercise">Warm-up Exercise</span>
+              <span class="item-title text-[13px] font-medium text-[#184EFF] truncate block" data-full-title="Warm-up Exercise">Warm-up Exercise</span>
               <div class="title-tooltip show-tooltip">Warm-up Exercise</div>
             </div>
             <div class="flex items-center gap-1 flex-shrink-0">
@@ -329,15 +313,15 @@ A card component for displaying items within a calendar view. Features a header 
                 </button>
                 <span class="more-options-tooltip-inline">More options</span>
                 <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     <span>Edit</span>
                   </button>
-                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                     <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF"><path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/><path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/></svg>
                     <span>Copy</span>
                   </button>
-                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                     <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2"><path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/></svg>
                     <span>Remove</span>
                   </button>
@@ -347,8 +331,8 @@ A card component for displaying items within a calendar view. Features a header 
           </div>
           <div class="px-3 pb-3">
             <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-              <div class="text-sm font-semibold text-[#141414] mb-1">Duration</div>
-              <div class="text-sm text-[#7B7E91]">
+              <div class="text-[13px] font-semibold text-[#141414] mb-1">Duration</div>
+              <div class="text-[13px] text-[#7B7E91]">
                 <div class="truncate">10 minutes</div>
                 <div class="truncate">Light cardio and stretching</div>
               </div>
@@ -360,7 +344,7 @@ A card component for displaying items within a calendar view. Features a header 
         <div class="item-in-calendar w-full bg-white rounded-lg shadow-sm border border-gray-200 hover:border-[#184EFF] transition-colors cursor-pointer">
           <div class="flex items-center justify-between px-3 py-2 gap-2">
             <div class="title-wrapper relative flex-1 min-w-0">
-              <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="Main Set - Bench Press Heavy">Main Set - Bench Press Heavy</span>
+              <span class="item-title text-[13px] font-medium text-[#184EFF] truncate block" data-full-title="Main Set - Bench Press Heavy">Main Set - Bench Press Heavy</span>
               <div class="title-tooltip show-tooltip">Main Set - Bench Press Heavy</div>
             </div>
             <div class="flex items-center gap-1 flex-shrink-0">
@@ -373,15 +357,15 @@ A card component for displaying items within a calendar view. Features a header 
                 </button>
                 <span class="more-options-tooltip-inline">More options</span>
                 <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     <span>Edit</span>
                   </button>
-                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                     <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF"><path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/><path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/></svg>
                     <span>Copy</span>
                   </button>
-                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                     <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2"><path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/></svg>
                     <span>Remove</span>
                   </button>
@@ -391,8 +375,8 @@ A card component for displaying items within a calendar view. Features a header 
           </div>
           <div class="px-3 pb-3">
             <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-              <div class="text-sm font-semibold text-[#141414] mb-1">Reps</div>
-              <div class="text-sm text-[#7B7E91]">
+              <div class="text-[13px] font-semibold text-[#141414] mb-1">Reps</div>
+              <div class="text-[13px] text-[#7B7E91]">
                 <div class="truncate">3 sets x 8-12 reps</div>
                 <div class="truncate">85% 1RM with 2min rest</div>
               </div>
@@ -404,7 +388,7 @@ A card component for displaying items within a calendar view. Features a header 
         <div class="item-in-calendar w-full bg-white rounded-lg shadow-sm border border-gray-200 hover:border-[#184EFF] transition-colors cursor-pointer">
           <div class="flex items-center justify-between px-3 py-2 gap-2">
             <div class="title-wrapper relative flex-1 min-w-0">
-              <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="Cool Down">Cool Down</span>
+              <span class="item-title text-[13px] font-medium text-[#184EFF] truncate block" data-full-title="Cool Down">Cool Down</span>
               <div class="title-tooltip">Cool Down</div>
             </div>
             <div class="flex items-center gap-1 flex-shrink-0">
@@ -417,15 +401,15 @@ A card component for displaying items within a calendar view. Features a header 
                 </button>
                 <span class="more-options-tooltip-inline">More options</span>
                 <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     <span>Edit</span>
                   </button>
-                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                     <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF"><path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/><path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/></svg>
                     <span>Copy</span>
                   </button>
-                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
+                  <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-[13px] hover:bg-[#374151] transition-colors" role="menuitem">
                     <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2"><path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/></svg>
                     <span>Remove</span>
                   </button>
@@ -435,8 +419,8 @@ A card component for displaying items within a calendar view. Features a header 
           </div>
           <div class="px-3 pb-3">
             <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-              <div class="text-sm font-semibold text-[#141414] mb-1">Stretching</div>
-              <div class="text-sm text-[#7B7E91]">
+              <div class="text-[13px] font-semibold text-[#141414] mb-1">Stretching</div>
+              <div class="text-[13px] text-[#7B7E91]">
                 <div class="truncate">5 minutes</div>
                 <div class="truncate">Full body stretch routine</div>
               </div>
@@ -622,7 +606,7 @@ A card component for displaying items within a calendar view. Features a header 
 
 /* Title - blue, truncate */
 .item-in-calendar .item-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--color-text-blue);
   white-space: nowrap;
@@ -669,345 +653,6 @@ A card component for displaying items within a calendar view. Features a header 
   opacity: 1;
   visibility: visible;
 }
-```
-
-## Tailwind CSS
-
-```html
-<style>
-  /* Tooltip styles */
-  .title-tooltip {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 0;
-    background-color: #1F2937;
-    color: #FFFFFF;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
-    pointer-events: none;
-    z-index: 999;
-    max-width: 300px;
-    white-space: normal;
-    word-break: break-word;
-  }
-  .title-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 16px;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid #1F2937;
-  }
-  .title-wrapper:hover .title-tooltip.show-tooltip {
-    opacity: 1;
-    visibility: visible;
-  }
-  /* Custom checkbox - matches Checkbox.md */
-  .custom-checkbox {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 1px solid #D1D5DB;
-    border-radius: 4px;
-    background-color: #FFFFFF;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.15s ease;
-    flex-shrink: 0;
-  }
-  .custom-checkbox:hover { border-color: #184EFF; }
-  .custom-checkbox:checked {
-    background-color: #184EFF;
-    border-color: #184EFF;
-  }
-  .custom-checkbox:checked::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 1px;
-    width: 5px;
-    height: 9px;
-    border: solid #FFFFFF;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-  }
-  .custom-checkbox:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(24, 78, 255, 0.2);
-  }
-  /* More options tooltip */
-  .more-options-tooltip-inline {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #1F2937;
-    color: #FFFFFF;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
-    pointer-events: none;
-    z-index: 999;
-  }
-  .more-options-tooltip-inline::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid #1F2937;
-  }
-</style>
-
-<div class="font-['Open_Sans'] space-y-8">
-
-  <!-- Case 1: Short Title -->
-  <div>
-    <h3 class="text-sm font-medium mb-3 text-[#7B7E91]">Case 1: Short Title</h3>
-    <div class="item-in-calendar w-full max-w-[416px] bg-white rounded-lg shadow-sm border border-gray-200 hover:border-[#184EFF] transition-colors cursor-pointer">
-      <div class="flex items-center justify-between px-3 py-2 gap-2">
-        <div class="title-wrapper relative flex-1 min-w-0">
-          <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="1RM">1RM</span>
-          <div class="title-tooltip">1RM</div>
-        </div>
-        <div class="flex items-center gap-1 flex-shrink-0">
-          <input type="checkbox" class="custom-checkbox" aria-label="Select item">
-          <div class="more-options-wrapper relative">
-            <button class="more-options-btn p-1.5 hover:bg-[#F5F7F9] rounded transition-colors" aria-haspopup="true" aria-expanded="false">
-              <svg class="w-4 h-4 text-gray-500 hover:text-[#184EFF] transition-colors" viewBox="0 0 16 16" fill="currentColor">
-                <circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/>
-              </svg>
-            </button>
-            <span class="more-options-tooltip-inline">More options</span>
-            <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-              <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>Edit</span>
-              </button>
-              <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF"><path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/><path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/></svg>
-                <span>Copy</span>
-              </button>
-              <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2"><path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/></svg>
-                <span>Remove</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="px-3 pb-3">
-        <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-          <div class="text-sm font-semibold text-[#141414] mb-1">weight</div>
-          <div class="text-sm text-[#7B7E91]">
-            <div class="truncate">1x</div>
-            <div class="truncate">100 %1RM x 1</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Case 2: Long Title (truncated with tooltip) -->
-  <div>
-    <h3 class="text-sm font-medium mb-3 text-[#7B7E91]">Case 2: Long Title (hover to see tooltip)</h3>
-    <div class="item-in-calendar w-full max-w-[416px] bg-white rounded-lg shadow-sm border border-gray-200 hover:border-[#184EFF] transition-colors cursor-pointer">
-      <div class="flex items-center justify-between px-3 py-2 gap-2">
-        <div class="title-wrapper relative flex-1 min-w-0">
-          <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="Title long text that should be truncated when it exceeds the available space">Title long text that should be truncated when it exceeds the available space</span>
-          <div class="title-tooltip show-tooltip">Title long text that should be truncated when it exceeds the available space</div>
-        </div>
-        <div class="flex items-center gap-1 flex-shrink-0">
-          <input type="checkbox" class="custom-checkbox" aria-label="Select item">
-          <div class="more-options-wrapper relative">
-            <button class="more-options-btn p-1.5 hover:bg-[#F5F7F9] rounded transition-colors" aria-haspopup="true" aria-expanded="false">
-              <svg class="w-4 h-4 text-gray-500 hover:text-[#184EFF] transition-colors" viewBox="0 0 16 16" fill="currentColor">
-                <circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/>
-              </svg>
-            </button>
-            <span class="more-options-tooltip-inline">More options</span>
-            <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-              <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>Edit</span>
-              </button>
-              <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF"><path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/><path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/></svg>
-                <span>Copy</span>
-              </button>
-              <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2"><path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/></svg>
-                <span>Remove</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="px-3 pb-3">
-        <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-          <div class="text-sm font-semibold text-[#141414] mb-1">Description heading</div>
-          <div class="text-sm text-[#7B7E91]">
-            <div class="truncate">This is a very long description text that will be truncated</div>
-            <div class="truncate">More content here that also gets truncated if too long</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Responsive Test: Different widths -->
-  <div>
-    <h3 class="text-sm font-medium mb-3 text-[#7B7E91]">Responsive Test (resize browser)</h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- Card 1 -->
-      <div class="item-in-calendar w-full bg-white rounded-lg shadow-sm border border-gray-200 hover:border-[#184EFF] transition-colors cursor-pointer">
-        <div class="flex items-center justify-between px-3 py-2 gap-2">
-          <div class="title-wrapper relative flex-1 min-w-0">
-            <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="Warm-up Exercise">Warm-up Exercise</span>
-            <div class="title-tooltip show-tooltip">Warm-up Exercise</div>
-          </div>
-          <div class="flex items-center gap-1 flex-shrink-0">
-            <input type="checkbox" class="custom-checkbox" aria-label="Select item">
-            <div class="more-options-wrapper relative">
-              <button class="more-options-btn p-1.5 hover:bg-[#F5F7F9] rounded transition-colors" aria-haspopup="true" aria-expanded="false">
-                <svg class="w-4 h-4 text-gray-500 hover:text-[#184EFF]" viewBox="0 0 16 16" fill="currentColor">
-                  <circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/>
-                </svg>
-              </button>
-              <span class="more-options-tooltip-inline">More options</span>
-              <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <span>Edit</span>
-                </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                  <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF"><path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/><path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/></svg>
-                  <span>Copy</span>
-                </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                  <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2"><path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/></svg>
-                  <span>Remove</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="px-3 pb-3">
-          <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-            <div class="text-sm font-semibold text-[#141414] mb-1">Duration</div>
-            <div class="text-sm text-[#7B7E91]">
-              <div class="truncate">10 minutes</div>
-              <div class="truncate">Light cardio and stretching</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Card 2 (checked) -->
-      <div class="item-in-calendar w-full bg-white rounded-lg shadow-sm border border-gray-200 hover:border-[#184EFF] transition-colors cursor-pointer">
-        <div class="flex items-center justify-between px-3 py-2 gap-2">
-          <div class="title-wrapper relative flex-1 min-w-0">
-            <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="Main Set - Bench Press Heavy">Main Set - Bench Press Heavy</span>
-            <div class="title-tooltip show-tooltip">Main Set - Bench Press Heavy</div>
-          </div>
-          <div class="flex items-center gap-1 flex-shrink-0">
-            <input type="checkbox" class="custom-checkbox" checked aria-label="Select item">
-            <div class="more-options-wrapper relative">
-              <button class="more-options-btn p-1.5 hover:bg-[#F5F7F9] rounded transition-colors" aria-haspopup="true" aria-expanded="false">
-                <svg class="w-4 h-4 text-gray-500 hover:text-[#184EFF]" viewBox="0 0 16 16" fill="currentColor">
-                  <circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/>
-                </svg>
-              </button>
-              <span class="more-options-tooltip-inline">More options</span>
-              <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <span>Edit</span>
-                </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                  <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF"><path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/><path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/></svg>
-                  <span>Copy</span>
-                </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                  <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2"><path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/></svg>
-                  <span>Remove</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="px-3 pb-3">
-          <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-            <div class="text-sm font-semibold text-[#141414] mb-1">Reps</div>
-            <div class="text-sm text-[#7B7E91]">
-              <div class="truncate">3 sets x 8-12 reps</div>
-              <div class="truncate">85% 1RM with 2min rest</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Card 3 -->
-      <div class="item-in-calendar w-full bg-white rounded-lg shadow-sm border border-gray-200 hover:border-[#184EFF] transition-colors cursor-pointer">
-        <div class="flex items-center justify-between px-3 py-2 gap-2">
-          <div class="title-wrapper relative flex-1 min-w-0">
-            <span class="item-title text-sm font-medium text-[#184EFF] truncate block" data-full-title="Cool Down">Cool Down</span>
-            <div class="title-tooltip">Cool Down</div>
-          </div>
-          <div class="flex items-center gap-1 flex-shrink-0">
-            <input type="checkbox" class="custom-checkbox" aria-label="Select item">
-            <div class="more-options-wrapper relative">
-              <button class="more-options-btn p-1.5 hover:bg-[#F5F7F9] rounded transition-colors" aria-haspopup="true" aria-expanded="false">
-                <svg class="w-4 h-4 text-gray-500 hover:text-[#184EFF]" viewBox="0 0 16 16" fill="currentColor">
-                  <circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/>
-                </svg>
-              </button>
-              <span class="more-options-tooltip-inline">More options</span>
-              <div class="more-options-dropdown absolute top-full right-0 mt-2 bg-[#1F2937] rounded-lg shadow-xl min-w-[200px] py-1 opacity-0 invisible -translate-y-2 transition-all z-50">
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2l4 4L7 17H3v-4L14 2zM3 22h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <span>Edit</span>
-                </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                  <svg class="w-4 h-4" viewBox="0 0 14 14" fill="#FFF"><path d="M9.521 2.667H1.428C.64 2.667 0 3.307 0 4.095v8.093c0 .789.64 1.428 1.428 1.428h8.093c.789 0 1.428-.64 1.428-1.428V4.095c0-.789-.64-1.428-1.428-1.428zm.476 9.52a.476.476 0 01-.476.477H1.428a.476.476 0 01-.476-.476V4.095c0-.263.213-.476.476-.476h8.093c.263 0 .476.213.476.476v8.093z"/><path d="M11.997 0H3.428C2.64 0 2 .64 2 1.428a.476.476 0 10.952 0c0-.263.213-.476.476-.476h8.57c.262 0 .475.213.475.476v8.57a.476.476 0 01-.476.475.476.476 0 100 .952c.789 0 1.428-.639 1.428-1.428V1.428C13.425.64 12.786 0 11.997 0z"/></svg>
-                  <span>Copy</span>
-                </button>
-                <button class="flex items-center gap-3 w-full px-4 py-2.5 text-white text-sm hover:bg-[#374151] transition-colors" role="menuitem">
-                  <svg class="w-4 h-4" viewBox="0 0 14 15" fill="#FFF" stroke="#FFF" stroke-width=".2"><path d="M12.613 2.935H9.815V2.48A1.48 1.48 0 008.335 1h-2.66a1.48 1.48 0 00-1.479 1.48v.455H1.398a.372.372 0 00-.373.374c0 .207.166.373.373.373h.675v8.77c0 1.101.896 1.997 1.996 1.997h5.873c1.1 0 1.996-.896 1.996-1.996V3.682h.675a.372.372 0 00.373-.373.372.372 0 00-.373-.374zm-7.67-.456c0-.403.329-.732.733-.732h2.66c.403 0 .732.329.732.732v.456H4.943V2.48zm6.249 9.974c0 .688-.562 1.25-1.25 1.25H4.069c-.688 0-1.25-.562-1.25-1.25V3.682h8.375v8.77h-.002z"/></svg>
-                  <span>Remove</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="px-3 pb-3">
-          <div class="p-2 rounded-md shadow-sm bg-white border border-gray-100">
-            <div class="text-sm font-semibold text-[#141414] mb-1">Stretching</div>
-            <div class="text-sm text-[#7B7E91]">
-              <div class="truncate">5 minutes</div>
-              <div class="truncate">Full body stretch routine</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div>
 ```
 
 ## JavaScript
@@ -1138,27 +783,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 ```
 
-## Specifications
-
-| Property | Before | After |
-|----------|--------|-------|
-| Max Width | 320px | 416px (x1.3) |
-| Header Padding | `px-4 py-3` | `px-3 py-2` |
-| Title Color | `#141414` | `#184EFF` |
-| Title Overflow | None | `truncate` + tooltip |
-| Divider | Yes | Removed |
-| Blue Left Border | Yes | Removed |
-| Content Frame | None | `p-2 shadow-sm border` |
-| Description Overflow | None | `truncate` (no tooltip) |
-
-## Responsive Behavior
-
-| Breakpoint | Columns | Card Width |
-|------------|---------|------------|
-| Mobile (< 640px) | 1 | 100% |
-| Tablet (640px+) | 2 | 50% |
-| Desktop (1024px+) | 3 | 33% |
-
 ## Accessibility
 
 - Title tooltip only shows when text is truncated
@@ -1167,9 +791,3 @@ document.addEventListener('DOMContentLoaded', function() {
 - Keyboard navigation supported
 - Color contrast meets WCAG AA
 
-## Related Components
-
-- [MoreOptionsHorizontal](./MoreOptionsHorizontal.md) - Three-dot menu pattern
-- [NumberBadge](./NumberBadge.md) - Day indicator badge
-- [Calendar](./Calendar.md) - Parent calendar component
-- [Checkbox](./Checkbox.md) - Checkbox component

@@ -20,13 +20,6 @@ A hierarchical navigation sidebar with main sections and sub-sections. Features:
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
-**Google Fonts Import:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-```
-
 ## Usage
 Use for main navigation in content management systems. Supports hierarchical structure with main sections and sub-sections. Clicking items displays wireframe placeholder instead of navigating to new pages. Collapses when triggered by external hamburger button.
 
@@ -38,9 +31,6 @@ Use for main navigation in content management systems. Supports hierarchical str
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LeftSidebar Demo</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -234,7 +224,7 @@ body {
 .sidebar-link {
   display: block;
   padding: 10px 16px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--color-text-secondary);
   text-decoration: none;
@@ -270,7 +260,7 @@ body {
 .sidebar-sublink {
   display: block;
   padding: 8px 16px 8px 36px; /* Indented only, no connector lines */
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--color-text-secondary);
   text-decoration: none;
@@ -412,47 +402,6 @@ document.addEventListener('DOMContentLoaded', function() {
 | Hover | Mouse over | Gray bg #F5F7F9, shadow | `.sidebar-link:hover` |
 | Active | Clicked | White bg, border, shadow | `.sidebar-link.active` |
 | Collapsed | External trigger | Hidden (translateX -240px) | `.sidebar.collapsed` |
-
-## Props/Variants
-
-| Variant | Class | Description |
-|---------|-------|-------------|
-| Main item | `.sidebar-link` | Top-level navigation item |
-| Sub item | `.sidebar-sublink` | Indented child item (36px left padding, NO connector lines) |
-| Active | `.active` | Selected item indicator (white bg + border + shadow) |
-| Collapsed | `.sidebar.collapsed` | Hidden state |
-
-## Menu Structure
-
-### Main Sections (12 items):
-1. **Dashboard** - Single item
-2. **Clients** - Has 2 sub-sections
-   - Active Clients
-   - Archived Clients
-3. **Programs** - Has 2 sub-sections
-   - Templates
-   - Active Programs
-4. **Exercises** - Has 2 sub-sections
-   - Exercise Library
-   - Custom Exercises
-5. **Workouts** - Single item
-6. **Nutrition** - Has 3 sub-sections (Recipes is active by default)
-   - Meal Plans
-   - Recipes
-   - Ingredients
-7. **Tasks** - Single item
-8. **Forms & Questionnaires** - Single item
-9. **Reports** - Single item
-10. **Metric Groups** - Single item
-11. **Knowledge Base (FAQ)** - Single item
-12. **Settings** - Single item
-
-## Click Behavior
-
-- **NO page navigation** - Clicking any link prevents default navigation
-- **Shows wireframe** - Displays `[Section Name]` in placeholder on right side
-- **Active state** - Clicked item gets active styling (white bg, border, shadow)
-- **Previous active cleared** - Only one item can be active at a time
 
 ## Accessibility
 - Semantic HTML with `<nav>`, `<ul>`, `<li>` structure

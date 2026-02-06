@@ -102,46 +102,9 @@ A toggle switch component for binary on/off states. Used for settings, preferenc
 }
 
 .toggle-label-text {
-  font-size: 14px;
+  font-size: 13px;
   color: #374151;
 }
-```
-
-## Tailwind CSS
-
-### OFF State
-```html
-<button type="button" role="switch" aria-checked="false"
-  class="relative w-11 h-6 bg-gray-300 rounded-full cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#184EFF] focus:ring-offset-2">
-  <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"></span>
-</button>
-```
-
-### ON State
-```html
-<button type="button" role="switch" aria-checked="true"
-  class="relative w-11 h-6 bg-[#184EFF] rounded-full cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#184EFF] focus:ring-offset-2">
-  <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 translate-x-5"></span>
-</button>
-```
-
-### With Label
-```html
-<label class="flex items-center gap-3 cursor-pointer">
-  <span class="text-sm text-gray-700">Enable notifications</span>
-  <button type="button" role="switch" aria-checked="false"
-    class="relative w-11 h-6 bg-gray-300 rounded-full cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#184EFF] focus:ring-offset-2">
-    <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"></span>
-  </button>
-</label>
-```
-
-### Disabled State
-```html
-<button type="button" role="switch" aria-checked="false" disabled
-  class="relative w-11 h-6 bg-gray-300 rounded-full cursor-not-allowed opacity-50 transition-colors duration-200">
-  <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"></span>
-</button>
 ```
 
 ## JavaScript
@@ -178,20 +141,6 @@ function initToggle(toggleButton) {
 document.querySelectorAll('[role="switch"]').forEach(initToggle);
 ```
 
-## Specifications
-
-| Property | Value |
-|----------|-------|
-| Width | 44px (w-11) |
-| Height | 24px (h-6) |
-| Circle Size | 20px (w-5 h-5) |
-| Border Radius | Full (rounded-full) |
-| OFF Track Color | #D1D5DB (gray-300) |
-| ON Track Color | #184EFF (primary blue) |
-| Circle Color | #FFFFFF (white) |
-| Transition | 200ms ease-in-out |
-| Focus Ring | 2px #184EFF |
-
 ## Accessibility
 
 - Uses `role="switch"` for screen readers
@@ -200,7 +149,3 @@ document.querySelectorAll('[role="switch"]').forEach(initToggle);
 - Focus ring visible for keyboard navigation
 - Disabled state with `opacity-50` and `cursor-not-allowed`
 
-## Related Components
-
-- [Checkbox](./Checkbox.md) - For multiple selections
-- [Radio](./Radio.md) - For single selection from options

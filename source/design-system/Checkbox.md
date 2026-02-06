@@ -1,9 +1,9 @@
 ---
 name: Checkbox
 category: forms
-created: 2026-02-05T00:00:00+07:00
-updated: 2026-02-05T15:30:00+07:00
-status: draft
+created: 2026-02-04T17:00:00.000Z
+updated: 2026-02-05T08:30:00.000Z
+status: approved
 ---
 
 # Checkbox
@@ -30,11 +30,6 @@ A native checkbox component styled to match the design system. Uses `<input type
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkbox Component</title>
-
-  <!-- Google Fonts - Open Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -169,25 +164,25 @@ A native checkbox component styled to match the design system. Uses `<input type
 
     <!-- With Labels -->
     <div class="mt-8">
-      <h3 class="text-sm font-medium mb-4 text-[#141414]">With Labels</h3>
+      <h3 class="text-[13px] font-medium mb-4 text-[#141414]">With Labels</h3>
       <div class="space-y-3">
 
         <!-- Unchecked with Label -->
         <label class="flex items-center gap-3 cursor-pointer">
           <input type="checkbox" class="custom-checkbox">
-          <span class="text-sm text-[#141414]">Accept terms and conditions</span>
+          <span class="text-[13px] text-[#141414]">Accept terms and conditions</span>
         </label>
 
         <!-- Checked with Label -->
         <label class="flex items-center gap-3 cursor-pointer">
           <input type="checkbox" class="custom-checkbox" checked>
-          <span class="text-sm text-[#141414]">Subscribe to newsletter</span>
+          <span class="text-[13px] text-[#141414]">Subscribe to newsletter</span>
         </label>
 
         <!-- Disabled with Label -->
         <label class="flex items-center gap-3 cursor-not-allowed opacity-50">
           <input type="checkbox" class="custom-checkbox" disabled>
-          <span class="text-sm text-[#141414]">Premium feature (upgrade required)</span>
+          <span class="text-[13px] text-[#141414]">Premium feature (upgrade required)</span>
         </label>
 
       </div>
@@ -195,30 +190,30 @@ A native checkbox component styled to match the design system. Uses `<input type
 
     <!-- Interactive Demo - Select All Pattern (like TableWithList) -->
     <div class="mt-8">
-      <h3 class="text-sm font-medium mb-4 text-[#141414]">Interactive Demo - Select All Pattern</h3>
+      <h3 class="text-[13px] font-medium mb-4 text-[#141414]">Interactive Demo - Select All Pattern</h3>
       <div class="bg-white rounded-lg border border-gray-200 p-4">
 
         <!-- Select All Header -->
         <div class="flex items-center gap-3 pb-3 border-b border-gray-200 mb-3">
           <input type="checkbox" id="select-all" class="custom-checkbox" aria-label="Select all">
-          <span class="text-sm font-semibold text-[#141414]">Select All</span>
+          <span class="text-[13px] font-semibold text-[#141414]">Select All</span>
         </div>
 
         <!-- Options -->
         <div class="space-y-3">
           <label class="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" class="custom-checkbox item-checkbox">
-            <span class="text-sm text-[#141414]">Option 1</span>
+            <span class="text-[13px] text-[#141414]">Option 1</span>
           </label>
 
           <label class="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" class="custom-checkbox item-checkbox">
-            <span class="text-sm text-[#141414]">Option 2</span>
+            <span class="text-[13px] text-[#141414]">Option 2</span>
           </label>
 
           <label class="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" class="custom-checkbox item-checkbox">
-            <span class="text-sm text-[#141414]">Option 3</span>
+            <span class="text-[13px] text-[#141414]">Option 3</span>
           </label>
         </div>
 
@@ -349,56 +344,6 @@ A native checkbox component styled to match the design system. Uses `<input type
 }
 ```
 
-## Tailwind CSS
-
-Note: Native checkbox requires custom CSS for styling. Use the `.custom-checkbox` class from the CSS section above.
-
-### Basic Checkbox
-```html
-<input type="checkbox" class="custom-checkbox" aria-label="Checkbox">
-```
-
-### Checked State
-```html
-<input type="checkbox" class="custom-checkbox" checked aria-label="Checked checkbox">
-```
-
-### Disabled State
-```html
-<input type="checkbox" class="custom-checkbox" disabled aria-label="Disabled checkbox">
-```
-
-### Disabled Checked
-```html
-<input type="checkbox" class="custom-checkbox" checked disabled aria-label="Disabled checked checkbox">
-```
-
-### With Label
-```html
-<label class="flex items-center gap-3 cursor-pointer">
-  <input type="checkbox" class="custom-checkbox">
-  <span class="text-sm text-[#141414]">Label text</span>
-</label>
-```
-
-### Select All Pattern (like TableWithList)
-```html
-<div class="bg-white rounded-lg border border-gray-200 p-4">
-  <!-- Select All Header -->
-  <div class="flex items-center gap-3 pb-3 border-b border-gray-200 mb-3">
-    <input type="checkbox" id="select-all" class="custom-checkbox" aria-label="Select all">
-    <span class="text-sm font-semibold text-[#141414]">Select All</span>
-  </div>
-  <!-- Options -->
-  <div class="space-y-3">
-    <label class="flex items-center gap-3 cursor-pointer">
-      <input type="checkbox" class="custom-checkbox item-checkbox">
-      <span class="text-sm text-[#141414]">Option 1</span>
-    </label>
-  </div>
-</div>
-```
-
 ## JavaScript
 
 ```javascript
@@ -437,26 +382,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 ```
 
-## Specifications
-
-| Property | Value |
-|----------|-------|
-| Size | 16px × 16px |
-| Border Radius | 4px |
-| Border Width | 1px |
-| Border Color (default) | `#D1D5DB` |
-| Border Color (hover) | `#184EFF` |
-| Border Color (checked) | `#184EFF` |
-| Background (unchecked) | `#FFFFFF` |
-| Background (checked) | `#184EFF` |
-| Background (indeterminate) | `#184EFF` |
-| Background (disabled) | `#F3F4F6` |
-| Checkmark | CSS `::after` pseudo-element |
-| Checkmark Color | `#FFFFFF` |
-| Focus Ring | `0 0 0 2px rgba(24, 78, 255, 0.2)` |
-| Disabled Opacity | 50% |
-| Transition | 150ms ease |
-
 ## Accessibility
 
 - Uses native `<input type="checkbox">` for full browser support
@@ -466,49 +391,6 @@ document.addEventListener('DOMContentLoaded', function() {
 - Label association via wrapping `<label>` element or `aria-label`
 - Indeterminate state for partial selection (screen reader announced)
 - Color contrast meets WCAG AA standards
-
-## Usage Examples
-
-### Form with Multiple Checkboxes
-```html
-<form class="space-y-3">
-  <label class="flex items-center gap-3 cursor-pointer">
-    <input type="checkbox" class="custom-checkbox" name="email">
-    <span class="text-sm text-[#141414]">Email notifications</span>
-  </label>
-
-  <label class="flex items-center gap-3 cursor-pointer">
-    <input type="checkbox" class="custom-checkbox" name="sms" checked>
-    <span class="text-sm text-[#141414]">SMS notifications</span>
-  </label>
-
-  <label class="flex items-center gap-3 cursor-pointer">
-    <input type="checkbox" class="custom-checkbox" name="push">
-    <span class="text-sm text-[#141414]">Push notifications</span>
-  </label>
-</form>
-```
-
-### Table Header Checkbox (like TableWithList)
-```html
-<th class="th-thumbnail">
-  <input type="checkbox" id="select-all-checkbox" class="custom-checkbox" aria-label="Select all">
-</th>
-```
-
-### Setting Indeterminate State
-```javascript
-// Indeterminate state must be set via JavaScript
-const checkbox = document.getElementById('select-all');
-checkbox.indeterminate = true;
-```
-
-## Related Components
-
-- [Toggle](./Toggle.md) - For binary on/off settings
-- [Radio](./Radio.md) - For single selection from options
-- [ItemInCalendar](./ItemInCalendar.md) - Uses checkbox in header
-- [TableWithList](./TableWithList.md) - Uses this checkbox pattern in header
 
 ## Notes
 

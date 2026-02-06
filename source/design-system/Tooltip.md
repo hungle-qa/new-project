@@ -13,13 +13,6 @@ A tooltip component that displays helpful text above a trigger element. Features
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
-**Google Fonts Import:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-```
-
 ## Usage
 Use tooltips to provide contextual information or labels for buttons, icons, or interactive elements. Appears on hover and positioned above the trigger element.
 
@@ -126,31 +119,6 @@ Use tooltips to provide contextual information or labels for buttons, icons, or 
 }
 ```
 
-## Tailwind CSS
-```html
-<!-- Tooltip with Tailwind -->
-<div class="relative inline-block group font-['Open_Sans']">
-  <!-- Trigger Button -->
-  <button
-    class="bg-white border border-gray-200 rounded-md px-3 py-2 hover:bg-[#F5F7F9] transition-colors"
-    aria-describedby="tooltip-tailwind"
-  >
-    <span class="text-[#141414]">⋯</span>
-  </button>
-
-  <!-- Tooltip -->
-  <div
-    id="tooltip-tailwind"
-    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-[#1F2937] text-white text-xs font-medium rounded-md whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none z-[1000]"
-    role="tooltip"
-  >
-    More options
-    <!-- Arrow pointing DOWN -->
-    <div class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#1F2937]"></div>
-  </div>
-</div>
-```
-
 ## JavaScript
 ```javascript
 // Tooltip - Show/Hide on Hover (if not using CSS :hover)
@@ -196,23 +164,6 @@ document.addEventListener('DOMContentLoaded', function() {
 |-------|---------|----------------|-------------|
 | Hidden | Default | Invisible, opacity 0 | `opacity: 0; visibility: hidden;` |
 | Visible | Hover/Focus | Visible, opacity 1 | `opacity: 1; visibility: visible;` |
-
-## Positioning Options
-
-| Position | CSS Modification |
-|----------|------------------|
-| Above (default) | `bottom: calc(100% + 8px);` |
-| Below | `top: calc(100% + 8px);` (flip arrow direction) |
-| Left | `right: calc(100% + 8px); top: 50%; transform: translateY(-50%);` |
-| Right | `left: calc(100% + 8px); top: 50%; transform: translateY(-50%);` |
-
-## Props/Variants
-
-| Variant | Description | Classes |
-|---------|-------------|---------|
-| default | Dark background, white text | `bg-[#1F2937] text-white` |
-| above | Positioned above trigger (default) | `bottom-full mb-2` |
-| arrow-down | Arrow points down to trigger | `border-t-[#1F2937]` |
 
 ## Accessibility
 - Uses `role="tooltip"` for screen readers

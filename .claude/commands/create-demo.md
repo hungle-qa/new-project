@@ -89,9 +89,13 @@ Create folder, scout design system, build pages.
 
 **COMPLEX tasks:**
 ```
-→ demo-folder-creator → scout → planner → designer → implementer → write-spec
+→ demo-folder-creator → scout → planner → designer → implementer
 ```
 Full workflow per `.claude/workflows/create-demo-workflow.md`.
+
+---
+
+**If `$ARGUMENTS` is empty:** Ask user for demo name before proceeding.
 
 ---
 

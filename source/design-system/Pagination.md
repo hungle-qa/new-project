@@ -18,13 +18,6 @@ A simple pagination component with previous/next navigation and current range di
 
 **Font:** Open Sans (`font-family: 'Open Sans', sans-serif`)
 
-**Google Fonts Import:**
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-```
-
 **Structure:**
 ```
 ┌─────────────────────────────────┐
@@ -97,7 +90,7 @@ Use at the bottom of tables or lists to navigate through paginated data. Typical
 }
 
 .pagination-text {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--color-text-primary);
   min-width: 100px;
@@ -197,22 +190,6 @@ document.addEventListener('DOMContentLoaded', function() {
 | Previous disabled | At first page | Previous button grayed out | `.pagination-btn:disabled` |
 | Next disabled | At last page | Next button grayed out | `.pagination-btn:disabled` |
 | Button hover | Mouse over button | Gray background | `.pagination-btn:hover` |
-
-## Props/Variants
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `currentPage` | Number | 1 | Current active page |
-| `itemsPerPage` | Number | 20 | Items displayed per page |
-| `totalItems` | Number | 42 | Total number of items in dataset |
-
-## Integration
-
-This component works with:
-- **TableWithList.md**: Place below table for navigation
-- **MainPageWithList.md**: Embedded in footer section
-- Emits `pageChange` custom event with page details
-- Provides public API: `goToPage(page)` and `setTotalItems(total)`
 
 ## Accessibility
 - ARIA labels on navigation buttons

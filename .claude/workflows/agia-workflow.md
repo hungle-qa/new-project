@@ -8,6 +8,39 @@
 
 ---
 
+## Operation Data Flow
+
+```
+[User Request: /agent-audit {operation} {agent-name}]
+      ↓
+  ┌──────────────────┐
+  │ Parse Arguments  │
+  └──────────────────┘
+  📥 "<operation> <agent-name>"
+  ⚙️ Extract operation + agent-name
+  📤 Validated params
+      ↓
+  ┌──────────────────┐
+  │ Validate Agent   │
+  └──────────────────┘
+  📥 agent-name
+  ⚙️ Check .claude/agents/{name}.md exists
+  📤 Agent file path OR error
+      ↓
+  ┌──────────────────────────────────────────────────────────┐
+  │                    Route by Operation                     │
+  ├──────────┬───────────┬──────────────┬───────────────────┤
+  │  AUDIT   │  UPDATE   │    TEST      │    OPTIMIZE       │
+  ├──────────┼───────────┼──────────────┼───────────────────┤
+  │📥 Agent  │📥 Agent   │📥 Agent file │📥 Agent file      │
+  │⚙️ Analyze │⚙️ Refactor │⚙️ Run 5 tests │⚙️ Reduce tokens    │
+  │📤 Report │📤 Updated │📤 Test report│📤 Optimized file  │
+  │  (console)│   file    │   (console)  │   (30-50% smaller)│
+  └──────────┴───────────┴──────────────┴───────────────────┘
+```
+
+---
+
 ## Operation Router
 
 ### Step 1: Parse Arguments

@@ -2,6 +2,37 @@
 
 **Purpose:** Build demo projects in `source/demo/{project-name}/`.
 
+---
+
+## Agent Data Flow
+
+```
+[User Request: /create-demo {name}]
+      ↓
+  ┌───────────────────┐
+  │ demo-folder-creator│
+  └───────────────────┘
+  📥 project_name (kebab-case)
+  ⚙️ Validate → Create folder
+  📤 source/demo/{name}/README.md
+      ↓
+  ┌─────────┐   file list   ┌─────────┐   plan      ┌──────────┐
+  │  scout  │ ────────────→ │ planner │ ──────────→ │ designer │
+  └─────────┘               └─────────┘             └──────────┘
+  📥 demo + design-system   📥 Scout findings       📥 Plan
+  ⚙️ Find components        ⚙️ Plan pages           ⚙️ Compose UI
+  📤 Available components   📤 Page structure       📤 Component selection
+      ↓
+  ┌─────────────┐               ┌────────────┐
+  │ implementer │ ────────────→ │ write-spec │
+  └─────────────┘               └────────────┘
+  📥 Plan + Designer            📥 Demo project path
+  ⚙️ Build HTML pages           ⚙️ Generate spec doc
+  📤 pages/*.html               📤 spec/{name}.md
+```
+
+---
+
 ## CRITICAL RULES
 
 **ONLY create/modify files in:** `source/demo/{project-name}/`

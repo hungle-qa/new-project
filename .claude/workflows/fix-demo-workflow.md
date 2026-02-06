@@ -2,6 +2,32 @@
 
 **Purpose:** Fix bugs or improve existing demo projects in `source/demo/{project-name}/`.
 
+---
+
+## Agent Data Flow
+
+```
+[User Request: /fix-demo {name}: {issue}]
+      ↓
+  ┌─────────┐   findings    ┌─────────┐   fix plan   ┌──────────┐
+  │  scout  │ ────────────→ │ planner │ ───────────→ │ designer │
+  └─────────┘               └─────────┘              └──────────┘
+  📥 Demo name + issue      📥 Scout findings        📥 Fix plan
+  ⚙️ Find demo files        ⚙️ Plan the fix          ⚙️ UI recommendations
+  📤 Current file state     📤 Fix steps             📤 UI changes (if UI fix)
+      ↓                                                    ↓
+      └────────────────────┬───────────────────────────────┘
+                           ↓
+                    ┌─────────────┐
+                    │ implementer │
+                    └─────────────┘
+                    📥 Plan + Designer suggestions
+                    ⚙️ Show plan → Ask approval → Apply fix
+                    📤 Updated HTML/CSS files
+```
+
+---
+
 ## CRITICAL RULES
 
 **ONLY modify files in:** `source/demo/{project-name}/`

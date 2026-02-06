@@ -10,6 +10,14 @@ You are a Design System Image-to-Code Converter. Analyze MULTIPLE UI component i
 **Mode:** MULTI IMAGE (2+ images with states)
 **Actions:** CREATE (new component) or EDIT (update existing)
 
+## I/O Summary
+
+| Phase | Description |
+|-------|-------------|
+| **📥 INPUT** | 2+ images + pre-detected context from workflow: `{ mode, action, component_name, file_exists, image_count }` |
+| **⚙️ PROCESSING** | Read RULE.md → Catalog all images → Compare states → Consolidate → Show mockup → Ask approval |
+| **📤 OUTPUT** | `source/design-system/{ComponentName}.md` with ALL state modifiers (Phase 1: HTML+CSS → Phase 2: full docs) |
+
 ---
 
 ## ⚠️ IMAGE FIDELITY RULE (P0 - CRITICAL)
@@ -32,17 +40,31 @@ You are a Design System Image-to-Code Converter. Analyze MULTIPLE UI component i
 
 ---
 
-## Step 0: Detect Action Type (MANDATORY)
+## Step 0: Use Pre-Detected Context (OPTIMIZED)
 
-**Check if EDIT mode:**
-- Keywords: "edit", "update", "modify", "change" in prompt
-- Component name mentioned → Check if exists at `source/design-system/{ComponentName}.md`
+**Workflow passes pre-detected values to save tokens:**
 
-| Condition | Action |
-|-----------|--------|
-| File exists AND edit keywords | **EDIT** → Go to Step 0a |
-| File exists, no edit keywords | **ASK** user: "Component exists. Create new or edit?" |
-| File doesn't exist | **CREATE** → Skip to Step 0b |
+```
+Received from workflow:
+{
+  mode: "MULTI",
+  action: "CREATE" | "EDIT",
+  component_name: "{ComponentName}",
+  file_exists: true | false,
+  image_count: {number}
+}
+```
+
+**If workflow already detected action:**
+- `action = CREATE` → Skip to Step 0b
+- `action = EDIT` → Go to Step 0a
+
+**If action not provided (fallback):**
+- Check keywords: "edit", "update", "modify" → EDIT
+- Check file exists at `source/design-system/{ComponentName}.md`
+- File exists + edit keywords → EDIT
+- File exists + no keywords → ASK user
+- File doesn't exist → CREATE
 
 ### Step 0a: EDIT Mode - Read Existing (if editing)
 
@@ -52,11 +74,18 @@ Extract: Current HTML, CSS, Component States
 Store as: BEFORE_HTML, BEFORE_CSS, BEFORE_STATES
 ```
 
-### Step 0b: Read Shared Rules (MANDATORY)
+### Step 0b: Validate Shared Rules (MANDATORY)
 
-**FIRST, read the shared rules file:**
+**Read the shared rules file and validate:**
 ```
-.claude/workflows/import-design-by-image-rules.md
+Read: .claude/workflows/import-design-by-image-rules.md
+
+If read fails or file empty:
+  ERROR: "Shared rules file not found or empty. Cannot proceed."
+  STOP and report to user.
+
+If read succeeds:
+  Continue to Step 1.
 ```
 
 Contains: Icon detection, RULE.md compliance, output format, HTML/CSS rules.
@@ -258,19 +287,47 @@ Options:
 - "Cancel"
 ```
 
-### Step 8b: Update HTML Section ONLY
+### Step 8b: Create/Update HTML & CSS Sections
+
+**⚠️ CRITICAL: ALWAYS create BOTH `## HTML` AND `## CSS` sections to avoid parsing errors!**
 
 **CREATE mode:** Create minimal file with:
 - Frontmatter (status: draft)
-- `## HTML` section only
+- `## HTML` section with html code block
+- `## CSS` section with css code block (minimal BEM structure)
 
-**EDIT mode:** Edit ONLY the `## HTML` section:
-- Use Edit tool to replace HTML code block
+**Minimal file structure (REQUIRED):**
+```markdown
+---
+name: {ComponentName}
+category: {category}
+status: draft
+created: {timestamp}
+updated: {timestamp}
+---
+
+# {ComponentName}
+
+## HTML
+\`\`\`html
+{your HTML with ALL state modifiers}
+\`\`\`
+
+## CSS
+\`\`\`css
+.{component-name} {
+  font-family: 'Open Sans', sans-serif;
+}
+\`\`\`
+```
+
+**EDIT mode:** Edit BOTH `## HTML` and `## CSS` sections:
+- Use Edit tool to replace code blocks
 - DO NOT touch other sections yet
 
 **Tell user:**
 ```
-"HTML updated. Please test in the web app at: http://localhost:3000
+"Component updated with {count} states. Please test in the web app at: http://localhost:3000
 When ready, let me know to complete the full documentation."
 ```
 
@@ -323,18 +380,32 @@ Follow full format from shared rules (16 sections).
 
 ---
 
-## Pre-Creation Checklist
+## Pre-Creation Checklist (MANDATORY - VERIFY BEFORE WRITE)
 
-| Check | Requirement |
-|-------|-------------|
-| **0** | ⛔ User approved via AskUserQuestion |
-| 1 | `## HTML` exists |
-| 2 | `## HTML` immediately followed by ```html |
-| 3 | `## CSS` exists |
-| 4 | `## CSS` immediately followed by ```css |
-| 5 | `## Component States` section complete |
-| 6 | All images accounted for in states table |
-| 7 | Frontmatter complete |
+**⚠️ FILE WILL NOT WORK IN WEB APP IF ANY CHECK FAILS!**
+
+| # | Check | Requirement | Verify |
+|---|-------|-------------|--------|
+| **0** | User approved | ⛔ AskUserQuestion response = "Yes" | ⬜ |
+| **1** | `## HTML` exists | Section header exactly `## HTML` (not `## Preview`) | ⬜ |
+| **2** | HTML code block | `## HTML` immediately followed by ` ```html` on next line | ⬜ |
+| **3** | `## CSS` exists | Section header exactly `## CSS` | ⬜ |
+| **4** | CSS code block | `## CSS` immediately followed by ` ```css` on next line | ⬜ |
+| **5** | No sub-headers | Nothing between `## HTML`/`## CSS` and their code blocks | ⬜ |
+| **6** | States complete | `## Component States` has all {count} images | ⬜ |
+| **7** | Frontmatter | Has name, category, status, created, updated | ⬜ |
+
+**WRONG (causes "No HTML/CSS found" error):**
+```markdown
+## Preview           ← WRONG! Must be "## HTML"
+\`\`\`html
+```
+
+**CORRECT:**
+```markdown
+## HTML              ← CORRECT section name
+\`\`\`html
+```
 
 ---
 

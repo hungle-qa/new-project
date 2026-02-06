@@ -6,6 +6,33 @@
 
 **NEVER:** Update `.md` files directly. This workflow builds the app only.
 
+---
+
+## Agent Data Flow
+
+```
+[User Request]
+      ↓
+  ┌─────────┐   JSON file    ┌─────────┐   plan.md    ┌──────────┐
+  │  scout  │ ─────────────→ │ planner │ ───────────→ │ designer │
+  └─────────┘                └─────────┘              └──────────┘
+  📥 Task desc               📥 Scout JSON            📥 Plan + Scout
+  ⚙️ Search files            ⚙️ Create plan           ⚙️ Suggest UI
+  📤 .agent-output/          📤 plans/                📤 .agent-output/
+     scout-{ts}.json            {name}-plan.md           designer-{ts}.json
+                                      ↓
+                              [USER APPROVAL]
+                                      ↓
+                             ┌─────────────┐
+                             │ implementer │
+                             └─────────────┘
+                             📥 Plan + Scout + Designer
+                             ⚙️ Show plan → Ask approval → Write code
+                             📤 TypeScript files in client/src/, server/
+```
+
+---
+
 ## Scope
 
 - React components in `client/src/`

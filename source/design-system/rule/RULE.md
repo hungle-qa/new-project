@@ -37,7 +37,7 @@ font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 | Token | Value | Usage |
 |-------|-------|-------|
 | `--color-btn-action` | `#184EFF` | Primary/action button background |
-| `--color-btn-action-hover` | `#184EFFE6` | Primary button hover state (except X icon) |
+| `--color-btn-action-hover` | `#184EFFE6` | Hovering on the SAVE button with blue background |
 | `--color-btn-cancel` | `linear-gradient(0deg, #FFFFFF, #FFFFFF), linear-gradient(0deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05))` | Cancel/secondary button background |
 | `--color-btn-cancel-hover` | `#F5F7F9` | Cancel button hover state |
 
@@ -50,14 +50,15 @@ font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 |-------|-------|-------|------|
 | `--color-bg-combobox-hover` | `#F0F1FF` | Hover on the item on the combobox, dropdown | color |
 | `--color-border-textbox-hover` | `#184EFF` | border when hovering the textbox, search box, datebox... Always 1px. | color |
-| `--color-text-blue` | `#184EFF` | Hovering the button with text is black | color |
+| `--color-text-blue` | `#184EFF` | Hovering the text is black | color |
 | `--color-bg-buttonwhite-hover` | `#F0F1FF` | Hovering the button color is white | color |
 | `--color-text-secondary` | `#222222` | Left sidebar: Main section, Sub section; text in the item (list, dropdownlist) | color |
 | `--color-bg-red` | `#EA314A` | background for error or button destructive Action (toast, discard change button, delete button..) | color |
 | `--color-btn-action-hover-red` | `#EA314AE6` | Primary button destructive action hover state | color |
 | `--color-bg-gray` | `#F0F0F2` | Gray background | color |
 | `--color-text-gray` | `#7B7E91` | Gray text | color |
-| `--arrow-btn-hover` | `icon only` | Arrow buttons: hover changes icon to blue (#184EFF), NO background change | behavior |
+| `--arrow-btn-hover` | `icon only` | Arrow buttons: hover changes icon to blue (#184EFF), NO background change | text |
+| `--color-btn-add-hover` | `#1649ED` | Hovering on the CREATE/ADD button with blue background | color |
 
 ---
 
@@ -88,6 +89,8 @@ Include these variables in your component styles:
   --color-btn-action-hover-red: #EA314AE6;
   --color-bg-gray: #F0F0F2;
   --color-text-gray: #7B7E91;
+  --arrow-btn-hover: icon only;
+  --color-btn-add-hover: #1649ED;
 }
 ```
 
@@ -136,34 +139,6 @@ Include these variables in your component styles:
   Cancel
 </button>
 ```
-
-### Arrow Button (Navigation)
-
-Arrow buttons (prev/next navigation) should **ONLY** change icon color on hover - **NO background change**.
-
-```css
-.arrow-btn {
-  background: none;
-  border: none;
-  padding: 6px;
-}
-
-.arrow-btn:hover svg path {
-  stroke: #184EFF;
-}
-/* NO background-color change on hover */
-```
-
-**Tailwind:**
-```html
-<button class="group p-1.5 transition-all" aria-label="Previous">
-  <svg class="w-3.5 h-5" viewBox="0 0 7 12">
-    <path stroke="#728096" class="group-hover:stroke-[#184EFF] transition-colors" .../>
-  </svg>
-</button>
-```
-
-**DO NOT use:** `hover:bg-gray-100`, `hover:bg-[#F5F7F9]`, or any hover background on arrow buttons.
 
 ---
 

@@ -302,12 +302,9 @@ body {
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-  background-color: #D1D5DB;
+  background-color: #e1e1ea;
   border-radius: 3px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-  background-color: #9CA3AF;
+  cursor: pointer;
 }
 
 /* Content Area (Right Side) */
@@ -391,6 +388,16 @@ document.addEventListener('DOMContentLoaded', function() {
         contentArea?.classList.add('expanded');
       }
     }
+  });
+
+  // Pointer cursor on scrollbar hover
+  sidebar.addEventListener('mousemove', function(e) {
+    var rect = this.getBoundingClientRect();
+    var onScrollbar = this.scrollHeight > this.clientHeight && e.clientX >= rect.right - 8;
+    this.style.cursor = onScrollbar ? 'pointer' : '';
+  });
+  sidebar.addEventListener('mouseleave', function() {
+    this.style.cursor = '';
   });
 
   console.log('LeftSidebar: Initialized');

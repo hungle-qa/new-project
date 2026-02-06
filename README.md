@@ -139,17 +139,20 @@ Import source materials (independent of workflows):
 
 ### Import Design By Image (Mode Detection)
 
-The `/import-design-by-image` command auto-detects single vs multi-image mode:
+The `/import-design-by-image` command auto-detects mode via the unified `import-design` agent:
 
-| Mode | Detection | Agent |
-|------|-----------|-------|
-| SINGLE | 1 image attached | `import-design-by-image-single` |
-| MULTI | 2+ images (states) | `import-design-by-image-multi` |
+| Mode | Detection | Skill Loaded |
+|------|-----------|--------------|
+| VALIDATE | HTML/CSS code pasted | `skills/import-design/validate.md` |
+| SINGLE | 1 image attached | `skills/import-design/single.md` |
+| MULTI | 2+ images (states) | `skills/import-design/multi.md` |
+| UPDATE | No image + component name | `skills/import-design/update.md` |
 
 **Usage:**
 ```
 /import-design-by-image [attach 1 image]      → Single mode
 /import-design-by-image [attach 2+ images]    → Multi mode (states)
+/import-design-by-image update {Name}          → Update mode
 ```
 
 ---
@@ -241,16 +244,14 @@ BA kit_v1/
 ### Import Agents
 | Agent | Purpose |
 |-------|---------|
-| `import-design` | Import HTML/CSS components |
-| `import-design-by-image-single` | Convert single UI image to HTML/CSS |
-| `import-design-by-image-multi` | Convert multiple state images to HTML/CSS |
+| `import-design` | Unified import agent (validate code, single/multi image, update existing) |
 | `import-idea` | Import product ideas |
 | `import-spec-template` | Import spec templates |
 
 ### Meta Agents
 | Agent | Purpose |
 |-------|---------|
-| `agia` | Audit and improve agents and system files |
+| `agia` | Audit and improve agents and system files (skill-based: audit/update/test/optimize/create-skill) |
 | `doc-writer` | Create user-friendly documentation for end users |
 
 ---

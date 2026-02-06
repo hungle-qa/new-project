@@ -193,6 +193,34 @@ Use for selecting multiple clients or groups, such as assigning licenses, adding
   padding: 0;
   max-height: 280px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e1e1ea transparent;
+}
+
+.combobox-list::-webkit-scrollbar,
+#clientList::-webkit-scrollbar,
+#inputContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.combobox-list::-webkit-scrollbar-track,
+#clientList::-webkit-scrollbar-track,
+#inputContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.combobox-list::-webkit-scrollbar-thumb,
+#clientList::-webkit-scrollbar-thumb,
+#inputContainer::-webkit-scrollbar-thumb {
+  background-color: #e1e1ea;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#clientList,
+#inputContainer {
+  scrollbar-width: thin;
+  scrollbar-color: #e1e1ea transparent;
 }
 
 /* List Item */
@@ -572,6 +600,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     item.addEventListener('blur', function() {
       this.classList.remove('bg-[#F0F1FF]');
+    });
+  });
+
+  // Pointer cursor on scrollbar hover
+  [dropdown, inputContainer].forEach(function(el) {
+    if (!el) return;
+    el.addEventListener('mousemove', function(e) {
+      var rect = this.getBoundingClientRect();
+      var onScrollbar = this.scrollHeight > this.clientHeight && e.clientX >= rect.right - 8;
+      this.style.cursor = onScrollbar ? 'pointer' : '';
+    });
+    el.addEventListener('mouseleave', function() {
+      this.style.cursor = '';
     });
   });
 

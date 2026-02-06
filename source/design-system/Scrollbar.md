@@ -15,8 +15,14 @@ Apply to any scrollable container like dropdown lists, modal content, sidebars, 
 
 ## Tailwind CSS
 ```html
+<style>
+  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; border-radius: 3px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #e1e1ea; border-radius: 3px; }
+  .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #e1e1ea transparent; }
+</style>
 <!-- Container with custom scrollbar -->
-<div class="max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400">
+<div class="custom-scrollbar max-h-[300px] overflow-y-auto">
   <!-- Scrollable content here -->
   <div class="p-4">Content 1</div>
   <div class="p-4">Content 2</div>
@@ -47,38 +53,21 @@ Apply to any scrollable container like dropdown lists, modal content, sidebars, 
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #D1D5DB;
+  background-color: #e1e1ea;
   border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #9CA3AF;
 }
 
 /* Firefox */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #D1D5DB transparent;
-}
-
-/* Hide scrollbar until hover (optional) */
-.custom-scrollbar-hidden {
-  overflow-y: auto;
-}
-
-.custom-scrollbar-hidden::-webkit-scrollbar-thumb {
-  background-color: transparent;
-}
-
-.custom-scrollbar-hidden:hover::-webkit-scrollbar-thumb {
-  background-color: #D1D5DB;
+  scrollbar-color: #e1e1ea transparent;
 }
 ```
 
 ## Tailwind Plugin (if using tailwind-scrollbar)
 ```html
 <!-- Requires: npm install tailwind-scrollbar -->
-<div class="overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400">
+<div class="overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#e1e1ea]">
   <!-- Content -->
 </div>
 ```
@@ -90,7 +79,7 @@ Apply to any scrollable container like dropdown lists, modal content, sidebars, 
     max-height: 300px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #D1D5DB transparent;
+    scrollbar-color: #e1e1ea transparent;
   }
 
   .scroll-container::-webkit-scrollbar {
@@ -102,12 +91,8 @@ Apply to any scrollable container like dropdown lists, modal content, sidebars, 
   }
 
   .scroll-container::-webkit-scrollbar-thumb {
-    background-color: #D1D5DB;
+    background-color: #e1e1ea;
     border-radius: 3px;
-  }
-
-  .scroll-container::-webkit-scrollbar-thumb:hover {
-    background-color: #9CA3AF;
   }
 </style>
 
@@ -120,8 +105,7 @@ Apply to any scrollable container like dropdown lists, modal content, sidebars, 
 
 | State | Visual | CSS |
 |-------|--------|-----|
-| Default | Light gray thumb | `#D1D5DB` |
-| Hover | Darker gray thumb | `#9CA3AF` |
+| Default | Light gray thumb | `#e1e1ea` |
 | Track | Transparent | `transparent` |
 
 ## Specifications
@@ -130,8 +114,7 @@ Apply to any scrollable container like dropdown lists, modal content, sidebars, 
 |----------|-------|
 | Width | 6px |
 | Border radius | 3px |
-| Thumb color | `#D1D5DB` (gray-300) |
-| Thumb hover | `#9CA3AF` (gray-400) |
+| Thumb color | `#e1e1ea` |
 | Track color | transparent |
 
 ## Accessibility

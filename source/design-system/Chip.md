@@ -25,7 +25,7 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
 ## HTML
 ```html
 <!-- Multiple Chips in Container (Mixed: Groups + Clients) -->
-<div class="flex flex-wrap gap-1 p-2 border border-[#184EFF] rounded-md bg-white max-h-[84px] overflow-y-auto">
+<div class="chip-container flex flex-wrap gap-1 p-2 border border-[#184EFF] rounded-md bg-white max-h-[84px] overflow-y-auto">
   <!-- Group chips (blue background - same as client style) -->
   <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EBF3FF] rounded text-sm text-[#141414]">
     Marketing Team (12 members)
@@ -173,6 +173,22 @@ Use chips to display selected items in multi-select comboboxes, applied filters,
   background: white;
   max-height: 84px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e1e1ea transparent;
+}
+
+.chip-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chip-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chip-container::-webkit-scrollbar-thumb {
+  background-color: #e1e1ea;
+  border-radius: 3px;
+  cursor: pointer;
 }
 ```
 
@@ -194,6 +210,18 @@ document.addEventListener('DOMContentLoaded', function() {
           detail: { value }
         }));
       }
+    });
+  });
+
+  // Pointer cursor on scrollbar hover
+  document.querySelectorAll('.chip-container').forEach(function(el) {
+    el.addEventListener('mousemove', function(e) {
+      var rect = this.getBoundingClientRect();
+      var onScrollbar = this.scrollHeight > this.clientHeight && e.clientX >= rect.right - 8;
+      this.style.cursor = onScrollbar ? 'pointer' : '';
+    });
+    el.addEventListener('mouseleave', function() {
+      this.style.cursor = '';
     });
   });
 });

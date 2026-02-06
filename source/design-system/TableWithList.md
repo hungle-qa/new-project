@@ -406,12 +406,9 @@ Use in list/table views where data needs to be displayed with sorting, selection
 }
 
 .table-container::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
+  background: #e1e1ea;
   border-radius: 4px;
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
+  cursor: pointer;
 }
 
 /* Data Table */
@@ -750,6 +747,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Reorder DOM
     rowsArray.forEach(row => tableBody.appendChild(row));
   }
+
+  // Pointer cursor on scrollbar hover
+  tableContainer.addEventListener('mousemove', function(e) {
+    var rect = this.getBoundingClientRect();
+    var onScrollbar = this.scrollHeight > this.clientHeight && e.clientX >= rect.right - 8;
+    this.style.cursor = onScrollbar ? 'pointer' : '';
+  });
+  tableContainer.addEventListener('mouseleave', function() {
+    this.style.cursor = '';
+  });
 
   console.log('TableWithList: Initialized');
 });

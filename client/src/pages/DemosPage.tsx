@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Eye } from 'lucide-react'
+import { Eye, Trash2 } from 'lucide-react'
 import { Card } from '../components/Card'
 
 interface Demo {
@@ -16,9 +16,11 @@ export function DemosPage() {
   const [demos, setDemos] = useState<string[]>([])
   const [selected, setSelected] = useState<Demo | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const navigate = useNavigate()
 
-  useEffect(() => {
+  const loadDemos = () => {
     fetch('/api/demo')
       .then(res => res.json())
       .then(data => {
@@ -26,6 +28,10 @@ export function DemosPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadDemos()
   }, [])
 
   const handleSelect = async (name: string) => {
@@ -34,12 +40,76 @@ export function DemosPage() {
     setSelected(data)
   }
 
+  const handleDelete = async () => {
+    if (!selected) return
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/demo/${selected.name}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      loadDemos()
+      setSelected(null)
+      setIsDeleteConfirmOpen(false)
+    } catch (err) {
+      console.error('Delete failed:', err)
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   if (loading) {
     return <div className="text-center py-12">Loading...</div>
   }
 
   return (
     <div>
+      {/* Delete Confirmation Modal */}
+      {isDeleteConfirmOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+            onClick={() => setIsDeleteConfirmOpen(false)}
+          />
+          <div className="relative min-h-screen flex items-center justify-center p-4">
+            <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-red-100 rounded-full">
+                  <Trash2 className="w-5 h-5 text-red-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Delete Demo?</h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                This will permanently delete <strong>{selected?.name}</strong> and all its pages.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setIsDeleteConfirmOpen(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50"
+                >
+                  {deleting ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Demo Projects</h1>
         <span className="text-sm text-gray-500">{demos.length} demos</span>
@@ -81,6 +151,13 @@ export function DemosPage() {
                     </span>
                   </div>
                 </div>
+                <button
+                  onClick={() => setIsDeleteConfirmOpen(true)}
+                  className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete
+                </button>
               </div>
 
               {/* Pages */}

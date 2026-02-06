@@ -178,29 +178,70 @@ Then paste your HTML/CSS code.
 
 ### Import Design by Image (`/import-design-by-image`)
 
-**Purpose:** Convert UI component images to HTML/CSS code
+**Purpose:** Convert UI component images to HTML/CSS code OR update existing components
 
 **Usage:**
+
+**Create from image(s):**
 ```
 /import-design-by-image
 ```
-Then provide the image.
+Then provide single image or multiple images (for different states).
 
-**Process:**
-1. Analyzes image for colors, typography, spacing
+**Update existing component (no image needed):**
+```
+/import-design-by-image
+update {ComponentName} - {your change request}
+```
+
+**Modes:**
+- **Single Image**: One component state → Creates/edits component
+- **Multiple Images**: Different states (hover, disabled, etc.) → Consolidates into one component
+- **Update Only**: No image needed → Modifies existing component based on instructions
+
+**Process (with images):**
+1. Analyzes image(s) for colors, typography, spacing
 2. Asks for component name and category
 3. Generates HTML + CSS + Tailwind versions
-4. Asks confirmation before creating file
+4. Shows preview, asks confirmation
+5. Phase 1: Creates HTML only for testing
+6. Phase 2: Completes full documentation after approval
+
+**Process (update only):**
+1. Reads existing component
+2. Applies requested changes
+3. Shows BEFORE vs AFTER comparison
+4. Phase 1: Updates HTML only for testing
+5. Phase 2: Updates full documentation after approval
 
 **Output:** `source/design-system/{ComponentName}.md`
 
-**Analyzes:**
+**Analyzes (when using images):**
 - Colors (background, text, border)
 - Typography (size, weight)
 - Spacing (padding, margin)
 - Border (style, radius)
 - Shadow effects
-- States (hover, focus)
+- States (hover, focus, disabled)
+
+**Examples:**
+```
+# Create from single image
+/import-design-by-image
+[attach image]
+
+# Create from multiple state images
+/import-design-by-image
+[attach hover.png, disabled.png, active.png]
+
+# Update existing component
+/import-design-by-image
+update ButtonBlue - change background color to bg-blue-600
+
+# Update existing component
+/import-design-by-image
+update Tooltip - add shadow-lg on hover
+```
 
 ---
 
@@ -297,8 +338,7 @@ Then provide PDF file or Confluence URL.
 
 | Agent | Purpose | Output |
 |-------|---------|--------|
-| `import-design` | Validate HTML/CSS | `source/design-system/*.md` |
-| `import-design-by-image` | Image to HTML/CSS | `source/design-system/*.md` |
+| `import-design` | Unified import (validate code, single/multi image, update existing) | `source/design-system/*.md` |
 | `import-idea` | PDF/Confluence to idea | `source/product-idea/*.md` |
 | `import-spec-template` | PDF/Confluence to template | `source/spec-template/*.md` |
 
@@ -306,7 +346,7 @@ Then provide PDF file or Confluence URL.
 
 | Agent | Purpose | Output |
 |-------|---------|--------|
-| `agia` | Audit and improve agents/system files | Audit reports, refactored agents |
+| `agia` | Audit and improve agents/system files (skill-based: audit/update/test/optimize/create-skill) | Audit reports, refactored agents, skill files |
 | `doc-writer` | Create user-friendly documentation | User guides, how-to articles, quick references |
 
 ---
@@ -324,6 +364,7 @@ Then provide PDF file or Confluence URL.
 @agia audit {agent-name}
 @agia audit all system files
 @agia sync after adding {agent-name}
+@agia create-skill {agent-name}
 ```
 
 **Capabilities:**
@@ -335,6 +376,7 @@ Then provide PDF file or Confluence URL.
 | Check system file consistency | `@agia audit system files` |
 | Sync docs after agent change | `@agia sync after adding {name}` |
 | Full system audit | `@agia full audit` |
+| Split agent into skills | `@agia create-skill planner` |
 
 **Audit Output:**
 - Weakness identification with severity levels

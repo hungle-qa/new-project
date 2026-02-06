@@ -1,8 +1,8 @@
 # AGIA Workflow
 
-**Purpose:** Execute agent audit, update, test, and optimize operations.
+**Purpose:** Execute agent audit, update, test, optimize, and create-skill operations.
 
-**Agent:** `agia` (Agent Intelligence Architect)
+**Agent:** `agia` (Agent Intelligence Architect) — skill-based architecture
 
 **Command:** `/agent-audit <operation> <agent-name>`
 
@@ -27,17 +27,52 @@
   ⚙️ Check .claude/agents/{name}.md exists
   📤 Agent file path OR error
       ↓
-  ┌──────────────────────────────────────────────────────────┐
-  │                    Route by Operation                     │
-  ├──────────┬───────────┬──────────────┬───────────────────┤
-  │  AUDIT   │  UPDATE   │    TEST      │    OPTIMIZE       │
-  ├──────────┼───────────┼──────────────┼───────────────────┤
-  │📥 Agent  │📥 Agent   │📥 Agent file │📥 Agent file      │
-  │⚙️ Analyze │⚙️ Refactor │⚙️ Run 5 tests │⚙️ Reduce tokens    │
-  │📤 Report │📤 Updated │📤 Test report│📤 Optimized file  │
-  │  (console)│   file    │   (console)  │   (30-50% smaller)│
-  └──────────┴───────────┴──────────────┴───────────────────┘
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │                         Route by Operation                              │
+  │                  (Read matching skill file → Execute)                    │
+  ├──────────┬───────────┬──────────┬───────────────┬──────────────────────┤
+  │  AUDIT   │  UPDATE   │  TEST    │  OPTIMIZE     │  CREATE-SKILL        │
+  ├──────────┼───────────┼──────────┼───────────────┼──────────────────────┤
+  │📥 Agent  │📥 Agent   │📥 Agent  │📥 Agent file  │📥 Agent file         │
+  │⚙️ Analyze │⚙️ Refactor │⚙️ 5 tests│⚙️ Reduce tokens│⚙️ Split to skills     │
+  │📤 Report │📤 Updated │📤 Report │📤 Optimized   │📤 Skill files        │
+  │ (console)│   file    │(console) │  (30-50% less)│  + updated master    │
+  └──────────┴───────────┴──────────┴───────────────┴──────────────────────┘
 ```
+
+---
+
+## Agent Chain Registry
+
+**Source of truth for all workflow chains.** Used by AUDIT and UPDATE operations to validate agent chaining.
+
+### Known Chains
+
+| Workflow | Chain | File |
+|----------|-------|------|
+| Primary (full) | `scout → planner → designer → implementer` | `primary-workflow.md` |
+| Primary (medium) | `quick-scout → implementer` | `primary-workflow.md` |
+| Primary (simple) | `implementer` | `primary-workflow.md` |
+| Create Demo | `demo-folder-creator → scout → planner → designer → implementer → write-spec` | `create-demo-workflow.md` |
+| Fix Demo | `scout → planner → designer → implementer` | `fix-demo-workflow.md` |
+| Import Design (all modes) | `import-design` (skill-based: validate/single/multi/update) | `import-design-by-image-workflow.md` |
+| AGIA | `agia` (skill-based: audit/update/test/optimize/create-skill) | `agia-workflow.md` |
+
+### I/O Contracts Between Chained Agents
+
+| From Agent | To Agent | Output Format | Key Fields |
+|------------|----------|---------------|------------|
+| `scout` | `planner` | JSON `.agent-output/scout-{ts}.json` | `task`, `scope`, `files`, `patterns_found` |
+| `planner` | `designer` | MD `plans/{slug}-plan.md` | frontmatter: `title`, `status`, `module`, `target`, `scout_output` |
+| `designer` | `implementer` | JSON `.agent-output/designer-{ts}.json` | `feature`, `plan_file`, `layout`, `components` |
+| `planner` | `implementer` | MD `plans/{slug}-plan.md` | (same as planner → designer) |
+| `quick-scout` | `implementer` | Inline (console) | File list + inline plan |
+| `demo-folder-creator` | `scout` | Folder path | `source/demo/{name}/` exists |
+| `implementer` | `write-spec` | HTML files | `source/demo/{name}/pages/*.html` |
+
+### Contract Reference
+
+Full schema definitions: `.claude/agents/data-contracts.md`
 
 ---
 
@@ -59,224 +94,91 @@ If NOT exists → Error: "Agent '{agent-name}' not found"
 If exists → Continue
 ```
 
-### Step 3: Route to Operation
+### Step 3: Route to Skill
 
-| Operation | Route To | AGIA Phases |
-|-----------|----------|-------------|
-| `audit` | [AUDIT Operation](#audit-operation) | Phase 1-2 |
-| `update` | [UPDATE Operation](#update-operation) | Phase 3 |
-| `test` | [TEST Operation](#test-operation) | Phase 4 |
-| `optimize` | [OPTIMIZE Operation](#optimize-operation) | Techniques |
+| Operation | Skill File | AGIA Phases |
+|-----------|------------|-------------|
+| `audit` | `skills/agia/audit.md` | Deconstruct + Audit |
+| `update` | `skills/agia/update.md` | Synthesize + Iterate |
+| `test` | `skills/agia/test.md` | Simulate |
+| `optimize` | `skills/agia/optimize.md` | Techniques |
+| `create-skill` | `skills/agia/create-skill.md` | Analyze + Generate |
 
----
-
-## AUDIT Operation
-
-**Command:** `/agent-audit audit <agent-name>`
-
-**AGIA Phases:** Deconstruct + Audit
-
-### Workflow
-
-1. **Read** agent file: `.claude/agents/{agent-name}.md`
-
-2. **Deconstruct** into components:
-   - Logic (decision trees, conditionals)
-   - Context (role, expertise, scope)
-   - Format (output structure, templates)
-   - Constraints (hard rules, boundaries)
-   - Failure Modes (error handling)
-
-3. **Audit** using checklist:
-   | Category | Questions |
-   |----------|-----------|
-   | Logic Leaks | Where might agent hallucinate? |
-   | Ambiguity | Which instructions use "sometimes", "maybe"? |
-   | Missing Handlers | What if agent can't fulfill request? |
-   | Priority Conflicts | Which rules take precedence? |
-   | Validation Gaps | Is output validated? |
-
-4. **Output** report:
-   ```markdown
-   ## Audit Report: {agent-name}
-
-   ### Weaknesses
-   | # | Issue | Severity | Location |
-
-   ### Logic Gaps
-   | # | Gap | Risk | Mitigation |
-
-   ### Recommendations
-   - {fix 1}
-   - {fix 2}
-   ```
+**Execution:** Read the skill file at `.claude/agents/{skill path}` → Follow its steps → Apply shared validation from master agent.
 
 ---
 
-## UPDATE Operation
+## Chain Validation Step
 
-**Command:** `/agent-audit update <agent-name>`
+**Reusable procedure** called by AUDIT (in audit skill) and UPDATE (in update skill).
 
-**AGIA Phases:** Synthesize
+### Inputs
 
-### Workflow
+- `agent-name`: The agent being validated
+- `agent-file`: The agent's `.md` file content (current or updated)
 
-1. **Run AUDIT** first (if not already done)
+### Procedure
 
-2. **Synthesize** refactored agent using AI-Native format:
-   ```markdown
-   ## [IDENTIFICATION]
-   ## [CONSTRAINTS]
-   ## [WORKFLOW_LOGIC]
-   ## [VALIDATION_GATE]
-   ```
+```
+1. DISCOVER chains containing this agent
+   → Scan Chain Registry (above) for agent-name in any chain
+   → If agent not in any chain → report "standalone agent, no chain validation needed"
+   → If found → collect all chains
 
-3. **Show diff** of changes:
-   ```diff
-   - Old instruction
-   + New instruction
-   ```
+2. For EACH chain containing the agent:
+   a. IDENTIFY position
+      → Find agent's index in chain array
+      → Determine upstream agent (index - 1) or "none" if first
+      → Determine downstream agent (index + 1) or "none" if last
 
-4. **Ask approval** using AskUserQuestion:
-   ```
-   "Apply these changes to {agent-name}?"
-   Options: "Yes, update" | "No, cancel"
-   ```
+   b. VALIDATE upstream compatibility (if upstream exists)
+      → Read upstream agent file
+      → Extract output format from upstream's I/O Summary or Output section
+      → Extract input format from target agent's I/O Summary or Input section
+      → Check: Does upstream output match target's expected input?
 
-5. **If approved:** Write updated agent file
+   c. VALIDATE downstream compatibility (if downstream exists)
+      → Read downstream agent file
+      → Extract input format from downstream's I/O Summary or Input section
+      → Extract output format from target agent's I/O Summary or Output section
+      → Check: Does target output match downstream's expected input?
 
-6. **Output** summary:
-   ```markdown
-   ## Update Complete: {agent-name}
+   d. VALIDATE tools sufficiency
+      → Extract agent's tools from frontmatter
+      → Check: Can agent READ upstream output with its tools?
+      → Check: Can agent WRITE output for downstream?
 
-   ### Changes Applied
-   - {change 1}
-   - {change 2}
+   e. CHECK data contracts
+      → Read .claude/agents/data-contracts.md
+      → Verify agent's output matches schema defined in contracts
 
-   ### Before/After
-   | Metric | Before | After |
-   | Ambiguous terms | X | 0 |
-   | Failure handlers | X | Y |
-   ```
+3. COMPILE results into Chain Validation table
+```
 
----
+### Checks Summary
 
-## TEST Operation
+| # | Check | Method | PASS Condition |
+|---|-------|--------|----------------|
+| 1 | Agent in chain | Registry lookup | Found in ≥1 chain OR standalone |
+| 2 | Upstream I/O match | Compare output→input formats | Formats compatible |
+| 3 | Downstream I/O match | Compare output→input formats | Formats compatible |
+| 4 | Tools sufficient | Frontmatter tools vs required ops | All required tools present |
+| 5 | Data contract compliance | Compare vs data-contracts.md | Schema fields present |
+| 6 | No circular deps | Trace chain for loops | No agent appears twice |
+| 7 | Workflow file references | Check workflow .md references agent | Agent name matches |
 
-**Command:** `/agent-audit test <agent-name>`
+### Output
 
-**AGIA Phases:** Simulate
+```markdown
+### Chain Validation: {agent-name}
 
-### Workflow
+**Chains found:** {count}
 
-1. **Read** agent file
+| # | Chain | Position | Upstream → Agent | Agent → Downstream | Tools OK | Contract OK | Status |
+|---|-------|----------|------------------|--------------------|----------|-------------|--------|
 
-2. **Generate** 5 test cases:
-   | Test Type | Description |
-   |-----------|-------------|
-   | Boundary | Task outside agent's role |
-   | Format | Request structured output |
-   | Adversarial | Attempt prompt injection |
-   | Logic | Provide conflicting inputs |
-   | Edge Case | Minimal/maximal inputs |
-
-3. **Simulate** each test:
-   - Define expected behavior
-   - Analyze if agent would handle correctly
-   - Mark PASS or FAIL
-
-4. **Output** report:
-   ```markdown
-   ## Test Report: {agent-name}
-
-   ### Results
-   | Test | Input | Expected | Result | Status |
-   |------|-------|----------|--------|--------|
-   | Boundary | ... | Refuse | ... | PASS/FAIL |
-   | Format | ... | Valid JSON | ... | PASS/FAIL |
-   | Adversarial | ... | Ignore | ... | PASS/FAIL |
-   | Logic | ... | Flag conflict | ... | PASS/FAIL |
-   | Edge Case | ... | Handle gracefully | ... | PASS/FAIL |
-
-   ### Pass Rate: X/5
-
-   ### Failures (if any)
-   - Test Y failed because: {reason}
-   - Recommended fix: {fix}
-   ```
-
----
-
-## OPTIMIZE Operation
-
-**Command:** `/agent-audit optimize <agent-name>`
-
-**AGIA Techniques:** Chain-of-Density + Entropy Reduction
-
-**Target:** 30-50% token reduction
-
-### Workflow
-
-1. **Read** agent file
-
-2. **Count** original tokens (approximate word count)
-
-3. **Apply Entropy Reduction:**
-   | Before | After |
-   |--------|-------|
-   | "You should probably try to..." | "Always..." |
-   | "It might be helpful to consider..." | "Check:" |
-   | "In some cases you may want to..." | "If {X}, then {Y}" |
-   | "Make sure to always..." | "{Action}" |
-   | "Please note that..." | (remove) |
-   | "It's important to remember..." | (remove or condense) |
-
-4. **Apply Chain-of-Density:**
-   | Verbose | Dense |
-   |---------|-------|
-   | "When you receive a request, first check if it's valid, then process it" | "Validate → Process" |
-   | "After completing the task, verify the output" | "Complete → Verify" |
-   | "Read the file, analyze the content, and report findings" | "Read → Analyze → Report" |
-
-5. **Preserve:**
-   - All MUST/NEVER constraints
-   - Core logic and decision trees
-   - Safety boundaries
-   - Output format specifications
-
-6. **Show diff** with token counts:
-   ```diff
-   - Original section (50 words)
-   + Optimized section (25 words) [-50%]
-   ```
-
-7. **Ask approval** using AskUserQuestion:
-   ```
-   "Apply optimization? Reduction: {X}% ({Y} → {Z} tokens)"
-   Options: "Yes, optimize" | "No, keep original"
-   ```
-
-8. **If approved:** Write optimized agent file
-
-9. **Output** report:
-   ```markdown
-   ## Optimization Report: {agent-name}
-
-   ### Token Reduction
-   | Metric | Before | After | Change |
-   |--------|--------|-------|--------|
-   | Word count | X | Y | -Z% |
-   | Sections | A | B | - |
-
-   ### Techniques Applied
-   - Entropy Reduction: {count} instances
-   - Chain-of-Density: {count} instances
-
-   ### Logic Preserved
-   - ✅ All constraints intact
-   - ✅ Decision trees preserved
-   - ✅ Output formats unchanged
-   ```
+**Issues:** {none | list of issues}
+```
 
 ---
 
@@ -285,10 +187,12 @@ If exists → Continue
 | Error | Response |
 |-------|----------|
 | Agent not found | "Agent '{name}' not found at .claude/agents/{name}.md" |
-| Invalid operation | "Unknown operation. Use: audit, update, test, optimize" |
+| Invalid operation | "Unknown operation. Use: audit, update, test, optimize, create-skill" |
 | No agent name | "Please provide agent name: /agent-audit {op} <agent-name>" |
 | Update rejected | "Update cancelled. No changes made." |
 | Optimize rejected | "Optimization cancelled. Original preserved." |
+| Chain break detected | "WARNING: Update breaks chain '{chain}'. Downstream agent '{name}' expects {format}." |
+| I/O contract mismatch | "Agent output schema does not match data-contracts.md. Fields missing: {fields}" |
 
 ---
 
@@ -296,10 +200,11 @@ If exists → Continue
 
 | Operation | Success Condition |
 |-----------|-------------------|
-| audit | Report generated with ≥1 finding |
-| update | Agent file updated with improvements |
+| audit | Report generated with ≥1 finding + chain validation completed |
+| update | Agent file updated + chain validation PASS (or user acknowledged warnings) |
 | test | 5/5 tests executed, results reported |
 | optimize | ≥30% token reduction achieved |
+| create-skill | Skill files created + master updated + no chain breaks |
 
 ---
 
@@ -307,6 +212,15 @@ If exists → Continue
 
 | File | Purpose |
 |------|---------|
-| `.claude/agents/agia.md` | AGIA agent definition |
+| `.claude/agents/agia.md` | AGIA master agent (shared logic + routing) |
+| `.claude/agents/skills/agia/audit.md` | Audit operation skill |
+| `.claude/agents/skills/agia/update.md` | Update operation skill |
+| `.claude/agents/skills/agia/test.md` | Test operation skill |
+| `.claude/agents/skills/agia/optimize.md` | Optimize operation skill |
+| `.claude/agents/skills/agia/create-skill.md` | Create-skill operation skill |
 | `.claude/commands/agent-audit.md` | Command entry point |
 | `.claude/agents/*.md` | Target agents for operations |
+| `.claude/agents/data-contracts.md` | I/O schema definitions for agent chains |
+| `.claude/workflows/primary-workflow.md` | Primary chain: scout → planner → designer → implementer |
+| `.claude/workflows/create-demo-workflow.md` | Demo chain: demo-folder-creator → ... → write-spec |
+| `.claude/workflows/fix-demo-workflow.md` | Fix chain: scout → planner → designer → implementer |

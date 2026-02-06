@@ -1,80 +1,65 @@
 # Import Design By Image Workflow
 
-**Purpose:** Route to appropriate agent based on image count and detect action type.
+**Purpose:** Route to the unified import-design agent based on image count and detect action type.
 
 ---
 
 ## Agent Data Flow
 
 ```
-[User Request: Image(s) + "import/edit {ComponentName}"]
-      ↓
-  ┌──────────────────────────────────┐
-  │  WORKFLOW: Mode + Action Detect  │
-  └──────────────────────────────────┘
-  📥 Image count + keywords + component name
-  ⚙️ 1. Count images → MODE (single/multi)
-     2. Check keywords → ACTION (create/edit)
-     3. Check file exists → Confirm ACTION
-  📤 { mode, action, component_name, file_exists }
-      ↓
-  ┌──────────────────────────────────┐
-  │  WORKFLOW: Validate Shared Rules │
-  └──────────────────────────────────┘
-  📥 Rules file path
-  ⚙️ Read .claude/workflows/import-design-by-image-rules.md
-  📤 Rules loaded OR ERROR (stop)
-      ↓
-  ┌───────────────────────────────────────────────────────┐
-  │              Route by Image Count                      │
-  ├─────────────────────────┬─────────────────────────────┤
-  │    1 IMAGE (SINGLE)     │    2+ IMAGES (MULTI)        │
-  ├─────────────────────────┼─────────────────────────────┤
-  │ import-design-by-image- │ import-design-by-image-     │
-  │ single.md               │ multi.md                    │
-  ├─────────────────────────┼─────────────────────────────┤
-  │📥 Pre-detected context  │📥 Pre-detected context      │
-  │⚙️ Analyze → Generate    │⚙️ Catalog → Compare states  │
-  │   → Ask approval        │   → Consolidate → Ask       │
-  │📤 source/design-system/ │📤 source/design-system/     │
-  │   {ComponentName}.md    │   {ComponentName}.md        │
-  └─────────────────────────┴─────────────────────────────┘
+[User Request: Image(s)/ComponentName + "import/edit/update {ComponentName}"]
+      |
+  +----------------------------------+
+  |  WORKFLOW: Mode + Action Detect  |
+  +----------------------------------+
+  IN:  Image count + keywords + component name
+  DO:  1. Check for images -> Has images?
+       2. Count images (if yes) -> MODE (single/multi)
+       3. Check keywords -> ACTION (create/edit/update)
+       4. Check file exists -> Confirm ACTION
+  OUT: { mode, action, component_name, file_exists }
+      |
+  +----------------------------------+
+  |  ROUTE TO: import-design.md      |
+  |  (Unified Master Agent)          |
+  +----------------------------------+
+  IN:  Pre-detected context
+  DO:  Loads matching skill file:
+       - VALIDATE: skills/import-design/validate.md
+       - SINGLE:   skills/import-design/single.md
+       - MULTI:    skills/import-design/multi.md
+       - UPDATE:   skills/import-design/update.md
+  OUT: source/design-system/{ComponentName}.md
 ```
 
 ---
 
 ## Step 1: Mode + Action Detection (CRITICAL - DO FIRST)
 
-**Before loading any agent context, detect BOTH:**
-
-```
-┌─────────────────────────────────────────┐
-│  DETECTION (WORKFLOW LEVEL)             │
-├─────────────────────────────────────────┤
-│  1. Count images → MODE (single/multi)  │
-│  2. Check keywords → ACTION (create/edit)│
-│  3. Check file exists → confirm ACTION  │
-│  4. Pass both to agent                  │
-└─────────────────────────────────────────┘
-```
+**Before loading agent context, detect MODE and ACTION:**
 
 ### 1a. Mode Detection
 
 | Signal | Mode |
 |--------|------|
+| HTML/CSS code pasted, no images | VALIDATE |
 | 1 image attached | SINGLE |
 | 2+ images attached | MULTI |
 | "this image", "single" | SINGLE |
 | "these images", "states", "hover", "disabled" | MULTI |
-| Unclear / no images | ASK (AskUserQuestion) |
+| No images + component name exists | UPDATE |
+| No images + component name missing | ASK (AskUserQuestion) |
 
-### 1b. Action Type Detection (NEW - saves tokens)
+### 1b. Action Type Detection
 
-| Signal | Action |
-|--------|--------|
-| "edit", "update", "modify", "change" | EDIT |
-| "import", "create", "new", "convert" | CREATE |
-| Component name only (no keywords) | CHECK FILE |
+| Signal | Action | Mode Hint |
+|--------|--------|-----------|
+| "update" + no images | UPDATE | UPDATE |
+| "edit", "modify", "change" + no images | UPDATE | UPDATE |
+| "edit", "update", "modify" + images | EDIT | SINGLE/MULTI |
+| "import", "create", "new", "convert" | CREATE | SINGLE/MULTI |
+| Component name only (no keywords) + no images | UPDATE | UPDATE |
+| Component name only (no keywords) + images | CHECK FILE | SINGLE/MULTI |
 
 ### 1c. File Existence Check
 
@@ -82,57 +67,51 @@
 If component name provided:
   Check: source/design-system/{ComponentName}.md
 
-  If EXISTS + EDIT keywords → ACTION = EDIT
-  If EXISTS + no keywords → ASK user: "Create new or edit?"
-  If NOT EXISTS → ACTION = CREATE
+  If NO IMAGES:
+    If EXISTS -> MODE = UPDATE, ACTION = UPDATE
+    If NOT EXISTS -> ERROR: "Component not found. Use CREATE with images."
+
+  If HAS IMAGES:
+    If EXISTS + EDIT keywords -> ACTION = EDIT
+    If EXISTS + no keywords -> ASK user: "Create new or edit?"
+    If NOT EXISTS -> ACTION = CREATE
 ```
 
 ---
 
-## Step 2: Validate Shared Rules (NEW)
+## Step 2: Route to Agent with Context
 
-**BEFORE routing to agent, verify rules file exists:**
+**All modes route to the same agent: `import-design.md`**
 
+Pass pre-detected values:
 ```
-Read: .claude/workflows/import-design-by-image-rules.md
-
-If read fails:
-  ERROR: "Shared rules file not found. Cannot proceed."
-  STOP workflow.
-
-If read succeeds:
-  Continue to Step 3.
-```
-
----
-
-## Step 3: Route to Agent with Context
-
-**Pass pre-detected values to save tokens:**
-
-```
-Route to agent with:
 {
-  mode: "SINGLE" | "MULTI",
-  action: "CREATE" | "EDIT",
+  mode: "VALIDATE" | "SINGLE" | "MULTI" | "UPDATE",
+  action: "CREATE" | "EDIT" | "UPDATE",
   component_name: "{ComponentName}",
   file_exists: true | false,
-  image_count: {number}
+  image_count: {number} | 0
 }
 ```
+
+The master agent loads the matching skill file internally.
 
 ---
 
 ## Detection Table (Full)
 
-| Signal | Mode | Action | Route To |
-|--------|------|--------|----------|
-| 1 image + "import" | SINGLE | CREATE | `import-design-by-image-single.md` |
-| 1 image + "edit" | SINGLE | EDIT | `import-design-by-image-single.md` |
-| 2+ images + "import" | MULTI | CREATE | `import-design-by-image-multi.md` |
-| 2+ images + "update" | MULTI | EDIT | `import-design-by-image-multi.md` |
-| "hover", "disabled", "states" | MULTI | - | `import-design-by-image-multi.md` |
-| Unclear / no images | ASK | - | AskUserQuestion first |
+| Signal | Mode | Action | Agent |
+|--------|------|--------|-------|
+| HTML/CSS pasted, no images | VALIDATE | CREATE | `import-design.md` |
+| 1 image + "import" | SINGLE | CREATE | `import-design.md` |
+| 1 image + "edit" | SINGLE | EDIT | `import-design.md` |
+| 2+ images + "import" | MULTI | CREATE | `import-design.md` |
+| 2+ images + "update" | MULTI | EDIT | `import-design.md` |
+| "hover", "disabled", "states" | MULTI | - | `import-design.md` |
+| No images + "update {Name}" | UPDATE | UPDATE | `import-design.md` |
+| No images + component name + exists | UPDATE | UPDATE | `import-design.md` |
+| No images + component missing | ERROR | - | Report error to user |
+| Unclear / no context | ASK | - | AskUserQuestion first |
 
 ---
 
@@ -150,10 +129,22 @@ Route to agent with:
 - User mentions states: "hover", "focus", "disabled", "active", "pressed"
 - User says "variants", "states", "different states"
 
+### UPDATE Mode Indicators
+- No images in conversation
+- User says "update {ComponentName}"
+- User provides component name + change request
+- Component file exists in design system
+- Keywords: "update", "change", "modify", "fix", "adjust"
+
+### VALIDATE Mode Indicators
+- User pastes HTML/CSS code
+- No images attached
+- User says "check", "validate", "import this code"
+
 ### UNCLEAR Indicators
-- No images visible
-- Ambiguous text (could be either)
-- User only provides text, no images
+- No images visible AND no component name AND no code
+- Ambiguous text
+- User only provides vague text
 
 ---
 
@@ -162,45 +153,24 @@ Route to agent with:
 Use AskUserQuestion:
 
 ```
-"I'll help you convert UI images to HTML/Tailwind. How many images will you provide?"
+"I can help you with component management. What would you like to do?"
 
 Options:
-- "Single image (one state)"
-- "Multiple images (different states like hover, disabled, etc.)"
+- "Import from single image (one state)"
+- "Import from multiple images (different states)"
+- "Update existing component (no image needed)"
+- "Validate pasted HTML/CSS code"
 ```
 
-**Then route to appropriate agent.**
+Then route to `import-design.md` with detected mode.
 
 ---
 
-## Agent Chains
+## Agent Chain
 
-### SINGLE Mode + CREATE
+All modes use the same standalone agent:
 ```
-Workflow detects: mode=SINGLE, action=CREATE
-→ import-design-by-image-single.md
-→ (skip action detection) → analyze → generate → approve → create
-```
-
-### SINGLE Mode + EDIT
-```
-Workflow detects: mode=SINGLE, action=EDIT
-→ import-design-by-image-single.md
-→ (skip action detection) → read existing → analyze → compare → approve → update
-```
-
-### MULTI Mode + CREATE
-```
-Workflow detects: mode=MULTI, action=CREATE
-→ import-design-by-image-multi.md
-→ (skip action detection) → catalog → compare states → consolidate → approve → create
-```
-
-### MULTI Mode + EDIT
-```
-Workflow detects: mode=MULTI, action=EDIT
-→ import-design-by-image-multi.md
-→ (skip action detection) → read existing → catalog → compare → approve → update
+import-design.md (loads skill internally based on mode)
 ```
 
 ---
@@ -211,6 +181,8 @@ Workflow detects: mode=MULTI, action=EDIT
 
 **DO:**
 - Convert images to HTML + Tailwind
+- Validate pasted HTML/CSS code
+- Update existing components
 - Create component documentation
 - Use design system icons
 
@@ -223,22 +195,4 @@ Workflow detects: mode=MULTI, action=EDIT
 
 ## Shared Rules Reference
 
-Both agents MUST read: `.claude/workflows/import-design-by-image-rules.md`
-
-Contains:
-- Icon detection workflow
-- RULE.md compliance
-- Output documentation format
-- HTML/CSS format rules
-- Color/category mappings
-- Date field requirements
-
----
-
-## Token Savings
-
-| Scenario | Savings |
-|----------|---------|
-| Single image | ~51% |
-| Multi image | ~35% |
-| Average (70% single) | ~46% |
+Rules are embedded in the master agent (`import-design.md`). The shared rules file `.claude/workflows/import-design-by-image-rules.md` is preserved for reference.

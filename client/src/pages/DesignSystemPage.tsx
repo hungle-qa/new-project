@@ -237,6 +237,9 @@ export function DesignSystemPage() {
         throw new Error('Failed to update status')
       }
 
+      // Update local status map so filtering reflects the change
+      setComponentStatuses(prev => ({ ...prev, [selected.name]: newStatus }))
+
       // Refresh selected component to show updated status
       handleSelect(selected.name)
     } catch (err) {

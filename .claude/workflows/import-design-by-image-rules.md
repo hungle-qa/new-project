@@ -130,28 +130,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ---
 
-## Strict Format Rules (CRITICAL)
+## Strict Format Rules (CRITICAL - P0)
 
-**The preview system uses regex. Breaking these rules causes errors!**
+**⚠️ The preview system uses regex. Breaking these rules causes "No HTML/CSS found" errors!**
 
-### Rule 1: `## HTML` immediately followed by code block
+### Rule 1: Section header MUST be `## HTML` (not `## Preview`)
 ```markdown
-## HTML
+## HTML              ← CORRECT
 \`\`\`html
 {code}
 \`\`\`
 ```
 **WRONG:**
 ```markdown
-## HTML
-### Some Subtitle    ← NO!
+## Preview           ← WRONG! Will cause parsing error!
+\`\`\`html
+
+## HTML (Tailwind)   ← WRONG! Must be exactly "## HTML"
 \`\`\`html
 ```
 
-### Rule 2: `## CSS` immediately followed by code block
-Same rule as HTML.
+### Rule 2: `## HTML` immediately followed by code block
+```markdown
+## HTML
+\`\`\`html           ← Must be on NEXT LINE, no blank lines
+{code}
+\`\`\`
+```
+**WRONG:**
+```markdown
+## HTML
+### Some Subtitle    ← NO! Nothing between header and code block
+\`\`\`html
 
-### Rule 3: No sub-headers between section and code block
+## HTML
+
+\`\`\`html           ← NO! No blank line allowed
+```
+
+### Rule 3: `## CSS` section is REQUIRED (same rules as HTML)
+```markdown
+## CSS
+\`\`\`css
+.component-name {
+  font-family: 'Open Sans', sans-serif;
+}
+\`\`\`
+```
+
+### Rule 4: No sub-headers between section and code block
+
+### Rule 5: BOTH sections required - `## HTML` AND `## CSS`
+Even for Phase 1 minimal files, ALWAYS include both sections!
 
 ---
 

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { Upload } from 'lucide-react'
 import { Card } from '../components/Card'
+import { ImportIdeaModal } from '../components/ImportIdeaModal'
 
 interface ProductIdea {
   name: string
@@ -14,8 +16,10 @@ export function ProductIdeasPage() {
   const [ideas, setIdeas] = useState<string[]>([])
   const [selected, setSelected] = useState<ProductIdea | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
-  useEffect(() => {
+  const fetchIdeas = () => {
+    setLoading(true)
     fetch('/api/product-idea')
       .then(res => res.json())
       .then(data => {
@@ -23,12 +27,21 @@ export function ProductIdeasPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    fetchIdeas()
   }, [])
 
   const handleSelect = async (name: string) => {
     const res = await fetch(`/api/product-idea/${name}`)
     const data = await res.json()
     setSelected(data)
+  }
+
+  const handleImportSuccess = () => {
+    fetchIdeas()
+    setSelected(null)
   }
 
   if (loading) {
@@ -39,7 +52,16 @@ export function ProductIdeasPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Product Ideas</h1>
-        <span className="text-sm text-gray-500">{ideas.length} ideas</span>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-500">{ideas.length} ideas</span>
+          <button
+            onClick={() => setIsImportModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <Upload className="w-4 h-4" />
+            Import
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -95,6 +117,13 @@ export function ProductIdeasPage() {
           )}
         </div>
       </div>
+
+      {/* Import Modal */}
+      <ImportIdeaModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onSuccess={handleImportSuccess}
+      />
     </div>
   )
 }

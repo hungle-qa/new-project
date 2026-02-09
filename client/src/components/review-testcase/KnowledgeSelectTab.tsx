@@ -1,18 +1,40 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Search, X, Save } from 'lucide-react'
 
 interface KnowledgeSelectTabProps {
   feature: string
   linkedKnowledge: string[]
   onSave: (linkedKnowledge: string[]) => Promise<void>
+  onDirtyChange?: (dirty: boolean) => void
+  saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
-export function KnowledgeSelectTab({ feature, linkedKnowledge, onSave }: KnowledgeSelectTabProps) {
+export function KnowledgeSelectTab({ feature, linkedKnowledge, onSave, onDirtyChange, saveRef }: KnowledgeSelectTabProps) {
   const [allItems, setAllItems] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>(linkedKnowledge || [])
   const [searchQuery, setSearchQuery] = useState('')
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  const hasChanges = JSON.stringify([...selected].sort()) !== JSON.stringify([...(linkedKnowledge || [])].sort())
+
+  const handleSave = useCallback(async () => {
+    setSaving(true)
+    try {
+      await onSave(selected)
+    } finally {
+      setSaving(false)
+    }
+  }, [selected, onSave])
+
+  useEffect(() => {
+    onDirtyChange?.(hasChanges)
+  }, [hasChanges])
+
+  useEffect(() => {
+    saveRef?.(hasChanges ? handleSave : null)
+    return () => saveRef?.(null)
+  }, [hasChanges, handleSave])
 
   useEffect(() => {
     fetch('/api/feature-knowledge')
@@ -35,23 +57,12 @@ export function KnowledgeSelectTab({ feature, linkedKnowledge, onSave }: Knowled
     setSelected(prev => prev.filter(n => n !== name))
   }
 
-  const handleSave = async () => {
-    setSaving(true)
-    try {
-      await onSave(selected)
-    } finally {
-      setSaving(false)
-    }
-  }
-
   const filteredItems = allItems.filter(name =>
     name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const selectedItems = filteredItems.filter(name => selected.includes(name))
   const availableItems = filteredItems.filter(name => !selected.includes(name))
-
-  const hasChanges = JSON.stringify([...selected].sort()) !== JSON.stringify([...(linkedKnowledge || [])].sort())
 
   if (loading) {
     return <div className="text-center py-4 text-gray-500 text-sm">Loading knowledge items...</div>

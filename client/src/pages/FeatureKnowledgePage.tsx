@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Plus, Trash2, Brain, FileUp, Eye, Search, BookOpen, X } from 'lucide-react'
 import { CreateKnowledgeModal } from '../components/feature-knowledge/CreateKnowledgeModal'
 import { ImportTab } from '../components/feature-knowledge/ImportTab'
 import { PreviewTab } from '../components/feature-knowledge/PreviewTab'
 import { ContentTab } from '../components/feature-knowledge/ContentTab'
+import { UnsavedChangesModal } from '../components/UnsavedChangesModal'
 
 interface KnowledgeItem {
   name: string
@@ -33,6 +34,54 @@ export function FeatureKnowledgePage() {
   const [deleting, setDeleting] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
+  // Unsaved changes guard
+  const [isDirty, setIsDirty] = useState(false)
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
+  const [modalSaving, setModalSaving] = useState(false)
+  const saveFnRef = useRef<(() => Promise<void>) | null>(null)
+
+  const handleDirtyChange = useCallback((dirty: boolean) => {
+    setIsDirty(dirty)
+  }, [])
+
+  const handleSaveRef = useCallback((fn: (() => Promise<void>) | null) => {
+    saveFnRef.current = fn
+  }, [])
+
+  const guardedNavigate = useCallback((action: () => void) => {
+    if (isDirty) {
+      setPendingAction(() => action)
+    } else {
+      action()
+    }
+  }, [isDirty])
+
+  const handleModalSave = async () => {
+    if (saveFnRef.current) {
+      setModalSaving(true)
+      try {
+        await saveFnRef.current()
+      } finally {
+        setModalSaving(false)
+      }
+    }
+    const action = pendingAction
+    setPendingAction(null)
+    setIsDirty(false)
+    action?.()
+  }
+
+  const handleModalDiscard = () => {
+    const action = pendingAction
+    setPendingAction(null)
+    setIsDirty(false)
+    action?.()
+  }
+
+  const handleModalCancel = () => {
+    setPendingAction(null)
+  }
+
   const fetchItems = () => {
     setLoading(true)
     fetch('/api/feature-knowledge')
@@ -52,9 +101,11 @@ export function FeatureKnowledgePage() {
   }
 
   const handleSelectItem = (name: string) => {
-    setSelectedItem(name)
-    setActiveTab('import')
-    loadItemData(name)
+    guardedNavigate(() => {
+      setSelectedItem(name)
+      setActiveTab('import')
+      loadItemData(name)
+    })
   }
 
   const handleCreated = (name: string) => {
@@ -71,6 +122,7 @@ export function FeatureKnowledgePage() {
         setSelectedItem(null)
         setItemData(null)
         setIsDeleteConfirmOpen(false)
+        setIsDirty(false)
         fetchItems()
       }
     } finally {
@@ -178,7 +230,7 @@ export function FeatureKnowledgePage() {
                 {tabs.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
-                    onClick={() => setActiveTab(id)}
+                    onClick={() => guardedNavigate(() => setActiveTab(id))}
                     className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === id
                         ? 'border-blue-500 text-blue-600'
@@ -199,6 +251,8 @@ export function FeatureKnowledgePage() {
                     sourceFiles={itemData.source_files}
                     savedPrompt={itemData.prompt}
                     onImported={() => loadItemData(selectedItem)}
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
                   />
                 )}
                 {activeTab === 'content' && (
@@ -213,6 +267,8 @@ export function FeatureKnowledgePage() {
                     content={itemData.content}
                     sourceFiles={itemData.source_files}
                     onSaved={() => loadItemData(selectedItem)}
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
                   />
                 )}
               </div>
@@ -272,6 +328,15 @@ export function FeatureKnowledgePage() {
           </div>
         </div>
       )}
+
+      {/* Unsaved Changes Modal */}
+      <UnsavedChangesModal
+        isOpen={pendingAction !== null}
+        onSave={handleModalSave}
+        onDiscard={handleModalDiscard}
+        onCancel={handleModalCancel}
+        saving={modalSaving}
+      />
     </div>
   )
 }

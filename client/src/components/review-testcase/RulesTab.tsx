@@ -1,13 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Save, Eye, Edit3 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 
-export function RulesTab() {
+interface RulesTabProps {
+  onDirtyChange?: (dirty: boolean) => void
+  saveRef?: (saveFn: (() => Promise<void>) | null) => void
+}
+
+export function RulesTab({ onDirtyChange, saveRef }: RulesTabProps) {
   const [content, setContent] = useState('')
   const [original, setOriginal] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
+
+  const hasChanges = content !== original
 
   useEffect(() => {
     fetch('/api/review-testcase/rules')
@@ -20,7 +27,7 @@ export function RulesTab() {
       .catch(() => setLoading(false))
   }, [])
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     setSaving(true)
     try {
       const res = await fetch('/api/review-testcase/rules', {
@@ -34,9 +41,16 @@ export function RulesTab() {
     } finally {
       setSaving(false)
     }
-  }
+  }, [content])
 
-  const hasChanges = content !== original
+  useEffect(() => {
+    onDirtyChange?.(hasChanges)
+  }, [hasChanges])
+
+  useEffect(() => {
+    saveRef?.(hasChanges ? handleSave : null)
+    return () => saveRef?.(null)
+  }, [hasChanges, handleSave])
 
   if (loading) {
     return <div className="text-center py-8 text-gray-500 text-sm">Loading rules...</div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Plus, Trash2, Layers, Target, BookOpen, Puzzle, FileUp, FileSpreadsheet, ScrollText, Table, Search, X, ChevronDown, Pencil } from 'lucide-react'
 import { CreateFeatureModal } from '../components/review-testcase/CreateFeatureModal'
 import { LevelsTab } from '../components/review-testcase/LevelsTab'
@@ -9,6 +9,7 @@ import { ImportSpecTab } from '../components/review-testcase/ImportSpecTab'
 import { ReviewExportTab } from '../components/review-testcase/ReviewExportTab'
 import { RulesTab } from '../components/review-testcase/RulesTab'
 import { TemplateTab } from '../components/review-testcase/TemplateTab'
+import { UnsavedChangesModal } from '../components/UnsavedChangesModal'
 
 interface FeatureConfig {
   name: string
@@ -60,6 +61,54 @@ export function ReviewTestcasePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState('')
 
+  // Unsaved changes guard
+  const [isDirty, setIsDirty] = useState(false)
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
+  const [modalSaving, setModalSaving] = useState(false)
+  const saveFnRef = useRef<(() => Promise<void>) | null>(null)
+
+  const handleDirtyChange = useCallback((dirty: boolean) => {
+    setIsDirty(dirty)
+  }, [])
+
+  const handleSaveRef = useCallback((fn: (() => Promise<void>) | null) => {
+    saveFnRef.current = fn
+  }, [])
+
+  const guardedNavigate = useCallback((action: () => void) => {
+    if (isDirty) {
+      setPendingAction(() => action)
+    } else {
+      action()
+    }
+  }, [isDirty])
+
+  const handleModalSave = async () => {
+    if (saveFnRef.current) {
+      setModalSaving(true)
+      try {
+        await saveFnRef.current()
+      } finally {
+        setModalSaving(false)
+      }
+    }
+    const action = pendingAction
+    setPendingAction(null)
+    setIsDirty(false)
+    action?.()
+  }
+
+  const handleModalDiscard = () => {
+    const action = pendingAction
+    setPendingAction(null)
+    setIsDirty(false)
+    action?.()
+  }
+
+  const handleModalCancel = () => {
+    setPendingAction(null)
+  }
+
   const fetchFeatures = () => {
     setLoading(true)
     fetch('/api/review-testcase')
@@ -79,14 +128,18 @@ export function ReviewTestcasePage() {
   }
 
   const handleSelectFeature = (name: string) => {
-    setSelectedFeature(name)
-    setActiveTab('levels')
-    loadConfig(name)
+    guardedNavigate(() => {
+      setSelectedFeature(name)
+      setActiveTab('levels')
+      loadConfig(name)
+    })
   }
 
   const handleCreated = (name: string) => {
     fetchFeatures()
-    handleSelectFeature(name)
+    setSelectedFeature(name)
+    setActiveTab('levels')
+    loadConfig(name)
   }
 
   const handleDelete = async () => {
@@ -98,6 +151,7 @@ export function ReviewTestcasePage() {
         setSelectedFeature(null)
         setConfig(null)
         setIsDeleteConfirmOpen(false)
+        setIsDirty(false)
         fetchFeatures()
       }
     } finally {
@@ -142,6 +196,18 @@ export function ReviewTestcasePage() {
     }
   }
 
+  const handleTabChange = (tab: TabType) => {
+    guardedNavigate(() => setActiveTab(tab))
+  }
+
+  const handleGlobalTab = (tab: TabType) => {
+    guardedNavigate(() => {
+      setSelectedFeature(null)
+      setConfig(null)
+      setActiveTab(tab)
+    })
+  }
+
   const filteredFeatures = features.filter(f =>
     f.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -159,7 +225,7 @@ export function ReviewTestcasePage() {
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-900">Review Testcase</h1>
           <button
-            onClick={() => { setSelectedFeature(null); setConfig(null); setActiveTab('rules') }}
+            onClick={() => handleGlobalTab('rules')}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
               activeTab === 'rules' && !selectedFeature
                 ? 'text-blue-600 bg-blue-50 border border-blue-200'
@@ -170,7 +236,7 @@ export function ReviewTestcasePage() {
             Rules
           </button>
           <button
-            onClick={() => { setSelectedFeature(null); setConfig(null); setActiveTab('template') }}
+            onClick={() => handleGlobalTab('template')}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
               activeTab === 'template' && !selectedFeature
                 ? 'text-blue-600 bg-blue-50 border border-blue-200'
@@ -292,7 +358,7 @@ export function ReviewTestcasePage() {
                 {featureTabs.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
-                    onClick={() => setActiveTab(id)}
+                    onClick={() => handleTabChange(id)}
                     className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === id
                         ? 'border-blue-500 text-blue-600'
@@ -312,6 +378,8 @@ export function ReviewTestcasePage() {
                     feature={selectedFeature}
                     levels={config.levels}
                     onSave={async (levels) => saveConfig({ levels })}
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
                   />
                 )}
                 {activeTab === 'scope' && (
@@ -319,6 +387,8 @@ export function ReviewTestcasePage() {
                     feature={selectedFeature}
                     scope={config.scope}
                     onSave={async (scope) => saveConfig({ scope })}
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
                   />
                 )}
                 {activeTab === 'knowledge' && (
@@ -326,6 +396,8 @@ export function ReviewTestcasePage() {
                     feature={selectedFeature}
                     linkedKnowledge={config.linked_knowledge || []}
                     onSave={async (linked_knowledge) => saveConfig({ linked_knowledge })}
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
                   />
                 )}
                 {activeTab === 'components' && (
@@ -333,6 +405,8 @@ export function ReviewTestcasePage() {
                     feature={selectedFeature}
                     components={config.components}
                     onSave={async (components) => saveConfig({ components })}
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
                   />
                 )}
                 {activeTab === 'import-spec' && (
@@ -350,7 +424,7 @@ export function ReviewTestcasePage() {
                 {globalTabs.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
-                    onClick={() => setActiveTab(id)}
+                    onClick={() => handleTabChange(id)}
                     className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === id
                         ? 'border-blue-500 text-blue-600'
@@ -363,8 +437,18 @@ export function ReviewTestcasePage() {
                 ))}
               </div>
               <div className="p-4">
-                {activeTab === 'rules' && <RulesTab />}
-                {activeTab === 'template' && <TemplateTab />}
+                {activeTab === 'rules' && (
+                  <RulesTab
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
+                  />
+                )}
+                {activeTab === 'template' && (
+                  <TemplateTab
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
+                  />
+                )}
               </div>
             </div>
           ) : (
@@ -422,6 +506,15 @@ export function ReviewTestcasePage() {
           </div>
         </div>
       )}
+
+      {/* Unsaved Changes Modal */}
+      <UnsavedChangesModal
+        isOpen={pendingAction !== null}
+        onSave={handleModalSave}
+        onDiscard={handleModalDiscard}
+        onCancel={handleModalCancel}
+        saving={modalSaving}
+      />
     </div>
   )
 }

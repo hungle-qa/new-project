@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Plus, Trash2, Save, X } from 'lucide-react'
 
 interface LevelEntry {
@@ -12,12 +12,34 @@ interface LevelsTabProps {
   feature: string
   levels: LevelEntry[]
   onSave: (levels: LevelEntry[]) => Promise<void>
+  onDirtyChange?: (dirty: boolean) => void
+  saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
-export function LevelsTab({ feature, levels: initialLevels, onSave }: LevelsTabProps) {
+export function LevelsTab({ feature, levels: initialLevels, onSave, onDirtyChange, saveRef }: LevelsTabProps) {
   const [levels, setLevels] = useState<LevelEntry[]>(initialLevels)
   const [saving, setSaving] = useState(false)
   const [tagInput, setTagInput] = useState<Record<number, string>>({})
+
+  const hasChanges = JSON.stringify(levels) !== JSON.stringify(initialLevels)
+
+  const handleSave = useCallback(async () => {
+    setSaving(true)
+    try {
+      await onSave(levels)
+    } finally {
+      setSaving(false)
+    }
+  }, [levels, onSave])
+
+  useEffect(() => {
+    onDirtyChange?.(hasChanges)
+  }, [hasChanges])
+
+  useEffect(() => {
+    saveRef?.(hasChanges ? handleSave : null)
+    return () => saveRef?.(null)
+  }, [hasChanges, handleSave])
 
   useEffect(() => {
     setLevels(initialLevels)
@@ -58,15 +80,6 @@ export function LevelsTab({ feature, levels: initialLevels, onSave }: LevelsTabP
     setLevels(updated)
   }
 
-  const handleSave = async () => {
-    setSaving(true)
-    try {
-      await onSave(levels)
-    } finally {
-      setSaving(false)
-    }
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -81,7 +94,7 @@ export function LevelsTab({ feature, levels: initialLevels, onSave }: LevelsTabP
           </button>
           <button
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || !hasChanges}
             className="flex items-center gap-1 px-3 py-1.5 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />

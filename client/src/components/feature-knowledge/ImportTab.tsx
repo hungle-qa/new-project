@@ -1,4 +1,4 @@
-import { useState, useRef, DragEvent } from 'react'
+import { useState, useRef, useEffect, useCallback, DragEvent } from 'react'
 import { Upload, FileText, CheckCircle, AlertCircle, Settings, X, Save } from 'lucide-react'
 import { useAISettings } from '../../hooks/useAISettings'
 import { AISettingsModal } from '../AISettingsModal'
@@ -8,13 +8,15 @@ interface ImportTabProps {
   sourceFiles: string[]
   savedPrompt: string
   onImported: () => void
+  onDirtyChange?: (dirty: boolean) => void
+  saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
 type UploadState = 'idle' | 'uploading' | 'success' | 'error'
 
 const DEFAULT_KNOWLEDGE_PROMPT = 'Keep the original content exactly as-is. Only convert to clean, well-formatted markdown that is easy to read. Do not summarize, rewrite, or omit any content.'
 
-export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported }: ImportTabProps) {
+export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported, onDirtyChange, saveRef }: ImportTabProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [customPrompt, setCustomPrompt] = useState(savedPrompt || DEFAULT_KNOWLEDGE_PROMPT)
   const [uploadState, setUploadState] = useState<UploadState>('idle')
@@ -42,7 +44,9 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported 
     }
   }
 
-  const handleSavePrompt = async () => {
+  const promptChanged = customPrompt.trim() !== (savedPrompt || DEFAULT_KNOWLEDGE_PROMPT).trim()
+
+  const handleSavePrompt = useCallback(async () => {
     setSavingPrompt(true)
     setPromptSaved(false)
     try {
@@ -59,9 +63,16 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported 
     } finally {
       setSavingPrompt(false)
     }
-  }
+  }, [customPrompt, knowledgeName, onImported])
 
-  const promptChanged = customPrompt.trim() !== (savedPrompt || DEFAULT_KNOWLEDGE_PROMPT).trim()
+  useEffect(() => {
+    onDirtyChange?.(promptChanged)
+  }, [promptChanged])
+
+  useEffect(() => {
+    saveRef?.(promptChanged ? handleSavePrompt : null)
+    return () => saveRef?.(null)
+  }, [promptChanged, handleSavePrompt])
 
   const handleFileSelect = (file: File) => {
     if (file.size > 10 * 1024 * 1024) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Save, Plus, Trash2, ArrowUp, ArrowDown, ExternalLink, X } from 'lucide-react'
 
 interface TemplateColumn {
@@ -7,6 +7,11 @@ interface TemplateColumn {
   width: string
   style: string
   writingStyle: string
+}
+
+interface TemplateTabProps {
+  onDirtyChange?: (dirty: boolean) => void
+  saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
 const STYLE_OPTIONS = ['normal', 'bold', 'mono', 'center', 'bold center', 'bold mono']
@@ -24,13 +29,15 @@ const DEFAULT_COLUMNS: TemplateColumn[] = [
   { id: '10', name: 'Status', width: '80px', style: 'center', writingStyle: 'Not Executed' },
 ]
 
-export function TemplateTab() {
+export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
   const [columns, setColumns] = useState<TemplateColumn[]>([])
   const [original, setOriginal] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [detailsCol, setDetailsCol] = useState<string | null>(null)
   const [detailsText, setDetailsText] = useState('')
+
+  const hasChanges = JSON.stringify(columns) !== original
 
   useEffect(() => {
     fetch('/api/review-testcase/template')
@@ -48,21 +55,31 @@ export function TemplateTab() {
       })
   }, [])
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async (cols?: TemplateColumn[]) => {
+    const toSave = cols || columns
     setSaving(true)
     try {
       const res = await fetch('/api/review-testcase/template', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(columns),
+        body: JSON.stringify(toSave),
       })
       if (res.ok) {
-        setOriginal(JSON.stringify(columns))
+        setOriginal(JSON.stringify(toSave))
       }
     } finally {
       setSaving(false)
     }
-  }
+  }, [columns])
+
+  useEffect(() => {
+    onDirtyChange?.(hasChanges)
+  }, [hasChanges])
+
+  useEffect(() => {
+    saveRef?.(hasChanges ? () => handleSave() : null)
+    return () => saveRef?.(null)
+  }, [hasChanges, handleSave])
 
   const addColumn = () => {
     const newCol: TemplateColumn = {
@@ -93,7 +110,13 @@ export function TemplateTab() {
     setColumns(newCols)
   }
 
-  const hasChanges = JSON.stringify(columns) !== original
+  const handleWritingStyleSave = (colId: string, text: string) => {
+    const updatedColumns = columns.map(c => c.id === colId ? { ...c, writingStyle: text } : c)
+    setColumns(updatedColumns)
+    setDetailsCol(null)
+    // Auto-save template when writing style is saved
+    handleSave(updatedColumns)
+  }
 
   const getStyleClasses = (style: string) => {
     const classes: string[] = []
@@ -123,7 +146,7 @@ export function TemplateTab() {
             Add Column
           </button>
           <button
-            onClick={handleSave}
+            onClick={() => handleSave()}
             disabled={saving || !hasChanges}
             className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -303,10 +326,7 @@ export function TemplateTab() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
-                    updateColumn(detailsCol, 'writingStyle', detailsText)
-                    setDetailsCol(null)
-                  }}
+                  onClick={() => handleWritingStyleSave(detailsCol, detailsText)}
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
                 >
                   Save

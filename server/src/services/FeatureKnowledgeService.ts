@@ -106,39 +106,29 @@ export class FeatureKnowledgeService {
 
     const structured = await AIService.structureKnowledge(rawContent, customPrompt, aiConfig)
 
-    // Save source file (append, don't clear)
+    // If re-importing same file, delete old section first
+    const existing = await this.getByName(name)
+    if (existing && existing.source_files.includes(filename)) {
+      await this.deleteFile(name, filename)
+    }
+
+    // Save source file (after deleteFile to avoid it being removed)
     const sourceDir = path.join(SOURCE_DIR, name, 'source')
     await fs.mkdir(sourceDir, { recursive: true })
     await fs.writeFile(path.join(sourceDir, filename), fileBuffer)
 
-    // Read existing config to append content
+    // Re-read after potential deletion
     const today = new Date().toISOString().split('T')[0]
-    const existing = await this.getByName(name)
-    const existingContent = existing?.content || ''
-    const existingFiles = existing?.source_files || []
+    const current = await this.getByName(name)
+    const currentContent = current?.content || ''
+    const currentFiles = current?.source_files || []
 
-    // Add filename to source_files if not already present
-    const updatedFiles = existingFiles.includes(filename)
-      ? existingFiles
-      : [...existingFiles, filename]
-
-    // Build new section for this file
+    const updatedFiles = [...currentFiles, filename]
     const newSection = `\n<!-- source: ${filename} -->\n\n${structured.content}`
 
-    // If re-importing same file, replace its section; otherwise append
     let finalContent: string
-    if (existingFiles.includes(filename) && existingContent) {
-      // Replace existing section for this file
-      const regex = new RegExp(
-        `(^|\\n---\\n)\\n<!-- source: ${filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} -->\\n[\\s\\S]*?(?=\\n---\\n\\n<!-- source:|$)`,
-      )
-      if (regex.test(existingContent)) {
-        finalContent = existingContent.replace(regex, `$1${newSection}`)
-      } else {
-        finalContent = existingContent + '\n\n---\n' + newSection
-      }
-    } else if (existingContent) {
-      finalContent = existingContent + '\n\n---\n' + newSection
+    if (currentContent) {
+      finalContent = currentContent + '\n\n---\n' + newSection
     } else {
       finalContent = newSection
     }
@@ -212,15 +202,13 @@ export class FeatureKnowledgeService {
     // Remove from source_files array
     const updatedFiles = existing.source_files.filter(f => f !== filename)
 
-    // Remove file's content section from body
-    const escapedName = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    const sectionRegex = new RegExp(
-      `(\\n---\\n)?\\n<!-- source: ${escapedName} -->\\n[\\s\\S]*?(?=\\n---\\n\\n<!-- source:|$)`,
-    )
-    let updatedContent = existing.content.replace(sectionRegex, '')
-    // Clean leading separator if first section was removed
-    updatedContent = updatedContent.replace(/^\n---\n/, '')
-    updatedContent = updatedContent.trim()
+    // Remove file's content section from body by splitting on source markers
+    const sections = this.splitContentBySections(existing.content)
+    const filteredSections = sections.filter(s => s.sourceFile !== filename)
+    const updatedContent = filteredSections
+      .map(s => s.sourceFile ? `<!-- source: ${s.sourceFile} -->\n\n${s.body}` : s.body)
+      .join('\n\n---\n\n')
+      .trim()
 
     const today = new Date().toISOString().split('T')[0]
     const frontmatter: Record<string, unknown> = {
@@ -236,5 +224,26 @@ export class FeatureKnowledgeService {
     await fs.writeFile(path.join(SOURCE_DIR, name, 'config.md'), configContent)
 
     return true
+  }
+
+  private static splitContentBySections(content: string): { sourceFile: string; body: string }[] {
+    if (!content.trim()) return []
+
+    const parts = content.split(/\n---\n/)
+    const sections: { sourceFile: string; body: string }[] = []
+
+    for (const part of parts) {
+      const trimmed = part.trim()
+      if (!trimmed) continue
+
+      const sourceMatch = trimmed.match(/^<!-- source: (.+?) -->\s*\n([\s\S]*)$/)
+      if (sourceMatch) {
+        sections.push({ sourceFile: sourceMatch[1], body: sourceMatch[2].trim() })
+      } else {
+        sections.push({ sourceFile: '', body: trimmed })
+      }
+    }
+
+    return sections
   }
 }

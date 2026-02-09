@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { FileText, Pencil, Save, X } from 'lucide-react'
 
 interface PreviewTabProps {
@@ -6,12 +6,16 @@ interface PreviewTabProps {
   content: string
   sourceFiles: string[]
   onSaved: () => void
+  onDirtyChange?: (dirty: boolean) => void
+  saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
-export function PreviewTab({ knowledgeName, content, sourceFiles, onSaved }: PreviewTabProps) {
+export function PreviewTab({ knowledgeName, content, sourceFiles, onSaved, onDirtyChange, saveRef }: PreviewTabProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editContent, setEditContent] = useState(content)
   const [saving, setSaving] = useState(false)
+
+  const hasChanges = isEditing && editContent !== content
 
   const handleEdit = () => {
     setEditContent(content)
@@ -23,7 +27,7 @@ export function PreviewTab({ knowledgeName, content, sourceFiles, onSaved }: Pre
     setEditContent(content)
   }
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     setSaving(true)
     try {
       const res = await fetch(`/api/feature-knowledge/${knowledgeName}/content`, {
@@ -38,7 +42,16 @@ export function PreviewTab({ knowledgeName, content, sourceFiles, onSaved }: Pre
     } finally {
       setSaving(false)
     }
-  }
+  }, [editContent, knowledgeName, onSaved])
+
+  useEffect(() => {
+    onDirtyChange?.(hasChanges)
+  }, [hasChanges])
+
+  useEffect(() => {
+    saveRef?.(hasChanges ? handleSave : null)
+    return () => saveRef?.(null)
+  }, [hasChanges, handleSave])
 
   if (!content && !isEditing) {
     return (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Save, Search, X } from 'lucide-react'
 
 interface ComponentMapping {
@@ -10,14 +10,36 @@ interface ComponentsTabProps {
   feature: string
   components: ComponentMapping[]
   onSave: (components: ComponentMapping[]) => Promise<void>
+  onDirtyChange?: (dirty: boolean) => void
+  saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
-export function ComponentsTab({ feature, components: initialComponents, onSave }: ComponentsTabProps) {
+export function ComponentsTab({ feature, components: initialComponents, onSave, onDirtyChange, saveRef }: ComponentsTabProps) {
   const [dsComponents, setDsComponents] = useState<string[]>([])
   const [selected, setSelected] = useState<ComponentMapping[]>(initialComponents)
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+
+  const hasChanges = JSON.stringify(selected) !== JSON.stringify(initialComponents)
+
+  const handleSave = useCallback(async () => {
+    setSaving(true)
+    try {
+      await onSave(selected)
+    } finally {
+      setSaving(false)
+    }
+  }, [selected, onSave])
+
+  useEffect(() => {
+    onDirtyChange?.(hasChanges)
+  }, [hasChanges])
+
+  useEffect(() => {
+    saveRef?.(hasChanges ? handleSave : null)
+    return () => saveRef?.(null)
+  }, [hasChanges, handleSave])
 
   useEffect(() => {
     setSelected(initialComponents)
@@ -47,15 +69,6 @@ export function ComponentsTab({ feature, components: initialComponents, onSave }
     setSelected(selected.map(c => c.name === name ? { ...c, usage } : c))
   }
 
-  const handleSave = async () => {
-    setSaving(true)
-    try {
-      await onSave(selected)
-    } finally {
-      setSaving(false)
-    }
-  }
-
   if (loading) {
     return <div className="text-center py-8 text-gray-500 text-sm">Loading design system components...</div>
   }
@@ -68,7 +81,7 @@ export function ComponentsTab({ feature, components: initialComponents, onSave }
         </h3>
         <button
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || !hasChanges}
           className="flex items-center gap-1 px-3 py-1.5 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
         >
           <Save className="w-4 h-4" />

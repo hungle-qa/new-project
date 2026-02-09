@@ -1,6 +1,6 @@
-# BA Demo Tool
+# QA-kit
 
-Create demo pages from product ideas and generate specs. All data is stored as markdown files (no database).
+QA testcase generation platform. Import components (AI learns UI), import testcase templates + rules, then generate testcases from feature specs. Also creates demo pages from product ideas. All data is stored as markdown files (no database).
 
 ## Quick Start
 
@@ -23,30 +23,30 @@ Navigate to http://localhost:3000
 
 ---
 
-## Two Workflows
+## Workflows
 
 | Workflow | Purpose | Command |
 |----------|---------|---------|
-| **Primary Workflow** | Code the main app (React + Express) | `/start` |
+| **Build App Workflow** | Code the main app (React + Express) | `/start` |
+| **Testcase Workflow** | Generate QA testcases from specs | `/testcase` |
 | **Create Demo Workflow** | Build demo projects in `source/demo/` | `/create-demo` |
 
 ---
 
-## Primary Workflow
+## Build App Workflow
 
-**Purpose:** Build and enhance the main BA Demo Tool application.
+**Purpose:** Build and enhance the main QA-kit application.
 
 ### Agent Chain
 ```
-scout.md → planner.md → designer.md → implementer.md
+scout(built-in) -> planner(built-in) -> [APPROVAL] -> implementer
 ```
 
 | Step | Agent | What It Does | Output |
 |------|-------|--------------|--------|
-| 1 | `scout` | Search `client/src/`, `server/` | File references, patterns |
-| 2 | `planner` | Create implementation plan | `plans/{feature}-plan.md` |
-| 3 | `designer` | Suggest UI/UX (if needed) | Component recommendations |
-| 4 | `implementer` | Write production code | TypeScript files |
+| 1 | `scout (built-in)` | Search `client/src/`, `server/` via Task tool | File references, patterns |
+| 2 | `planner (built-in)` | Create implementation plan via Task tool | Implementation plan |
+| 3 | `implementer` | Write production code | TypeScript files |
 
 ### How to Run
 
@@ -56,10 +56,10 @@ scout.md → planner.md → designer.md → implementer.md
 
 ### Scope
 
-Use Primary Workflow for:
+Use Build App Workflow for:
 - Design System management UI
 - Spec Template management UI
-- Product Ideas management UI
+- Review Testcase management UI
 - Demo Projects management UI
 - Import features
 - Backend API enhancements
@@ -74,13 +74,49 @@ Use Primary Workflow for:
 
 ---
 
+## Testcase Workflow
+
+**Purpose:** Generate and manage QA testcases from feature specs using templates and rules.
+
+### Agent Chain
+```
+testcase-writer (skill-based: init / import-spec / write / update)
+```
+
+### How to Run
+
+```
+/testcase init                      # One-time setup: template + rules
+/testcase import-spec {feature}     # Import PDF spec for a feature
+/testcase write {feature}           # Generate testcases
+/testcase update {feature}          # Update existing testcases
+```
+
+### Typical Workflow Order
+```
+1. /testcase init                    -> Setup template + rules
+2. /testcase import-spec login-page  -> Import spec from PDF
+3. /testcase write login-page        -> Generate testcase CSV
+4. /testcase update login-page       -> Iterate as needed
+```
+
+### Examples
+```
+/testcase init
+/testcase import-spec login-page
+/testcase write login-page
+/testcase update login-page
+```
+
+---
+
 ## Create Demo Workflow
 
 **Purpose:** Build demo projects with HTML pages in `source/demo/`.
 
 ### Agent Chain (COMPLEX Tier)
 ```
-demo-folder-creator.md → scout.md → planner.md → designer.md → implementer.md
+demo-folder-creator.md -> scout.md -> planner.md -> designer.md -> implementer.md
 ```
 
 | Step | Agent | What It Does | Output |
@@ -151,9 +187,9 @@ The `/import-design-by-image` command auto-detects mode via the unified `import-
 
 **Usage:**
 ```
-/import-design-by-image [attach 1 image]      → Single mode
-/import-design-by-image [attach 2+ images]    → Multi mode (states)
-/import-design-by-image update {Name}          → Update mode
+/import-design-by-image [attach 1 image]      -> Single mode
+/import-design-by-image [attach 2+ images]    -> Multi mode (states)
+/import-design-by-image update {Name}          -> Update mode
 ```
 
 ---
@@ -161,8 +197,16 @@ The `/import-design-by-image` command auto-detects mode via the unified `import-
 ## Project Structure
 
 ```
-BA kit_v1/
+QA-kit/
 ├── source/                    # All content (file-based storage)
+│   ├── testcase/              # QA testcase data (testcase workflow)
+│   │   ├── rule/              # test-rules.md (testcase generation rules)
+│   │   ├── template/          # Imported CSV templates
+│   │   └── {feature-name}/    # Per-feature testcase data
+│   │       ├── config.md      # Feature config (levels, scope, components)
+│   │       ├── spec/          # Extracted spec from PDF
+│   │       ├── knowledge/     # Knowledge files (PDF/MD/TXT)
+│   │       └── result/        # Generated testcase CSVs
 │   ├── demo/                  # Demo projects (create-demo workflow)
 │   │   └── {project-name}/
 │   │       ├── README.md
@@ -174,20 +218,21 @@ BA kit_v1/
 │   ├── product-idea/          # Product ideas (.md)
 │   └── spec-template/         # Spec templates (.md)
 │
-├── client/                    # React Frontend (primary workflow)
+├── client/                    # React Frontend (build-app workflow)
 │   └── src/
 │       ├── components/
 │       ├── pages/
 │       ├── hooks/
 │       └── utils/
 │
-├── server/                    # Express Backend (primary workflow)
+├── server/                    # Express Backend (build-app workflow)
 │   ├── routes/
 │   ├── services/
 │   └── utils/
 │
 └── .claude/                   # Workflow configuration
     ├── agents/                # Agent definitions (pure executors)
+    │   └── skills/            # Skill files for skill-based agents
     ├── commands/              # Slash commands (thin routing)
     └── workflows/             # Workflow docs (orchestration)
 ```
@@ -211,8 +256,17 @@ BA kit_v1/
 |--------|----------|-------------|
 | GET | /api/design-system | List all components |
 | GET | /api/design-system/:name | Get component by name |
-| GET | /api/product-idea | List all product ideas |
-| GET | /api/product-idea/:name | Get idea by name |
+| GET | /api/review-testcase | List all features |
+| GET | /api/review-testcase/:feature | Get feature config |
+| POST | /api/review-testcase | Create feature |
+| PUT | /api/review-testcase/:feature | Update feature config |
+| DELETE | /api/review-testcase/:feature | Delete feature |
+| POST | /api/review-testcase/:feature/import-spec | Import spec via AI |
+| GET | /api/review-testcase/:feature/spec | Get imported spec |
+| POST | /api/review-testcase/:feature/knowledge | Upload knowledge file |
+| DELETE | /api/review-testcase/:feature/knowledge/:filename | Delete knowledge file |
+| GET | /api/review-testcase/:feature/results | List result CSVs |
+| GET | /api/review-testcase/:feature/results/:filename | Get/download result CSV |
 | GET | /api/demo | List all demos |
 | GET | /api/demo/:name | Get demo details |
 
@@ -235,35 +289,35 @@ BA kit_v1/
 ### Core Agents (Pure Executors)
 | Agent | Purpose | Used By |
 |-------|---------|---------|
-| `scout` | Search codebase for context | Both workflows |
-| `quick-scout` | Fast scout + inline plan for MEDIUM tasks | Demo workflows (MEDIUM tier) |
-| `planner` | Create implementation plans | Both workflows |
-| `designer` | Suggest UI composition | Both workflows |
-| `implementer` | Write code | Both workflows |
-| `write-spec` | Generate spec from demo | Demo workflow |
-| `demo-folder-creator` | Create demo folder structure | Demo workflow |
+| `implementer` | Write code | Build App workflow |
+
+### Skill-Based Agents
+| Agent | Purpose | Skills |
+|-------|---------|--------|
+| `testcase-writer` | Generate and manage QA testcases | init, import-spec, write, update |
+| `import-design` | Unified import agent (validate code, single/multi image, update existing) | validate, single, multi, update |
+| `agia` | Audit and improve agents and system files | audit, update, test, optimize, create-skill, system-audit |
 
 ### Import Agents
 | Agent | Purpose |
 |-------|---------|
-| `import-design` | Unified import agent (validate code, single/multi image, update existing) |
 | `import-idea` | Import product ideas |
 | `import-spec-template` | Import spec templates |
 
 ### Commands (Slash Commands)
 | Command | Purpose |
 |---------|---------|
-| `/start` | Start primary workflow for main app development |
+| `/start` | Start build-app workflow for main app development |
+| `/testcase` | Manage QA testcases (init, import-spec, write, update) |
 | `/create-demo` | Create a demo project with tiered execution |
 | `/fix-demo` | Fix issues in an existing demo project |
 | `/import-design-by-image` | Convert UI images to design system components |
-| `/build-feature` | Build features using file-based storage |
 | `/agent-audit` | Audit, update, test, or optimize agents via AGIA |
 
 ### Meta Agents
 | Agent | Purpose |
 |-------|---------|
-| `agia` | Audit and improve agents and system files (skill-based: audit/update/test/optimize/create-skill) |
+| `agia` | Audit and improve agents and system files (skill-based: audit/update/test/optimize/create-skill/system-audit) |
 | `doc-writer` | Create user-friendly documentation for end users |
 
 ---
@@ -273,11 +327,13 @@ BA kit_v1/
 | File | Purpose |
 |------|---------|
 | `CLAUDE.md` | Project instructions for Claude |
-| `.claude/workflows/primary-workflow.md` | Main app coding workflow |
+| `.claude/workflows/build-app-workflow.md` | Main app coding workflow |
+| `.claude/workflows/testcase-workflow.md` | QA testcase generation workflow |
 | `.claude/workflows/create-demo-workflow.md` | Create demo workflow |
 | `.claude/workflows/fix-demo-workflow.md` | Fix demo workflow |
 | `.claude/workflows/development-rules.md` | Coding standards |
 | `.claude/agents/*.md` | Agent definitions |
+| `.claude/agents/skills/` | Skill files for skill-based agents |
 
 ---
 
@@ -285,6 +341,8 @@ BA kit_v1/
 
 | Problem | Solution |
 |---------|----------|
-| Wrong workflow | Use `/start` for app code, `/create-demo` for demo |
+| Wrong workflow | Use `/start` for app code, `/testcase` for testcases, `/create-demo` for demo |
 | Scout finds nothing | Try different keywords |
 | Demo files in wrong place | Check you're using `/create-demo` |
+| Testcase init missing | Run `/testcase init` before write/update |
+| Spec not imported | Run `/testcase import-spec {feature}` before write |

@@ -3,7 +3,7 @@ import cors from 'cors'
 import path from 'path'
 
 import designSystemRoutes from './routes/design-system'
-import productIdeaRoutes from './routes/product-idea'
+import reviewTestcaseRoutes from './routes/review-testcase'
 import specTemplateRoutes from './routes/spec-template'
 import demoRoutes from './routes/demo'
 import aiRoutes from './routes/ai'
@@ -17,7 +17,7 @@ app.use(express.json())
 
 // API Routes
 app.use('/api/design-system', designSystemRoutes)
-app.use('/api/product-idea', productIdeaRoutes)
+app.use('/api/review-testcase', reviewTestcaseRoutes)
 app.use('/api/spec-template', specTemplateRoutes)
 app.use('/api/demo', demoRoutes)
 app.use('/api/ai', aiRoutes)

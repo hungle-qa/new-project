@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { BookOpen, Code, Layers, Monitor, AlertCircle, Palette, Lightbulb, FileText, Layout as LayoutIcon, Bot } from 'lucide-react'
+import { BookOpen, Code, Layers, Monitor, AlertCircle, Palette, ClipboardCheck, FileText, Layout as LayoutIcon, Bot } from 'lucide-react'
 
 type TabType = 'edit-app' | 'create-demos' | 'use-webapp' | 'train-agent'
-type WebAppSubTab = 'design-system' | 'product-ideas' | 'spec-templates' | 'demo-projects'
+type WebAppSubTab = 'design-system' | 'review-testcase' | 'spec-templates' | 'demo-projects'
 
 interface GuideSection {
   overview: string
@@ -23,7 +23,7 @@ const tabs: { id: TabType; label: string; icon: typeof Code }[] = [
 
 const webAppSubTabs: { id: WebAppSubTab; label: string; icon: typeof Palette }[] = [
   { id: 'design-system', label: 'Design System', icon: Palette },
-  { id: 'product-ideas', label: 'Product Ideas', icon: Lightbulb },
+  { id: 'review-testcase', label: 'Review Testcase', icon: ClipboardCheck },
   { id: 'spec-templates', label: 'Spec Templates', icon: FileText },
   { id: 'demo-projects', label: 'Demo Projects', icon: LayoutIcon },
 ]
@@ -72,48 +72,48 @@ const webAppSubTabContent: Record<WebAppSubTab, GuideSection> = {
       'Copy works everywhere: The Copy button appears in all code tabs'
     ]
   },
-  'product-ideas': {
-    overview: 'Store and organize your product requirements. Each idea includes problem statements, user stories, and acceptance criteria. Use ideas to generate demos automatically.',
+  'review-testcase': {
+    overview: 'Manage feature testcase configurations. Define hierarchy levels, scope, map design system components, import specs via AI, and review generated testcase CSVs.',
     workflow: {
-      steps: ['Browse Ideas', 'View Details', 'Edit', 'Use for Demo'],
-      description: 'See all ideas → Click to read details → Edit if needed → Generate demo from idea'
+      steps: ['Create Feature', 'Configure Levels', 'Set Scope', 'Import Spec', 'Review Results'],
+      description: 'Create feature → Define hierarchy → Set scope → Import spec → Generate & review testcases'
     },
     input: [
-      '1. Browsing Ideas',
-      'View all: Ideas appear as cards in a grid',
-      'Search: Type keywords to filter (like "client" or "dashboard")',
-      'Click card: Opens the full idea details'
+      '1. Managing Features',
+      'Create: Click "Create Feature" button and enter a name',
+      'Select: Click a feature in the sidebar to configure it',
+      'Delete: Click Delete button on the feature detail panel'
     ],
     process: [
-      '2. What Each Idea Contains',
-      'When you open an idea, you see:',
+      '2. Feature Configuration Tabs',
       '',
-      'Title and Description: What the product is',
-      'Problem Statement: What problem it solves',
-      'Target Users: Who will use it',
-      'User Stories: What users can do',
-      'Acceptance Criteria: How to know it works',
-      'Technical Notes: Implementation details'
+      'Levels: Define component hierarchy (Lv1 component, Lv2 sub-component, Lv3 functions)',
+      'Scope: Define happy case and corner case definitions',
+      'Knowledge: Upload reference files (PDF, MD, TXT)',
+      'Components: Map design system components to the feature',
+      'Import Spec: Upload a PDF spec, AI extracts and structures it',
+      'Review & Export: View generated testcase CSVs and download them'
     ],
     output: [
-      '3. Using Ideas',
-      'You can:',
+      '3. Generating Testcases',
+      'After configuring:',
       '',
-      'Edit: Click Edit button to change any section',
-      'Delete: Click Delete button (requires confirmation)',
-      'Create Demo: Use /create-demo from @product-idea {name} in CLI'
+      'Run /testcase write {feature} in CLI to generate testcases',
+      'Results appear in Review & Export tab as downloadable CSVs',
+      'Preview first 100 rows inline before downloading'
     ],
     examples: [
-      'View idea → Click "Fitness Tracker" card',
-      'Edit idea → Click Edit → Change description → Save',
-      'Create demo from idea → /create-demo from @product-idea fitness-tracker'
+      'Create feature → Click "Create Feature" → Type "inbox" → Create',
+      'Add levels → Levels tab → Add Level → Set type and value → Save',
+      'Import spec → Import Spec tab → Upload PDF → AI processes → Preview',
+      'Download CSV → Review & Export tab → Click Download'
     ],
     note: [
       '⚠️ Tips',
       '',
-      'File location: Ideas are saved as markdown in source/product-idea/',
-      'Auto-save: Your edits save automatically',
-      'Import new ideas: Use /import-idea command to add from PDF or Confluence'
+      'File location: Features saved in source/testcase/{feature-name}/',
+      'AI required: Import Spec needs AI settings configured (Google Gemini)',
+      'Generate testcases: Use /testcase write {feature} after configuring'
     ]
   },
   'spec-templates': {
@@ -407,8 +407,8 @@ const guideContent: Record<Exclude<TabType, 'use-webapp'>, GuideSection> = {
 const useWebappContent: GuideSection = {
   overview: 'Access all your project resources in one place. The web app runs at http://localhost:3000 after you start the development server with npm run dev.',
   workflow: {
-    steps: ['Design System', 'Product Ideas', 'Spec Templates', 'Demo Projects'],
-    description: 'Four main sections: Components you can copy → Ideas you can develop → Templates you can use → Demos you can preview'
+    steps: ['Design System', 'Review Testcase', 'Spec Templates', 'Demo Projects'],
+    description: 'Four main sections: Components you can copy → Features you can configure → Templates you can use → Demos you can preview'
   },
   input: [
     '1. Getting Started',
@@ -420,7 +420,7 @@ const useWebappContent: GuideSection = {
     '2. What Each Section Does',
     '',
     'Design System: Browse and copy UI components (buttons, cards, forms)',
-    'Product Ideas: Manage requirements and feature specifications',
+    'Review Testcase: Configure features and review generated testcases',
     'Spec Templates: Use ready-made document templates',
     'Demo Projects: Preview and manage generated demo pages'
   ],
@@ -434,7 +434,7 @@ const useWebappContent: GuideSection = {
   ],
   examples: [
     'Copy a button → Design System → "Button" → HTML tab → Copy',
-    'Edit an idea → Product Ideas → Click idea → Edit → Save',
+    'Configure feature → Review Testcase → Click feature → Set levels → Save',
     'Preview demo → Demo Projects → Click project → Click page link'
   ],
   note: [

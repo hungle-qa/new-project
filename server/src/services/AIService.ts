@@ -9,6 +9,10 @@ export interface StructuredProductIdea {
   content: string
 }
 
+export interface StructuredSpec {
+  content: string
+}
+
 export interface AIConfig {
   provider: 'gemini'
   apiKey: string
@@ -96,6 +100,69 @@ NAME: interactive-table-builder
         error instanceof Error
           ? `Failed to structure content: ${error.message}`
           : 'Failed to structure content with AI'
+      )
+    }
+  }
+
+  /**
+   * Uses Google Gemini AI to structure raw spec content into a clean feature specification
+   */
+  static async structureSpec(
+    rawContent: string,
+    config: AIConfig
+  ): Promise<StructuredSpec> {
+    if (!config.apiKey) {
+      throw new Error('API key is required. Please configure AI settings.')
+    }
+
+    const prompt = `You are a senior QA analyst. Convert the following raw content into a structured feature specification document.
+
+**RAW CONTENT TO CONVERT:**
+
+${rawContent}
+
+---
+
+**CRITICAL INSTRUCTIONS:**
+
+1. Extract all feature requirements, user flows, and acceptance criteria
+2. Organize into clear sections with markdown headers
+3. Preserve all technical details, field names, error messages, and business rules
+4. Use tables for structured data (fields, validations, etc.)
+5. Include edge cases and boundary conditions if mentioned
+6. Output ONLY the structured markdown content (no preamble)
+
+**OUTPUT FORMAT:**
+# Feature Specification
+
+## Overview
+...
+
+## User Flows
+...
+
+## Requirements
+...
+
+## Acceptance Criteria
+...`
+
+    try {
+      const genAI = new GoogleGenerativeAI(config.apiKey)
+      const model = genAI.getGenerativeModel({
+        model: config.model || 'gemini-2.0-flash'
+      })
+
+      const result = await model.generateContent(prompt)
+      const content = result.response.text().trim()
+
+      return { content }
+    } catch (error) {
+      console.error('AI Service Error:', error)
+      throw new Error(
+        error instanceof Error
+          ? `Failed to structure spec: ${error.message}`
+          : 'Failed to structure spec with AI'
       )
     }
   }

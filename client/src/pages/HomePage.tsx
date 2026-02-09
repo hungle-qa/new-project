@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Palette, Lightbulb, Layout, FileText } from 'lucide-react'
+import { Palette, ClipboardCheck, Layout, FileText } from 'lucide-react'
 
 const features = [
   {
@@ -10,10 +10,10 @@ const features = [
     color: 'bg-blue-500',
   },
   {
-    title: 'Product Ideas',
-    description: 'Store and organize product requirements',
-    icon: Lightbulb,
-    path: '/product-ideas',
+    title: 'Review Testcase',
+    description: 'Manage features and review generated testcases',
+    icon: ClipboardCheck,
+    path: '/review-testcase',
     color: 'bg-yellow-500',
   },
   {

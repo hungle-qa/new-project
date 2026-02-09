@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Palette, ClipboardCheck, Layout, FileText } from 'lucide-react'
+import { Palette, ClipboardCheck, FileText } from 'lucide-react'
 
 const features = [
   {
@@ -16,13 +16,7 @@ const features = [
     path: '/review-testcase',
     color: 'bg-yellow-500',
   },
-  {
-    title: 'Demo Projects',
-    description: 'Create and preview demo pages',
-    icon: Layout,
-    path: '/demos',
-    color: 'bg-green-500',
-  },
+
   {
     title: 'Spec Templates',
     description: 'Generate specs from demos',

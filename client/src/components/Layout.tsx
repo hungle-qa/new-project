@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Palette, ClipboardCheck, Layout as LayoutIcon, BookOpen } from 'lucide-react'
+import { Home, Palette, ClipboardCheck, BookOpen } from 'lucide-react'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -9,7 +9,7 @@ const navItems = [
   { path: '/', label: 'Home', icon: Home },
   { path: '/design-system', label: 'Design System', icon: Palette },
   { path: '/review-testcase', label: 'Review Testcase', icon: ClipboardCheck },
-  { path: '/demos', label: 'Demos', icon: LayoutIcon },
+
   { path: '/user-guide', label: 'User Guide', icon: BookOpen },
 ]
 

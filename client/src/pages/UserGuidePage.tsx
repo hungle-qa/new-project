@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { BookOpen, Code, Layers, Monitor, AlertCircle, Palette, ClipboardCheck, FileText, Layout as LayoutIcon, Bot } from 'lucide-react'
+import { BookOpen, Code, Layers, Monitor, AlertCircle, Palette, ClipboardCheck, FileText, Bot } from 'lucide-react'
 
 type TabType = 'edit-app' | 'create-demos' | 'use-webapp' | 'train-agent'
-type WebAppSubTab = 'design-system' | 'review-testcase' | 'spec-templates' | 'demo-projects'
+type WebAppSubTab = 'design-system' | 'review-testcase' | 'spec-templates'
 
 interface GuideSection {
   overview: string
@@ -25,7 +25,6 @@ const webAppSubTabs: { id: WebAppSubTab; label: string; icon: typeof Palette }[]
   { id: 'design-system', label: 'Design System', icon: Palette },
   { id: 'review-testcase', label: 'Review Testcase', icon: ClipboardCheck },
   { id: 'spec-templates', label: 'Spec Templates', icon: FileText },
-  { id: 'demo-projects', label: 'Demo Projects', icon: LayoutIcon },
 ]
 
 const webAppSubTabContent: Record<WebAppSubTab, GuideSection> = {
@@ -157,50 +156,6 @@ const webAppSubTabContent: Record<WebAppSubTab, GuideSection> = {
       'File format: Templates are markdown files (.md)',
       'Location: Stored in source/spec-template/',
       'Reusable: Use the same template for multiple projects'
-    ]
-  },
-  'demo-projects': {
-    overview: 'View and manage your demo projects. Each demo is a collection of HTML pages built from design system components. Demos include auto-generated specification documents.',
-    workflow: {
-      steps: ['Browse Demos', 'Open Project', 'Preview Pages', 'View Spec'],
-      description: 'See all demos → Click to open → Preview HTML pages → Read the specification'
-    },
-    input: [
-      '1. Browsing Demos',
-      'View all: Demos appear as cards in a grid',
-      'Click card: Opens project details',
-      'See info: Each card shows page count and components used'
-    ],
-    process: [
-      '2. Project Contents',
-      'Each demo project includes:',
-      '',
-      'HTML Pages: Standalone pages in the pages/ folder',
-      'Specification: Documentation in the spec/ folder',
-      'Components List: Shows which design system parts were used',
-      'Creation Date: When the demo was generated'
-    ],
-    output: [
-      '3. Working with Demos',
-      'You can:',
-      '',
-      'Preview pages: Click any page link to open it in browser',
-      'View spec: Click "View Spec" button to see documentation',
-      'Create new: Use /create-demo command in CLI',
-      'Fix issues: Use /fix-demo {name}: {issue} in CLI'
-    ],
-    examples: [
-      'Preview page → Click "Client Portal" → Click "login.html"',
-      'View spec → Click demo → "View Spec" button',
-      'Create new → /create-demo my-project',
-      'Fix bug → /fix-demo my-project: button not aligned'
-    ],
-    note: [
-      '⚠️ Tips',
-      '',
-      'File location: Demos are saved in source/demo/{project-name}/',
-      'Plain HTML: Demo pages are HTML files, not React',
-      'Auto documentation: Specs are generated automatically when you create a demo'
     ]
   }
 }
@@ -407,8 +362,8 @@ const guideContent: Record<Exclude<TabType, 'use-webapp'>, GuideSection> = {
 const useWebappContent: GuideSection = {
   overview: 'Access all your project resources in one place. The web app runs at http://localhost:3000 after you start the development server with npm run dev.',
   workflow: {
-    steps: ['Design System', 'Review Testcase', 'Spec Templates', 'Demo Projects'],
-    description: 'Four main sections: Components you can copy → Features you can configure → Templates you can use → Demos you can preview'
+    steps: ['Design System', 'Review Testcase', 'Spec Templates'],
+    description: 'Three main sections: Components you can copy → Features you can configure → Templates you can use'
   },
   input: [
     '1. Getting Started',
@@ -422,20 +377,16 @@ const useWebappContent: GuideSection = {
     'Design System: Browse and copy UI components (buttons, cards, forms)',
     'Review Testcase: Configure features and review generated testcases',
     'Spec Templates: Use ready-made document templates',
-    'Demo Projects: Preview and manage generated demo pages'
   ],
   output: [
     '3. Common Workflows',
     '',
-    'Build a Demo: Import components → Create idea → Generate demo → Review',
     'Copy Component: Design System → Click component → Copy code → Paste',
     'Create Documentation: Spec Templates → Copy template → Fill placeholders',
-    'Review Demo: Demo Projects → Click project → Preview pages'
   ],
   examples: [
     'Copy a button → Design System → "Button" → HTML tab → Copy',
     'Configure feature → Review Testcase → Click feature → Set levels → Save',
-    'Preview demo → Demo Projects → Click project → Click page link'
   ],
   note: [
     '⚠️ Key Information',

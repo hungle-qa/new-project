@@ -1,9 +1,9 @@
 ---
-description: Start primary workflow for main app development
+description: Start build-app workflow for main app development
 argument-hint: [feature description]
 ---
 
-**Purpose:** Build and enhance the main BA Demo Tool application.
+**Purpose:** Build and enhance the main QA-kit application.
 
 **Target:** TypeScript code in `client/src/` and `server/src/`
 
@@ -16,16 +16,16 @@ argument-hint: [feature description]
 **If task could mean EITHER app UI OR documentation, ASK user:**
 
 Example ambiguous tasks:
-- "Update User Guide section" → App UI or docs/user-guide.md?
-- "Add help content" → App component or README?
-- "Update about page" → React page or docs?
+- "Update User Guide section" -> App UI or docs/user-guide.md?
+- "Add help content" -> App component or README?
+- "Update about page" -> React page or docs?
 
 **Ask using AskUserQuestion:**
 ```
 "Do you want to update the APP (React component) or the DOCUMENTATION (.md file)?"
 Options:
-- "App (client/src/)" → Proceed with workflow
-- "Documentation (.md file)" → Exit workflow, do directly
+- "App (client/src/)" -> Proceed with workflow
+- "Documentation (.md file)" -> Exit workflow, do directly
 ```
 
 **If clearly app-related, proceed without asking.**
@@ -39,8 +39,8 @@ Options:
 | Tier | Detection Criteria | Agent Chain |
 |------|-------------------|-------------|
 | **SIMPLE** | Single file, bug fix, typo, rename | implementer only |
-| **MEDIUM** | 2-3 files, clear scope, known feature | quick-scout → implementer |
-| **COMPLEX** | Multi-file, unclear scope, new architecture | Full workflow |
+| **MEDIUM** | 2-3 files, clear scope, known feature | scout(built-in) -> implementer |
+| **COMPLEX** | Multi-file, unclear scope, new architecture | scout(built-in) -> planner(built-in) -> [APPROVAL] -> implementer |
 
 ### SIMPLE Task Indicators
 - User specifies exact file path
@@ -67,25 +67,25 @@ Options:
 
 ## Execution
 
-**🚨 IMPLEMENTER ALWAYS ASKS APPROVAL BEFORE CODING.**
+**IMPLEMENTER ALWAYS ASKS APPROVAL BEFORE CODING.**
 
 **SIMPLE tasks:**
 ```
-→ implementer → [APPROVAL] → code
+-> implementer -> [APPROVAL] -> code
 ```
 No scout, no plan file. Implementer shows plan and asks before coding.
 
 **MEDIUM tasks:**
 ```
-→ quick-scout → implementer → [APPROVAL] → code
+-> scout(built-in) -> implementer -> [APPROVAL] -> code
 ```
-Quick-scout finds files and shows inline plan, then implementer asks before coding.
+Scout via Task tool finds files and shows inline plan, then implementer asks before coding.
 
 **COMPLEX tasks:**
 ```
-→ scout → planner → designer → implementer → [APPROVAL] → code
+-> scout(built-in) -> planner(built-in) -> [APPROVAL] -> implementer -> code
 ```
-Full workflow. Implementer asks before coding.
+Full workflow. Planner creates plan for approval, then implementer codes.
 
 ---
 

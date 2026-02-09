@@ -18,6 +18,7 @@ argument-hint: <operation> <agent-name>
 | `test` | `/agent-audit test scout` | Run 5 simulation tests against agent |
 | `optimize` | `/agent-audit optimize scout` | Reduce tokens 30-50% via Chain-of-Density & Entropy Reduction |
 | `create-skill` | `/agent-audit create-skill planner` | Split agent into skill-based architecture |
+| `system-audit` | `/agent-audit system-audit` | Check system docs consistency (README, CLAUDE.md, user-guide) |
 
 ---
 
@@ -31,6 +32,7 @@ argument-hint: <operation> <agent-name>
 - `/agent-audit test planner` → Run tests on planner agent
 - `/agent-audit optimize implementer` → Optimize implementer for token efficiency
 - `/agent-audit create-skill planner` → Split planner into skill-based architecture
+- `/agent-audit system-audit` → Check system docs consistency
 
 ---
 
@@ -55,6 +57,7 @@ argument-hint: <operation> <agent-name>
 /agent-audit test <agent>           → Run simulation tests
 /agent-audit optimize <agent>       → Reduce token count 30-50%
 /agent-audit create-skill <agent>   → Split into skill-based architecture
+/agent-audit system-audit           → Check system docs consistency
 ```
 
 ---

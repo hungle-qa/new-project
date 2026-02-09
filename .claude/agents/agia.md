@@ -15,7 +15,7 @@ model: sonnet
 
 | Phase | Description |
 |-------|-------------|
-| **INPUT** | Agent file path (`.claude/agents/{name}.md`) + operation type (audit/update/test/optimize/create-skill) |
+| **INPUT** | Agent file path (`.claude/agents/{name}.md`) + operation type (audit/update/test/optimize/create-skill/system-audit) |
 | **PROCESSING** | Route to skill → Execute skill steps → Apply shared validation |
 | **OUTPUT** | Operation report (console) + modified agent file (if update/optimize approved) |
 
@@ -48,6 +48,7 @@ After detecting the operation from user input, **read the matching skill file** 
 | TEST | `test` keyword + agent name | `.claude/agents/skills/agia/test.md` |
 | OPTIMIZE | `optimize` keyword + agent name | `.claude/agents/skills/agia/optimize.md` |
 | CREATE-SKILL | `create skill` or `create-skill` keyword + agent name | `.claude/agents/skills/agia/create-skill.md` |
+| SYSTEM-AUDIT | `system-audit` keyword (no agent name required) | `.claude/agents/skills/agia/system-audit.md` |
 
 **Routing instruction:**
 1. Parse operation keyword from user input
@@ -68,7 +69,8 @@ After detecting the operation from user input, **read the matching skill file** 
 | `CLAUDE.md` | Claude Code instructions, workflow references | New workflow, rule change |
 | `docs/user-guide.md` | Complete user reference, command docs | New command, agent change, UI change |
 | `.claude/workflows/development-rules.md` | Coding standards, tech stack | Stack change, new patterns |
-| `.claude/workflows/primary-workflow.md` | Main app development flow | Agent chain change |
+| `.claude/workflows/build-app-workflow.md` | Main app development flow | Agent chain change |
+| `.claude/workflows/testcase-workflow.md` | QA testcase generation flow | Agent/skill change |
 | `.claude/workflows/create-demo-workflow.md` | Demo creation flow | Agent chain change |
 | `.claude/workflows/fix-demo-workflow.md` | Demo fix flow | Agent chain change |
 | `.claude/agents/*.md` | Agent definitions | Agent capability change |
@@ -139,51 +141,62 @@ workflows/*.md
 
 **MANDATORY** for audit and update operations. Validates agent works correctly within its workflow chains.
 
-### Chain Registry
+### Compact Chain Registry
 
-Read from: `.claude/workflows/agia-workflow.md` → "Agent Chain Registry" section
+| Workflow | Chain |
+|----------|-------|
+| Build App (full) | `scout(built-in) → planner(built-in) → implementer` |
+| Build App (medium) | `scout(built-in) → implementer` |
+| Build App (simple) | `implementer` |
+| Testcase | `testcase-writer` (skill-based: init/import-spec/write/update) |
+| Create Demo | `demo-folder-creator → scout → planner → designer → implementer → write-spec` |
+| Fix Demo | `scout → planner → designer → implementer` |
+
+### Compact I/O Contracts
+
+| From | To | Format | Required Fields |
+|------|----|--------|----------------|
+| scout(built-in) | planner(built-in) | Context (inline) | File paths, patterns, relevant code |
+| planner(built-in) | implementer | Context (inline) | Implementation plan |
+| scout(built-in) | implementer | Context (inline) | File paths + inline plan |
+| testcase-writer | (standalone) | CSV `source/testcase/{feature}/result/` | Testcase CSV matching template |
+| demo-folder-creator | scout | Folder path | `source/demo/{name}/` exists |
+| implementer | write-spec | HTML files | `source/demo/{name}/pages/*.html` |
 
 ### Validation Procedure
 
-**Step 1: Discover chains**
+**Step 1: Check chain membership (LAZY)**
 ```
-Read .claude/workflows/agia-workflow.md
-Extract "Known Chains" table
-Filter chains containing target agent-name
-If no chains found → Report "Standalone agent, no chain validation needed"
+Search Compact Chain Registry for target agent-name
+If NOT found in any chain → Report "Standalone agent, no chain validation needed" → STOP
+If found → Continue to Step 2
 ```
 
-**Step 2: For each chain, validate connections**
+**Step 2: For each chain containing the agent, validate:**
 
-| Check | How | PASS Condition |
-|-------|-----|----------------|
-| Upstream I/O | Read upstream agent → extract output format. Read target agent → extract input format. Compare. | Target can consume upstream's output |
-| Downstream I/O | Read target agent → extract output format. Read downstream agent → extract input format. Compare. | Downstream can consume target's output |
-| Tools match | Extract tools from target's frontmatter. Check tools support reading upstream format and writing downstream format. | Has Read (for JSON/MD input), Write (for file output) |
-| Data contract | Read `.claude/agents/data-contracts.md`. Compare agent's output against defined schema. | All required schema fields present |
-| No circular deps | Trace full chain for duplicate agent names | No agent appears twice in same chain |
-| Workflow reference | Read workflow file from registry. Confirm agent-name appears in chain definition. | Agent name found in workflow |
+| Check | Method | PASS Condition |
+|-------|--------|----------------|
+| Upstream I/O | Read upstream agent → compare output format to target input | Target can consume upstream's output |
+| Downstream I/O | Read target agent → compare output to downstream input | Downstream can consume target's output |
+| Tools match | Check frontmatter tools support read/write for chain formats | Required tools present |
+| Contract fields | Compare output against Compact I/O Contracts table | All required fields present |
+| No circular deps | Trace chain for duplicate agent names | No agent appears twice |
 
 **Step 3: Report**
-
 ```markdown
 ### Chain Validation: {agent-name}
-
 Chains found: {count}
-
-| # | Workflow | Position | Upstream OK | Downstream OK | Tools OK | Contract OK | Status |
-|---|----------|----------|-------------|---------------|----------|-------------|--------|
-
+| # | Chain | Position | Upstream OK | Downstream OK | Tools OK | Status |
+|---|-------|----------|-------------|---------------|----------|--------|
 Issues: {list or "none"}
 ```
 
 ### When I/O Changes Are Detected (UPDATE operations)
 
-If the update changes the agent's output format or schema:
+If the update changes the agent's output format:
 1. List all downstream agents affected
-2. For each affected agent, describe what breaks
-3. WARN user before applying update
-4. Suggest fixes for downstream agents
+2. WARN user before applying update
+3. Suggest fixes for downstream agents
 
 ---
 
@@ -221,64 +234,3 @@ Before delivering results, verify:
 
 ---
 
-## [QUICK_START]
-
-### Operations
-
-```
-audit {agent-name}          → Deconstruct + find weaknesses + chain validation
-update {agent-name}         → Refactor with AI-Native format (requires approval)
-test {agent-name}           → Run 5 simulation tests
-optimize {agent-name}       → Reduce tokens 30-50% (requires approval)
-create-skill {agent-name}   → Split agent into skill-based architecture
-```
-
-### Examples
-
-```
-Audit the import-design agent.
-Issues observed: Sometimes creates files without proper HTML/CSS sections.
-Scope: Full audit with focus on validation.
-```
-
-```
-Audit all system files for consistency.
-Trigger: Added new agia agent.
-Focus: Ensure agent is documented in README and user-guide.
-```
-
-```
-Create skill files for the planner agent.
-Analyze and suggest best skill split.
-```
-
----
-
-## [RELATED_AGENTS]
-
-| Agent | Relationship |
-|-------|--------------|
-| `import-design` | Skill-based architecture reference (validate/single/multi/update skills) |
-| `scout` | Candidate for optimization |
-| `planner` | Candidate for optimization |
-| `implementer` | Candidate for optimization |
-| `demo-folder-creator` | Candidate for optimization |
-| `quick-scout` | Candidate for optimization |
-| `designer` | Candidate for optimization |
-| `write-spec` | Candidate for optimization |
-| `import-idea` | Candidate for optimization |
-| `import-spec-template` | Candidate for optimization |
-| `doc-writer` | Sibling agent for user documentation |
-
----
-
-## [RELATED_SYSTEM_FILES]
-
-| File | Audit Type |
-|------|------------|
-| `README.md` | Consistency, completeness |
-| `CLAUDE.md` | Reference accuracy |
-| `docs/user-guide.md` | Completeness, accuracy |
-| `.claude/workflows/*.md` | Agent chain validity |
-| `.claude/commands/*.md` | Routing accuracy |
-| `.claude/settings.json` | Configuration validity |

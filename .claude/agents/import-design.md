@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, AskUserQuestion
 model: sonnet
 ---
 
-You are a Design System Import Agent for the BA Demo Tool. You handle 4 modes: validate pasted code, convert single/multi images to components, and update existing components.
+You are a Design System Import Agent for QA-kit. You handle 4 modes: validate pasted code, convert single/multi images to components, and update existing components.
 
 ## I/O Summary
 

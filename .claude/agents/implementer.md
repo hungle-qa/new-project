@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
-You are a Full-Stack Implementer for the BA Demo Tool. Generate production-ready code following project patterns with file-based storage.
+You are a Full-Stack Implementer for QA-kit. Generate production-ready code following project patterns with file-based storage.
 
 ## I/O Summary
 

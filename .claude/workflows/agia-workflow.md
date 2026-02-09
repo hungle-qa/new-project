@@ -31,13 +31,13 @@
   │                         Route by Operation                              │
   │                  (Read matching skill file → Execute)                    │
   ├──────────┬───────────┬──────────┬───────────────┬──────────────────────┤
-  │  AUDIT   │  UPDATE   │  TEST    │  OPTIMIZE     │  CREATE-SKILL        │
-  ├──────────┼───────────┼──────────┼───────────────┼──────────────────────┤
-  │📥 Agent  │📥 Agent   │📥 Agent  │📥 Agent file  │📥 Agent file         │
-  │⚙️ Analyze │⚙️ Refactor │⚙️ 5 tests│⚙️ Reduce tokens│⚙️ Split to skills     │
-  │📤 Report │📤 Updated │📤 Report │📤 Optimized   │📤 Skill files        │
-  │ (console)│   file    │(console) │  (30-50% less)│  + updated master    │
-  └──────────┴───────────┴──────────┴───────────────┴──────────────────────┘
+  │  AUDIT   │  UPDATE   │  TEST    │  OPTIMIZE     │  CREATE-SKILL  │ SYSTEM-AUDIT   │
+  ├──────────┼───────────┼──────────┼───────────────┼────────────────┼────────────────┤
+  │📥 Agent  │📥 Agent   │📥 Agent  │📥 Agent file  │📥 Agent file   │📥 (no agent)   │
+  │⚙️ Analyze │⚙️ Refactor │⚙️ 5 tests│⚙️ Reduce tokens│⚙️ Split to skills│⚙️ Check docs    │
+  │📤 Report │📤 Updated │📤 Report │📤 Optimized   │📤 Skill files  │📤 Consistency  │
+  │ (console)│   file    │(console) │  (30-50% less)│  + master      │   report       │
+  └──────────┴───────────┴──────────┴───────────────┴────────────────┴────────────────┘
 ```
 
 ---
@@ -50,9 +50,10 @@
 
 | Workflow | Chain | File |
 |----------|-------|------|
-| Primary (full) | `scout → planner → designer → implementer` | `primary-workflow.md` |
-| Primary (medium) | `quick-scout → implementer` | `primary-workflow.md` |
-| Primary (simple) | `implementer` | `primary-workflow.md` |
+| Build App (full) | `scout(built-in) → planner(built-in) → implementer` | `build-app-workflow.md` |
+| Build App (medium) | `scout(built-in) → implementer` | `build-app-workflow.md` |
+| Build App (simple) | `implementer` | `build-app-workflow.md` |
+| Testcase | `testcase-writer` (skill-based: init/import-spec/write/update) | `testcase-workflow.md` |
 | Create Demo | `demo-folder-creator → scout → planner → designer → implementer → write-spec` | `create-demo-workflow.md` |
 | Fix Demo | `scout → planner → designer → implementer` | `fix-demo-workflow.md` |
 | Import Design (all modes) | `import-design` (skill-based: validate/single/multi/update) | `import-design-by-image-workflow.md` |
@@ -62,11 +63,10 @@
 
 | From Agent | To Agent | Output Format | Key Fields |
 |------------|----------|---------------|------------|
-| `scout` | `planner` | JSON `.agent-output/scout-{ts}.json` | `task`, `scope`, `files`, `patterns_found` |
-| `planner` | `designer` | MD `plans/{slug}-plan.md` | frontmatter: `title`, `status`, `module`, `target`, `scout_output` |
-| `designer` | `implementer` | JSON `.agent-output/designer-{ts}.json` | `feature`, `plan_file`, `layout`, `components` |
-| `planner` | `implementer` | MD `plans/{slug}-plan.md` | (same as planner → designer) |
-| `quick-scout` | `implementer` | Inline (console) | File list + inline plan |
+| `scout(built-in)` | `planner(built-in)` | Context (inline) | File paths, patterns, relevant code |
+| `planner(built-in)` | `implementer` | Context (inline) | Implementation plan |
+| `scout(built-in)` | `implementer` | Context (inline) | File paths + inline plan |
+| `testcase-writer` | (standalone) | CSV `source/testcase/{feature}/result/` | Testcase CSV matching template |
 | `demo-folder-creator` | `scout` | Folder path | `source/demo/{name}/` exists |
 | `implementer` | `write-spec` | HTML files | `source/demo/{name}/pages/*.html` |
 
@@ -103,82 +103,11 @@ If exists → Continue
 | `test` | `skills/agia/test.md` | Simulate |
 | `optimize` | `skills/agia/optimize.md` | Techniques |
 | `create-skill` | `skills/agia/create-skill.md` | Analyze + Generate |
+| `system-audit` | `skills/agia/system-audit.md` | Discover + Verify docs |
 
 **Execution:** Read the skill file at `.claude/agents/{skill path}` → Follow its steps → Apply shared validation from master agent.
 
----
-
-## Chain Validation Step
-
-**Reusable procedure** called by AUDIT (in audit skill) and UPDATE (in update skill).
-
-### Inputs
-
-- `agent-name`: The agent being validated
-- `agent-file`: The agent's `.md` file content (current or updated)
-
-### Procedure
-
-```
-1. DISCOVER chains containing this agent
-   → Scan Chain Registry (above) for agent-name in any chain
-   → If agent not in any chain → report "standalone agent, no chain validation needed"
-   → If found → collect all chains
-
-2. For EACH chain containing the agent:
-   a. IDENTIFY position
-      → Find agent's index in chain array
-      → Determine upstream agent (index - 1) or "none" if first
-      → Determine downstream agent (index + 1) or "none" if last
-
-   b. VALIDATE upstream compatibility (if upstream exists)
-      → Read upstream agent file
-      → Extract output format from upstream's I/O Summary or Output section
-      → Extract input format from target agent's I/O Summary or Input section
-      → Check: Does upstream output match target's expected input?
-
-   c. VALIDATE downstream compatibility (if downstream exists)
-      → Read downstream agent file
-      → Extract input format from downstream's I/O Summary or Input section
-      → Extract output format from target agent's I/O Summary or Output section
-      → Check: Does target output match downstream's expected input?
-
-   d. VALIDATE tools sufficiency
-      → Extract agent's tools from frontmatter
-      → Check: Can agent READ upstream output with its tools?
-      → Check: Can agent WRITE output for downstream?
-
-   e. CHECK data contracts
-      → Read .claude/agents/data-contracts.md
-      → Verify agent's output matches schema defined in contracts
-
-3. COMPILE results into Chain Validation table
-```
-
-### Checks Summary
-
-| # | Check | Method | PASS Condition |
-|---|-------|--------|----------------|
-| 1 | Agent in chain | Registry lookup | Found in ≥1 chain OR standalone |
-| 2 | Upstream I/O match | Compare output→input formats | Formats compatible |
-| 3 | Downstream I/O match | Compare output→input formats | Formats compatible |
-| 4 | Tools sufficient | Frontmatter tools vs required ops | All required tools present |
-| 5 | Data contract compliance | Compare vs data-contracts.md | Schema fields present |
-| 6 | No circular deps | Trace chain for loops | No agent appears twice |
-| 7 | Workflow file references | Check workflow .md references agent | Agent name matches |
-
-### Output
-
-```markdown
-### Chain Validation: {agent-name}
-
-**Chains found:** {count}
-
-| # | Chain | Position | Upstream → Agent | Agent → Downstream | Tools OK | Contract OK | Status |
-|---|-------|----------|------------------|--------------------|----------|-------------|--------|
-
-**Issues:** {none | list of issues}
-```
+**Note:** Chain validation procedure is defined in `agia.md` `[CHAIN_VALIDATION]` section. Not duplicated here.
 
 ---
 
@@ -187,7 +116,7 @@ If exists → Continue
 | Error | Response |
 |-------|----------|
 | Agent not found | "Agent '{name}' not found at .claude/agents/{name}.md" |
-| Invalid operation | "Unknown operation. Use: audit, update, test, optimize, create-skill" |
+| Invalid operation | "Unknown operation. Use: audit, update, test, optimize, create-skill, system-audit" |
 | No agent name | "Please provide agent name: /agent-audit {op} <agent-name>" |
 | Update rejected | "Update cancelled. No changes made." |
 | Optimize rejected | "Optimization cancelled. Original preserved." |
@@ -205,6 +134,7 @@ If exists → Continue
 | test | 5/5 tests executed, results reported |
 | optimize | ≥30% token reduction achieved |
 | create-skill | Skill files created + master updated + no chain breaks |
+| system-audit | Consistency report generated, inconsistencies listed with fixes |
 
 ---
 
@@ -218,9 +148,11 @@ If exists → Continue
 | `.claude/agents/skills/agia/test.md` | Test operation skill |
 | `.claude/agents/skills/agia/optimize.md` | Optimize operation skill |
 | `.claude/agents/skills/agia/create-skill.md` | Create-skill operation skill |
+| `.claude/agents/skills/agia/system-audit.md` | System-audit operation skill |
 | `.claude/commands/agent-audit.md` | Command entry point |
 | `.claude/agents/*.md` | Target agents for operations |
 | `.claude/agents/data-contracts.md` | I/O schema definitions for agent chains |
-| `.claude/workflows/primary-workflow.md` | Primary chain: scout → planner → designer → implementer |
+| `.claude/workflows/build-app-workflow.md` | Build App chain: scout(built-in) → planner(built-in) → implementer |
+| `.claude/workflows/testcase-workflow.md` | Testcase chain: testcase-writer (skill-based) |
 | `.claude/workflows/create-demo-workflow.md` | Demo chain: demo-folder-creator → ... → write-spec |
 | `.claude/workflows/fix-demo-workflow.md` | Fix chain: scout → planner → designer → implementer |

@@ -1,6 +1,6 @@
-# Primary Workflow
+# Build App Workflow
 
-**Purpose:** Build and enhance the main BA Demo Tool application (React + Express).
+**Purpose:** Build and enhance the main QA-kit application (React + Express).
 
 **Target:** TypeScript code in `client/src/` and `server/src/`
 
@@ -12,23 +12,22 @@
 
 ```
 [User Request]
-      ↓
-  ┌─────────┐   JSON file    ┌─────────┐   plan.md    ┌──────────┐
-  │  scout  │ ─────────────→ │ planner │ ───────────→ │ designer │
-  └─────────┘                └─────────┘              └──────────┘
-  📥 Task desc               📥 Scout JSON            📥 Plan + Scout
-  ⚙️ Search files            ⚙️ Create plan           ⚙️ Suggest UI
-  📤 .agent-output/          📤 plans/                📤 .agent-output/
-     scout-{ts}.json            {name}-plan.md           designer-{ts}.json
-                                      ↓
-                              [USER APPROVAL]
-                                      ↓
-                             ┌─────────────┐
-                             │ implementer │
-                             └─────────────┘
-                             📥 Plan + Scout + Designer
-                             ⚙️ Show plan → Ask approval → Write code
-                             📤 TypeScript files in client/src/, server/
+      |
+  ┌───────────────────┐   context    ┌────────────────────┐
+  │  scout (built-in) │ ───────────→ │ planner (built-in) │
+  └───────────────────┘              └────────────────────┘
+  Uses Task tool                     Uses Task tool
+  Search files                       Create plan
+  Returns file paths                 Returns plan
+                                           |
+                                   [USER APPROVAL]
+                                           |
+                                  ┌─────────────┐
+                                  │ implementer │
+                                  └─────────────┘
+                                  .claude/agents/implementer.md
+                                  Show plan → Ask approval → Write code
+                                  TypeScript files in client/src/, server/
 ```
 
 ---
@@ -51,7 +50,7 @@
 | "Add help section" | React component or README? |
 | "Update about content" | AboutPage.tsx or docs? |
 
-**If clearly app-related → proceed. If unclear → ask.**
+**If clearly app-related -> proceed. If unclear -> ask.**
 
 ---
 
@@ -59,10 +58,9 @@
 
 **For SIMPLE tasks** (single file, clear change, bug fix with known location):
 
-- ❌ Skip scout (file is known)
-- ❌ Skip planner (no plan file needed)
-- ❌ Skip designer (no UI decisions)
-- ✅ Go direct to implementer
+- Skip scout (file is known)
+- Skip planner (no plan file needed)
+- Go direct to implementer
 
 **Trigger conditions:**
 - User specifies exact file path
@@ -78,21 +76,20 @@
 
 **For MEDIUM tasks** (2-3 files, clear feature, no architecture decisions):
 
-- ✅ quick-scout (find files + inline plan)
-- ❌ Skip planner file creation
-- ❌ Skip designer
-- ✅ implementer
+- Use Claude's built-in scout via Task tool (find files + inline plan)
+- Skip planner file creation
+- Go to implementer
 
 **Trigger conditions:**
 - Clear feature scope (e.g., "add search to X")
 - 2-3 files affected
 - No architectural decisions needed
 
-**Chain:** `quick-scout → implementer`
+**Chain:** `scout(built-in) -> implementer`
 
 **Inline Plan Format** (shown in console, no file):
 ```
-📋 Inline Plan:
+Inline Plan:
 - Edit: `client/src/pages/DesignSystemPage.tsx`
 - Add: Search input + filter state + filter logic
 Proceed? [Yes/Modify/Cancel]
@@ -107,22 +104,20 @@ Proceed? [Yes/Modify/Cancel]
 ## Agent Chain
 
 ```
-scout → planner → [USER APPROVAL] → designer → [USER APPROVAL] → implementer
+scout(built-in) -> planner(built-in) -> [USER APPROVAL] -> implementer
 ```
 
 | Step | Agent | Purpose | Output | User Approval |
 |------|-------|---------|--------|---------------|
-| 1 | `scout` | Search codebase | File references | No |
-| 2 | `planner` | Create plan | `plans/{feature}-plan.md` | **YES** |
-| 3 | `designer` | Suggest UI/UX | Wireframe + components | **YES** |
-| 4 | `implementer` | Write code | TypeScript files | No |
+| 1 | `scout (built-in)` | Search codebase via Task tool | File references, patterns | No |
+| 2 | `planner (built-in)` | Create plan via Task tool | Implementation plan | **YES** |
+| 3 | `implementer` | Write code | TypeScript files | No |
 
 ## Orchestration
 
 ### Step 1: Scout
 
-Call `.claude/agents/scout.md` with:
-- **workflow**: "primary"
+Use Claude's built-in scout via Task tool (subagent_type=Explore) with:
 - **scope**: `client/src/`, `server/`, `source/` (references only)
 - **skip**: `source/demo/` (demos handled by separate workflow)
 - **task**: User's feature description
@@ -131,33 +126,19 @@ Call `.claude/agents/scout.md` with:
 
 ### Step 2: Planner
 
-Call `.claude/agents/planner.md` with:
+Use Claude's built-in planner via Task tool (subagent_type=Plan) with:
 - **scout_findings**: Output from scout
 - **task**: User's feature description
-- **workflow**: "primary"
 
-**Output**: `plans/{feature}-plan.md`
+**Output**: Implementation plan
 
-**⏸️ PAUSE: Ask user to approve plan before continuing.**
+**PAUSE: Ask user to approve plan before continuing.**
 
-### Step 3: Designer (if UI involved)
-
-**Skip if**: No UI changes needed (backend-only work)
-
-Call `.claude/agents/designer.md` with:
-- **plan**: Output from planner
-- **workflow**: "primary"
-
-**Output**: ASCII wireframe + component recommendations
-
-**⏸️ PAUSE: Ask user to approve design before continuing.**
-
-### Step 4: Implementer
+### Step 3: Implementer
 
 Call `.claude/agents/implementer.md` with:
 - **plan**: Output from planner
-- **designer_suggestions**: Output from designer (if any)
-- **workflow**: "primary"
+- **workflow**: "build-app"
 
 **Output**: TypeScript files in `client/src/` and/or `server/`
 
@@ -187,7 +168,6 @@ Call `.claude/agents/implementer.md` with:
 /start Fix typo in Button.tsx
 ```
 **Flow:** implementer only (direct fix)
-**Savings:** 75% fewer agents
 
 ```
 /start Rename variable in DesignSystemPage.tsx
@@ -199,20 +179,19 @@ Call `.claude/agents/implementer.md` with:
 ```
 /start Add search to design system page
 ```
-**Flow:** quick-scout → implementer
-**Savings:** 50% fewer agents, no plan file
+**Flow:** scout(built-in) -> implementer
 
 ```
 /start Add filter dropdown to component list
 ```
-**Flow:** quick-scout → implementer
+**Flow:** scout(built-in) -> implementer
 **Why:** Clear scope, 2-3 files, no architecture decisions
 
 ### COMPLEX Tier Examples
 ```
 /start Rebuild entire navigation system
 ```
-**Flow:** scout → planner → [APPROVAL] → designer → [APPROVAL] → implementer
+**Flow:** scout(built-in) -> planner(built-in) -> [APPROVAL] -> implementer
 **Why:** Multi-file, architectural changes, unclear scope
 
 ```
@@ -225,7 +204,7 @@ Call `.claude/agents/implementer.md` with:
 ```
 /start Add pagination to spec template API
 ```
-**Flow:** quick-scout → implementer (skip designer - no UI)
+**Flow:** scout(built-in) -> implementer (no UI)
 
 ## Rules
 

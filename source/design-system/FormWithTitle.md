@@ -1,9 +1,9 @@
 ---
 name: FormWithTitle
 category: forms
-status: draft
-created: 2026-02-06T18:00:00+07:00
-updated: 2026-02-06T18:30:00+07:00
+status: approved
+created: 2026-02-06T11:00:00.000Z
+updated: 2026-02-06T11:30:00.000Z
 ---
 
 # FormWithTitle

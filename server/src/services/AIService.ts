@@ -1,127 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import fs from 'fs/promises'
-import path from 'path'
 
-const TEMPLATE_PATH = path.join(__dirname, '../../../source/product-idea/template/product-idea-format.md')
-
-export interface StructuredProductIdea {
-  name: string
-  content: string
-}
-
-export interface StructuredSpec {
-  content: string
-}
-
-export interface AIConfig {
-  provider: 'gemini'
-  apiKey: string
-  model?: string
-}
-
-export class AIService {
-  /**
-   * Uses Google Gemini AI to structure raw, unstructured content into a product idea format
-   */
-  static async structureProductIdea(
-    rawContent: string,
-    config: AIConfig
-  ): Promise<StructuredProductIdea> {
-    if (!config.apiKey) {
-      throw new Error('API key is required. Please configure AI settings.')
-    }
-
-    // Read format template from file (allows real-time updates)
-    const formatTemplate = await fs.readFile(TEMPLATE_PATH, 'utf-8')
-
-    const prompt = `You are a senior business analyst. Convert the following raw content into a structured product idea document.
-
-**YOU MUST FOLLOW THIS EXACT FORMAT TEMPLATE:**
-
-${formatTemplate}
-
----
-
-**RAW CONTENT TO CONVERT:**
-
-${rawContent}
-
----
-
-**CRITICAL INSTRUCTIONS:**
-
-1. **Follow the format template EXACTLY** - use the same section headers and structure
-2. **Extract information from the raw content** and place it in the appropriate sections
-3. **For the product name**, create a short, descriptive kebab-case name (e.g., "canvas-table-builder")
-4. **Fill in all sections** based on the content - if information is not available, write "To be defined" or make reasonable inferences
-5. **Keep tables and formatting** as shown in the template
-6. **Be thorough** - this is a professional product specification document
-
-**OUTPUT FORMAT:**
-- First line MUST be: "NAME: [kebab-case-product-name]"
-- Remaining content: The full markdown document following the template structure
-
-**EXAMPLE OUTPUT:**
-NAME: interactive-table-builder
-# Interactive Table Builder
-
----
-
-## 1. Executive Summary
-...`
-
-    try {
-      const genAI = new GoogleGenerativeAI(config.apiKey)
-      const model = genAI.getGenerativeModel({
-        model: config.model || 'gemini-2.0-flash'
-      })
-
-      const result = await model.generateContent(prompt)
-      const responseText = result.response.text()
-
-      // Parse response
-      const lines = responseText.split('\n')
-      const nameLine = lines.find(line => line.startsWith('NAME:'))
-
-      if (!nameLine) {
-        throw new Error('AI response did not include product name')
-      }
-
-      const name = nameLine.replace('NAME:', '').trim()
-      const content = lines
-        .slice(lines.indexOf(nameLine) + 1)
-        .join('\n')
-        .trim()
-
-      return { name, content }
-    } catch (error) {
-      console.error('AI Service Error:', error)
-      throw new Error(
-        error instanceof Error
-          ? `Failed to structure content: ${error.message}`
-          : 'Failed to structure content with AI'
-      )
-    }
-  }
-
-  /**
-   * Uses Google Gemini AI to structure raw spec content into a clean feature specification
-   */
-  static async structureSpec(
-    rawContent: string,
-    config: AIConfig
-  ): Promise<StructuredSpec> {
-    if (!config.apiKey) {
-      throw new Error('API key is required. Please configure AI settings.')
-    }
-
-    const prompt = `You are a senior QA analyst. Convert the following raw content into a structured feature specification document.
-
-**RAW CONTENT TO CONVERT:**
-
-${rawContent}
-
----
+export const DEFAULT_SPEC_PROMPT = `You are a senior QA analyst. Convert the following raw content into a structured feature specification document.
 
 **CRITICAL INSTRUCTIONS:**
 
@@ -147,13 +26,72 @@ ${rawContent}
 ## Acceptance Criteria
 ...`
 
+export const DEFAULT_KNOWLEDGE_PROMPT = `Keep the original content exactly as-is. Only convert to clean, well-formatted markdown that is easy to read. Do not summarize, rewrite, or omit any content.`
+
+export interface StructuredSpec {
+  content: string
+}
+
+export interface AIConfig {
+  provider: 'gemini'
+  apiKey: string
+  model?: string
+}
+
+export class AIService {
+  private static async callWithRetry(
+    model: ReturnType<GoogleGenerativeAI['getGenerativeModel']>,
+    prompt: string,
+    maxRetries = 3
+  ) {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await model.generateContent(prompt)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        const is429 = message.includes('429') || message.includes('Resource has been exhausted')
+
+        if (!is429 || attempt === maxRetries) {
+          throw error
+        }
+
+        const delay = Math.pow(2, attempt + 1) * 1000 // 2s, 4s, 8s
+        console.warn(`Rate limited (429). Retrying in ${delay / 1000}s... (attempt ${attempt + 1}/${maxRetries})`)
+        await new Promise(resolve => setTimeout(resolve, delay))
+      }
+    }
+    throw new Error('Unexpected: exhausted retries without throwing')
+  }
+
+  /**
+   * Structure raw spec content into a clean feature specification
+   */
+  static async structureSpec(
+    rawContent: string,
+    customPrompt: string,
+    config: AIConfig
+  ): Promise<StructuredSpec> {
+    if (!config.apiKey) {
+      throw new Error('API key is required. Please configure AI settings.')
+    }
+
+    const instructions = customPrompt || DEFAULT_SPEC_PROMPT
+
+    const prompt = `${instructions}
+
+---
+
+**RAW CONTENT TO CONVERT:**
+
+${rawContent}`
+
     try {
       const genAI = new GoogleGenerativeAI(config.apiKey)
       const model = genAI.getGenerativeModel({
         model: config.model || 'gemini-2.0-flash'
       })
 
-      const result = await model.generateContent(prompt)
+      const result = await this.callWithRetry(model, prompt)
       const content = result.response.text().trim()
 
       return { content }
@@ -163,6 +101,52 @@ ${rawContent}
         error instanceof Error
           ? `Failed to structure spec: ${error.message}`
           : 'Failed to structure spec with AI'
+      )
+    }
+  }
+
+  /**
+   * Structure raw document content into knowledge markdown
+   */
+  static async structureKnowledge(
+    rawContent: string,
+    customPrompt: string,
+    config: AIConfig
+  ): Promise<{ content: string }> {
+    if (!config.apiKey) {
+      throw new Error('API key is required. Please configure AI settings.')
+    }
+
+    const instructions = customPrompt || DEFAULT_KNOWLEDGE_PROMPT
+
+    const prompt = `You are an AI assistant that processes documents into structured knowledge.
+
+**USER INSTRUCTIONS:**
+${instructions}
+
+**DOCUMENT CONTENT:**
+${rawContent}
+
+**OUTPUT:**
+Output clean, structured markdown. Use headers, bullets, tables as appropriate.
+Output ONLY the structured content (no preamble).`
+
+    try {
+      const genAI = new GoogleGenerativeAI(config.apiKey)
+      const model = genAI.getGenerativeModel({
+        model: config.model || 'gemini-2.0-flash'
+      })
+
+      const result = await this.callWithRetry(model, prompt)
+      const content = result.response.text().trim()
+
+      return { content }
+    } catch (error) {
+      console.error('AI Service Error:', error)
+      throw new Error(
+        error instanceof Error
+          ? `Failed to structure knowledge: ${error.message}`
+          : 'Failed to structure knowledge with AI'
       )
     }
   }

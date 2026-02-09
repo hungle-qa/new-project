@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Save } from 'lucide-react'
+import { Save, Search, X } from 'lucide-react'
 
 interface ComponentMapping {
   name: string
@@ -17,6 +17,7 @@ export function ComponentsTab({ feature, components: initialComponents, onSave }
   const [selected, setSelected] = useState<ComponentMapping[]>(initialComponents)
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     setSelected(initialComponents)
@@ -75,13 +76,34 @@ export function ComponentsTab({ feature, components: initialComponents, onSave }
         </button>
       </div>
 
+      {dsComponents.length > 0 && (
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search components..."
+            className="w-full pl-9 pr-8 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      )}
+
       {dsComponents.length === 0 ? (
         <div className="text-center py-8 text-gray-500 text-sm">
           No design system components found. Import components first.
         </div>
       ) : (
         <div className="space-y-2 max-h-96 overflow-y-auto">
-          {dsComponents.map(name => {
+          {dsComponents.filter(name => name.toLowerCase().includes(searchQuery.toLowerCase())).map(name => {
             const isSelected = selected.some(c => c.name === name)
             const mapping = selected.find(c => c.name === name)
 

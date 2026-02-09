@@ -57,7 +57,6 @@ scout(built-in) -> planner(built-in) -> [APPROVAL] -> implementer
 
 Use Build App Workflow for:
 - Design System management UI
-- Spec Template management UI
 - Review Testcase management UI
 
 - Import features
@@ -79,30 +78,25 @@ Use Build App Workflow for:
 
 ### Agent Chain
 ```
-testcase-writer (skill-based: init / import-spec / write / update)
+testcase-writer (skill-based: write / update)
 ```
 
 ### How to Run
 
 ```
-/testcase init                      # One-time setup: template + rules
-/testcase import-spec {feature}     # Import PDF spec for a feature
 /testcase write {feature}           # Generate testcases
 /testcase update {feature}          # Update existing testcases
 ```
 
-### Typical Workflow Order
-```
-1. /testcase init                    -> Setup template + rules
-2. /testcase import-spec login-page  -> Import spec from PDF
-3. /testcase write login-page        -> Generate testcase CSV
-4. /testcase update login-page       -> Iterate as needed
-```
+### Prerequisites
+
+Before running `/testcase write`, ensure:
+1. Template CSV exists in `source/testcase/template/`
+2. Rules exist at `source/testcase/rule/test-rules.md`
+3. Feature spec imported via the Web UI (Review Testcase > Import Spec tab)
 
 ### Examples
 ```
-/testcase init
-/testcase import-spec login-page
 /testcase write login-page
 /testcase update login-page
 ```
@@ -117,8 +111,6 @@ Import source materials (independent of workflows):
 |---------|---------|--------|
 | `@import-design` | Import HTML/CSS component | `source/design-system/{name}.md` |
 | `/import-design-by-image` | Convert UI image(s) to component | `source/design-system/{name}.md` |
-| `@import-idea` | Import product idea | `source/product-idea/{name}.md` |
-| `@import-spec-template` | Import spec template | `source/spec-template/{name}.md` |
 
 ### Import Design By Image (Mode Detection)
 
@@ -153,8 +145,7 @@ QA-kit/
 │   │       ├── spec/          # Extracted spec from PDF
 │   │       ├── knowledge/     # Knowledge files (PDF/MD/TXT)
 │   │       └── result/        # Generated testcase CSVs
-│   ├── design-system/         # HTML/CSS components (.md)
-│   └── spec-template/         # Spec templates (.md)
+│   └── design-system/         # HTML/CSS components (.md)
 │
 ├── client/                    # React Frontend (build-app workflow)
 │   └── src/
@@ -230,21 +221,15 @@ QA-kit/
 ### Skill-Based Agents
 | Agent | Purpose | Skills |
 |-------|---------|--------|
-| `testcase-writer` | Generate and manage QA testcases | init, import-spec, write, update |
+| `testcase-writer` | Generate and manage QA testcases | write, update |
 | `import-design` | Unified import agent (validate code, single/multi image, update existing) | validate, single, multi, update |
 | `agia` | Audit and improve agents and system files | audit, update, test, optimize, create-skill, system-audit |
-
-### Import Agents
-| Agent | Purpose |
-|-------|---------|
-| `import-idea` | Import product ideas |
-| `import-spec-template` | Import spec templates |
 
 ### Commands (Slash Commands)
 | Command | Purpose |
 |---------|---------|
 | `/start` | Start build-app workflow for main app development |
-| `/testcase` | Manage QA testcases (init, import-spec, write, update) |
+| `/testcase` | Manage QA testcases (write, update) |
 
 | `/import-design-by-image` | Convert UI images to design system components |
 | `/agent-audit` | Audit, update, test, or optimize agents via AGIA |
@@ -276,5 +261,6 @@ QA-kit/
 | Problem | Solution |
 |---------|----------|
 | Wrong workflow | Use `/start` for app code, `/testcase` for testcases |
-| Testcase init missing | Run `/testcase init` before write/update |
-| Spec not imported | Run `/testcase import-spec {feature}` before write |
+| Spec not imported | Import spec via Web UI (Review Testcase > Import Spec tab) before write |
+| Template missing | Add CSV template to `source/testcase/template/` |
+| Rules missing | Add rules to `source/testcase/rule/test-rules.md` |

@@ -7,14 +7,17 @@ interface ScopeTabProps {
   onSave: (scope: { happy_case: string; corner_case: string }) => Promise<void>
 }
 
+const DEFAULT_HAPPY_CASE = 'Normal user flows, valid inputs, expected outcomes'
+const DEFAULT_CORNER_CASE = 'Boundary values, invalid inputs, many data, make action quickly'
+
 export function ScopeTab({ feature, scope: initialScope, onSave }: ScopeTabProps) {
-  const [happyCase, setHappyCase] = useState(initialScope.happy_case)
-  const [cornerCase, setCornerCase] = useState(initialScope.corner_case)
+  const [happyCase, setHappyCase] = useState(initialScope.happy_case || DEFAULT_HAPPY_CASE)
+  const [cornerCase, setCornerCase] = useState(initialScope.corner_case || DEFAULT_CORNER_CASE)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    setHappyCase(initialScope.happy_case)
-    setCornerCase(initialScope.corner_case)
+    setHappyCase(initialScope.happy_case || DEFAULT_HAPPY_CASE)
+    setCornerCase(initialScope.corner_case || DEFAULT_CORNER_CASE)
   }, [initialScope, feature])
 
   const handleSave = async () => {

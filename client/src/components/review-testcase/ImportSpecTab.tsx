@@ -9,8 +9,35 @@ interface ImportSpecTabProps {
 
 type UploadState = 'idle' | 'uploading' | 'success' | 'error'
 
+const DEFAULT_SPEC_PROMPT = `You are a senior QA analyst. Convert the following raw content into a structured feature specification document.
+
+**CRITICAL INSTRUCTIONS:**
+
+1. Extract all feature requirements, user flows, and acceptance criteria
+2. Organize into clear sections with markdown headers
+3. Preserve all technical details, field names, error messages, and business rules
+4. Use tables for structured data (fields, validations, etc.)
+5. Include edge cases and boundary conditions if mentioned
+6. Output ONLY the structured markdown content (no preamble)
+
+**OUTPUT FORMAT:**
+# Feature Specification
+
+## Overview
+...
+
+## User Flows
+...
+
+## Requirements
+...
+
+## Acceptance Criteria
+...`
+
 export function ImportSpecTab({ feature }: ImportSpecTabProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [customPrompt, setCustomPrompt] = useState(DEFAULT_SPEC_PROMPT)
   const [uploadState, setUploadState] = useState<UploadState>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [isDragging, setIsDragging] = useState(false)
@@ -61,6 +88,9 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
     try {
       const formData = new FormData()
       formData.append('file', selectedFile)
+      if (customPrompt.trim()) {
+        formData.append('prompt', customPrompt.trim())
+      }
 
       const res = await fetch(`/api/review-testcase/${feature}/import-spec`, {
         method: 'POST',
@@ -158,6 +188,23 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
               <p className="text-xs text-gray-500">PDF, Markdown, or TXT (max 10MB)</p>
             </div>
           )}
+        </div>
+
+        {/* Custom Prompt */}
+        <div>
+          <label htmlFor="specPrompt" className="block text-sm font-medium text-gray-700 mb-1">
+            Custom Prompt (optional)
+          </label>
+          <textarea
+            id="specPrompt"
+            value={customPrompt}
+            onChange={(e) => setCustomPrompt(e.target.value)}
+            rows={6}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Tells AI how to process the spec document. Edit above to customize.
+          </p>
         </div>
 
         {selectedFile && (

@@ -13,21 +13,12 @@
 ```
 [User Request]
       |
-  ┌───────────────────┐   context    ┌────────────────────┐
-  │  scout (built-in) │ ───────────→ │ planner (built-in) │
-  └───────────────────┘              └────────────────────┘
-  Uses Task tool                     Uses Task tool
-  Search files                       Create plan
-  Returns file paths                 Returns plan
-                                           |
-                                   [USER APPROVAL]
-                                           |
-                                  ┌─────────────┐
-                                  │ implementer │
-                                  └─────────────┘
-                                  .claude/agents/implementer.md
-                                  Show plan → Ask approval → Write code
-                                  TypeScript files in client/src/, server/
+  ┌─────────────┐
+  │ implementer  │
+  └─────────────┘
+  .claude/agents/implementer.md
+  Read context → Show plan → Wireframe (if UI) → Ask approval → Write code
+  TypeScript files in client/src/, server/
 ```
 
 ---
@@ -54,102 +45,32 @@
 
 ---
 
-## Quick Mode (Simple Tasks)
+## Execution
 
-**For SIMPLE tasks** (single file, clear change, bug fix with known location):
+**IMPORTANT:** Read and follow `.claude/agents/implementer.md` for ALL tasks.
 
-- Skip scout (file is known)
-- Skip planner (no plan file needed)
-- Go direct to implementer
+**All tasks go through the implementer agent:**
 
-**Trigger conditions:**
-- User specifies exact file path
-- Keywords: "fix", "typo", "rename", "change text"
-- Single component/file change
-- No new files needed
+```
+-> implementer -> [WIREFRAME if UI] -> [APPROVAL] -> code
+```
 
-**Chain:** `implementer` only
+The implementer will:
+1. Read relevant files to understand context
+2. Present planned actions
+3. **Show wireframe mockup for any UI changes** (REQUIRED)
+4. Ask user approval via AskUserQuestion
+5. Only code after explicit "Yes"
 
 ---
-
-## Medium Mode (Clear Scope Tasks)
-
-**For MEDIUM tasks** (2-3 files, clear feature, no architecture decisions):
-
-- Use Claude's built-in scout via Task tool (find files + inline plan)
-- Skip planner file creation
-- Go to implementer
-
-**Trigger conditions:**
-- Clear feature scope (e.g., "add search to X")
-- 2-3 files affected
-- No architectural decisions needed
-
-**Chain:** `scout(built-in) -> implementer`
-
-**Inline Plan Format** (shown in console, no file):
-```
-Inline Plan:
-- Edit: `client/src/pages/DesignSystemPage.tsx`
-- Add: Search input + filter state + filter logic
-Proceed? [Yes/Modify/Cancel]
-```
-
----
-
-## Full Mode (Complex Tasks)
-
-**For COMPLEX tasks** (multi-file, unclear scope, architectural):
-
-## Agent Chain
-
-```
-scout(built-in) -> planner(built-in) -> [USER APPROVAL] -> implementer
-```
-
-| Step | Agent | Purpose | Output | User Approval |
-|------|-------|---------|--------|---------------|
-| 1 | `scout (built-in)` | Search codebase via Task tool | File references, patterns | No |
-| 2 | `planner (built-in)` | Create plan via Task tool | Implementation plan | **YES** |
-| 3 | `implementer` | Write code | TypeScript files | No |
-
-## Orchestration
-
-### Step 1: Scout
-
-Use Claude's built-in scout via Task tool (subagent_type=Explore) with:
-- **scope**: `client/src/`, `server/`, `source/` (references only)
-- **skip**: `source/demo/` (demos handled by separate workflow)
-- **task**: User's feature description
-
-**Output**: File paths, existing patterns, relevant code
-
-### Step 2: Planner
-
-Use Claude's built-in planner via Task tool (subagent_type=Plan) with:
-- **scout_findings**: Output from scout
-- **task**: User's feature description
-
-**Output**: Implementation plan
-
-**PAUSE: Ask user to approve plan before continuing.**
-
-### Step 3: Implementer
-
-Call `.claude/agents/implementer.md` with:
-- **plan**: Output from planner
-- **workflow**: "build-app"
-
-**Output**: TypeScript files in `client/src/` and/or `server/`
 
 ## File Targets
 
 | Feature Area | Files |
 |--------------|-------|
 | Design System | `client/src/pages/DesignSystemPage.tsx`, `server/src/routes/design-system.ts` |
-| Spec Templates | `client/src/pages/SpecTemplatePage.tsx`, `server/src/routes/spec-template.ts` |
-| Product Ideas | `client/src/pages/ProductIdeasPage.tsx`, `server/src/routes/product-idea.ts` |
-| Demo Projects | `client/src/pages/DemoProjectsPage.tsx`, `server/src/routes/demo.ts` |
+| Feature Knowledge | `client/src/pages/FeatureKnowledgePage.tsx`, `server/src/routes/feature-knowledge.ts` |
+| Review Testcase | `client/src/pages/ReviewTestcasePage.tsx`, `server/src/routes/review-testcase.ts` |
 | Import Features | `client/src/components/Import*.tsx`, `server/src/services/*Service.ts` |
 
 ## Tech Stack
@@ -161,56 +82,19 @@ Call `.claude/agents/implementer.md` with:
 | Styling | Tailwind CSS |
 | Storage | File-based (markdown) |
 
-## Examples (Tier-Based)
+## Examples
 
-### SIMPLE Tier Examples
 ```
 /start Fix typo in Button.tsx
-```
-**Flow:** implementer only (direct fix)
-
-```
-/start Rename variable in DesignSystemPage.tsx
-```
-**Flow:** implementer only
-**Why:** Single file, exact path given
-
-### MEDIUM Tier Examples
-```
 /start Add search to design system page
-```
-**Flow:** scout(built-in) -> implementer
-
-```
-/start Add filter dropdown to component list
-```
-**Flow:** scout(built-in) -> implementer
-**Why:** Clear scope, 2-3 files, no architecture decisions
-
-### COMPLEX Tier Examples
-```
 /start Rebuild entire navigation system
 ```
-**Flow:** scout(built-in) -> planner(built-in) -> [APPROVAL] -> implementer
-**Why:** Multi-file, architectural changes, unclear scope
 
-```
-/start Add new authentication module
-```
-**Flow:** Full workflow with approvals
-**Why:** New feature, multiple components/services
-
-### Backend-Only Example
-```
-/start Add pagination to spec template API
-```
-**Flow:** scout(built-in) -> implementer (no UI)
+All go through implementer. Implementer handles context reading, planning, wireframe, approval, and coding.
 
 ## Rules
 
 1. **Always proceed**: Execute workflow for all `/start` tasks
-2. **Tier detection FIRST**: Classify as SIMPLE/MEDIUM/COMPLEX before proceeding
-3. **Match tier to chain**: Use appropriate agent chain for complexity level
-4. **Minimize overhead**: Don't use full workflow for simple tasks
-5. **Designer optional**: Skip if no UI changes needed (any tier)
-6. **File-based storage**: No database, use markdown files
+2. **Read implementer agent**: Follow `.claude/agents/implementer.md` instructions
+3. **Wireframe for UI**: Any task with UI changes MUST show wireframe before approval
+4. **File-based storage**: No database, use markdown files

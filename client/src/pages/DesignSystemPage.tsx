@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { Eye, Code, FileCode, Copy, Check, Plus, Pencil, Trash2, Search, Palette, Layers, Settings, RefreshCw } from 'lucide-react'
+import { Eye, Code, FileCode, Copy, Check, Plus, Pencil, Trash2, Search, Palette, Layers, Settings, RefreshCw, X } from 'lucide-react'
 import { ImportComponentModal, ComponentData } from '../components/ImportComponentModal'
 import { TailwindDevTools } from '../components/TailwindDevTools'
 import { IconManager } from '../components/IconManager'
@@ -500,8 +500,16 @@ export function DesignSystemPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search components..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {/* Status Filter */}

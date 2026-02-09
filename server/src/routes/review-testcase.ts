@@ -18,6 +18,52 @@ const upload = multer({
   },
 })
 
+// --- Global Rules ---
+router.get('/rules', async (_req, res) => {
+  try {
+    const content = await ReviewTestcaseService.getRules()
+    res.json({ content })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch rules' })
+  }
+})
+
+router.put('/rules', async (req, res) => {
+  try {
+    const { content } = req.body
+    if (typeof content !== 'string') {
+      return res.status(400).json({ error: 'Content is required' })
+    }
+    await ReviewTestcaseService.saveRules(content)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save rules' })
+  }
+})
+
+// --- Global Template ---
+router.get('/template', async (_req, res) => {
+  try {
+    const columns = await ReviewTestcaseService.getTemplate()
+    res.json(columns)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch template' })
+  }
+})
+
+router.put('/template', async (req, res) => {
+  try {
+    const columns = req.body
+    if (!Array.isArray(columns)) {
+      return res.status(400).json({ error: 'Columns array is required' })
+    }
+    await ReviewTestcaseService.saveTemplate(columns)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save template' })
+  }
+})
+
 // List all features
 router.get('/', async (_req, res) => {
   try {
@@ -69,6 +115,24 @@ router.put('/:feature', async (req, res) => {
   }
 })
 
+// Rename feature
+router.put('/:feature/rename', async (req, res) => {
+  try {
+    const { name } = req.body
+    if (!name || typeof name !== 'string') {
+      return res.status(400).json({ error: 'New name is required' })
+    }
+    const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-')
+    const newName = await ReviewTestcaseService.renameFeature(req.params.feature, sanitized)
+    if (!newName) {
+      return res.status(400).json({ error: 'Failed to rename. Name may already exist.' })
+    }
+    res.json({ name: newName })
+  } catch (error) {
+    res.status(400).json({ error: 'Failed to rename feature' })
+  }
+})
+
 // Delete feature
 router.delete('/:feature', async (req, res) => {
   try {
@@ -102,11 +166,14 @@ router.post('/:feature/import-spec', upload.single('file'), async (req, res) => 
       model: model || 'gemini-2.0-flash',
     }
 
+    const customPrompt = (req.body?.prompt as string) || ''
+
     const result = await ReviewTestcaseService.importSpec(
       req.params.feature,
       req.file.buffer,
       req.file.originalname,
       req.file.mimetype,
+      customPrompt,
       aiConfig
     )
 

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Palette, ClipboardCheck } from 'lucide-react'
+import { Palette, ClipboardCheck, Brain } from 'lucide-react'
 
 const features = [
   {
@@ -15,6 +15,13 @@ const features = [
     icon: ClipboardCheck,
     path: '/review-testcase',
     color: 'bg-yellow-500',
+  },
+  {
+    title: 'Feature Knowledge',
+    description: 'Import and manage AI-structured knowledge docs',
+    icon: Brain,
+    path: '/feature-knowledge',
+    color: 'bg-purple-500',
   },
 ]
 

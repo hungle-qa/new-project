@@ -4,8 +4,7 @@ import path from 'path'
 
 import designSystemRoutes from './routes/design-system'
 import reviewTestcaseRoutes from './routes/review-testcase'
-import specTemplateRoutes from './routes/spec-template'
-
+import featureKnowledgeRoutes from './routes/feature-knowledge'
 import aiRoutes from './routes/ai'
 
 const app = express()
@@ -18,8 +17,7 @@ app.use(express.json())
 // API Routes
 app.use('/api/design-system', designSystemRoutes)
 app.use('/api/review-testcase', reviewTestcaseRoutes)
-app.use('/api/spec-template', specTemplateRoutes)
-
+app.use('/api/feature-knowledge', featureKnowledgeRoutes)
 app.use('/api/ai', aiRoutes)
 
 // Serve static files from source folder

@@ -1,28 +1,36 @@
 import { useState, useEffect } from 'react'
-import { Plus, Trash2, Layers, Target, BookOpen, Puzzle, FileUp, FileSpreadsheet } from 'lucide-react'
+import { Plus, Trash2, Layers, Target, BookOpen, Puzzle, FileUp, FileSpreadsheet, ScrollText, Table, Search, X, ChevronDown, Pencil } from 'lucide-react'
 import { CreateFeatureModal } from '../components/review-testcase/CreateFeatureModal'
 import { LevelsTab } from '../components/review-testcase/LevelsTab'
 import { ScopeTab } from '../components/review-testcase/ScopeTab'
 import { ComponentsTab } from '../components/review-testcase/ComponentsTab'
-import { KnowledgeFilesTab } from '../components/review-testcase/KnowledgeFilesTab'
+import { KnowledgeSelectTab } from '../components/review-testcase/KnowledgeSelectTab'
 import { ImportSpecTab } from '../components/review-testcase/ImportSpecTab'
 import { ReviewExportTab } from '../components/review-testcase/ReviewExportTab'
+import { RulesTab } from '../components/review-testcase/RulesTab'
+import { TemplateTab } from '../components/review-testcase/TemplateTab'
 
 interface FeatureConfig {
   name: string
   created: string
   updated: string
-  status: string
   levels: Array<{ level: number; type: string; value?: string; values?: string[] }>
   scope: { happy_case: string; corner_case: string }
   knowledge_files: Array<{ name: string; path: string; imported: string }>
+  linked_knowledge: string[]
   components: Array<{ name: string; usage: string }>
   content: string
 }
 
-type TabType = 'levels' | 'scope' | 'knowledge' | 'components' | 'import-spec' | 'review-export'
+interface FeatureSummary {
+  name: string
+  created: string
+  updated: string
+}
 
-const tabs = [
+type TabType = 'levels' | 'scope' | 'knowledge' | 'components' | 'import-spec' | 'review-export' | 'rules' | 'template'
+
+const featureTabs = [
   { id: 'levels' as TabType, label: 'Levels', icon: Layers },
   { id: 'scope' as TabType, label: 'Scope', icon: Target },
   { id: 'knowledge' as TabType, label: 'Knowledge', icon: BookOpen },
@@ -31,8 +39,15 @@ const tabs = [
   { id: 'review-export' as TabType, label: 'Review & Export', icon: FileSpreadsheet },
 ]
 
+const globalTabs = [
+  { id: 'rules' as TabType, label: 'Rules', icon: ScrollText },
+  { id: 'template' as TabType, label: 'Template', icon: Table },
+]
+
+const PAGE_SIZE = 20
+
 export function ReviewTestcasePage() {
-  const [features, setFeatures] = useState<string[]>([])
+  const [features, setFeatures] = useState<FeatureSummary[]>([])
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null)
   const [config, setConfig] = useState<FeatureConfig | null>(null)
   const [activeTab, setActiveTab] = useState<TabType>('levels')
@@ -40,12 +55,16 @@ export function ReviewTestcasePage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showAll, setShowAll] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editName, setEditName] = useState('')
 
   const fetchFeatures = () => {
     setLoading(true)
     fetch('/api/review-testcase')
       .then(res => res.json())
-      .then(data => { setFeatures(data); setLoading(false) })
+      .then((data: FeatureSummary[]) => { setFeatures(data); setLoading(false) })
       .catch(() => setLoading(false))
   }
 
@@ -99,14 +118,69 @@ export function ReviewTestcasePage() {
     }
   }
 
+  const handleRename = async () => {
+    if (!selectedFeature || !editName.trim()) {
+      setIsEditing(false)
+      return
+    }
+    const sanitized = editName.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-')
+    if (sanitized === selectedFeature) {
+      setIsEditing(false)
+      return
+    }
+    const res = await fetch(`/api/review-testcase/${selectedFeature}/rename`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: sanitized }),
+    })
+    if (res.ok) {
+      const { name: newName } = await res.json()
+      setSelectedFeature(newName)
+      setIsEditing(false)
+      fetchFeatures()
+      loadConfig(newName)
+    }
+  }
+
+  const filteredFeatures = features.filter(f =>
+    f.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+  const displayedFeatures = showAll ? filteredFeatures : filteredFeatures.slice(0, PAGE_SIZE)
+  const hasMore = filteredFeatures.length > PAGE_SIZE && !showAll
+
   if (loading) {
     return <div className="text-center py-12">Loading...</div>
   }
 
   return (
     <div>
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Review Testcase</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-gray-900">Review Testcase</h1>
+          <button
+            onClick={() => { setSelectedFeature(null); setConfig(null); setActiveTab('rules') }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
+              activeTab === 'rules' && !selectedFeature
+                ? 'text-blue-600 bg-blue-50 border border-blue-200'
+                : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <ScrollText className="w-4 h-4" />
+            Rules
+          </button>
+          <button
+            onClick={() => { setSelectedFeature(null); setConfig(null); setActiveTab('template') }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
+              activeTab === 'template' && !selectedFeature
+                ? 'text-blue-600 bg-blue-50 border border-blue-200'
+                : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            <Table className="w-4 h-4" />
+            Template
+          </button>
+        </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-500">{features.length} features</span>
           <button
@@ -122,24 +196,55 @@ export function ReviewTestcasePage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar */}
         <div className="lg:col-span-1 space-y-2">
-          {features.length === 0 ? (
+          {/* Search */}
+          <div className="relative mb-3">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setShowAll(false) }}
+              placeholder="Search features..."
+              className="w-full pl-9 pr-8 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => { setSearchQuery(''); setShowAll(false) }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {filteredFeatures.length === 0 ? (
             <p className="text-gray-500 text-center py-8 text-sm">
-              No features yet. Click "Create Feature" to start.
+              {features.length === 0 ? 'No features yet. Click "Create Feature" to start.' : 'No matches found.'}
             </p>
           ) : (
-            features.map(name => (
-              <button
-                key={name}
-                onClick={() => handleSelectFeature(name)}
-                className={`w-full text-left px-4 py-3 rounded-lg border transition-colors ${
-                  selectedFeature === name
-                    ? 'border-blue-300 bg-blue-50 text-blue-900'
-                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:shadow-sm'
-                }`}
-              >
-                <span className="text-sm font-medium">{name.replace(/-/g, ' ')}</span>
-              </button>
-            ))
+            <>
+              {displayedFeatures.map(({ name }) => (
+                <button
+                  key={name}
+                  onClick={() => handleSelectFeature(name)}
+                  className={`w-full text-left px-4 py-3 rounded-lg border transition-colors ${
+                    selectedFeature === name
+                      ? 'border-blue-300 bg-blue-50 text-blue-900'
+                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:shadow-sm'
+                  }`}
+                >
+                  <span className="text-sm font-medium">{name.replace(/-/g, ' ')}</span>
+                </button>
+              ))}
+              {hasMore && (
+                <button
+                  onClick={() => setShowAll(true)}
+                  className="w-full flex items-center justify-center gap-1 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                  Show all ({filteredFeatures.length - PAGE_SIZE} more)
+                </button>
+              )}
+            </>
           )}
         </div>
 
@@ -151,12 +256,26 @@ export function ReviewTestcasePage() {
               <div className="px-4 py-3 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-lg font-semibold text-gray-900">
-                      {selectedFeature.replace(/-/g, ' ')}
-                    </h2>
-                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">
-                      {config.status}
-                    </span>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        onBlur={handleRename}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleRename(); if (e.key === 'Escape') setIsEditing(false) }}
+                        autoFocus
+                        className="text-lg font-semibold text-gray-900 px-2 py-0.5 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[400px]"
+                      />
+                    ) : (
+                      <button
+                        onClick={() => { setEditName(selectedFeature.replace(/-/g, ' ')); setIsEditing(true) }}
+                        className="flex items-center gap-2 text-lg font-semibold text-gray-900 hover:text-blue-600 group"
+                        title="Click to rename"
+                      >
+                        {selectedFeature.replace(/-/g, ' ')}
+                        <Pencil className="w-3.5 h-3.5 text-gray-400 group-hover:text-blue-500" />
+                      </button>
+                    )}
                   </div>
                   <button
                     onClick={() => setIsDeleteConfirmOpen(true)}
@@ -170,7 +289,7 @@ export function ReviewTestcasePage() {
 
               {/* Tabs */}
               <div className="flex border-b border-gray-200 overflow-x-auto">
-                {tabs.map(({ id, label, icon: Icon }) => (
+                {featureTabs.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
                     onClick={() => setActiveTab(id)}
@@ -203,10 +322,10 @@ export function ReviewTestcasePage() {
                   />
                 )}
                 {activeTab === 'knowledge' && (
-                  <KnowledgeFilesTab
+                  <KnowledgeSelectTab
                     feature={selectedFeature}
-                    files={config.knowledge_files}
-                    onUploaded={() => loadConfig(selectedFeature)}
+                    linkedKnowledge={config.linked_knowledge || []}
+                    onSave={async (linked_knowledge) => saveConfig({ linked_knowledge })}
                   />
                 )}
                 {activeTab === 'components' && (
@@ -222,6 +341,30 @@ export function ReviewTestcasePage() {
                 {activeTab === 'review-export' && (
                   <ReviewExportTab feature={selectedFeature} />
                 )}
+              </div>
+            </div>
+          ) : activeTab === 'rules' || activeTab === 'template' ? (
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              {/* Tabs (global only) */}
+              <div className="flex border-b border-gray-200 overflow-x-auto">
+                {globalTabs.map(({ id, label, icon: Icon }) => (
+                  <button
+                    key={id}
+                    onClick={() => setActiveTab(id)}
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                      activeTab === id
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="p-4">
+                {activeTab === 'rules' && <RulesTab />}
+                {activeTab === 'template' && <TemplateTab />}
               </div>
             </div>
           ) : (

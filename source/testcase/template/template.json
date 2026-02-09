@@ -1,0 +1,53 @@
+[
+  {
+    "id": "1",
+    "name": "ID",
+    "width": "80px",
+    "style": "bold mono",
+    "writingStyle": "[Module_Code]-[Sequence] (e.g., AUTH-001)."
+  },
+  {
+    "id": "2",
+    "name": "Module",
+    "width": "120px",
+    "style": "normal"
+  },
+  {
+    "id": "5",
+    "name": "Title",
+    "width": "200px",
+    "style": "bold",
+    "writingStyle": "[Action] + [Object] + [Context] (e.g., CLICK Submit Button with Empty Fields)."
+  },
+  {
+    "id": "6",
+    "name": "Preconditions",
+    "width": "180px",
+    "style": "normal"
+  },
+  {
+    "id": "7",
+    "name": "Steps",
+    "width": "300px",
+    "style": "mono",
+    "writingStyle": "## Use **Step-by-Step** numbering within the \"Steps\" cell.\n\n## To maintain consistency, use ONLY these verbs for the 'Steps' column:\n- **NAVIGATE**: Moving to a URL or main menu.\n- **CLICK**: Interaction with buttons, checkboxes, or radio buttons.\n- **INPUT**: Typing text into a field.\n- **SELECT**: Choosing an option from a dropdown/combobox.\n- **VERIFY**: Checking a condition (used in Expected Results).\n- **HOVER**: Moving the mouse over an element.\n\n## Wrap all UI elements in **Bold** and [Brackets] (e.g., CLICK **[Submit]** button)."
+  },
+  {
+    "id": "col_1770625210357",
+    "name": "Test data",
+    "width": "120px",
+    "style": "normal"
+  },
+  {
+    "id": "8",
+    "name": "Expected Result",
+    "width": "200px",
+    "style": "normal"
+  },
+  {
+    "id": "9",
+    "name": "Priority",
+    "width": "80px",
+    "style": "bold center"
+  }
+]

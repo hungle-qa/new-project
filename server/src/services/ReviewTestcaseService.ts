@@ -24,28 +24,54 @@ export interface ComponentMapping {
   usage: string
 }
 
+export interface TemplateColumn {
+  id: string
+  name: string
+  width: string
+  style: string
+  writingStyle: string
+}
+
+export interface FeatureSummary {
+  name: string
+  created: string
+  updated: string
+}
+
 export interface FeatureConfig {
   name: string
   created: string
   updated: string
-  status: string
   levels: LevelEntry[]
   scope: {
     happy_case: string
     corner_case: string
   }
   knowledge_files: KnowledgeFile[]
+  linked_knowledge: string[]
   components: ComponentMapping[]
   content: string
 }
 
 export class ReviewTestcaseService {
-  static async getAllFeatures(): Promise<string[]> {
+  static async getAllFeatures(): Promise<FeatureSummary[]> {
     try {
       const entries = await fs.readdir(SOURCE_DIR, { withFileTypes: true })
-      return entries
-        .filter(e => e.isDirectory() && !EXCLUDED_DIRS.includes(e.name))
-        .map(e => e.name)
+      const dirs = entries.filter(e => e.isDirectory() && !EXCLUDED_DIRS.includes(e.name))
+
+      const summaries: FeatureSummary[] = []
+      for (const dir of dirs) {
+        const config = await this.getFeatureConfig(dir.name)
+        summaries.push({
+          name: dir.name,
+          created: config?.created || '',
+          updated: config?.updated || '',
+        })
+      }
+
+      // Sort by updated date, newest first
+      summaries.sort((a, b) => (b.updated || '').localeCompare(a.updated || ''))
+      return summaries
     } catch {
       return []
     }
@@ -64,13 +90,13 @@ export class ReviewTestcaseService {
       name,
       created: today,
       updated: today,
-      status: 'draft',
       levels: [],
       scope: {
         happy_case: '',
         corner_case: '',
       },
       knowledge_files: [],
+      linked_knowledge: [],
       components: [],
     }
 
@@ -90,10 +116,10 @@ export class ReviewTestcaseService {
         name: data.name || name,
         created: data.created || '',
         updated: data.updated || '',
-        status: data.status || 'draft',
         levels: data.levels || [],
         scope: data.scope || { happy_case: '', corner_case: '' },
         knowledge_files: data.knowledge_files || [],
+        linked_knowledge: data.linked_knowledge || [],
         components: data.components || [],
         content,
       }
@@ -127,10 +153,10 @@ export class ReviewTestcaseService {
       name: merged.name,
       created: merged.created,
       updated: merged.updated,
-      status: merged.status,
       levels: merged.levels,
       scope: merged.scope,
       knowledge_files: merged.knowledge_files,
+      linked_knowledge: merged.linked_knowledge,
       components: merged.components,
     }
 
@@ -139,6 +165,33 @@ export class ReviewTestcaseService {
     await fs.writeFile(configPath, configContent)
 
     return this.getFeatureConfig(name)
+  }
+
+  static async renameFeature(oldName: string, newName: string): Promise<string | null> {
+    try {
+      const oldDir = path.join(SOURCE_DIR, oldName)
+      const newDir = path.join(SOURCE_DIR, newName)
+
+      // Check target doesn't already exist
+      try {
+        await fs.access(newDir)
+        return null // target already exists
+      } catch {
+        // Good - doesn't exist
+      }
+
+      await fs.rename(oldDir, newDir)
+
+      // Update name in config.md
+      const config = await this.getFeatureConfig(newName)
+      if (config) {
+        await this.updateFeatureConfig(newName, { name: newName } as Partial<FeatureConfig>)
+      }
+
+      return newName
+    } catch {
+      return null
+    }
   }
 
   static async deleteFeature(name: string): Promise<boolean> {
@@ -156,6 +209,7 @@ export class ReviewTestcaseService {
     fileBuffer: Buffer,
     filename: string,
     mimeType: string,
+    customPrompt: string,
     aiConfig: AIConfig
   ): Promise<{ specPath: string }> {
     let rawContent: string
@@ -172,7 +226,7 @@ export class ReviewTestcaseService {
       throw new Error('Unsupported file type. Only PDF, Markdown, and TXT files are supported.')
     }
 
-    const structured = await AIService.structureSpec(rawContent, aiConfig)
+    const structured = await AIService.structureSpec(rawContent, customPrompt, aiConfig)
 
     const specDir = path.join(SOURCE_DIR, name, 'spec')
     await fs.mkdir(specDir, { recursive: true })
@@ -260,5 +314,43 @@ export class ReviewTestcaseService {
 
   static getResultFilePath(name: string, filename: string): string {
     return path.join(SOURCE_DIR, name, 'result', filename)
+  }
+
+  // --- Rules ---
+
+  static async getRules(): Promise<string> {
+    try {
+      const rulesPath = path.join(SOURCE_DIR, 'rule', 'test-rules.md')
+      return await fs.readFile(rulesPath, 'utf-8')
+    } catch {
+      return ''
+    }
+  }
+
+  static async saveRules(content: string): Promise<void> {
+    const rulesDir = path.join(SOURCE_DIR, 'rule')
+    await fs.mkdir(rulesDir, { recursive: true })
+    await fs.writeFile(path.join(rulesDir, 'test-rules.md'), content)
+  }
+
+  // --- Template ---
+
+  static async getTemplate(): Promise<TemplateColumn[]> {
+    try {
+      const templatePath = path.join(SOURCE_DIR, 'template', 'template.json')
+      const raw = await fs.readFile(templatePath, 'utf-8')
+      return JSON.parse(raw)
+    } catch {
+      return []
+    }
+  }
+
+  static async saveTemplate(columns: TemplateColumn[]): Promise<void> {
+    const templateDir = path.join(SOURCE_DIR, 'template')
+    await fs.mkdir(templateDir, { recursive: true })
+    await fs.writeFile(
+      path.join(templateDir, 'template.json'),
+      JSON.stringify(columns, null, 2)
+    )
   }
 }

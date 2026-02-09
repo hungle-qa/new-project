@@ -15,11 +15,6 @@ argument-hint: [feature description]
 
 **If task could mean EITHER app UI OR documentation, ASK user:**
 
-Example ambiguous tasks:
-- "Update User Guide section" -> App UI or docs/user-guide.md?
-- "Add help content" -> App component or README?
-- "Update about page" -> React page or docs?
-
 **Ask using AskUserQuestion:**
 ```
 "Do you want to update the APP (React component) or the DOCUMENTATION (.md file)?"
@@ -32,60 +27,22 @@ Options:
 
 ---
 
-## Tier Detection
-
-**BEFORE running workflow, classify task complexity:**
-
-| Tier | Detection Criteria | Agent Chain |
-|------|-------------------|-------------|
-| **SIMPLE** | Single file, bug fix, typo, rename | implementer only |
-| **MEDIUM** | 2-3 files, clear scope, known feature | scout(built-in) -> implementer |
-| **COMPLEX** | Multi-file, unclear scope, new architecture | scout(built-in) -> planner(built-in) -> [APPROVAL] -> implementer |
-
-### SIMPLE Task Indicators
-- User specifies exact file path
-- Keywords: "fix", "typo", "rename", "change text", "update string"
-- Single component change
-- No new files needed
-- Bug fix with known location
-
-### MEDIUM Task Indicators
-- Clear feature scope (e.g., "add search to X page")
-- 2-3 files affected
-- No architectural decisions
-- Feature addition to existing page/route
-
-### COMPLEX Task Indicators
-- New feature with unclear scope
-- Multiple components/services involved
-- User explicitly asks for plan
-- Architectural changes
-- New pages or routes
-- Keywords: "rebuild", "refactor", "redesign", "implement new"
-
----
-
 ## Execution
 
-**IMPLEMENTER ALWAYS ASKS APPROVAL BEFORE CODING.**
+**IMPORTANT:** Read and follow `.claude/agents/implementer.md` for ALL tasks.
 
-**SIMPLE tasks:**
-```
--> implementer -> [APPROVAL] -> code
-```
-No scout, no plan file. Implementer shows plan and asks before coding.
+**All tasks go directly to implementer:**
 
-**MEDIUM tasks:**
 ```
--> scout(built-in) -> implementer -> [APPROVAL] -> code
+-> implementer -> [WIREFRAME if UI] -> [APPROVAL] -> code
 ```
-Scout via Task tool finds files and shows inline plan, then implementer asks before coding.
 
-**COMPLEX tasks:**
-```
--> scout(built-in) -> planner(built-in) -> [APPROVAL] -> implementer -> code
-```
-Full workflow. Planner creates plan for approval, then implementer codes.
+The implementer will:
+1. Read relevant files to understand context
+2. Present planned actions
+3. **Show wireframe mockup for any UI changes** (REQUIRED)
+4. Ask user approval via AskUserQuestion
+5. Only code after explicit "Yes"
 
 ---
 

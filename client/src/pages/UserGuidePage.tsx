@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { BookOpen, Code, Layers, Monitor, AlertCircle, Palette, ClipboardCheck, FileText, Bot } from 'lucide-react'
+import { BookOpen, Code, Layers, Monitor, AlertCircle, Palette, ClipboardCheck, Bot } from 'lucide-react'
 
 type TabType = 'edit-app' | 'create-demos' | 'use-webapp' | 'train-agent'
-type WebAppSubTab = 'design-system' | 'review-testcase' | 'spec-templates'
+type WebAppSubTab = 'design-system' | 'review-testcase'
 
 interface GuideSection {
   overview: string
@@ -24,7 +24,6 @@ const tabs: { id: TabType; label: string; icon: typeof Code }[] = [
 const webAppSubTabs: { id: WebAppSubTab; label: string; icon: typeof Palette }[] = [
   { id: 'design-system', label: 'Design System', icon: Palette },
   { id: 'review-testcase', label: 'Review Testcase', icon: ClipboardCheck },
-  { id: 'spec-templates', label: 'Spec Templates', icon: FileText },
 ]
 
 const webAppSubTabContent: Record<WebAppSubTab, GuideSection> = {
@@ -113,49 +112,6 @@ const webAppSubTabContent: Record<WebAppSubTab, GuideSection> = {
       'File location: Features saved in source/testcase/{feature-name}/',
       'AI required: Import Spec needs AI settings configured (Google Gemini)',
       'Generate testcases: Use /testcase write {feature} after configuring'
-    ]
-  },
-  'spec-templates': {
-    overview: 'Use ready-made templates for specifications and documentation. Templates include placeholders like {project-name} that you fill in with your details.',
-    workflow: {
-      steps: ['Browse', 'Preview', 'Copy', 'Customize'],
-      description: 'Find a template → Preview the structure → Copy it → Replace placeholders with your content'
-    },
-    input: [
-      '1. Finding Templates',
-      'Browse: Scroll through the template list',
-      'Click: Select a template to see its full structure',
-      'Expand: Click sections to see details'
-    ],
-    process: [
-      '2. Template Structure',
-      'Each template contains:',
-      '',
-      'Section Headers: H1, H2, H3 for organization',
-      'Placeholders: Fields like {name}, {date}, {version} to fill in',
-      'Tables: For requirements, features, or comparisons',
-      'Instructions: Comments explaining what to write'
-    ],
-    output: [
-      '3. Using a Template',
-      'To use:',
-      '',
-      'Click the Copy button',
-      'Paste into your editor',
-      'Replace all {placeholders} with your content',
-      'Delete any sections you don\'t need'
-    ],
-    examples: [
-      'Copy PRD template → Click "PRD Template" → Copy → Paste in editor',
-      'Fill placeholders → Replace {project-name} with "Client Portal"',
-      'Import new → /import-spec-template in CLI'
-    ],
-    note: [
-      '⚠️ Tips',
-      '',
-      'File format: Templates are markdown files (.md)',
-      'Location: Stored in source/spec-template/',
-      'Reusable: Use the same template for multiple projects'
     ]
   }
 }
@@ -362,8 +318,8 @@ const guideContent: Record<Exclude<TabType, 'use-webapp'>, GuideSection> = {
 const useWebappContent: GuideSection = {
   overview: 'Access all your project resources in one place. The web app runs at http://localhost:3000 after you start the development server with npm run dev.',
   workflow: {
-    steps: ['Design System', 'Review Testcase', 'Spec Templates'],
-    description: 'Three main sections: Components you can copy → Features you can configure → Templates you can use'
+    steps: ['Design System', 'Review Testcase'],
+    description: 'Two main sections: Components you can copy → Features you can configure'
   },
   input: [
     '1. Getting Started',
@@ -376,13 +332,11 @@ const useWebappContent: GuideSection = {
     '',
     'Design System: Browse and copy UI components (buttons, cards, forms)',
     'Review Testcase: Configure features and review generated testcases',
-    'Spec Templates: Use ready-made document templates',
   ],
   output: [
     '3. Common Workflows',
     '',
     'Copy Component: Design System → Click component → Copy code → Paste',
-    'Create Documentation: Spec Templates → Copy template → Fill placeholders',
   ],
   examples: [
     'Copy a button → Design System → "Button" → HTML tab → Copy',

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Palette, ClipboardCheck, FileText } from 'lucide-react'
+import { Palette, ClipboardCheck } from 'lucide-react'
 
 const features = [
   {
@@ -15,14 +15,6 @@ const features = [
     icon: ClipboardCheck,
     path: '/review-testcase',
     color: 'bg-yellow-500',
-  },
-
-  {
-    title: 'Spec Templates',
-    description: 'Generate specs from demos',
-    icon: FileText,
-    path: '/spec-templates',
-    color: 'bg-purple-500',
   },
 ]
 

@@ -1,6 +1,6 @@
 # QA-kit
 
-QA testcase generation platform. Import components (AI learns UI), import testcase templates + rules, then generate testcases from feature specs. Also creates demo pages from product ideas. All data is stored as markdown files (no database).
+QA testcase generation platform. Import components (AI learns UI), import testcase templates + rules, then generate testcases from feature specs. All data is stored as markdown files (no database).
 
 ## Quick Start
 
@@ -29,7 +29,6 @@ Navigate to http://localhost:3000
 |----------|---------|---------|
 | **Build App Workflow** | Code the main app (React + Express) | `/start` |
 | **Testcase Workflow** | Generate QA testcases from specs | `/testcase` |
-| **Create Demo Workflow** | Build demo projects in `source/demo/` | `/create-demo` |
 
 ---
 
@@ -60,7 +59,7 @@ Use Build App Workflow for:
 - Design System management UI
 - Spec Template management UI
 - Review Testcase management UI
-- Demo Projects management UI
+
 - Import features
 - Backend API enhancements
 - Bug fixes in `client/` or `server/`
@@ -110,59 +109,6 @@ testcase-writer (skill-based: init / import-spec / write / update)
 
 ---
 
-## Create Demo Workflow
-
-**Purpose:** Build demo projects with HTML pages in `source/demo/`.
-
-### Agent Chain (COMPLEX Tier)
-```
-demo-folder-creator.md -> scout.md -> planner.md -> designer.md -> implementer.md
-```
-
-| Step | Agent | What It Does | Output |
-|------|-------|--------------|--------|
-| 1 | `demo-folder-creator` | Create folder structure | `source/demo/{name}/` |
-| 2 | `scout` | Scout demo + design-system only | Available components |
-| 3 | `planner` | Plan demo pages | Page structure |
-| 4 | `designer` | Suggest UI composition | Layout recommendations |
-| 5 | `implementer` | Build HTML pages | `pages/*.html` |
-
-**Tiered execution:** SIMPLE skips scout/planner/designer. MEDIUM uses `quick-scout` instead of full scout+planner+designer.
-
-### How to Run
-```
-/create-demo
-/create-demo {project-name}
-/create-demo from @product-idea {idea-name}
-```
-
-### Scope
-
-Use Create Demo Workflow for:
-- Create new demo project folders
-- Build demo pages using design system
-- Generate spec from demo
-
-### Examples
-```
-/create-demo client-portal
-/create-demo from @product-idea fitness-tracker
-```
-
-### Fix Existing Demo
-```
-/fix-demo {project-name}
-/fix-demo {project-name}: {issue description}
-```
-
-**Examples:**
-```
-/fix-demo client-portal
-/fix-demo hello-world-page: button not aligned
-```
-
----
-
 ## Import Commands
 
 Import source materials (independent of workflows):
@@ -207,15 +153,7 @@ QA-kit/
 │   │       ├── spec/          # Extracted spec from PDF
 │   │       ├── knowledge/     # Knowledge files (PDF/MD/TXT)
 │   │       └── result/        # Generated testcase CSVs
-│   ├── demo/                  # Demo projects (create-demo workflow)
-│   │   └── {project-name}/
-│   │       ├── README.md
-│   │       ├── components/
-│   │       ├── pages/
-│   │       ├── assets/
-│   │       └── spec/
 │   ├── design-system/         # HTML/CSS components (.md)
-│   ├── product-idea/          # Product ideas (.md)
 │   └── spec-template/         # Spec templates (.md)
 │
 ├── client/                    # React Frontend (build-app workflow)
@@ -267,8 +205,6 @@ QA-kit/
 | DELETE | /api/review-testcase/:feature/knowledge/:filename | Delete knowledge file |
 | GET | /api/review-testcase/:feature/results | List result CSVs |
 | GET | /api/review-testcase/:feature/results/:filename | Get/download result CSV |
-| GET | /api/demo | List all demos |
-| GET | /api/demo/:name | Get demo details |
 
 ---
 
@@ -309,8 +245,7 @@ QA-kit/
 |---------|---------|
 | `/start` | Start build-app workflow for main app development |
 | `/testcase` | Manage QA testcases (init, import-spec, write, update) |
-| `/create-demo` | Create a demo project with tiered execution |
-| `/fix-demo` | Fix issues in an existing demo project |
+
 | `/import-design-by-image` | Convert UI images to design system components |
 | `/agent-audit` | Audit, update, test, or optimize agents via AGIA |
 
@@ -329,8 +264,7 @@ QA-kit/
 | `CLAUDE.md` | Project instructions for Claude |
 | `.claude/workflows/build-app-workflow.md` | Main app coding workflow |
 | `.claude/workflows/testcase-workflow.md` | QA testcase generation workflow |
-| `.claude/workflows/create-demo-workflow.md` | Create demo workflow |
-| `.claude/workflows/fix-demo-workflow.md` | Fix demo workflow |
+
 | `.claude/workflows/development-rules.md` | Coding standards |
 | `.claude/agents/*.md` | Agent definitions |
 | `.claude/agents/skills/` | Skill files for skill-based agents |
@@ -341,8 +275,6 @@ QA-kit/
 
 | Problem | Solution |
 |---------|----------|
-| Wrong workflow | Use `/start` for app code, `/testcase` for testcases, `/create-demo` for demo |
-| Scout finds nothing | Try different keywords |
-| Demo files in wrong place | Check you're using `/create-demo` |
+| Wrong workflow | Use `/start` for app code, `/testcase` for testcases |
 | Testcase init missing | Run `/testcase init` before write/update |
 | Spec not imported | Run `/testcase import-spec {feature}` before write |

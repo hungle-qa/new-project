@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { BookOpen, Code, Layers, Monitor, AlertCircle, Palette, ClipboardCheck, Bot } from 'lucide-react'
+import { BookOpen, Code, Monitor, AlertCircle, Palette, ClipboardCheck, Bot } from 'lucide-react'
 
-type TabType = 'edit-app' | 'create-demos' | 'use-webapp' | 'train-agent'
+type TabType = 'edit-app' | 'use-webapp' | 'train-agent'
 type WebAppSubTab = 'design-system' | 'review-testcase'
 
 interface GuideSection {
@@ -16,7 +16,6 @@ interface GuideSection {
 
 const tabs: { id: TabType; label: string; icon: typeof Code }[] = [
   { id: 'edit-app', label: 'Build App', icon: Code },
-  { id: 'create-demos', label: 'Create Demos', icon: Layers },
   { id: 'use-webapp', label: 'Use Web App', icon: Monitor },
   { id: 'train-agent', label: 'Train Agent', icon: Bot },
 ]
@@ -245,72 +244,8 @@ const guideContent: Record<Exclude<TabType, 'use-webapp'>, GuideSection> = {
       '⚠️ Tips for Best Results',
       '',
       '• Be specific: "Fix Toggle on Dashboard not changing color" beats "Fix UI bug"',
-      '• Main app only: Use for client/ and server/, not demos',
+      '• Main app only: Use for client/ and server/',
       '• Review first: Check /plans folder before implementation starts'
-    ]
-  },
-  'create-demos': {
-    overview: 'Create demo projects using your design system components. Demos are standalone HTML pages for presentations, client reviews, or prototyping.',
-    workflow: {
-      steps: ['Create Folder', 'Scout', 'Plan', 'Build', 'Generate Spec'],
-      description: 'You name project → System creates folders → Finds components → Builds HTML → Creates spec'
-    },
-    input: [
-      '1. Commands',
-      '',
-      '• /create-demo {project-name} → Create new demo',
-      '• /create-demo from @product-idea {name} → Create from idea',
-      '• /fix-demo {name}: {issue} → Fix existing demo'
-    ],
-    process: [
-      '2. The 5 Phases',
-      '',
-      '📍 Create Folder Phase',
-      '• Creates source/demo/{project-name}/',
-      '• Adds subfolders: pages/, spec/, components/',
-      '',
-      '📍 Scout Phase',
-      '• Scans source/design-system/',
-      '• Lists available buttons, cards, forms, etc.',
-      '',
-      '📍 Planning Phase',
-      '• Decides which pages to create',
-      '• Assigns components to each page',
-      '',
-      '📍 Build Phase',
-      '• Creates standalone HTML files',
-      '• Applies Tailwind CSS styling',
-      '',
-      '📍 Spec Phase',
-      '• Generates documentation',
-      '• Saves to spec/ folder'
-    ],
-    output: [
-      '3. What You Get',
-      '',
-      '• ✓ Project folder at source/demo/{name}/',
-      '• ✓ HTML pages in pages/ subfolder',
-      '• ✓ Spec document in spec/ subfolder'
-    ],
-    examples: [
-      '💡 Example: Creating a Demo',
-      '',
-      'Command: /create-demo client-portal',
-      '',
-      'Folder created → source/demo/client-portal/',
-      'Scout finds → Button, Card, Navigation, Form',
-      'Planner creates → login.html, dashboard.html, settings.html',
-      'Builder outputs → 3 HTML pages with Tailwind',
-      'Spec written → client-portal-spec.md',
-      '',
-      'Result: Open pages/login.html in browser to preview'
-    ],
-    note: [
-      '⚠️ Tips',
-      '',
-      '• HTML only: Demos are plain HTML, not React',
-      '• Design system: All demos use components from source/design-system/',
-      '• Be specific: When fixing, say "button not aligned" not just "broken"'
     ]
   }
 }

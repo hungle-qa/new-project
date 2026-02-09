@@ -5,7 +5,7 @@ import path from 'path'
 import designSystemRoutes from './routes/design-system'
 import reviewTestcaseRoutes from './routes/review-testcase'
 import specTemplateRoutes from './routes/spec-template'
-import demoRoutes from './routes/demo'
+
 import aiRoutes from './routes/ai'
 
 const app = express()
@@ -19,7 +19,7 @@ app.use(express.json())
 app.use('/api/design-system', designSystemRoutes)
 app.use('/api/review-testcase', reviewTestcaseRoutes)
 app.use('/api/spec-template', specTemplateRoutes)
-app.use('/api/demo', demoRoutes)
+
 app.use('/api/ai', aiRoutes)
 
 // Serve static files from source folder

@@ -22,10 +22,9 @@ export function HomePage() {
   return (
     <div>
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Internal Demo Tool</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">QA Kit</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Create demo pages from product ideas and generate specs.
-          Import design components, build demos, and export documentation.
+          Import design components, configure features, and generate QA testcases.
         </p>
       </div>
 
@@ -48,13 +47,13 @@ export function HomePage() {
       <div className="mt-12 bg-white rounded-lg border border-gray-200 p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Workflow</h2>
         <div className="flex items-center justify-center gap-4 text-sm">
-          <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">Init Data</span>
+          <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">Import Components</span>
           <span className="text-gray-400">→</span>
-          <span className="px-4 py-2 bg-green-100 text-green-800 rounded-lg">Create Demo</span>
+          <span className="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg">Configure Feature</span>
           <span className="text-gray-400">→</span>
-          <span className="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg">Build Demo</span>
+          <span className="px-4 py-2 bg-green-100 text-green-800 rounded-lg">Import Spec</span>
           <span className="text-gray-400">→</span>
-          <span className="px-4 py-2 bg-purple-100 text-purple-800 rounded-lg">Generate Spec</span>
+          <span className="px-4 py-2 bg-purple-100 text-purple-800 rounded-lg">Generate Testcases</span>
         </div>
       </div>
     </div>

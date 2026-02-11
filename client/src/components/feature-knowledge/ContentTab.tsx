@@ -1,5 +1,7 @@
 import { FileText } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 
 interface ContentTabProps {
   content: string
@@ -62,7 +64,23 @@ export function ContentTab({ content, sourceFiles }: ContentTabProps) {
                 {section.filename}
               </h4>
             )}
-            <ReactMarkdown>{section.text}</ReactMarkdown>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw]}
+              components={{
+                table: ({ children, ...props }) => (
+                  <table {...props} style={{ tableLayout: 'fixed', width: '100%' }}>{children}</table>
+                ),
+                td: ({ children, ...props }) => (
+                  <td {...props} style={{ whiteSpace: 'pre-line', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{children}</td>
+                ),
+                th: ({ children, ...props }) => (
+                  <th {...props} style={{ whiteSpace: 'pre-line', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{children}</th>
+                ),
+              }}
+            >
+              {section.text}
+            </ReactMarkdown>
           </div>
         ))}
       </div>

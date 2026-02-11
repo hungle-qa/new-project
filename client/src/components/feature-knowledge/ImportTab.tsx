@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, DragEvent } from 'react'
-import { Upload, FileText, CheckCircle, AlertCircle, Settings, X, Save } from 'lucide-react'
+import { Upload, FileText, CheckCircle, AlertCircle, Settings, X, Save, Square, Globe, RotateCcw } from 'lucide-react'
 import { useAISettings } from '../../hooks/useAISettings'
 import { AISettingsModal } from '../AISettingsModal'
 
@@ -14,21 +14,73 @@ interface ImportTabProps {
 
 type UploadState = 'idle' | 'uploading' | 'success' | 'error'
 
-const DEFAULT_KNOWLEDGE_PROMPT = 'Keep the original content exactly as-is. Only convert to clean, well-formatted markdown that is easy to read. Do not summarize, rewrite, or omit any content.'
+const FALLBACK_PROMPT = 'Keep the original content exactly as-is. Only convert to clean, well-formatted markdown that is easy to read. Do not summarize, rewrite, or omit any content.'
 
 export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported, onDirtyChange, saveRef }: ImportTabProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [customPrompt, setCustomPrompt] = useState(savedPrompt || DEFAULT_KNOWLEDGE_PROMPT)
+  const [defaultPrompt, setDefaultPrompt] = useState('')
+  const [customPrompt, setCustomPrompt] = useState('')
+  const [promptInitialized, setPromptInitialized] = useState(false)
   const [uploadState, setUploadState] = useState<UploadState>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [deletingFile, setDeletingFile] = useState<string | null>(null)
   const [savingPrompt, setSavingPrompt] = useState(false)
+  const [savingDefault, setSavingDefault] = useState(false)
   const [promptSaved, setPromptSaved] = useState(false)
+  const [defaultSaved, setDefaultSaved] = useState(false)
+  const [lastSavedPrompt, setLastSavedPrompt] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   const { settings, isConfigured, refreshSettings } = useAISettings()
+
+  // Load default prompt on mount, then initialize customPrompt
+  useEffect(() => {
+    fetch('/api/feature-knowledge/default-prompt')
+      .then(res => res.json())
+      .then(data => {
+        const dp = data.prompt || ''
+        setDefaultPrompt(dp)
+        // Priority: savedPrompt > defaultPrompt > fallback
+        setCustomPrompt(savedPrompt || dp || FALLBACK_PROMPT)
+        setPromptInitialized(true)
+      })
+      .catch(() => {
+        setCustomPrompt(savedPrompt || FALLBACK_PROMPT)
+        setPromptInitialized(true)
+      })
+  }, [])
+
+  // Reset prompt when switching knowledge items or when parent provides updated savedPrompt
+  const prevNameRef = useRef(knowledgeName)
+  const prevSavedPromptRef = useRef(savedPrompt)
+  useEffect(() => {
+    if (!promptInitialized) return
+    const nameChanged = prevNameRef.current !== knowledgeName
+    const savedPromptChanged = prevSavedPromptRef.current !== savedPrompt
+    prevNameRef.current = knowledgeName
+    prevSavedPromptRef.current = savedPrompt
+
+    if (nameChanged) {
+      // Switching items: full reset
+      setCustomPrompt(savedPrompt || defaultPrompt || FALLBACK_PROMPT)
+      setLastSavedPrompt('')
+    } else if (savedPromptChanged && !lastSavedPrompt) {
+      // Same item but parent re-fetched with new data (async load completed)
+      // Only update if user hasn't locally saved
+      setCustomPrompt(savedPrompt || defaultPrompt || FALLBACK_PROMPT)
+    }
+  }, [knowledgeName, savedPrompt])
+
+  const effectiveDefault = defaultPrompt || FALLBACK_PROMPT
+  // The actual saved value: lastSavedPrompt (local after save) > savedPrompt (from parent) > effectiveDefault
+  const currentSaved = lastSavedPrompt || savedPrompt || effectiveDefault
+  // For Save/Save as Default buttons visibility
+  const promptChanged = customPrompt.trim() !== currentSaved.trim()
+  // For unsaved changes guard: same as promptChanged (tracks per-item save)
+  const needsItemSave = promptChanged
 
   const handleDeleteFile = async (filename: string) => {
     setDeletingFile(filename)
@@ -44,8 +96,6 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
     }
   }
 
-  const promptChanged = customPrompt.trim() !== (savedPrompt || DEFAULT_KNOWLEDGE_PROMPT).trim()
-
   const handleSavePrompt = useCallback(async () => {
     setSavingPrompt(true)
     setPromptSaved(false)
@@ -56,6 +106,7 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
         body: JSON.stringify({ prompt: customPrompt.trim() }),
       })
       if (res.ok) {
+        setLastSavedPrompt(customPrompt.trim())
         setPromptSaved(true)
         onImported()
         setTimeout(() => setPromptSaved(false), 2000)
@@ -65,14 +116,44 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
     }
   }, [customPrompt, knowledgeName, onImported])
 
-  useEffect(() => {
-    onDirtyChange?.(promptChanged)
-  }, [promptChanged])
+  const handleSaveAndSetDefault = async () => {
+    setSavingDefault(true)
+    setDefaultSaved(false)
+    try {
+      // Save to current item + save as global default in parallel
+      const [itemRes, defaultRes] = await Promise.all([
+        fetch(`/api/feature-knowledge/${knowledgeName}/prompt`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: customPrompt.trim() }),
+        }),
+        fetch('/api/feature-knowledge/default-prompt', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: customPrompt.trim() }),
+        }),
+      ])
+      if (itemRes.ok) {
+        setLastSavedPrompt(customPrompt.trim())
+        onImported()
+      }
+      if (defaultRes.ok) {
+        setDefaultSaved(true)
+        setTimeout(() => setDefaultSaved(false), 2000)
+      }
+    } finally {
+      setSavingDefault(false)
+    }
+  }
 
   useEffect(() => {
-    saveRef?.(promptChanged ? handleSavePrompt : null)
+    onDirtyChange?.(needsItemSave)
+  }, [needsItemSave])
+
+  useEffect(() => {
+    saveRef?.(needsItemSave ? handleSavePrompt : null)
     return () => saveRef?.(null)
-  }, [promptChanged, handleSavePrompt])
+  }, [needsItemSave, handleSavePrompt])
 
   const handleFileSelect = (file: File) => {
     if (file.size > 10 * 1024 * 1024) {
@@ -96,6 +177,9 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
   const handleImport = async () => {
     if (!selectedFile || !isConfigured) return
 
+    const controller = new AbortController()
+    abortRef.current = controller
+
     setUploadState('uploading')
     setErrorMessage('')
 
@@ -111,6 +195,7 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
           'X-AI-Model': settings.model,
         },
         body: formData,
+        signal: controller.signal,
       })
 
       const data = await res.json()
@@ -120,9 +205,19 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
       setSelectedFile(null)
       onImported()
     } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        setUploadState('idle')
+        return
+      }
       setUploadState('error')
       setErrorMessage(err instanceof Error ? err.message : 'Failed to import knowledge')
+    } finally {
+      abortRef.current = null
     }
+  }
+
+  const handleStop = () => {
+    abortRef.current?.abort()
   }
 
   return (
@@ -235,26 +330,47 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
               {promptSaved && (
                 <span className="text-xs text-green-600">Saved</span>
               )}
-              {promptChanged && (
-                <button
-                  onClick={handleSavePrompt}
-                  disabled={savingPrompt}
-                  className="flex items-center gap-1 px-2 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {savingPrompt ? (
-                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <Save className="w-3 h-3" />
-                  )}
-                  Save
-                </button>
+              {defaultSaved && (
+                <span className="text-xs text-green-600">Default saved</span>
               )}
+              <button
+                onClick={() => { setCustomPrompt(effectiveDefault); setPromptSaved(false); setDefaultSaved(false) }}
+                disabled={!promptChanged}
+                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-40 disabled:cursor-default disabled:hover:bg-transparent"
+              >
+                <RotateCcw className="w-3 h-3" />
+                Use Default
+              </button>
+              <button
+                onClick={handleSavePrompt}
+                disabled={!promptChanged || savingPrompt}
+                className="flex items-center gap-1 px-2 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-40 disabled:cursor-default"
+              >
+                {savingPrompt ? (
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Save className="w-3 h-3" />
+                )}
+                Save
+              </button>
+              <button
+                onClick={handleSaveAndSetDefault}
+                disabled={!promptChanged || savingDefault}
+                className="flex items-center gap-1 px-2 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700 disabled:opacity-40 disabled:cursor-default"
+              >
+                {savingDefault ? (
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Globe className="w-3 h-3" />
+                )}
+                Save & Set Default
+              </button>
             </div>
           </div>
           <textarea
             id="customPrompt"
             value={customPrompt}
-            onChange={(e) => { setCustomPrompt(e.target.value); setPromptSaved(false) }}
+            onChange={(e) => { setCustomPrompt(e.target.value); setPromptSaved(false); setDefaultSaved(false) }}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
           />
@@ -264,24 +380,31 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
         </div>
 
         {/* Import Button */}
-        {selectedFile && (
+        {selectedFile && uploadState !== 'uploading' && (
           <button
             onClick={handleImport}
-            disabled={!isConfigured || uploadState === 'uploading'}
+            disabled={!isConfigured}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {uploadState === 'uploading' ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Processing with AI...
-              </>
-            ) : (
-              <>
-                <Upload className="w-4 h-4" />
-                Import
-              </>
-            )}
+            <Upload className="w-4 h-4" />
+            Import
           </button>
+        )}
+
+        {uploadState === 'uploading' && (
+          <div className="flex items-center justify-between px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center gap-2 text-sm text-blue-700">
+              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+              Processing with AI...
+            </div>
+            <button
+              onClick={handleStop}
+              className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600"
+            >
+              <Square className="w-3 h-3" />
+              Stop
+            </button>
+          </div>
         )}
 
         {uploadState === 'success' && (

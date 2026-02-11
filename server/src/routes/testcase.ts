@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import multer from 'multer'
-import { ReviewTestcaseService } from '../services/ReviewTestcaseService'
+import { TestcaseService } from '../services/TestcaseService'
 
 const router = Router()
 
@@ -21,7 +21,7 @@ const upload = multer({
 // --- Global Rules ---
 router.get('/rules', async (_req, res) => {
   try {
-    const content = await ReviewTestcaseService.getRules()
+    const content = await TestcaseService.getRules()
     res.json({ content })
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch rules' })
@@ -34,7 +34,7 @@ router.put('/rules', async (req, res) => {
     if (typeof content !== 'string') {
       return res.status(400).json({ error: 'Content is required' })
     }
-    await ReviewTestcaseService.saveRules(content)
+    await TestcaseService.saveRules(content)
     res.json({ success: true })
   } catch (error) {
     res.status(500).json({ error: 'Failed to save rules' })
@@ -44,7 +44,7 @@ router.put('/rules', async (req, res) => {
 // --- Global Template ---
 router.get('/template', async (_req, res) => {
   try {
-    const columns = await ReviewTestcaseService.getTemplate()
+    const columns = await TestcaseService.getTemplate()
     res.json(columns)
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch template' })
@@ -57,17 +57,62 @@ router.put('/template', async (req, res) => {
     if (!Array.isArray(columns)) {
       return res.status(400).json({ error: 'Columns array is required' })
     }
-    await ReviewTestcaseService.saveTemplate(columns)
+    await TestcaseService.saveTemplate(columns)
     res.json({ success: true })
   } catch (error) {
     res.status(500).json({ error: 'Failed to save template' })
   }
 })
 
+// --- Default Spec Prompt ---
+router.get('/default-prompt', async (_req, res) => {
+  try {
+    const prompt = await TestcaseService.getDefaultPrompt()
+    res.json({ prompt })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch default prompt' })
+  }
+})
+
+router.put('/default-prompt', async (req, res) => {
+  try {
+    const { prompt } = req.body
+    if (typeof prompt !== 'string') {
+      return res.status(400).json({ error: 'Prompt is required' })
+    }
+    await TestcaseService.saveDefaultPrompt(prompt)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save default prompt' })
+  }
+})
+
+// --- Strategies (before /:feature to avoid conflict) ---
+router.get('/strategies', async (_req, res) => {
+  try {
+    const strategies = await TestcaseService.getStrategies()
+    res.json(strategies)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch strategies' })
+  }
+})
+
+router.get('/strategies/:name', async (req, res) => {
+  try {
+    const content = await TestcaseService.getStrategyContent(req.params.name)
+    if (!content) {
+      return res.status(404).json({ error: 'Strategy not found' })
+    }
+    res.json({ content })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch strategy content' })
+  }
+})
+
 // List all features
 router.get('/', async (_req, res) => {
   try {
-    const features = await ReviewTestcaseService.getAllFeatures()
+    const features = await TestcaseService.getAllFeatures()
     res.json(features)
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch features' })
@@ -82,7 +127,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Feature name is required' })
     }
     const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-')
-    const result = await ReviewTestcaseService.createFeature(sanitized)
+    const result = await TestcaseService.createFeature(sanitized)
     res.status(201).json(result)
   } catch (error) {
     res.status(400).json({ error: 'Failed to create feature' })
@@ -92,7 +137,7 @@ router.post('/', async (req, res) => {
 // Get feature config
 router.get('/:feature', async (req, res) => {
   try {
-    const config = await ReviewTestcaseService.getFeatureConfig(req.params.feature)
+    const config = await TestcaseService.getFeatureConfig(req.params.feature)
     if (!config) {
       return res.status(404).json({ error: 'Feature not found' })
     }
@@ -105,7 +150,7 @@ router.get('/:feature', async (req, res) => {
 // Update feature config
 router.put('/:feature', async (req, res) => {
   try {
-    const updated = await ReviewTestcaseService.updateFeatureConfig(req.params.feature, req.body)
+    const updated = await TestcaseService.updateFeatureConfig(req.params.feature, req.body)
     if (!updated) {
       return res.status(404).json({ error: 'Feature not found' })
     }
@@ -123,7 +168,7 @@ router.put('/:feature/rename', async (req, res) => {
       return res.status(400).json({ error: 'New name is required' })
     }
     const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-')
-    const newName = await ReviewTestcaseService.renameFeature(req.params.feature, sanitized)
+    const newName = await TestcaseService.renameFeature(req.params.feature, sanitized)
     if (!newName) {
       return res.status(400).json({ error: 'Failed to rename. Name may already exist.' })
     }
@@ -136,13 +181,37 @@ router.put('/:feature/rename', async (req, res) => {
 // Delete feature
 router.delete('/:feature', async (req, res) => {
   try {
-    const success = await ReviewTestcaseService.deleteFeature(req.params.feature)
+    const success = await TestcaseService.deleteFeature(req.params.feature)
     if (!success) {
       return res.status(404).json({ error: 'Feature not found' })
     }
     res.json({ success: true })
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete feature' })
+  }
+})
+
+// Get per-feature spec prompt
+router.get('/:feature/spec-prompt', async (req, res) => {
+  try {
+    const prompt = await TestcaseService.getSpecPrompt(req.params.feature)
+    res.json({ prompt })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch spec prompt' })
+  }
+})
+
+// Save per-feature spec prompt
+router.put('/:feature/spec-prompt', async (req, res) => {
+  try {
+    const { prompt } = req.body
+    if (typeof prompt !== 'string') {
+      return res.status(400).json({ error: 'Prompt is required' })
+    }
+    await TestcaseService.saveSpecPrompt(req.params.feature, prompt)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save spec prompt' })
   }
 })
 
@@ -168,7 +237,7 @@ router.post('/:feature/import-spec', upload.single('file'), async (req, res) => 
 
     const customPrompt = (req.body?.prompt as string) || ''
 
-    const result = await ReviewTestcaseService.importSpec(
+    const result = await TestcaseService.importSpec(
       req.params.feature,
       req.file.buffer,
       req.file.originalname,
@@ -188,7 +257,7 @@ router.post('/:feature/import-spec', upload.single('file'), async (req, res) => 
 // Get imported spec
 router.get('/:feature/spec', async (req, res) => {
   try {
-    const spec = await ReviewTestcaseService.getSpec(req.params.feature)
+    const spec = await TestcaseService.getSpec(req.params.feature)
     if (!spec) {
       return res.status(404).json({ error: 'No spec found' })
     }
@@ -198,45 +267,10 @@ router.get('/:feature/spec', async (req, res) => {
   }
 })
 
-// Upload knowledge file
-router.post('/:feature/knowledge', upload.single('file'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' })
-    }
-
-    const result = await ReviewTestcaseService.uploadKnowledge(
-      req.params.feature,
-      req.file.buffer,
-      req.file.originalname
-    )
-
-    res.status(201).json(result)
-  } catch (error) {
-    res.status(400).json({ error: 'Failed to upload knowledge file' })
-  }
-})
-
-// Delete knowledge file
-router.delete('/:feature/knowledge/:filename', async (req, res) => {
-  try {
-    const success = await ReviewTestcaseService.deleteKnowledge(
-      req.params.feature,
-      req.params.filename
-    )
-    if (!success) {
-      return res.status(404).json({ error: 'Knowledge file not found' })
-    }
-    res.json({ success: true })
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete knowledge file' })
-  }
-})
-
 // List result CSVs
 router.get('/:feature/results', async (req, res) => {
   try {
-    const results = await ReviewTestcaseService.getResults(req.params.feature)
+    const results = await TestcaseService.getResults(req.params.feature)
     res.json(results)
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch results' })
@@ -246,7 +280,7 @@ router.get('/:feature/results', async (req, res) => {
 // Download/get result CSV
 router.get('/:feature/results/:filename', async (req, res) => {
   try {
-    const content = await ReviewTestcaseService.getResultFile(
+    const content = await TestcaseService.getResultFile(
       req.params.feature,
       req.params.filename
     )
@@ -255,7 +289,7 @@ router.get('/:feature/results/:filename', async (req, res) => {
     }
 
     if (req.query.download === 'true') {
-      const filePath = ReviewTestcaseService.getResultFilePath(
+      const filePath = TestcaseService.getResultFilePath(
         req.params.feature,
         req.params.filename
       )

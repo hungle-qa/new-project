@@ -40,7 +40,7 @@ export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
   const hasChanges = JSON.stringify(columns) !== original
 
   useEffect(() => {
-    fetch('/api/review-testcase/template')
+    fetch('/api/testcase/template')
       .then(res => res.json())
       .then((data: TemplateColumn[]) => {
         const cols = data.length > 0 ? data : DEFAULT_COLUMNS
@@ -59,7 +59,7 @@ export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
     const toSave = cols || columns
     setSaving(true)
     try {
-      const res = await fetch('/api/review-testcase/template', {
+      const res = await fetch('/api/testcase/template', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(toSave),

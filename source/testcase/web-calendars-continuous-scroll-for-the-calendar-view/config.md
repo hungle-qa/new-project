@@ -16,7 +16,6 @@ scope:
     - Wrong data type (string in number field)
     - Special characters
     - Unicode/emoji characters
-knowledge_files: []
 linked_knowledge:
   - client-calendar
 components:

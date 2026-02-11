@@ -57,7 +57,7 @@ scout(built-in) -> planner(built-in) -> [APPROVAL] -> implementer
 
 Use Build App Workflow for:
 - Design System management UI
-- Review Testcase management UI
+- Testcase Manager management UI
 
 - Import features
 - Backend API enhancements
@@ -93,7 +93,7 @@ testcase-writer (skill-based: write / update)
 Before running `/testcase write`, ensure:
 1. Template CSV exists in `source/testcase/template/`
 2. Rules exist at `source/testcase/rule/test-rules.md`
-3. Feature spec imported via the Web UI (Review Testcase > Import Spec tab)
+3. Feature spec imported via the Web UI (Testcase Manager > Import Spec tab)
 
 ### Examples
 ```
@@ -185,17 +185,19 @@ QA-kit/
 |--------|----------|-------------|
 | GET | /api/design-system | List all components |
 | GET | /api/design-system/:name | Get component by name |
-| GET | /api/review-testcase | List all features |
-| GET | /api/review-testcase/:feature | Get feature config |
-| POST | /api/review-testcase | Create feature |
-| PUT | /api/review-testcase/:feature | Update feature config |
-| DELETE | /api/review-testcase/:feature | Delete feature |
-| POST | /api/review-testcase/:feature/import-spec | Import spec via AI |
-| GET | /api/review-testcase/:feature/spec | Get imported spec |
-| POST | /api/review-testcase/:feature/knowledge | Upload knowledge file |
-| DELETE | /api/review-testcase/:feature/knowledge/:filename | Delete knowledge file |
-| GET | /api/review-testcase/:feature/results | List result CSVs |
-| GET | /api/review-testcase/:feature/results/:filename | Get/download result CSV |
+| GET | /api/testcase | List all features |
+| GET | /api/testcase/:feature | Get feature config |
+| POST | /api/testcase | Create feature |
+| PUT | /api/testcase/:feature | Update feature config |
+| DELETE | /api/testcase/:feature | Delete feature |
+| GET | /api/testcase/strategies | List available strategies |
+| GET | /api/testcase/strategies/:name | Get strategy content |
+| POST | /api/testcase/:feature/import-spec | Import spec via AI |
+| GET | /api/testcase/:feature/spec | Get imported spec |
+| POST | /api/testcase/:feature/knowledge | Upload knowledge file |
+| DELETE | /api/testcase/:feature/knowledge/:filename | Delete knowledge file |
+| GET | /api/testcase/:feature/results | List result CSVs |
+| GET | /api/testcase/:feature/results/:filename | Get/download result CSV |
 
 ---
 
@@ -261,6 +263,6 @@ QA-kit/
 | Problem | Solution |
 |---------|----------|
 | Wrong workflow | Use `/start` for app code, `/testcase` for testcases |
-| Spec not imported | Import spec via Web UI (Review Testcase > Import Spec tab) before write |
+| Spec not imported | Import spec via Web UI (Testcase Manager > Import Spec tab) before write |
 | Template missing | Add CSV template to `source/testcase/template/` |
 | Rules missing | Add rules to `source/testcase/rule/test-rules.md` |

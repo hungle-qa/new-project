@@ -42,7 +42,8 @@
     "id": "8",
     "name": "Expected Result",
     "width": "200px",
-    "style": "normal"
+    "style": "normal",
+    "writingStyle": "Start by SHOULD or SHOULD NOT.\nMust break a new line if there are many expectations."
   },
   {
     "id": "9",

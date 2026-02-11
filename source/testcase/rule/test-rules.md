@@ -41,4 +41,5 @@ All generated testcases MUST use the CSV template columns defined in `source/tes
 | **Trivial** | Cosmetic issue, no functional impact |
 
 ## CONSTRAINTS
+- Ensure all terminology matches the terminology that define in the [feature knowledge].
 - If a step/component or word is repeated across cases, keep the wording 100% identical.

@@ -15,6 +15,12 @@ export function PreviewTab({ knowledgeName, content, sourceFiles, onSaved, onDir
   const [editContent, setEditContent] = useState(content)
   const [saving, setSaving] = useState(false)
 
+  // Reset editContent when switching items or content prop changes
+  useEffect(() => {
+    setEditContent(content)
+    setIsEditing(false)
+  }, [knowledgeName, content])
+
   const hasChanges = isEditing && editContent !== content
 
   const handleEdit = () => {

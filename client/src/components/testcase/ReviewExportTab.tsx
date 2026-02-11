@@ -16,7 +16,7 @@ export function ReviewExportTab({ feature }: ReviewExportTabProps) {
     setLoading(true)
     setPreviewFile(null)
     setPreviewContent(null)
-    fetch(`/api/review-testcase/${feature}/results`)
+    fetch(`/api/testcase/${feature}/results`)
       .then(res => res.json())
       .then(data => {
         setCsvFiles(data)
@@ -36,7 +36,7 @@ export function ReviewExportTab({ feature }: ReviewExportTabProps) {
     setPreviewFile(filename)
 
     try {
-      const res = await fetch(`/api/review-testcase/${feature}/results/${filename}`)
+      const res = await fetch(`/api/testcase/${feature}/results/${filename}`)
       const data = await res.json()
 
       if (data.content) {
@@ -69,7 +69,7 @@ export function ReviewExportTab({ feature }: ReviewExportTabProps) {
   }
 
   const handleDownload = (filename: string) => {
-    window.open(`/api/review-testcase/${feature}/results/${filename}?download=true`, '_blank')
+    window.open(`/api/testcase/${feature}/results/${filename}?download=true`, '_blank')
   }
 
   if (loading) {

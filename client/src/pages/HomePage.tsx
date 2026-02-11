@@ -10,10 +10,10 @@ const features = [
     color: 'bg-blue-500',
   },
   {
-    title: 'Review Testcase',
+    title: 'Testcase Manager',
     description: 'Manage features and review generated testcases',
     icon: ClipboardCheck,
-    path: '/review-testcase',
+    path: '/testcase',
     color: 'bg-yellow-500',
   },
   {

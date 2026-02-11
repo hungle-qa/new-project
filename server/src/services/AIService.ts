@@ -79,6 +79,9 @@ export class AIService {
 
     const prompt = `${instructions}
 
+**FORMATTING RULES:**
+- For markdown tables: use <br> tags to break long content into readable lines within cells. Each cell should be readable without horizontal scrolling.
+
 ---
 
 **RAW CONTENT TO CONVERT:**
@@ -129,6 +132,7 @@ ${rawContent}
 
 **OUTPUT:**
 Output clean, structured markdown. Use headers, bullets, tables as appropriate.
+For markdown tables: use <br> tags to break long content into multiple lines within cells. Each cell should be readable without horizontal scrolling.
 Output ONLY the structured content (no preamble).`
 
     try {

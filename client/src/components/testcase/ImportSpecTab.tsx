@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, DragEvent } from 'react'
-import { Upload, FileText, CheckCircle, AlertCircle, Settings } from 'lucide-react'
+import { Upload, FileText, CheckCircle, AlertCircle, Settings, Square, Save, Globe, RotateCcw } from 'lucide-react'
 import { useAISettings } from '../../hooks/useAISettings'
 import { AISettingsModal } from '../AISettingsModal'
 
@@ -9,7 +9,7 @@ interface ImportSpecTabProps {
 
 type UploadState = 'idle' | 'uploading' | 'success' | 'error'
 
-const DEFAULT_SPEC_PROMPT = `You are a senior QA analyst. Convert the following raw content into a structured feature specification document.
+const FALLBACK_SPEC_PROMPT = `You are a senior QA analyst. Convert the following raw content into a structured feature specification document.
 
 **CRITICAL INSTRUCTIONS:**
 
@@ -37,21 +37,62 @@ const DEFAULT_SPEC_PROMPT = `You are a senior QA analyst. Convert the following 
 
 export function ImportSpecTab({ feature }: ImportSpecTabProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [customPrompt, setCustomPrompt] = useState(DEFAULT_SPEC_PROMPT)
+  const [defaultPrompt, setDefaultPrompt] = useState('')
+  const [savedPrompt, setSavedPrompt] = useState('')
+  const [customPrompt, setCustomPrompt] = useState('')
+  const [promptInitialized, setPromptInitialized] = useState(false)
   const [uploadState, setUploadState] = useState<UploadState>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [specContent, setSpecContent] = useState<string | null>(null)
   const [loadingSpec, setLoadingSpec] = useState(true)
+  const [savingPrompt, setSavingPrompt] = useState(false)
+  const [savingDefault, setSavingDefault] = useState(false)
+  const [promptSaved, setPromptSaved] = useState(false)
+  const [defaultSaved, setDefaultSaved] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   const { settings, isConfigured, refreshSettings } = useAISettings()
 
-  // Load existing spec on mount
+  // Load default prompt + per-feature saved prompt on mount
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/testcase/default-prompt').then(r => r.json()).catch(() => ({ prompt: '' })),
+      fetch(`/api/testcase/${feature}/spec-prompt`).then(r => r.json()).catch(() => ({ prompt: '' })),
+    ]).then(([defaultData, savedData]) => {
+      const dp = defaultData.prompt || ''
+      const sp = savedData.prompt || ''
+      setDefaultPrompt(dp)
+      setSavedPrompt(sp)
+      // Priority: savedPrompt > defaultPrompt > fallback
+      setCustomPrompt(sp || dp || FALLBACK_SPEC_PROMPT)
+      setPromptInitialized(true)
+    })
+  }, [])
+
+  // Update prompt when switching features
+  useEffect(() => {
+    if (promptInitialized) {
+      fetch(`/api/testcase/${feature}/spec-prompt`)
+        .then(r => r.json())
+        .then(data => {
+          const sp = data.prompt || ''
+          setSavedPrompt(sp)
+          setCustomPrompt(sp || defaultPrompt || FALLBACK_SPEC_PROMPT)
+        })
+        .catch(() => {
+          setSavedPrompt('')
+          setCustomPrompt(defaultPrompt || FALLBACK_SPEC_PROMPT)
+        })
+    }
+  }, [feature])
+
+  // Load existing spec on mount / feature change
   useEffect(() => {
     setLoadingSpec(true)
-    fetch(`/api/review-testcase/${feature}/spec`)
+    fetch(`/api/testcase/${feature}/spec`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         setSpecContent(data?.content || null)
@@ -59,6 +100,57 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
       })
       .catch(() => setLoadingSpec(false))
   }, [feature])
+
+  const effectiveDefault = defaultPrompt || FALLBACK_SPEC_PROMPT
+  const promptChanged = customPrompt.trim() !== (savedPrompt || effectiveDefault).trim()
+
+  const handleSavePrompt = async () => {
+    setSavingPrompt(true)
+    setPromptSaved(false)
+    try {
+      const res = await fetch(`/api/testcase/${feature}/spec-prompt`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: customPrompt.trim() }),
+      })
+      if (res.ok) {
+        setSavedPrompt(customPrompt.trim())
+        setPromptSaved(true)
+        setTimeout(() => setPromptSaved(false), 2000)
+      }
+    } finally {
+      setSavingPrompt(false)
+    }
+  }
+
+  const handleSaveAndSetDefault = async () => {
+    setSavingDefault(true)
+    setDefaultSaved(false)
+    try {
+      // Save to current feature + save as global default in parallel
+      const [itemRes, defaultRes] = await Promise.all([
+        fetch(`/api/testcase/${feature}/spec-prompt`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: customPrompt.trim() }),
+        }),
+        fetch('/api/testcase/default-prompt', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: customPrompt.trim() }),
+        }),
+      ])
+      if (itemRes.ok) {
+        setSavedPrompt(customPrompt.trim())
+      }
+      if (defaultRes.ok) {
+        setDefaultSaved(true)
+        setTimeout(() => setDefaultSaved(false), 2000)
+      }
+    } finally {
+      setSavingDefault(false)
+    }
+  }
 
   const handleFileSelect = (file: File) => {
     if (file.size > 10 * 1024 * 1024) {
@@ -82,6 +174,9 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
   const handleUpload = async () => {
     if (!selectedFile || !isConfigured) return
 
+    const controller = new AbortController()
+    abortRef.current = controller
+
     setUploadState('uploading')
     setErrorMessage('')
 
@@ -92,13 +187,14 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
         formData.append('prompt', customPrompt.trim())
       }
 
-      const res = await fetch(`/api/review-testcase/${feature}/import-spec`, {
+      const res = await fetch(`/api/testcase/${feature}/import-spec`, {
         method: 'POST',
         headers: {
           'X-AI-API-Key': settings.apiKey,
           'X-AI-Model': settings.model,
         },
         body: formData,
+        signal: controller.signal,
       })
 
       const data = await res.json()
@@ -108,15 +204,25 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
       setSelectedFile(null)
 
       // Reload spec content
-      const specRes = await fetch(`/api/review-testcase/${feature}/spec`)
+      const specRes = await fetch(`/api/testcase/${feature}/spec`)
       if (specRes.ok) {
         const specData = await specRes.json()
         setSpecContent(specData.content)
       }
     } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        setUploadState('idle')
+        return
+      }
       setUploadState('error')
       setErrorMessage(err instanceof Error ? err.message : 'Failed to import spec')
+    } finally {
+      abortRef.current = null
     }
+  }
+
+  const handleStop = () => {
+    abortRef.current?.abort()
   }
 
   return (
@@ -192,13 +298,55 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
 
         {/* Custom Prompt */}
         <div>
-          <label htmlFor="specPrompt" className="block text-sm font-medium text-gray-700 mb-1">
-            Custom Prompt (optional)
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label htmlFor="specPrompt" className="text-sm font-medium text-gray-700">
+              Custom Prompt (optional)
+            </label>
+            <div className="flex items-center gap-2">
+              {promptSaved && (
+                <span className="text-xs text-green-600">Saved</span>
+              )}
+              {defaultSaved && (
+                <span className="text-xs text-green-600">Default saved</span>
+              )}
+              <button
+                onClick={() => { setCustomPrompt(savedPrompt || effectiveDefault); setPromptSaved(false); setDefaultSaved(false) }}
+                disabled={!promptChanged}
+                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-40 disabled:cursor-default disabled:hover:bg-transparent"
+              >
+                <RotateCcw className="w-3 h-3" />
+                Use Default
+              </button>
+              <button
+                onClick={handleSavePrompt}
+                disabled={!promptChanged || savingPrompt}
+                className="flex items-center gap-1 px-2 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-40 disabled:cursor-default"
+              >
+                {savingPrompt ? (
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Save className="w-3 h-3" />
+                )}
+                Save
+              </button>
+              <button
+                onClick={handleSaveAndSetDefault}
+                disabled={!promptChanged || savingDefault}
+                className="flex items-center gap-1 px-2 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700 disabled:opacity-40 disabled:cursor-default"
+              >
+                {savingDefault ? (
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Globe className="w-3 h-3" />
+                )}
+                Save & Set Default
+              </button>
+            </div>
+          </div>
           <textarea
             id="specPrompt"
             value={customPrompt}
-            onChange={(e) => setCustomPrompt(e.target.value)}
+            onChange={(e) => { setCustomPrompt(e.target.value); setPromptSaved(false); setDefaultSaved(false) }}
             rows={6}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
           />
@@ -207,24 +355,31 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
           </p>
         </div>
 
-        {selectedFile && (
+        {selectedFile && uploadState !== 'uploading' && (
           <button
             onClick={handleUpload}
-            disabled={!isConfigured || uploadState === 'uploading'}
+            disabled={!isConfigured}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {uploadState === 'uploading' ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Processing with AI...
-              </>
-            ) : (
-              <>
-                <Upload className="w-4 h-4" />
-                Import Spec
-              </>
-            )}
+            <Upload className="w-4 h-4" />
+            Import Spec
           </button>
+        )}
+
+        {uploadState === 'uploading' && (
+          <div className="flex items-center justify-between px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center gap-2 text-sm text-blue-700">
+              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+              Processing with AI...
+            </div>
+            <button
+              onClick={handleStop}
+              className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600"
+            >
+              <Square className="w-3 h-3" />
+              Stop
+            </button>
+          </div>
         )}
 
         {uploadState === 'success' && (

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Save, Eye, Edit3 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 
 interface RulesTabProps {
   onDirtyChange?: (dirty: boolean) => void
@@ -17,7 +19,7 @@ export function RulesTab({ onDirtyChange, saveRef }: RulesTabProps) {
   const hasChanges = content !== original
 
   useEffect(() => {
-    fetch('/api/review-testcase/rules')
+    fetch('/api/testcase/rules')
       .then(res => res.json())
       .then(data => {
         setContent(data.content || '')
@@ -30,7 +32,7 @@ export function RulesTab({ onDirtyChange, saveRef }: RulesTabProps) {
   const handleSave = useCallback(async () => {
     setSaving(true)
     try {
-      const res = await fetch('/api/review-testcase/rules', {
+      const res = await fetch('/api/testcase/rules', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
@@ -88,7 +90,23 @@ export function RulesTab({ onDirtyChange, saveRef }: RulesTabProps) {
 
       {showPreview ? (
         <div className="prose prose-sm max-w-none border border-gray-200 rounded-lg p-4 max-h-[600px] overflow-auto bg-white">
-          <ReactMarkdown>{content}</ReactMarkdown>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
+            components={{
+              table: ({ children, ...props }) => (
+                <table {...props} style={{ tableLayout: 'fixed', width: '100%' }}>{children}</table>
+              ),
+              td: ({ children, ...props }) => (
+                <td {...props} style={{ whiteSpace: 'pre-line', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{children}</td>
+              ),
+              th: ({ children, ...props }) => (
+                <th {...props} style={{ whiteSpace: 'pre-line', wordBreak: 'break-word', overflowWrap: 'break-word' }}>{children}</th>
+              ),
+            }}
+          >
+            {content}
+          </ReactMarkdown>
         </div>
       ) : (
         <textarea

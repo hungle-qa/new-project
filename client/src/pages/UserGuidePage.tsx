@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { BookOpen, Code, Monitor, AlertCircle, Palette, ClipboardCheck, Bot } from 'lucide-react'
 
 type TabType = 'edit-app' | 'use-webapp' | 'train-agent'
-type WebAppSubTab = 'design-system' | 'review-testcase'
+type WebAppSubTab = 'design-system' | 'testcase-manager'
 
 interface GuideSection {
   overview: string
@@ -22,7 +22,7 @@ const tabs: { id: TabType; label: string; icon: typeof Code }[] = [
 
 const webAppSubTabs: { id: WebAppSubTab; label: string; icon: typeof Palette }[] = [
   { id: 'design-system', label: 'Design System', icon: Palette },
-  { id: 'review-testcase', label: 'Review Testcase', icon: ClipboardCheck },
+  { id: 'testcase-manager', label: 'Testcase Manager', icon: ClipboardCheck },
 ]
 
 const webAppSubTabContent: Record<WebAppSubTab, GuideSection> = {
@@ -69,11 +69,11 @@ const webAppSubTabContent: Record<WebAppSubTab, GuideSection> = {
       'Copy works everywhere: The Copy button appears in all code tabs'
     ]
   },
-  'review-testcase': {
-    overview: 'Manage feature testcase configurations. Define hierarchy levels, scope, map design system components, import specs via AI, and review generated testcase CSVs.',
+  'testcase-manager': {
+    overview: 'Manage feature testcase configurations. Select testing strategy, define hierarchy levels, scope, map design system components, import specs via AI, and review generated testcase CSVs.',
     workflow: {
-      steps: ['Create Feature', 'Configure Levels', 'Set Scope', 'Import Spec', 'Review Results'],
-      description: 'Create feature → Define hierarchy → Set scope → Import spec → Generate & review testcases'
+      steps: ['Create Feature', 'Select Strategy', 'Configure Levels', 'Import Spec', 'Review Results'],
+      description: 'Create feature → Select strategy → Define hierarchy → Import spec → Generate & review testcases'
     },
     input: [
       '1. Managing Features',
@@ -84,6 +84,7 @@ const webAppSubTabContent: Record<WebAppSubTab, GuideSection> = {
     process: [
       '2. Feature Configuration Tabs',
       '',
+      'Strategy: Select testing approach (Scenario-based or Component Testing)',
       'Levels: Define component hierarchy (Lv1 component, Lv2 sub-component, Lv3 functions)',
       'Scope: Define happy case and corner case definitions',
       'Knowledge: Upload reference files (PDF, MD, TXT)',
@@ -253,7 +254,7 @@ const guideContent: Record<Exclude<TabType, 'use-webapp'>, GuideSection> = {
 const useWebappContent: GuideSection = {
   overview: 'Access all your project resources in one place. The web app runs at http://localhost:3000 after you start the development server with npm run dev.',
   workflow: {
-    steps: ['Design System', 'Review Testcase'],
+    steps: ['Design System', 'Testcase Manager'],
     description: 'Two main sections: Components you can copy → Features you can configure'
   },
   input: [
@@ -266,7 +267,7 @@ const useWebappContent: GuideSection = {
     '2. What Each Section Does',
     '',
     'Design System: Browse and copy UI components (buttons, cards, forms)',
-    'Review Testcase: Configure features and review generated testcases',
+    'Testcase Manager: Configure features and review generated testcases',
   ],
   output: [
     '3. Common Workflows',
@@ -275,7 +276,7 @@ const useWebappContent: GuideSection = {
   ],
   examples: [
     'Copy a button → Design System → "Button" → HTML tab → Copy',
-    'Configure feature → Review Testcase → Click feature → Set levels → Save',
+    'Configure feature → Testcase Manager → Click feature → Set levels → Save',
   ],
   note: [
     '⚠️ Key Information',

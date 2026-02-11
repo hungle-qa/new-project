@@ -70,7 +70,7 @@ The implementer will:
 |--------------|-------|
 | Design System | `client/src/pages/DesignSystemPage.tsx`, `server/src/routes/design-system.ts` |
 | Feature Knowledge | `client/src/pages/FeatureKnowledgePage.tsx`, `server/src/routes/feature-knowledge.ts` |
-| Review Testcase | `client/src/pages/ReviewTestcasePage.tsx`, `server/src/routes/review-testcase.ts` |
+| Testcase Manager | `client/src/pages/TestcaseManagerPage.tsx`, `server/src/routes/testcase.ts` |
 | Import Features | `client/src/components/Import*.tsx`, `server/src/services/*Service.ts` |
 
 ## Tech Stack

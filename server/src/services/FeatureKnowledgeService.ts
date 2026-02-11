@@ -226,6 +226,22 @@ export class FeatureKnowledgeService {
     return true
   }
 
+  // --- Default Prompt ---
+
+  static async getDefaultPrompt(): Promise<string> {
+    try {
+      const promptPath = path.join(SOURCE_DIR, 'default-prompt.txt')
+      return (await fs.readFile(promptPath, 'utf-8')).trim()
+    } catch {
+      return ''
+    }
+  }
+
+  static async saveDefaultPrompt(prompt: string): Promise<void> {
+    await fs.mkdir(SOURCE_DIR, { recursive: true })
+    await fs.writeFile(path.join(SOURCE_DIR, 'default-prompt.txt'), prompt.trim())
+  }
+
   private static splitContentBySections(content: string): { sourceFile: string; body: string }[] {
     if (!content.trim()) return []
 

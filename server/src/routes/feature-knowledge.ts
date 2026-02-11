@@ -28,6 +28,30 @@ router.get('/', async (_req, res) => {
   }
 })
 
+// Get default prompt
+router.get('/default-prompt', async (_req, res) => {
+  try {
+    const prompt = await FeatureKnowledgeService.getDefaultPrompt()
+    res.json({ prompt })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch default prompt' })
+  }
+})
+
+// Save default prompt
+router.put('/default-prompt', async (req, res) => {
+  try {
+    const { prompt } = req.body
+    if (typeof prompt !== 'string') {
+      return res.status(400).json({ error: 'Prompt is required' })
+    }
+    await FeatureKnowledgeService.saveDefaultPrompt(prompt)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save default prompt' })
+  }
+})
+
 // Create knowledge item
 router.post('/', async (req, res) => {
   try {

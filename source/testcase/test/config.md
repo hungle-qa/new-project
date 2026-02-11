@@ -7,7 +7,6 @@ levels: []
 scope:
   happy_case: ''
   corner_case: ''
-knowledge_files: []
 linked_knowledge: []
 components: []
 ---

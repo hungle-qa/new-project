@@ -22,7 +22,7 @@ export function CreateFeatureModal({ isOpen, onClose, onCreated }: CreateFeature
     setError('')
 
     try {
-      const res = await fetch('/api/review-testcase', {
+      const res = await fetch('/api/testcase', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name.trim() }),

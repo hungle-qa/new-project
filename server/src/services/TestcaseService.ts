@@ -4,19 +4,13 @@ import matter from 'gray-matter'
 import { AIService, AIConfig } from './AIService'
 
 const SOURCE_DIR = path.join(__dirname, '../../../source/testcase')
-const EXCLUDED_DIRS = ['rule', 'template']
+const EXCLUDED_DIRS = ['rule', 'template', 'strategy']
 
 export interface LevelEntry {
   level: number
   type: string
   value?: string
   values?: string[]
-}
-
-export interface KnowledgeFile {
-  name: string
-  path: string
-  imported: string
 }
 
 export interface ComponentMapping {
@@ -42,18 +36,18 @@ export interface FeatureConfig {
   name: string
   created: string
   updated: string
+  strategy: string
   levels: LevelEntry[]
   scope: {
     happy_case: string
     corner_case: string
   }
-  knowledge_files: KnowledgeFile[]
   linked_knowledge: string[]
   components: ComponentMapping[]
   content: string
 }
 
-export class ReviewTestcaseService {
+export class TestcaseService {
   static async getAllFeatures(): Promise<FeatureSummary[]> {
     try {
       const entries = await fs.readdir(SOURCE_DIR, { withFileTypes: true })
@@ -83,19 +77,18 @@ export class ReviewTestcaseService {
     await fs.mkdir(featureDir, { recursive: true })
     await fs.mkdir(path.join(featureDir, 'spec'), { recursive: true })
     await fs.mkdir(path.join(featureDir, 'result'), { recursive: true })
-    await fs.mkdir(path.join(featureDir, 'knowledge'), { recursive: true })
 
     const today = new Date().toISOString().split('T')[0]
     const config: Record<string, unknown> = {
       name,
       created: today,
       updated: today,
+      strategy: '',
       levels: [],
       scope: {
         happy_case: '',
         corner_case: '',
       },
-      knowledge_files: [],
       linked_knowledge: [],
       components: [],
     }
@@ -116,9 +109,9 @@ export class ReviewTestcaseService {
         name: data.name || name,
         created: data.created || '',
         updated: data.updated || '',
+        strategy: data.strategy || '',
         levels: data.levels || [],
         scope: data.scope || { happy_case: '', corner_case: '' },
-        knowledge_files: data.knowledge_files || [],
         linked_knowledge: data.linked_knowledge || [],
         components: data.components || [],
         content,
@@ -153,9 +146,9 @@ export class ReviewTestcaseService {
       name: merged.name,
       created: merged.created,
       updated: merged.updated,
+      strategy: merged.strategy,
       levels: merged.levels,
       scope: merged.scope,
-      knowledge_files: merged.knowledge_files,
       linked_knowledge: merged.linked_knowledge,
       components: merged.components,
     }
@@ -245,54 +238,6 @@ export class ReviewTestcaseService {
     }
   }
 
-  static async uploadKnowledge(
-    name: string,
-    fileBuffer: Buffer,
-    filename: string
-  ): Promise<KnowledgeFile> {
-    const knowledgeDir = path.join(SOURCE_DIR, name, 'knowledge')
-    await fs.mkdir(knowledgeDir, { recursive: true })
-
-    const filePath = path.join(knowledgeDir, filename)
-    await fs.writeFile(filePath, fileBuffer)
-
-    const today = new Date().toISOString().split('T')[0]
-    const knowledgeFile: KnowledgeFile = {
-      name: filename,
-      path: `knowledge/${filename}`,
-      imported: today,
-    }
-
-    // Update config with new knowledge file
-    const config = await this.getFeatureConfig(name)
-    if (config) {
-      const existing = config.knowledge_files || []
-      const filtered = existing.filter(f => f.name !== filename)
-      filtered.push(knowledgeFile)
-      await this.updateFeatureConfig(name, { knowledge_files: filtered })
-    }
-
-    return knowledgeFile
-  }
-
-  static async deleteKnowledge(name: string, filename: string): Promise<boolean> {
-    try {
-      const filePath = path.join(SOURCE_DIR, name, 'knowledge', filename)
-      await fs.unlink(filePath)
-
-      // Update config to remove knowledge file
-      const config = await this.getFeatureConfig(name)
-      if (config) {
-        const filtered = (config.knowledge_files || []).filter(f => f.name !== filename)
-        await this.updateFeatureConfig(name, { knowledge_files: filtered })
-      }
-
-      return true
-    } catch {
-      return false
-    }
-  }
-
   static async getResults(name: string): Promise<string[]> {
     try {
       const resultDir = path.join(SOURCE_DIR, name, 'result')
@@ -333,6 +278,39 @@ export class ReviewTestcaseService {
     await fs.writeFile(path.join(rulesDir, 'test-rules.md'), content)
   }
 
+  // --- Default Spec Prompt ---
+
+  static async getDefaultPrompt(): Promise<string> {
+    try {
+      const promptPath = path.join(SOURCE_DIR, 'default-prompt.txt')
+      return (await fs.readFile(promptPath, 'utf-8')).trim()
+    } catch {
+      return ''
+    }
+  }
+
+  static async saveDefaultPrompt(prompt: string): Promise<void> {
+    await fs.mkdir(SOURCE_DIR, { recursive: true })
+    await fs.writeFile(path.join(SOURCE_DIR, 'default-prompt.txt'), prompt.trim())
+  }
+
+  // --- Per-feature Spec Prompt ---
+
+  static async getSpecPrompt(name: string): Promise<string> {
+    try {
+      const promptPath = path.join(SOURCE_DIR, name, 'spec', 'prompt.txt')
+      return (await fs.readFile(promptPath, 'utf-8')).trim()
+    } catch {
+      return ''
+    }
+  }
+
+  static async saveSpecPrompt(name: string, prompt: string): Promise<void> {
+    const specDir = path.join(SOURCE_DIR, name, 'spec')
+    await fs.mkdir(specDir, { recursive: true })
+    await fs.writeFile(path.join(specDir, 'prompt.txt'), prompt.trim())
+  }
+
   // --- Template ---
 
   static async getTemplate(): Promise<TemplateColumn[]> {
@@ -352,5 +330,26 @@ export class ReviewTestcaseService {
       path.join(templateDir, 'template.json'),
       JSON.stringify(columns, null, 2)
     )
+  }
+
+  // --- Strategies ---
+
+  static async getStrategies(): Promise<string[]> {
+    try {
+      const strategyDir = path.join(SOURCE_DIR, 'strategy')
+      const files = await fs.readdir(strategyDir)
+      return files.filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+    } catch {
+      return []
+    }
+  }
+
+  static async getStrategyContent(name: string): Promise<string | null> {
+    try {
+      const filePath = path.join(SOURCE_DIR, 'strategy', `${name}.md`)
+      return await fs.readFile(filePath, 'utf-8')
+    } catch {
+      return null
+    }
   }
 }

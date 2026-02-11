@@ -1,23 +1,24 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Plus, Trash2, Layers, Target, BookOpen, Puzzle, FileUp, FileSpreadsheet, ScrollText, Table, Search, X, ChevronDown, Pencil } from 'lucide-react'
-import { CreateFeatureModal } from '../components/review-testcase/CreateFeatureModal'
-import { LevelsTab } from '../components/review-testcase/LevelsTab'
-import { ScopeTab } from '../components/review-testcase/ScopeTab'
-import { ComponentsTab } from '../components/review-testcase/ComponentsTab'
-import { KnowledgeSelectTab } from '../components/review-testcase/KnowledgeSelectTab'
-import { ImportSpecTab } from '../components/review-testcase/ImportSpecTab'
-import { ReviewExportTab } from '../components/review-testcase/ReviewExportTab'
-import { RulesTab } from '../components/review-testcase/RulesTab'
-import { TemplateTab } from '../components/review-testcase/TemplateTab'
+import { Plus, Trash2, Layers, Target, BookOpen, Puzzle, FileUp, FileSpreadsheet, ScrollText, Table, Search, X, ChevronDown, Pencil, Compass } from 'lucide-react'
+import { CreateFeatureModal } from '../components/testcase/CreateFeatureModal'
+import { StrategyTab } from '../components/testcase/StrategyTab'
+import { LevelsTab } from '../components/testcase/LevelsTab'
+import { ScopeTab } from '../components/testcase/ScopeTab'
+import { ComponentsTab } from '../components/testcase/ComponentsTab'
+import { KnowledgeSelectTab } from '../components/testcase/KnowledgeSelectTab'
+import { ImportSpecTab } from '../components/testcase/ImportSpecTab'
+import { ReviewExportTab } from '../components/testcase/ReviewExportTab'
+import { RulesTab } from '../components/testcase/RulesTab'
+import { TemplateTab } from '../components/testcase/TemplateTab'
 import { UnsavedChangesModal } from '../components/UnsavedChangesModal'
 
 interface FeatureConfig {
   name: string
   created: string
   updated: string
+  strategy: string
   levels: Array<{ level: number; type: string; value?: string; values?: string[] }>
   scope: { happy_case: string; corner_case: string }
-  knowledge_files: Array<{ name: string; path: string; imported: string }>
   linked_knowledge: string[]
   components: Array<{ name: string; usage: string }>
   content: string
@@ -29,9 +30,10 @@ interface FeatureSummary {
   updated: string
 }
 
-type TabType = 'levels' | 'scope' | 'knowledge' | 'components' | 'import-spec' | 'review-export' | 'rules' | 'template'
+type TabType = 'strategy' | 'levels' | 'scope' | 'knowledge' | 'components' | 'import-spec' | 'review-export' | 'rules' | 'template'
 
 const featureTabs = [
+  { id: 'strategy' as TabType, label: 'Strategy', icon: Compass },
   { id: 'levels' as TabType, label: 'Levels', icon: Layers },
   { id: 'scope' as TabType, label: 'Scope', icon: Target },
   { id: 'knowledge' as TabType, label: 'Knowledge', icon: BookOpen },
@@ -47,11 +49,11 @@ const globalTabs = [
 
 const PAGE_SIZE = 20
 
-export function ReviewTestcasePage() {
+export function TestcaseManagerPage() {
   const [features, setFeatures] = useState<FeatureSummary[]>([])
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null)
   const [config, setConfig] = useState<FeatureConfig | null>(null)
-  const [activeTab, setActiveTab] = useState<TabType>('levels')
+  const [activeTab, setActiveTab] = useState<TabType>('strategy')
   const [loading, setLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
@@ -111,7 +113,7 @@ export function ReviewTestcasePage() {
 
   const fetchFeatures = () => {
     setLoading(true)
-    fetch('/api/review-testcase')
+    fetch('/api/testcase')
       .then(res => res.json())
       .then((data: FeatureSummary[]) => { setFeatures(data); setLoading(false) })
       .catch(() => setLoading(false))
@@ -120,7 +122,7 @@ export function ReviewTestcasePage() {
   useEffect(() => { fetchFeatures() }, [])
 
   const loadConfig = async (name: string) => {
-    const res = await fetch(`/api/review-testcase/${name}`)
+    const res = await fetch(`/api/testcase/${name}`)
     if (res.ok) {
       const data = await res.json()
       setConfig(data)
@@ -130,7 +132,7 @@ export function ReviewTestcasePage() {
   const handleSelectFeature = (name: string) => {
     guardedNavigate(() => {
       setSelectedFeature(name)
-      setActiveTab('levels')
+      setActiveTab('strategy')
       loadConfig(name)
     })
   }
@@ -138,7 +140,7 @@ export function ReviewTestcasePage() {
   const handleCreated = (name: string) => {
     fetchFeatures()
     setSelectedFeature(name)
-    setActiveTab('levels')
+    setActiveTab('strategy')
     loadConfig(name)
   }
 
@@ -146,7 +148,7 @@ export function ReviewTestcasePage() {
     if (!selectedFeature) return
     setDeleting(true)
     try {
-      const res = await fetch(`/api/review-testcase/${selectedFeature}`, { method: 'DELETE' })
+      const res = await fetch(`/api/testcase/${selectedFeature}`, { method: 'DELETE' })
       if (res.ok) {
         setSelectedFeature(null)
         setConfig(null)
@@ -161,7 +163,7 @@ export function ReviewTestcasePage() {
 
   const saveConfig = async (updates: Partial<FeatureConfig>) => {
     if (!selectedFeature) return
-    const res = await fetch(`/api/review-testcase/${selectedFeature}`, {
+    const res = await fetch(`/api/testcase/${selectedFeature}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates),
@@ -182,7 +184,7 @@ export function ReviewTestcasePage() {
       setIsEditing(false)
       return
     }
-    const res = await fetch(`/api/review-testcase/${selectedFeature}/rename`, {
+    const res = await fetch(`/api/testcase/${selectedFeature}/rename`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: sanitized }),
@@ -223,7 +225,7 @@ export function ReviewTestcasePage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-gray-900">Review Testcase</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Testcase Manager</h1>
           <button
             onClick={() => handleGlobalTab('rules')}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
@@ -373,6 +375,15 @@ export function ReviewTestcasePage() {
 
               {/* Tab Content */}
               <div className="p-4">
+                {activeTab === 'strategy' && (
+                  <StrategyTab
+                    feature={selectedFeature}
+                    strategy={config.strategy || ''}
+                    onSave={async (strategy) => saveConfig({ strategy })}
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
+                  />
+                )}
                 {activeTab === 'levels' && (
                   <LevelsTab
                     feature={selectedFeature}

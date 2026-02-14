@@ -4,19 +4,12 @@
     "name": "ID",
     "width": "80px",
     "style": "bold mono",
-    "writingStyle": "number 000"
-  },
-  {
-    "id": "5",
-    "name": "Title",
-    "width": "200px",
-    "style": "bold",
-    "writingStyle": "[Action] + [Object] + [Context] (e.g., CLICK Submit Button with Empty Fields)."
+    "writingStyle": "[Module_Code]-[Sequence] (e.g., AUTH-001)."
   },
   {
     "id": "2",
     "name": "Module",
-    "width": "120px",
+    "width": "160px",
     "style": "normal",
     "writingStyle": "This is Test Hierarchy. Example:\n- Component (page, screen, pop-up) -> Sub component -> Element.\n- Scenario -> Case.\n- Module -> Function.\n- User Story (US) -> Acceptance Criteria (AC)."
   },
@@ -28,11 +21,18 @@
     "writingStyle": "## Use **Step-by-Step** numbering within the \"Steps\" cell.\n\n## To maintain consistency, use ONLY these verbs for the 'Steps' column:\n- **NAVIGATE**: Moving to a URL or main menu.\n- **CLICK**: Interaction with buttons, checkboxes, or radio buttons.\n- **INPUT**: Typing text into a field.\n- **SELECT**: Choosing an option from a dropdown/combobox.\n- **VERIFY**: Checking a condition (used in Expected Results).\n- **HOVER**: Moving the mouse over an element.\n\n## Wrap all UI elements in **Bold** and [Brackets] (e.g., CLICK **[Submit]** button)."
   },
   {
+    "id": "col_1770880364835",
+    "name": "Description",
+    "width": "120px",
+    "style": "normal",
+    "writingStyle": "This is a keyword (Like: component name, field name, State...) included in the expected. Example: \n* SHOULD show the warning message \"xyz....\" -> keyword = warning message.\n* Hover SHOULD show blue highlight -> keyword = Hover state.\n* SHOULD send the payment successful email -> keyword = Email."
+  },
+  {
     "id": "8",
     "name": "Expected Result",
     "width": "200px",
     "style": "normal",
-    "writingStyle": "Start by SHOULD or SHOULD NOT.\nEach expectation MUST be on its own line prefixed with '- ' bullet.\nExample:\n- SHOULD display success message.\n- SHOULD NOT show error."
+    "writingStyle": "Start by SHOULD or SHOULD NOT.\nMust break a new line if there are many expectations."
   },
   {
     "id": "9",

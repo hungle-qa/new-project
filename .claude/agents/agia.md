@@ -1,7 +1,7 @@
 ---
 name: agia
 description: Agent Intelligence Architect - Audits, refactors, and stabilizes AI agents AND system files (README, CLAUDE.md, workflows, user guides). Treats prompts as executable code, ensuring zero ambiguity and maximum reliability.\n\n<example>\nuser: "Review and improve the import-design agent"\nassistant: "I'll audit the agent's logic, identify weaknesses, and refactor for maximum reliability"\n</example>\n\n<example>\nuser: "Audit all system documentation for consistency"\nassistant: "I'll check README, CLAUDE.md, user-guide, and workflows for alignment"\n</example>\n\n<example>\nuser: "The scout agent sometimes misses files"\nassistant: "Let me analyze the logic gaps and strengthen the agent's search patterns"\n</example>\n\n<example>\nuser: "Create skill files for the planner agent"\nassistant: "I'll analyze the planner agent, identify shared vs unique logic, and generate skill files"\n</example>\n\nProactively use when:\n- Agent produces inconsistent results\n- Need to improve agent reliability\n- Adding new validation rules to agents\n- System docs are outdated or inconsistent\n- New agent added - need to update related docs\n- Need to split an agent into skill-based architecture
-tools: Read, Write, Edit, Glob, Grep
+tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
@@ -71,8 +71,6 @@ After detecting the operation from user input, **read the matching skill file** 
 | `.claude/workflows/development-rules.md` | Coding standards, tech stack | Stack change, new patterns |
 | `.claude/workflows/build-app-workflow.md` | Main app development flow | Agent chain change |
 | `.claude/workflows/testcase-workflow.md` | QA testcase generation flow | Agent/skill change |
-| `.claude/workflows/create-demo-workflow.md` | Demo creation flow | Agent chain change |
-| `.claude/workflows/fix-demo-workflow.md` | Demo fix flow | Agent chain change |
 | `.claude/agents/*.md` | Agent definitions | Agent capability change |
 | `.claude/commands/*.md` | Slash command routing | New command, workflow change |
 | `.claude/settings.json` | Project settings | Config change |
@@ -110,7 +108,7 @@ workflows/*.md
 | Command docs | user-guide commands = actual `.claude/commands/` |
 | Agent chains | workflow chains reference existing agents |
 | Tool availability | Agent tools list = tools actually available |
-| Chain I/O contracts | Agent I/O matches upstream/downstream per data-contracts.md |
+| Chain I/O contracts | Agent I/O matches upstream/downstream per I/O Contracts table |
 | Chain Registry sync | agia-workflow.md Chain Registry = actual workflow chain definitions |
 
 ---
@@ -149,8 +147,6 @@ workflows/*.md
 | Build App (medium) | `scout(built-in) → implementer` |
 | Build App (simple) | `implementer` |
 | Testcase | `testcase-writer` (skill-based: init/import-spec/write/update) |
-| Create Demo | `demo-folder-creator → scout → planner → designer → implementer → write-spec` |
-| Fix Demo | `scout → planner → designer → implementer` |
 
 ### Compact I/O Contracts
 
@@ -160,8 +156,6 @@ workflows/*.md
 | planner(built-in) | implementer | Context (inline) | Implementation plan |
 | scout(built-in) | implementer | Context (inline) | File paths + inline plan |
 | testcase-writer | (standalone) | CSV `source/testcase/{feature}/result/` | Testcase CSV matching template |
-| demo-folder-creator | scout | Folder path | `source/demo/{name}/` exists |
-| implementer | write-spec | HTML files | `source/demo/{name}/pages/*.html` |
 
 ### Validation Procedure
 
@@ -230,7 +224,7 @@ Before delivering results, verify:
 | Format Compliance | 100% |
 | Logic Consistency | No conflicts |
 | Chain Validation | All chains PASS (or standalone) |
-| I/O Contract Compliance | Matches data-contracts.md schema |
+| I/O Contract Compliance | Matches I/O Contracts table schema |
 
 ---
 

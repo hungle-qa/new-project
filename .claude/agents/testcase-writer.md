@@ -30,106 +30,121 @@ You are a **QA Testcase Writer**. Generate and manage testcases from feature spe
 
 ### Digest Freshness Check
 
-Run this Bash command to check if digest needs regenerating:
+Call the server API to check if digest needs regenerating:
 
 ```bash
-FEATURE="{feature-name}"
-DIGEST="source/testcase/$FEATURE/context-digest.md"
-
-# If digest doesn't exist, needs generation
-if [ ! -f "$DIGEST" ]; then echo "STALE:no-digest"; exit 0; fi
-
-DIGEST_TIME=$(stat -f %m "$DIGEST" 2>/dev/null || stat -c %Y "$DIGEST")
-
-# Check all source files against digest timestamp
-for f in \
-  "source/testcase/$FEATURE/config.md" \
-  "source/testcase/rule/test-rules.md" \
-  "source/testcase/template/template.json" \
-  source/testcase/$FEATURE/spec/*.md \
-; do
-  [ -f "$f" ] || continue
-  FILE_TIME=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f")
-  if [ "$FILE_TIME" -gt "$DIGEST_TIME" ]; then echo "STALE:$f"; exit 0; fi
-done
-
-# Check linked knowledge from config
-LINKED=$(grep -A 100 'linked_knowledge:' "source/testcase/$FEATURE/config.md" | grep '^ *- ' | sed 's/^ *- //' | head -20)
-for name in $LINKED; do
-  f="source/feature-knowledge/$name/config.md"
-  [ -f "$f" ] || continue
-  FILE_TIME=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f")
-  if [ "$FILE_TIME" -gt "$DIGEST_TIME" ]; then echo "STALE:$f"; exit 0; fi
-done
-
-# Check design-system components from config
-COMPS=$(grep -A 100 'components:' "source/testcase/$FEATURE/config.md" | grep '^ *- ' | sed 's/^ *- //' | head -20)
-for name in $COMPS; do
-  f="source/design-system/$name.md"
-  [ -f "$f" ] || continue
-  FILE_TIME=$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f")
-  if [ "$FILE_TIME" -gt "$DIGEST_TIME" ]; then echo "STALE:$f"; exit 0; fi
-done
-
-echo "FRESH"
+curl -s http://localhost:3001/api/testcase/{feature-name}/digest-status
 ```
 
-- If output starts with `STALE` → regenerate digest (read all sources, write digest)
-- If output is `FRESH` → read only the digest file, skip all individual reads
+Response: `{"status":"FRESH"}` or `{"status":"STALE","reason":"source/testcase/{feature}/config.md"}`
+
+- If `status` is `STALE` → regenerate digest (read all sources, write digest)
+- If `status` is `FRESH` → read only the digest file, skip all individual reads
 
 ### Digest Generation
 
-When STALE, read all source files and write digest to `source/testcase/{feature}/context-digest.md`:
+When STALE, read sources and write to `source/testcase/{feature}/context-digest.md`:
 
 ```markdown
 ---
+digest-version: 2
 generated: {ISO timestamp}
 feature: {feature-name}
-sources:
-  - source/testcase/{feature}/config.md
-  - source/testcase/rule/test-rules.md
-  - source/testcase/template/template.json
-  - source/testcase/{feature}/spec/*.md
-  - {linked knowledge files}
-  - {component files}
+sources: [list all read files]
 ---
 
 ## Config
-levels: {parsed levels from config}
-scope.happy_case: {value}
-scope.corner_case: {value}
+strategy: {id or "none"}
+structure: {tree or "empty"}
 components: {list}
 linked_knowledge: {list}
 
-## Template Columns
-{For each column: name, writingStyle instruction — only include columns that have writingStyle}
-Full column order: {comma-separated column names}
-
-## Rules Summary
-{Condensed rules: priority mapping, constraints, column format if no template}
-
-## Feature Knowledge
-{For each linked knowledge item: key domain terms, definitions, context}
+<!-- [REQUIREMENTS — Generate testcases from this] -->
 
 ## Spec Summary
-{Condensed spec: user stories, acceptance criteria as bullet points, key requirements}
+{User stories, acceptance criteria as bullets, key requirements}
+
+## Test Scope
+
+### TESTABLE (generate testcases for these)
+{List each User Story with its Acceptance Criteria:}
+- US1: {title}
+  - AC1: {criterion}
+  - AC2: {criterion}
+- US2: ...
+
+### OUT OF SCOPE (in knowledge but NOT in spec — do NOT test)
+{List feature-knowledge functions/topics NOT referenced in any spec AC}
+- {Function/topic name}
+- ...
+
+### Scope Hints
+**Happy Case:** {from per-feature rules ## Scope, or "Standard happy paths"}
+**Corner Case:** {from per-feature rules ## Scope, or "Standard edge cases"}
+
+## Structure
+{If non-empty: render tree. Example:}
+- Pop-up
+  - Header
+  - Footer
+
+{If empty: "No structure — AI freestyles."}
+
+**RULE:** Structure defined → MUST follow tree, replace Module with Level 1..N, test ONLY leaf nodes. Empty → freestyle.
+
+## Strategy Guide
+{If strategy set: strategy name + 1-line summary + path reference}
+{If none: "No strategy — balanced approach"}
+{Agent reads full strategy from source/testcase/strategy/{name}.md if needed}
+
+<!-- [FORMAT — How to write testcases] -->
+
+## Template Columns
+{For each column with writingStyle: name + 1-line hint (condensed from full writingStyle)}
+{Agent reads full writingStyle from per-feature template.json if needed}
+Full order: {comma-separated}
+
+## Merged Column Order
+{Structure defined: show merged with Level 1..N replacing Module}
+{Structure empty: same as template order}
+
+## Rules Summary
+{Condensed rules: priority map, constraints, column format}
+
+<!-- [REFERENCE — Terminology only, do NOT generate testcases from this] -->
+
+## Terminology & Context
+{Extract ONLY these from feature knowledge — omit full prose/function details:}
+
+**Glossary:** {term → definition table, only terms referenced in spec}
+**UI Elements:** {button/panel/screen names referenced in spec}
+**User Roles:** {roles and access levels relevant to spec}
+**Preconditions:** {plans, settings, conditions required for testing}
+**Test Accounts:** {if available in knowledge}
 
 ## Component Knowledge
-{For each mapped component: behavior, states, interactions}
+{Behavior, states, interactions — only for components listed in config}
 ```
 
-**CRITICAL:** The digest must preserve ALL spec acceptance criteria, ALL rule constraints, ALL writingStyle instructions, and ALL terminology from feature knowledge. Summarize for brevity but never omit testable requirements.
+**Digest Generation Rules:**
+1. Spec Summary MUST appear before any other content section — agent reads requirements FIRST
+2. Test Scope MUST list every spec US/AC under TESTABLE and every knowledge topic not in spec under OUT OF SCOPE
+3. Terminology & Context MUST contain only glossary/UI/roles/preconditions — never full feature prose
+4. All 3 zone comment markers MUST be present in every digest
+
+**CRITICAL:** Preserve ALL acceptance criteria, rule constraints, writingStyle, and terminology. Summarize for brevity but omit nothing testable.
 
 ---
 
 ## Constraints
 
-1. MUST check digest freshness before reading individual files
-2. MUST match template CSV column format exactly (follow each `writingStyle`)
-3. NEVER modify spec, template, rules, knowledge, or design-system files (read-only)
-4. NEVER skip approval gate (AskUserQuestion before any file write)
-5. NEVER invent requirements not in the spec
-6. NEVER generate testcases without spec present
-7. Output: `.csv` files only
-8. Terminology must match feature knowledge exactly
-9. Repeated steps/words across cases must be 100% identical
+1. MUST check digest freshness before reading files
+2. MUST match template CSV format (follow `writingStyle` per column)
+3. NEVER modify spec/template/rules/knowledge/design-system (read-only)
+4. NEVER skip approval gate (AskUserQuestion before write)
+5. NEVER invent requirements not in spec
+6. NEVER generate testcases without spec
+7. Output: `.csv` only
+8. Terminology: match feature knowledge exactly
+9. Repeated text: 100% identical across cases
+10. **STRUCTURE:** Defined → follow tree strictly, replace Module with Level 1..N, test ONLY leaf nodes. Empty → AI freestyles.

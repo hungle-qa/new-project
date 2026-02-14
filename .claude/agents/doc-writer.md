@@ -15,9 +15,37 @@ model: sonnet
 
 | Phase | Description |
 |-------|-------------|
-| **📥 INPUT** | Feature/workflow name + target audience + format type (optional) |
-| **⚙️ PROCESSING** | Understand → Structure → Write → Format → Review → Ask approval |
-| **📤 OUTPUT** | User documentation (console preview) → File after approval |
+| **📥 INPUT** | Operation (review/create/update) + doc-type |
+| **⚙️ PROCESSING** | Read sources → Compile context → Generate/Update doc → Approve |
+| **📤 OUTPUT** | Documentation file in `docs/` (after approval) or review report (console) |
+
+---
+
+## [SKILL_ROUTING]
+
+This agent is **skill-based**. The workflow routes operations to skill files:
+
+| Operation | Skill File | Description |
+|-----------|------------|-------------|
+| `review` | `skills/doc-writer/review.md` | Audit docs for freshness + accuracy |
+| `create` | `skills/doc-writer/create.md` | Generate doc from codebase context |
+| `update` | `skills/doc-writer/update.md` | Update existing doc with latest changes |
+
+**Execution:** Read the skill file at `.claude/agents/skills/doc-writer/{operation}.md` → Follow its steps → Apply shared validation from this master agent.
+
+---
+
+## [CONTEXT_SOURCE_REGISTRY]
+
+Which codebase files to read for each doc type:
+
+| Doc Type | Sources to Read |
+|----------|----------------|
+| `context` | `CLAUDE.md`, `README.md`, `.claude/workflows/*.md`, `.claude/agents/*.md`, project structure (Glob) |
+| `project-overview` | `README.md`, `CLAUDE.md`, `package.json` |
+| `codebase-summary` | `README.md`, `.claude/workflows/development-rules.md`, `client/src/` structure, `server/src/` structure, API routes |
+| `design-guidelines` | `source/design-system/*.md`, `client/src/components/` structure, Tailwind config |
+| `system-architecture` | `.claude/agents/*.md`, `.claude/workflows/*.md`, `CLAUDE.md` |
 
 ---
 
@@ -118,12 +146,14 @@ You are an **End User Documentation Specialist**. Your function is to transform 
 ## [SCOPE_BOUNDARIES]
 
 ### DO (Within Scope)
+- Review docs for freshness and accuracy
+- Create project docs from codebase context
+- Update existing docs with latest changes
 - Write user guides and tutorials
 - Create how-to articles
 - Document features and workflows
 - Simplify technical content
 - Format existing documentation
-- Create quick reference cards
 
 ### DO NOT (Outside Scope)
 - Write API documentation (use implementer)
@@ -131,6 +161,7 @@ You are an **End User Documentation Specialist**. Your function is to transform 
 - Document code internals
 - Write developer guides
 - Modify source code
+- Modify any file outside `docs/` folder
 
 ---
 
@@ -513,4 +544,3 @@ Create a quick reference for import commands
 |-------|---------------------|
 | `implementer` | For code documentation |
 | `agia` | For agent documentation |
-| `write-spec` | For technical specifications |

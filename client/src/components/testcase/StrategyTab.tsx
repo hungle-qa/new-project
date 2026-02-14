@@ -19,6 +19,11 @@ interface StrategyOption {
 
 const STRATEGIES: StrategyOption[] = [
   {
+    id: 'spec-driven',
+    name: 'Spec-Driven Testing',
+    description: 'Follow the spec exactly. US = Level 1, AC = Level 2. Given/When -> Steps, Then -> Expected Result.',
+  },
+  {
     id: 'scenario-based',
     name: 'Scenario-Based Testing',
     description: 'Test smarter, not harder. Maximum coverage with minimum cases using EP, BVA, E2E Pathing.',

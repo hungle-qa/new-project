@@ -1,36 +1,86 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Plus, Trash2, Save, X } from 'lucide-react'
+import { Plus, Trash2, Save, ChevronRight, ChevronDown } from 'lucide-react'
 
-interface LevelEntry {
-  level: number
-  type: string
-  value?: string
-  values?: string[]
+export interface StructureNode {
+  id: string
+  name: string
+  children: StructureNode[]
 }
 
-interface LevelsTabProps {
+interface StructureTabProps {
   feature: string
-  levels: LevelEntry[]
-  onSave: (levels: LevelEntry[]) => Promise<void>
+  structure: StructureNode[]
+  onSave: (structure: StructureNode[]) => Promise<void>
   onDirtyChange?: (dirty: boolean) => void
   saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
-export function LevelsTab({ feature, levels: initialLevels, onSave, onDirtyChange, saveRef }: LevelsTabProps) {
-  const [levels, setLevels] = useState<LevelEntry[]>(initialLevels)
-  const [saving, setSaving] = useState(false)
-  const [tagInput, setTagInput] = useState<Record<number, string>>({})
+let nodeCounter = 0
+function genId() {
+  return `n_${Date.now()}_${++nodeCounter}`
+}
 
-  const hasChanges = JSON.stringify(levels) !== JSON.stringify(initialLevels)
+function getMaxDepth(nodes: StructureNode[], depth = 1): number {
+  let max = nodes.length > 0 ? depth : 0
+  for (const node of nodes) {
+    if (node.children.length > 0) {
+      max = Math.max(max, getMaxDepth(node.children, depth + 1))
+    }
+  }
+  return max
+}
+
+interface FlatRow {
+  levels: string[]
+}
+
+function flattenTree(nodes: StructureNode[], maxDepth: number): FlatRow[] {
+  const rows: FlatRow[] = []
+
+  function walk(children: StructureNode[], depth: number, parentLevels: string[]) {
+    for (let i = 0; i < children.length; i++) {
+      const node = children[i]
+      const levels = [...parentLevels]
+      // Fill current depth
+      levels[depth] = node.name
+      // Pad remaining levels
+      while (levels.length < maxDepth) levels.push('')
+
+      if (node.children.length === 0) {
+        rows.push({ levels })
+      } else {
+        walk(node.children, depth + 1, levels)
+        // After first child group, blank out parent levels for subsequent siblings
+      }
+
+      // Blank parent levels for next sibling
+      if (i < children.length - 1) {
+        parentLevels = parentLevels.map(() => '')
+      }
+    }
+  }
+
+  walk(nodes, 0, [])
+  return rows
+}
+
+export function StructureTab({ feature, structure: initialStructure, onSave, onDirtyChange, saveRef }: StructureTabProps) {
+  const [structure, setStructure] = useState<StructureNode[]>(initialStructure)
+  const [saving, setSaving] = useState(false)
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editText, setEditText] = useState('')
+
+  const hasChanges = JSON.stringify(structure) !== JSON.stringify(initialStructure)
 
   const handleSave = useCallback(async () => {
     setSaving(true)
     try {
-      await onSave(levels)
+      await onSave(structure)
     } finally {
       setSaving(false)
     }
-  }, [levels, onSave])
+  }, [structure, onSave])
 
   useEffect(() => {
     onDirtyChange?.(hasChanges)
@@ -42,153 +92,249 @@ export function LevelsTab({ feature, levels: initialLevels, onSave, onDirtyChang
   }, [hasChanges, handleSave])
 
   useEffect(() => {
-    setLevels(initialLevels)
-  }, [initialLevels, feature])
+    setStructure(initialStructure)
+  }, [initialStructure, feature])
 
-  const addLevel = () => {
-    const nextLevel = levels.length + 1
-    setLevels([...levels, { level: nextLevel, type: 'component', value: '' }])
+  // Tree mutation helpers (immutable updates)
+  function updateNode(nodes: StructureNode[], id: string, updater: (n: StructureNode) => StructureNode): StructureNode[] {
+    return nodes.map(node => {
+      if (node.id === id) return updater(node)
+      return { ...node, children: updateNode(node.children, id, updater) }
+    })
   }
 
-  const removeLevel = (index: number) => {
-    const updated = levels.filter((_, i) => i !== index).map((l, i) => ({ ...l, level: i + 1 }))
-    setLevels(updated)
+  function removeNode(nodes: StructureNode[], id: string): StructureNode[] {
+    return nodes
+      .filter(node => node.id !== id)
+      .map(node => ({ ...node, children: removeNode(node.children, id) }))
   }
 
-  const updateLevel = (index: number, field: string, value: string) => {
-    const updated = [...levels]
-    updated[index] = { ...updated[index], [field]: value }
-    setLevels(updated)
+  function addChild(nodes: StructureNode[], parentId: string, child: StructureNode): StructureNode[] {
+    return nodes.map(node => {
+      if (node.id === parentId) {
+        return { ...node, children: [...node.children, child] }
+      }
+      return { ...node, children: addChild(node.children, parentId, child) }
+    })
   }
 
-  const addTag = (index: number) => {
-    const input = tagInput[index]?.trim()
-    if (!input) return
-    const updated = [...levels]
-    const current = updated[index].values || []
-    if (!current.includes(input)) {
-      updated[index] = { ...updated[index], values: [...current, input] }
-      setLevels(updated)
-    }
-    setTagInput({ ...tagInput, [index]: '' })
+  const handleAddRoot = () => {
+    const newNode: StructureNode = { id: genId(), name: '', children: [] }
+    setStructure([...structure, newNode])
+    setEditingId(newNode.id)
+    setEditText('')
   }
 
-  const removeTag = (levelIndex: number, tagIndex: number) => {
-    const updated = [...levels]
-    const current = updated[levelIndex].values || []
-    updated[levelIndex] = { ...updated[levelIndex], values: current.filter((_, i) => i !== tagIndex) }
-    setLevels(updated)
+  const handleAddChild = (parentId: string) => {
+    const newNode: StructureNode = { id: genId(), name: '', children: [] }
+    setStructure(addChild(structure, parentId, newNode))
+    // Ensure parent is expanded
+    setCollapsed(prev => {
+      const next = new Set(prev)
+      next.delete(parentId)
+      return next
+    })
+    setEditingId(newNode.id)
+    setEditText('')
   }
+
+  const handleRemove = (id: string) => {
+    setStructure(removeNode(structure, id))
+    if (editingId === id) setEditingId(null)
+  }
+
+  const handleRename = (id: string, name: string) => {
+    setStructure(updateNode(structure, id, n => ({ ...n, name })))
+    setEditingId(null)
+  }
+
+  const startEdit = (id: string, currentName: string) => {
+    setEditingId(id)
+    setEditText(currentName)
+  }
+
+  const toggleCollapse = (id: string) => {
+    setCollapsed(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  // Render tree recursively
+  function renderNode(node: StructureNode, depth: number, isLast: boolean) {
+    const hasChildren = node.children.length > 0
+    const isCollapsed = collapsed.has(node.id)
+    const isEditing = editingId === node.id
+    const indent = depth * 24
+
+    return (
+      <div key={node.id}>
+        <div
+          className="flex items-center gap-1 group hover:bg-gray-50 rounded py-1 pr-2"
+          style={{ paddingLeft: `${indent + 8}px` }}
+        >
+          {/* Tree line indicator */}
+          {depth > 0 && (
+            <span className="text-gray-300 text-xs w-4 flex-shrink-0 text-center select-none">
+              {isLast ? '└' : '├'}
+            </span>
+          )}
+
+          {/* Expand/collapse toggle */}
+          <button
+            onClick={() => hasChildren && toggleCollapse(node.id)}
+            className={`flex-shrink-0 w-5 h-5 flex items-center justify-center rounded ${
+              hasChildren ? 'text-gray-500 hover:bg-gray-200' : 'text-transparent'
+            }`}
+            tabIndex={hasChildren ? 0 : -1}
+          >
+            {hasChildren && (
+              isCollapsed
+                ? <ChevronRight className="w-3.5 h-3.5" />
+                : <ChevronDown className="w-3.5 h-3.5" />
+            )}
+          </button>
+
+          {/* Node name */}
+          {isEditing ? (
+            <input
+              type="text"
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              onBlur={() => handleRename(node.id, editText.trim())}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleRename(node.id, editText.trim())
+                if (e.key === 'Escape') { setEditingId(null); setEditText('') }
+              }}
+              autoFocus
+              placeholder="Node name..."
+              className="flex-1 px-2 py-0.5 text-sm border border-blue-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-0"
+            />
+          ) : (
+            <button
+              onClick={() => startEdit(node.id, node.name)}
+              className="flex-1 text-left text-sm text-gray-800 px-2 py-0.5 rounded hover:bg-blue-50 truncate min-w-0"
+              title="Click to rename"
+            >
+              {node.name || <span className="text-gray-400 italic">unnamed</span>}
+            </button>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+            <button
+              onClick={() => handleAddChild(node.id)}
+              className="flex items-center gap-0.5 px-1.5 py-0.5 text-xs text-blue-600 hover:bg-blue-100 rounded"
+              title="Add child"
+            >
+              <Plus className="w-3 h-3" />
+              <span className="hidden sm:inline">Child</span>
+            </button>
+            <button
+              onClick={() => handleRemove(node.id)}
+              className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded"
+              title="Delete"
+            >
+              <Trash2 className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+
+        {/* Children */}
+        {hasChildren && !isCollapsed && (
+          <div>
+            {node.children.map((child, i) =>
+              renderNode(child, depth + 1, i === node.children.length - 1)
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Template preview
+  const maxDepth = getMaxDepth(structure)
+  const flatRows = flattenTree(structure, maxDepth)
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-gray-700">Hierarchy Levels</h3>
-        <div className="flex gap-2">
+        <div>
+          <h3 className="text-sm font-medium text-gray-700">Structure</h3>
+          <p className="text-xs text-gray-500 mt-0.5">Define the test module hierarchy (replaces Module column in template)</p>
+        </div>
+        <button
+          onClick={handleSave}
+          disabled={saving || !hasChanges}
+          className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Save className="w-3 h-3" />
+          {saving ? 'Saving...' : 'Save'}
+        </button>
+      </div>
+
+      {/* Tree editor */}
+      <div className="border border-gray-200 rounded-lg bg-white">
+        {structure.length === 0 ? (
+          <div className="text-center py-8 text-gray-500 text-sm">
+            No structure defined. Click "Add Root Node" to start.
+          </div>
+        ) : (
+          <div className="py-2">
+            {structure.map((node, i) =>
+              renderNode(node, 0, i === structure.length - 1)
+            )}
+          </div>
+        )}
+
+        {/* Add root button */}
+        <div className="border-t border-gray-100 px-3 py-2">
           <button
-            onClick={addLevel}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100"
+            onClick={handleAddRoot}
+            className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-md"
           >
             <Plus className="w-4 h-4" />
-            Add Level
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving || !hasChanges}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
-          >
-            <Save className="w-4 h-4" />
-            {saving ? 'Saving...' : 'Save'}
+            Add Root Node
           </button>
         </div>
       </div>
 
-      {levels.length === 0 ? (
-        <div className="text-center py-8 text-gray-500 text-sm">
-          No levels defined. Click "Add Level" to start.
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {levels.map((level, index) => (
-            <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-medium text-gray-700">Level {level.level}</span>
-                <button
-                  onClick={() => removeLevel(index)}
-                  className="p-1 text-red-500 hover:bg-red-50 rounded"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Type</label>
-                  <select
-                    value={level.type}
-                    onChange={(e) => updateLevel(index, 'type', e.target.value)}
-                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="component">Component</option>
-                    <option value="sub-component">Sub-component</option>
-                    <option value="function">Function</option>
-                    <option value="screen">Screen</option>
-                    <option value="module">Module</option>
-                  </select>
-                </div>
-
-                {level.type === 'function' ? (
-                  <div className="col-span-1">
-                    <label className="block text-xs text-gray-500 mb-1">Values (tags)</label>
-                    <div className="flex gap-1">
-                      <input
-                        type="text"
-                        value={tagInput[index] || ''}
-                        onChange={(e) => setTagInput({ ...tagInput, [index]: e.target.value })}
-                        onKeyDown={(e) => e.key === 'Enter' && addTag(index)}
-                        placeholder="Add tag..."
-                        className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <button
-                        onClick={() => addTag(index)}
-                        className="px-2 py-1.5 text-sm bg-gray-200 rounded hover:bg-gray-300"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <label className="block text-xs text-gray-500 mb-1">Value</label>
-                    <input
-                      type="text"
-                      value={level.value || ''}
-                      onChange={(e) => updateLevel(index, 'value', e.target.value)}
-                      placeholder="e.g. inbox"
-                      className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Tags display */}
-              {level.values && level.values.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {level.values.map((tag, tagIdx) => (
-                    <span
-                      key={tagIdx}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full"
-                    >
-                      {tag}
-                      <button onClick={() => removeTag(index, tagIdx)} className="hover:text-blue-900">
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
+      {/* Template Preview */}
+      {maxDepth > 0 && flatRows.length > 0 && (
+        <div>
+          <p className="text-xs font-medium text-gray-500 uppercase mb-2">Template Preview</p>
+          <div className="border border-gray-200 rounded-lg overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 py-2 text-left font-medium text-gray-600 whitespace-nowrap">ID</th>
+                  {Array.from({ length: maxDepth }, (_, i) => (
+                    <th key={i} className="px-3 py-2 text-left font-medium text-gray-600 whitespace-nowrap">
+                      Level {i + 1}
+                    </th>
                   ))}
-                </div>
-              )}
-            </div>
-          ))}
+                  <th className="px-3 py-2 text-left font-medium text-gray-600 whitespace-nowrap">Title</th>
+                  <th className="px-3 py-2 text-left font-medium text-gray-600 whitespace-nowrap">Step</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {flatRows.map((row, ri) => (
+                  <tr key={ri} className="hover:bg-gray-50">
+                    <td className="px-3 py-1.5 text-gray-500 font-mono">{ri + 1}</td>
+                    {row.levels.map((val, ci) => (
+                      <td key={ci} className="px-3 py-1.5 text-gray-700 whitespace-nowrap">
+                        {val}
+                      </td>
+                    ))}
+                    <td className="px-3 py-1.5 text-gray-400 italic">...</td>
+                    <td className="px-3 py-1.5 text-gray-400 italic">...</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

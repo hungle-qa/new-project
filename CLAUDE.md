@@ -10,6 +10,7 @@ Your role is to analyze user requirements, delegate tasks to appropriate sub-age
 
 - Build App workflow: `./.claude/workflows/build-app-workflow.md`
 - Testcase workflow: `./.claude/workflows/testcase-workflow.md`
+- Doc workflow: `./.claude/workflows/doc-workflow.md`
 
 - Development rules: `./.claude/workflows/development-rules.md`
 - And other workflows: `./.claude/workflows/*`

@@ -191,6 +191,72 @@ router.delete('/:feature', async (req, res) => {
   }
 })
 
+// --- Per-feature Digest Freshness Check ---
+router.get('/:feature/digest-status', async (req, res) => {
+  try {
+    const result = await TestcaseService.checkDigestFreshness(req.params.feature)
+    res.json(result)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to check digest status' })
+  }
+})
+
+// --- Per-feature Context Digest ---
+router.post('/:feature/context-digest', async (req, res) => {
+  try {
+    await TestcaseService.generateContextDigest(req.params.feature)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to generate context digest' })
+  }
+})
+
+// --- Per-feature Rules ---
+router.get('/:feature/rules', async (req, res) => {
+  try {
+    const content = await TestcaseService.getFeatureRules(req.params.feature)
+    res.json({ content })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch feature rules' })
+  }
+})
+
+router.put('/:feature/rules', async (req, res) => {
+  try {
+    const { content } = req.body
+    if (typeof content !== 'string') {
+      return res.status(400).json({ error: 'Content is required' })
+    }
+    await TestcaseService.saveFeatureRules(req.params.feature, content)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save feature rules' })
+  }
+})
+
+// --- Per-feature Template ---
+router.get('/:feature/template', async (req, res) => {
+  try {
+    const columns = await TestcaseService.getFeatureTemplate(req.params.feature)
+    res.json(columns)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch feature template' })
+  }
+})
+
+router.put('/:feature/template', async (req, res) => {
+  try {
+    const columns = req.body
+    if (!Array.isArray(columns)) {
+      return res.status(400).json({ error: 'Columns array is required' })
+    }
+    await TestcaseService.saveFeatureTemplate(req.params.feature, columns)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save feature template' })
+  }
+})
+
 // Get per-feature spec prompt
 router.get('/:feature/spec-prompt', async (req, res) => {
   try {
@@ -299,6 +365,22 @@ router.get('/:feature/results/:filename', async (req, res) => {
     res.json({ content })
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch result file' })
+  }
+})
+
+// Delete result CSV
+router.delete('/:feature/results/:filename', async (req, res) => {
+  try {
+    const success = await TestcaseService.deleteResultFile(
+      req.params.feature,
+      req.params.filename
+    )
+    if (!success) {
+      return res.status(404).json({ error: 'Result file not found' })
+    }
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete result file' })
   }
 })
 

@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Plus, Trash2, Layers, Target, BookOpen, Puzzle, FileUp, FileSpreadsheet, ScrollText, Table, Search, X, ChevronDown, Pencil, Compass } from 'lucide-react'
+import { Plus, Trash2, BookOpen, FileUp, FileSpreadsheet, ScrollText, Table, Search, X, ChevronDown, Pencil, Compass, Layers, RefreshCw, Check } from 'lucide-react'
 import { CreateFeatureModal } from '../components/testcase/CreateFeatureModal'
 import { StrategyTab } from '../components/testcase/StrategyTab'
-import { LevelsTab } from '../components/testcase/LevelsTab'
-import { ScopeTab } from '../components/testcase/ScopeTab'
+import { StructureNode } from '../components/testcase/LevelsTab'
 import { ComponentsTab } from '../components/testcase/ComponentsTab'
 import { KnowledgeSelectTab } from '../components/testcase/KnowledgeSelectTab'
 import { ImportSpecTab } from '../components/testcase/ImportSpecTab'
@@ -12,14 +11,16 @@ import { RulesTab } from '../components/testcase/RulesTab'
 import { TemplateTab } from '../components/testcase/TemplateTab'
 import { UnsavedChangesModal } from '../components/UnsavedChangesModal'
 
+export type LinkedKnowledgeEntry = string | { item: string; sections: string[] }
+
 interface FeatureConfig {
   name: string
   created: string
   updated: string
   strategy: string
-  levels: Array<{ level: number; type: string; value?: string; values?: string[] }>
+  structure: StructureNode[]
   scope: { happy_case: string; corner_case: string }
-  linked_knowledge: string[]
+  linked_knowledge: LinkedKnowledgeEntry[]
   components: Array<{ name: string; usage: string }>
   content: string
 }
@@ -30,21 +31,20 @@ interface FeatureSummary {
   updated: string
 }
 
-type TabType = 'strategy' | 'levels' | 'scope' | 'knowledge' | 'components' | 'import-spec' | 'review-export' | 'rules' | 'template'
+type TabType = 'strategy' | 'knowledge' | 'components' | 'import-spec' | 'review-export' | 'rules' | 'template' | 'default-rules' | 'default-template'
 
 const featureTabs = [
   { id: 'strategy' as TabType, label: 'Strategy', icon: Compass },
-  { id: 'levels' as TabType, label: 'Levels', icon: Layers },
-  { id: 'scope' as TabType, label: 'Scope', icon: Target },
+  { id: 'rules' as TabType, label: 'Rules', icon: ScrollText },
+  { id: 'template' as TabType, label: 'Template', icon: Table },
   { id: 'knowledge' as TabType, label: 'Knowledge', icon: BookOpen },
-  { id: 'components' as TabType, label: 'Components', icon: Puzzle },
   { id: 'import-spec' as TabType, label: 'Import Spec', icon: FileUp },
   { id: 'review-export' as TabType, label: 'Review & Export', icon: FileSpreadsheet },
 ]
 
 const globalTabs = [
-  { id: 'rules' as TabType, label: 'Rules', icon: ScrollText },
-  { id: 'template' as TabType, label: 'Template', icon: Table },
+  { id: 'default-rules' as TabType, label: 'Default Rules', icon: ScrollText },
+  { id: 'default-template' as TabType, label: 'Default Template', icon: Table },
 ]
 
 const PAGE_SIZE = 20
@@ -62,6 +62,8 @@ export function TestcaseManagerPage() {
   const [showAll, setShowAll] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState('')
+  const [digestUpdating, setDigestUpdating] = useState(false)
+  const [digestDone, setDigestDone] = useState(false)
 
   // Unsaved changes guard
   const [isDirty, setIsDirty] = useState(false)
@@ -227,26 +229,26 @@ export function TestcaseManagerPage() {
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-900">Testcase Manager</h1>
           <button
-            onClick={() => handleGlobalTab('rules')}
+            onClick={() => handleGlobalTab('default-rules')}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
-              activeTab === 'rules' && !selectedFeature
+              activeTab === 'default-rules' && !selectedFeature
                 ? 'text-blue-600 bg-blue-50 border border-blue-200'
                 : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
             }`}
           >
             <ScrollText className="w-4 h-4" />
-            Rules
+            Default Rules
           </button>
           <button
-            onClick={() => handleGlobalTab('template')}
+            onClick={() => handleGlobalTab('default-template')}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
-              activeTab === 'template' && !selectedFeature
+              activeTab === 'default-template' && !selectedFeature
                 ? 'text-blue-600 bg-blue-50 border border-blue-200'
                 : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
             }`}
           >
             <Table className="w-4 h-4" />
-            Template
+            Default Template
           </button>
         </div>
         <div className="flex items-center gap-4">
@@ -345,13 +347,54 @@ export function TestcaseManagerPage() {
                       </button>
                     )}
                   </div>
-                  <button
-                    onClick={() => setIsDeleteConfirmOpen(true)}
-                    className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 bg-red-50 rounded-md hover:bg-red-100"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={async () => {
+                        if (!selectedFeature || digestUpdating) return
+                        setDigestUpdating(true)
+                        setDigestDone(false)
+                        try {
+                          const res = await fetch(`/api/testcase/${selectedFeature}/context-digest`, { method: 'POST' })
+                          if (res.ok) {
+                            setDigestDone(true)
+                            setTimeout(() => setDigestDone(false), 2000)
+                          }
+                        } finally {
+                          setDigestUpdating(false)
+                        }
+                      }}
+                      disabled={digestUpdating}
+                      className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-md transition-colors ${
+                        digestDone
+                          ? 'text-green-600 bg-green-50 border border-green-200'
+                          : 'text-gray-600 bg-gray-100 hover:bg-gray-200 border border-gray-200'
+                      } disabled:opacity-50`}
+                    >
+                      {digestUpdating ? (
+                        <>
+                          <span className="w-3.5 h-3.5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                          Updating...
+                        </>
+                      ) : digestDone ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          Updated!
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="w-4 h-4" />
+                          Update Context
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setIsDeleteConfirmOpen(true)}
+                      className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 bg-red-50 rounded-md hover:bg-red-100"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -384,29 +427,11 @@ export function TestcaseManagerPage() {
                     saveRef={handleSaveRef}
                   />
                 )}
-                {activeTab === 'levels' && (
-                  <LevelsTab
-                    feature={selectedFeature}
-                    levels={config.levels}
-                    onSave={async (levels) => saveConfig({ levels })}
-                    onDirtyChange={handleDirtyChange}
-                    saveRef={handleSaveRef}
-                  />
-                )}
-                {activeTab === 'scope' && (
-                  <ScopeTab
-                    feature={selectedFeature}
-                    scope={config.scope}
-                    onSave={async (scope) => saveConfig({ scope })}
-                    onDirtyChange={handleDirtyChange}
-                    saveRef={handleSaveRef}
-                  />
-                )}
                 {activeTab === 'knowledge' && (
                   <KnowledgeSelectTab
                     feature={selectedFeature}
                     linkedKnowledge={config.linked_knowledge || []}
-                    onSave={async (linked_knowledge) => saveConfig({ linked_knowledge })}
+                    onSave={async (linked_knowledge) => saveConfig({ linked_knowledge } as Partial<FeatureConfig>)}
                     onDirtyChange={handleDirtyChange}
                     saveRef={handleSaveRef}
                   />
@@ -423,12 +448,28 @@ export function TestcaseManagerPage() {
                 {activeTab === 'import-spec' && (
                   <ImportSpecTab feature={selectedFeature} />
                 )}
+                {activeTab === 'rules' && (
+                  <RulesTab
+                    feature={selectedFeature}
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
+                  />
+                )}
+                {activeTab === 'template' && (
+                  <TemplateTab
+                    feature={selectedFeature}
+                    structure={config.structure || []}
+                    onStructureSave={async (structure) => saveConfig({ structure })}
+                    onDirtyChange={handleDirtyChange}
+                    saveRef={handleSaveRef}
+                  />
+                )}
                 {activeTab === 'review-export' && (
                   <ReviewExportTab feature={selectedFeature} />
                 )}
               </div>
             </div>
-          ) : activeTab === 'rules' || activeTab === 'template' ? (
+          ) : activeTab === 'default-rules' || activeTab === 'default-template' ? (
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
               {/* Tabs (global only) */}
               <div className="flex border-b border-gray-200 overflow-x-auto">
@@ -448,13 +489,13 @@ export function TestcaseManagerPage() {
                 ))}
               </div>
               <div className="p-4">
-                {activeTab === 'rules' && (
+                {activeTab === 'default-rules' && (
                   <RulesTab
                     onDirtyChange={handleDirtyChange}
                     saveRef={handleSaveRef}
                   />
                 )}
-                {activeTab === 'template' && (
+                {activeTab === 'default-template' && (
                   <TemplateTab
                     onDirtyChange={handleDirtyChange}
                     saveRef={handleSaveRef}

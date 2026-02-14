@@ -1,32 +1,47 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-export const DEFAULT_SPEC_PROMPT = `You are a senior QA analyst. Convert the following raw content into a structured feature specification document.
+export const DEFAULT_SPEC_PROMPT = `You are a senior QA analyst. Convert the raw content into a testcase-ready spec. Focus on Acceptance Criteria — this is what QA uses to generate testcases.
 
 **CRITICAL INSTRUCTIONS:**
-
-1. Extract all feature requirements, user flows, and acceptance criteria
-2. Organize into clear sections with markdown headers
-3. Preserve all technical details, field names, error messages, and business rules
-4. Use tables for structured data (fields, validations, etc.)
-5. Include edge cases and boundary conditions if mentioned
-6. Output ONLY the structured markdown content (no preamble)
+1. Extract ALL user stories (US) and acceptance criteria (AC) with Given/When/Then
+2. Preserve exact field names, error messages, and business rules
+3. Keep a brief Requirements table for traceability
+4. SKIP lengthy overview prose and user flow narratives — the ACs already capture these
+5. Output ONLY the structured markdown (no preamble)
 
 **OUTPUT FORMAT:**
-# Feature Specification
 
-## Overview
-...
+### Acceptance Criteria
 
-## User Flows
-...
+**US1 - {user story title with "As a... I want... so that..."}**
 
-## Requirements
-...
+| AC ID | Description | Given | When | Then |
+|-------|-------------|-------|------|------|
+| AC1 | ... | ... | ... | ... |
 
-## Acceptance Criteria
-...`
+**US2 - {title}**
+(repeat table for each US)
 
-export const DEFAULT_KNOWLEDGE_PROMPT = `Keep the original content exactly as-is. Only convert to clean, well-formatted markdown that is easy to read. Do not summarize, rewrite, or omit any content.`
+### Requirements
+
+| REQ-ID | Description | User Story |
+|--------|-------------|------------|
+| REQ-1 | ... | US1 |
+
+### Edge Cases
+(only if explicitly mentioned in the source document)`
+
+export const DEFAULT_KNOWLEDGE_PROMPT = `Extract ONLY these sections from the document into clean markdown. Omit everything else.
+
+1. **Glossary** — Feature name, module/page, purpose (1-2 sentences max per term)
+2. **User Roles** — Who can use the feature, access levels (bullet list)
+3. **Preconditions** — Plans, settings, or conditions required (bullet list)
+4. **UI Map** — Screen areas, button names, panel names referenced in the document (brief list, no full descriptions)
+5. **Key Logic** — Confusing logic, known issues, edge cases worth noting for testing (bullet list, skip if none)
+6. **Test Accounts** — Email, role, scenario (table, skip if none mentioned)
+
+SKIP entirely: full function detail prose, help center URLs, notification tables, document status tables, cURL commands, related documents table, changelog entries.
+Keep terminology exact — do not rename buttons, screens, or features.`
 
 export interface StructuredSpec {
   content: string
@@ -42,21 +57,25 @@ export class AIService {
   private static async callWithRetry(
     model: ReturnType<GoogleGenerativeAI['getGenerativeModel']>,
     prompt: string,
-    maxRetries = 3
+    maxRetries = 5
   ) {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         return await model.generateContent(prompt)
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error)
-        const is429 = message.includes('429') || message.includes('Resource has been exhausted')
+        const isRateLimit = message.includes('429') ||
+          message.toLowerCase().includes('resource exhausted') ||
+          message.toLowerCase().includes('too many requests')
 
-        if (!is429 || attempt === maxRetries) {
+        if (!isRateLimit || attempt === maxRetries) {
           throw error
         }
 
-        const delay = Math.pow(2, attempt + 1) * 1000 // 2s, 4s, 8s
-        console.warn(`Rate limited (429). Retrying in ${delay / 1000}s... (attempt ${attempt + 1}/${maxRetries})`)
+        const baseDelay = Math.pow(2, attempt + 1) * 1000 // 2s, 4s, 8s, 16s, 32s
+        const jitter = Math.random() * 1000
+        const delay = baseDelay + jitter
+        console.warn(`Rate limited (429). Retrying in ${(delay / 1000).toFixed(1)}s... (attempt ${attempt + 1}/${maxRetries})`)
         await new Promise(resolve => setTimeout(resolve, delay))
       }
     }

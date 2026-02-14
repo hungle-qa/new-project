@@ -1,149 +1,80 @@
 ---
 name: inbox
 created: '2026-02-09'
-updated: '2026-02-09'
+updated: '2026-02-12'
 source_files:
   - EV-Handbook inbox-090226-101139.pdf
-prompt: >-
-  Keep the original content exactly as-is. Only convert to clean, well-formatted
-  markdown that is easy to read. Do not rewrite, or omit any content. SHOULD
-  list out Terminology. SHOULD summarize at the end.
+prompt: "You are a senior QA knowledge engineer. Convert the raw document into a condensed knowledge reference that a QA testcase writer can use. Goal: 20% of original length but 80% of the context and information.\r\n\r\n**CRITICAL INSTRUCTIONS:**\r\n1. Organize ALL content under ## headings (one per major topic/function)\r\n2. Under each ## heading, extract ONLY:\r\n   - Key business rules and logic (bullet points)\r\n   - Field names, valid values, constraints\r\n   - User roles and permissions\r\n   - Error conditions and edge cases\r\n   - Terminology definitions (bold term: definition)\r\n3. SKIP: UI flow narratives, screenshots descriptions, lengthy explanations, repeated info\r\n4. KEEP: exact field names, error messages, numeric thresholds, status values — these must be word-for-word\r\n5. End with ## Terminology section (bold glossary of all domain-specific terms)\r\n6. End with ## Summary section (3-5 bullet high-level overview)\r\n7. Output ONLY the structured markdown (no preamble)\r\n\r\n**OUTPUT FORMAT:**\r\n\r\n## I. {Topic/Function Name}\r\n- {key rule or constraint}\r\n- **{Field/Term}:** {definition or valid values}\r\n- {business logic bullet}\r\n\r\n## II. {Next Topic}\r\n...\r\n\r\n## Terminology\r\n- **{Term}:** {definition}\r\n\r\n## Summary\r\n- {high-level point 1}\r\n- {high-level point 2}"
 ---
 
 <!-- source: EV-Handbook inbox-090226-101139.pdf -->
 
-# Handbook Inbox
+## I. Overview
+- In-app messaging system for coaches to receive and send replies instantaneously.
+- Accessible to all user roles (Owner, Admin, Trainer, Client) on all plans.
 
-## I. Overview Feature
-## II. Related Documents
-*   **Feature Name:** Inbox
-*   **Production Item:** N/A
-*   **Module / Page:**
-*   **Purpose & value of the feature:** An in-app messaging system so you can receive and send replies to your coach instantaneously.
-*   **User Roles:** All roles
-    *   (Which roles can use it (Owner, Admin, Trainer, Client ...)
-*   **Preconditions:** All plans
-    *   (Conditions required before using the feature)
+## II. Admin Convo Mode
+- Owners, Admins, or Managers can view their Coaches' inbox and conversations with clients for quality control.
+- Navigation: Inbox > Click the dropdown > Choose the Coach.
 
-**Related Documents Table:**
+## III. AI Setting (Smart Response)
+- Smart Responses provide AI-generated draft replies based on the chat context.
+- Scenario 1: New (Unopened) Conversations
+    - Smart Response creates a draft reply as soon as a message arrives.
+    - A "Draft" badge appears in the Inbox list.
+    - Open the conversation to see the AI draft already filled in the chat box.
+- Scenario 2: Actively Chatting
+    - Smart Response drafts a reply for the first incoming message of an active session.
+    - The draft appears as a preview above the chat box.
+    - Click the draft to move it into the chat box.
+- Manually Generate a Smart Response:
+    - Web app: Hover over a clientʼs text message > Click Reply with AI.
+    - Mobile app: Long‑press a client message > Tap Reply with AI.
 
-| Title                                   | Type    | Link                                                                                                               | Confirmation |
-| :-------------------------------------- | :------ | :----------------------------------------------------------------------------------------------------------------- | :----------- |
-| Spec                                    | Inbox V1 | https://dev.everfit.io/home/inbox/6954f8b1b994e5bab5eb21d3                                                       | N/A          |
-| Inbox - Trainer App                     | Figma   |                                                                                                                    | N/A          |
-|                                         | Help Article | https://help.everfit.io/en/?q=inbox                                                                                       | N/A          |
+## IV. Broadcast
+- Send messages to multiple clients simultaneously.
+- Available only to Studio plan users.
 
-## III. Function Details
+## V. Create New Chat - Group Chat
+- Coaches and clients can maintain seamless communication and participate in real-time discussions.
+- Available to Studio plan users.
 
-### UI overview
-1.  Change to Admin convo mode.
-2.  Open AI setting for auto generate the message.
-3.  Broadcast: Send message to many clients.
-4.  Create new private chat or group chat.
-5.  Left side bar: List room chat.
-6.  Middle: Conversation view
-    *   a. Header: Client name or group name.
-    *   b. Conversation View: store chat history.
-    *   c. Chat box and action send:
-        *   i. Media
-        *   ii. Voice chat
-        *   iii. GIF
-        *   iv. Saved response
-7.  Right panel: View and Edit the client profile (Note) or Group info (Name, Avatar, Search/Add/Remove clients to Group chat).
+## VI. Reply Message
+- Web app: Hover over the message to respond to.
+- Mobile app: Select the message and swipe left or press hold.
 
-**Function Details Table:**
+## VII. Mark as Unread / Archive Room
+- Mark as unread: Remind yourself to check back on a conversation.
+- Archive a chat: Click on the “...” button at the top right corner.
 
-| Function                                                                                    | Description                                                                                                                                                                                                                                                                                                                                                            | Note                                                                                                                                                                                                  |
-| :------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Admin convo                                                                                 | As an Owner, Admin, or Manager, you want to make sure your team delivers a consistent training quality to your clients during onboarding or customer support. We make it super easy to view your Coaches' inbox and conversations with their clients to help you with quality control. Go to Inbox > Click on the dropdown > Choose the Coach you want to view the inbox | [Admin Inbox: Access to your workspace's inbox \| Everfit Help Center](https://help.everfit.io/en/articles/8483463-admin-inbox-access-to-your-workspace-s-inbox)                                       |
-| AI setting (Smart response)                                                                 | Smart Responses help you respond to client messages more efficiently by providing AI-generated draft replies based on the current chat context, giving you full control to review and edit before sending.                                                                                                                                                                | [Smart Response (Beta Testing) \| Everfit Help Center](https://help.everfit.io/en/articles/8193308-smart-response-beta-testing)                                                                      |
-| **1/ How Smart Responses Work**                                                             |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| Smart Responses can be generated in several situations:                                     |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| *   Scenario 1: For New (Unopened) Conversations*                                           |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 1.  Auto-Generate: Smart Response creates a draft reply as soon as a message arrives.       |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 2.  Notification: A "Draft" badge appears in your Inbox list.                               |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 3.  Auto-Fill: Open the conversation to see the AI draft already filled in the chat box, ready to edit or send. |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| *   Scenario 2: While Actively Chatting*                                                    |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 1.  Trigger: Smart Response drafts a reply for the first incoming message of an active session. |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 2.  Suggestion: The draft appears as a preview above the chat box.                          |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 3.  Apply: Click the draft to move it into the chat box and clear the suggestion.            |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| **2/ Manually Generate a Smart Response**                                                    |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| You can generate a Smart Response anytime for any text message from a client.               |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| *   Web app*                                                                                |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 1.  Hover over a clientʼs text message                                                       |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 2.  Click Reply with AI                                                                     |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 3.  Wait for the draft to appear                                                            |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 4.  Click the generated draft to insert it into the chat box, where itʼs ready for you to review, edit, and send |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| *   Mobile app*                                                                             |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 1.  Long‑press a client message                                                              |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 2.  Tap Reply with AI                                                                       |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 3.  Wait for the draft to generate                                                          |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 4.  Tap the draft to insert it into the message box                                         |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 5.  Review, edit, and send                                                                 |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| BroadCast                                                                                   | The broadcast message feature is exclusively available to Studio plan users, allowing coaches to effortlessly send messages to multiple clients simultaneously.                                                                                                                                                                                                         | [Inbox: Broadcast Messages \| Everfit Help Center](https://help.everfit.io/en/articles/7858992-inbox-broadcast-messages) This functionality is accessible only with the Studio plan.                 |
-| Create new chat - Group chat                                                                | The group chat functionality is specifically offered to all Studio plan users, enabling coaches and clients to maintain seamless communication and participate in real-time discussions on both web and mobile app interfaces.                                                                                                                                         | [Group Messaging \| Everfit Help Center](https://help.everfit.io/en/articles/7819230-group-messaging) Available on Studio plans only                                                                  |
-| Reply message                                                                               | On Web app: Hover over the message you want to respond to for the ‘Replyʼ option to appear On mobile app: Select the message you want to respond to and either swipe left or press hold for the ‘Replyʼ option to appear                                                                                                                                                 | [How to Reply to Inbox Messages \| Everfit Help Center](https://help.everfit.io/en/articles/5698383-how-to-reply-to-inbox-messages)                                                                |
-| Mark as unread Archive room                                                                 | If you would like to remind yourself to check back on a conversation, click on the “...” button and select Mark as unread either in the list of conversations, or the button at the top right corner of the selected conversation. You can archive a chat by clicking on the “...” button at the top right corner. Once a conversation is archived, you can always use the Compose option to look for the client and start chatting with them again. | [Private Messaging \| Everfit Help Center](https://help.everfit.io/en/articles/5698374-private-messaging)                                                                                       |
-| Voice chat                                                                                  | On web: you can click on the microphone icon to send voice messages to clients from the web app. On mobile: From the Inbox of the coach app, you will see the microphone icon to send your client a voice message.                                                                                                                                                   | [How to Send Voice Messages \| Everfit Help Center](https://help.everfit.io/en/articles/5698438-how-to-send-voice-messages) Turn off Voice Messages for specific clients Voice chat is enabled for all your clients by default. If you want to turn it off, you can head to the clientʼs settings page on the web and uncheck the "Allow client to send voice messages" option under "Messages". |
-| Save response                                                                               | This feature helps coaches save frequently used messages and quickly reuse them in chats. Instead of typing the same replies over and over, you can insert a saved message with just a click or shortcut - saving time and keeping your communication consistent.                                                                                                     | [Saved Responses \| Everfit Help Center](https://help.everfit.io/en/articles/5698442-saved-responses) This feature is available on the Pro plan and above.                                       |
-| *   Web app*                                                                                |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 1.  Open a conversation in the Inbox                                                        |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 2.  Click the Saved Responses button (or use the shortcut)                                  |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 3.  Select a saved response from the list                                                    |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 4.  The full message will be inserted into your chat box, after any existing text           |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 5.  Edit the message if needed, then send                                                  |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| *   Mobile app*                                                                             |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 1.  Open a conversation in the Inbox                                                        |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 2.  Tap the Saved Responses icon in the chat input                                          |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 3.  Search or scroll to find the response you want                                          |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 4.  Tap the response to insert it into the message field                                   |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
-| 5.  Edit if needed, then send                                                              |                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                      |
+## VIII. Voice Chat
+- Send voice messages to clients.
+- Web: Click the microphone icon.
+- Mobile: Microphone icon in the Inbox of the coach app.
+- Voice chat is enabled for all clients by default.
+- To disable for specific clients: Client's settings page > uncheck "Allow client to send voice messages" under "Messages".
 
-## IV. Hard-to-remember Logic / Confusing Logic / Known Issues
-## V. Guide for Difficult Test Cases
-## VI. Test Accounts (Special Accounts)
+## IX. Save Response
+- Save frequently used messages and quickly reuse them in chats.
+- Available on the Pro plan and above.
+- Web app: Click the Saved Responses button (or use the shortcut).
+- Mobile app: Tap the Saved Responses icon in the chat input.
 
-**Test Accounts Table:**
-
-| Email                      | Role (Owner, Admin, Trainer, Client...) | What scenarios this account is used for |
-| :------------------------- | :-------------------------------------- | :---------------------------------------- |
-| hungle+a1@everfit.io       | Owner                                 | Can chat with all clients.                |
-| hungle+ada1@everfit.io     | Admin                                 | Can chat with all clients.                |
-| hungle+tra1@everfit.io     | Trainer                               | Donʼt allow chat with other coachesʼ clients. |
-
-## VII. Cheat logic (N/A)
-## VIII. cURL command (N/A)
-## IX. Need to update system document (upcoming)
-
-**Notifications:**
-
-| Type                | Document | Link | Status |
-| :------------------ | :------- | :--- | :----- |
-| Push notification on the mobile | N/A      |      |        |
-| In-app notification         | N/A      |      |        |
-| Notification center       | N/A      |      |        |
-
-**Type Documents**
-
-| Type|Document|Link|Status|
-|:---|:---|:---|:---|
-|Main feature|[Update client] section in the client overview|N/A|No|
-|Main feature|How to Archive a client|N/A|In-progress|
-|Main feature|How to assign/remove the client to the asset (Autoflow, program, studio program, Resource collection, workout collection, recipe book, onboarding flow...)|N/A|Done|
-|App integration|Handbook app integration|||
-|Landing page|Handbook landing page|||
-|Multiple workspace|Handbook Multiple workspace|||
-|Billing|Handbook Billing|||
-|Payment|Handbook Payment|||
+## X. Test Accounts
+- `hungle+a1@everfit.io`: Owner - Can chat with all clients.
+- `hungle+ada1@everfit.io`: Admin - Can chat with all clients.
+- `hungle+tra1@everfit.io`: Trainer - Donʼt allow chat with other coachesʼ clients.
 
 ## Terminology
-
-*   **Inbox:** An in-app messaging system for instant communication with coaches.
-*   **Smart Responses:** AI-generated draft replies to client messages.
-*   **Broadcast Message:** Sending messages to multiple clients simultaneously (Studio plan only).
-*   **Group Chat:** Real-time discussions between coaches and clients (Studio plan only).
-*   **Saved Responses:** Pre-written messages for quick reuse in chats (Pro plan and above).
+- **Admin Convo Mode:** Allows Owners, Admins, or Managers to view coach-client conversations for quality control.
+- **Smart Response:** AI-generated draft replies to client messages.
+- **Broadcast:** Sending a message to multiple clients simultaneously.
+- **Archive:** Removing a conversation from the main inbox view.
+- **Saved Response:** Pre-written messages that can be quickly inserted into a chat.
 
 ## Summary
-
-This document details the Inbox feature within the Everfit platform, covering its purpose, user roles, related documents, and functional specifics. It includes information on admin conversation mode, AI-powered smart replies, broadcast messaging, group chats, message replies, voice chat, and saving responses. Additionally, it provides test accounts and highlights areas needing system documentation updates.
+- Inbox feature supports various communication methods including text, voice, and AI-assisted responses.
+- Different user roles have specific permissions, such as Admins viewing coach conversations.
+- Studio plan unlocks advanced functionalities like broadcast messages and group chats.
+- Voice chat can be disabled for individual clients.
+- Saved responses streamline communication for coaches.

@@ -5,11 +5,12 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 
 interface RulesTabProps {
+  feature?: string
   onDirtyChange?: (dirty: boolean) => void
   saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
-export function RulesTab({ onDirtyChange, saveRef }: RulesTabProps) {
+export function RulesTab({ feature, onDirtyChange, saveRef }: RulesTabProps) {
   const [content, setContent] = useState('')
   const [original, setOriginal] = useState('')
   const [loading, setLoading] = useState(true)
@@ -17,9 +18,12 @@ export function RulesTab({ onDirtyChange, saveRef }: RulesTabProps) {
   const [showPreview, setShowPreview] = useState(false)
 
   const hasChanges = content !== original
+  const apiBase = feature ? `/api/testcase/${feature}/rules` : '/api/testcase/rules'
 
   useEffect(() => {
-    fetch('/api/testcase/rules')
+    setLoading(true)
+    setShowPreview(false)
+    fetch(apiBase)
       .then(res => res.json())
       .then(data => {
         setContent(data.content || '')
@@ -27,12 +31,12 @@ export function RulesTab({ onDirtyChange, saveRef }: RulesTabProps) {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [])
+  }, [apiBase])
 
   const handleSave = useCallback(async () => {
     setSaving(true)
     try {
-      const res = await fetch('/api/testcase/rules', {
+      const res = await fetch(apiBase, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
@@ -62,8 +66,10 @@ export function RulesTab({ onDirtyChange, saveRef }: RulesTabProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium text-gray-700">Testcase Rules</h3>
-          <p className="text-xs text-gray-500 mt-0.5">Edit rules that guide AI testcase generation</p>
+          <h3 className="text-sm font-medium text-gray-700">{feature ? 'Feature Rules' : 'Default Rules'}</h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            {feature ? 'Rules specific to this feature (cloned from default)' : 'Default rules for all new features'}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button

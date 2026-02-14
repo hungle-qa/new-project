@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
-import { Save, Plus, Trash2, ArrowUp, ArrowDown, ExternalLink, X } from 'lucide-react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { Save, Plus, Trash2, ArrowUp, ArrowDown, ExternalLink, X, GitBranch } from 'lucide-react'
+import { StructureTab, StructureNode } from './LevelsTab'
 
 interface TemplateColumn {
   id: string
@@ -10,6 +11,9 @@ interface TemplateColumn {
 }
 
 interface TemplateTabProps {
+  feature?: string
+  structure?: StructureNode[]
+  onStructureSave?: (structure: StructureNode[]) => Promise<void>
   onDirtyChange?: (dirty: boolean) => void
   saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
@@ -29,18 +33,24 @@ const DEFAULT_COLUMNS: TemplateColumn[] = [
   { id: '10', name: 'Status', width: '80px', style: 'center', writingStyle: 'Not Executed' },
 ]
 
-export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
+export function TemplateTab({ feature, structure, onStructureSave, onDirtyChange, saveRef }: TemplateTabProps) {
+  const apiBase = feature ? `/api/testcase/${feature}/template` : '/api/testcase/template'
   const [columns, setColumns] = useState<TemplateColumn[]>([])
   const [original, setOriginal] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [detailsCol, setDetailsCol] = useState<string | null>(null)
   const [detailsText, setDetailsText] = useState('')
+  const [structureExpanded, setStructureExpanded] = useState(false)
+  const [structureDirty, setStructureDirty] = useState(false)
+  const structureSaveFn = useRef<(() => Promise<void>) | null>(null)
 
   const hasChanges = JSON.stringify(columns) !== original
+  const combinedDirty = hasChanges || structureDirty
 
   useEffect(() => {
-    fetch('/api/testcase/template')
+    setLoading(true)
+    fetch(apiBase)
       .then(res => res.json())
       .then((data: TemplateColumn[]) => {
         const cols = data.length > 0 ? data : DEFAULT_COLUMNS
@@ -53,13 +63,13 @@ export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
         setOriginal(JSON.stringify(DEFAULT_COLUMNS))
         setLoading(false)
       })
-  }, [])
+  }, [apiBase])
 
   const handleSave = useCallback(async (cols?: TemplateColumn[]) => {
     const toSave = cols || columns
     setSaving(true)
     try {
-      const res = await fetch('/api/testcase/template', {
+      const res = await fetch(apiBase, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(toSave),
@@ -73,13 +83,16 @@ export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
   }, [columns])
 
   useEffect(() => {
-    onDirtyChange?.(hasChanges)
-  }, [hasChanges])
+    onDirtyChange?.(combinedDirty)
+  }, [combinedDirty])
 
   useEffect(() => {
-    saveRef?.(hasChanges ? () => handleSave() : null)
+    saveRef?.(combinedDirty ? async () => {
+      if (hasChanges) await handleSave()
+      if (structureDirty && structureSaveFn.current) await structureSaveFn.current()
+    } : null)
     return () => saveRef?.(null)
-  }, [hasChanges, handleSave])
+  }, [combinedDirty, hasChanges, structureDirty, handleSave])
 
   const addColumn = () => {
     const newCol: TemplateColumn = {
@@ -134,8 +147,10 @@ export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium text-gray-700">Testcase Template</h3>
-          <p className="text-xs text-gray-500 mt-0.5">Define columns for generated testcase CSV</p>
+          <h3 className="text-sm font-medium text-gray-700">{feature ? 'Feature Template' : 'Default Template'}</h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            {feature ? 'Template specific to this feature (cloned from default)' : 'Default template for all new features'}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -157,7 +172,7 @@ export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
       </div>
 
       {/* Column Editor Table */}
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="border border-gray-200 rounded-lg overflow-visible">
         <table className="w-full text-sm">
           <thead className="bg-gray-50">
             <tr>
@@ -170,81 +185,133 @@ export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {columns.map((col, index) => (
-              <tr key={col.id} className="hover:bg-gray-50">
-                <td className="px-3 py-2 text-gray-500 text-xs">{index + 1}</td>
-                <td className="px-3 py-2">
-                  <input
-                    type="text"
-                    value={col.name}
-                    onChange={(e) => updateColumn(col.id, 'name', e.target.value)}
-                    placeholder="Column name"
-                    className="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="px-3 py-2">
-                  <input
-                    type="text"
-                    value={col.width}
-                    onChange={(e) => updateColumn(col.id, 'width', e.target.value)}
-                    placeholder="120px"
-                    className="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="px-3 py-2">
-                  <select
-                    value={col.style}
-                    onChange={(e) => updateColumn(col.id, 'style', e.target.value)}
-                    className="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  >
-                    {STYLE_OPTIONS.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </td>
-                <td className="px-3 py-2">
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-gray-500 truncate max-w-[150px]" title={col.writingStyle || ''}>
-                      {col.writingStyle || <span className="italic text-gray-400">None</span>}
-                    </span>
-                    <button
-                      onClick={() => { setDetailsCol(col.id); setDetailsText(col.writingStyle || '') }}
-                      className="flex-shrink-0 p-1 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded"
-                      title="Edit writing style"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                    </button>
-                  </div>
-                </td>
-                <td className="px-3 py-2">
-                  <div className="flex items-center justify-center gap-1">
-                    <button
-                      onClick={() => moveColumn(index, 'up')}
-                      disabled={index === 0}
-                      className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                      title="Move up"
-                    >
-                      <ArrowUp className="w-3 h-3" />
-                    </button>
-                    <button
-                      onClick={() => moveColumn(index, 'down')}
-                      disabled={index === columns.length - 1}
-                      className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                      title="Move down"
-                    >
-                      <ArrowDown className="w-3 h-3" />
-                    </button>
-                    <button
-                      onClick={() => removeColumn(col.id)}
-                      className="p-1 text-red-400 hover:text-red-600"
-                      title="Remove column"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {columns.map((col, index) => {
+              const isModule = isModuleColumn(col.name)
+              return (
+                <React.Fragment key={col.id}>
+                  <tr className="hover:bg-gray-50">
+                    <td className="px-3 py-2 text-gray-500 text-xs">{index + 1}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="text"
+                          value={col.name}
+                          onChange={(e) => !isModule && updateColumn(col.id, 'name', e.target.value)}
+                          readOnly={isModule}
+                          placeholder="Column name"
+                          title={isModule ? 'Module column name is locked. It maps to the structure hierarchy.' : ''}
+                          className={`w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 ${isModule ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : ''}`}
+                        />
+                        {isModule && feature && (
+                          <button
+                            onClick={() => setStructureExpanded(!structureExpanded)}
+                            className={`flex-shrink-0 p-1 rounded transition-colors ${structureExpanded ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}`}
+                            title={structureExpanded ? 'Collapse module structure' : 'Expand module structure'}
+                          >
+                            <GitBranch className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2">
+                      <input
+                        type="text"
+                        value={col.width}
+                        onChange={(e) => updateColumn(col.id, 'width', e.target.value)}
+                        placeholder="120px"
+                        className="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <select
+                        value={col.style}
+                        onChange={(e) => updateColumn(col.id, 'style', e.target.value)}
+                        className="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      >
+                        {STYLE_OPTIONS.map(s => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-gray-500 truncate max-w-[150px]" title={col.writingStyle || ''}>
+                          {col.writingStyle || <span className="italic text-gray-400">None</span>}
+                        </span>
+                        <button
+                          onClick={() => { setDetailsCol(col.id); setDetailsText(col.writingStyle || '') }}
+                          className="flex-shrink-0 p-1 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded"
+                          title="Edit writing style"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          onClick={() => moveColumn(index, 'up')}
+                          disabled={index === 0}
+                          className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                          title="Move up"
+                        >
+                          <ArrowUp className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={() => moveColumn(index, 'down')}
+                          disabled={index === columns.length - 1}
+                          className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                          title="Move down"
+                        >
+                          <ArrowDown className="w-3 h-3" />
+                        </button>
+                        {isModule ? (
+                          <div className="relative group/del">
+                            <button
+                              disabled
+                              className="p-1 text-gray-300 cursor-not-allowed"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                            <div className="fixed z-[9999] hidden group-hover/del:block pointer-events-none" style={{ transform: 'translate(-90%, -110%)' }}>
+                              <div className="bg-gray-900 text-white text-xs leading-relaxed rounded px-2.5 py-2 shadow-lg w-[260px]">
+                                Module column cannot be deleted.<br />
+                                It maps to the structure hierarchy<br />
+                                (Level 1, Level 2...).
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => removeColumn(col.id)}
+                            className="p-1 text-red-400 hover:text-red-600"
+                            title="Remove column"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                  {/* Embedded Structure editor for Module column */}
+                  {isModule && feature && structureExpanded && (
+                    <tr>
+                      <td colSpan={6} className="p-0">
+                        <div className="border-t border-b border-blue-100 bg-blue-50/30 px-4 py-3">
+                          <StructureTab
+                            feature={feature}
+                            structure={structure || []}
+                            onSave={onStructureSave || (async () => {})}
+                            onDirtyChange={setStructureDirty}
+                            saveRef={(fn) => { structureSaveFn.current = fn }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              )
+            })}
           </tbody>
         </table>
       </div>
@@ -338,6 +405,10 @@ export function TemplateTab({ onDirtyChange, saveRef }: TemplateTabProps) {
       )}
     </div>
   )
+}
+
+function isModuleColumn(name: string): boolean {
+  return name.toLowerCase().trim() === 'module'
 }
 
 function getSampleData(columnName: string): string {

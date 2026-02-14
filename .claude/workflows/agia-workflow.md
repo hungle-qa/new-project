@@ -54,9 +54,8 @@
 | Build App (medium) | `scout(built-in) → implementer` | `build-app-workflow.md` |
 | Build App (simple) | `implementer` | `build-app-workflow.md` |
 | Testcase | `testcase-writer` (skill-based: init/import-spec/write/update) | `testcase-workflow.md` |
-| Create Demo | `demo-folder-creator → scout → planner → designer → implementer → write-spec` | `create-demo-workflow.md` |
-| Fix Demo | `scout → planner → designer → implementer` | `fix-demo-workflow.md` |
 | Import Design (all modes) | `import-design` (skill-based: validate/single/multi/update) | `import-design-by-image-workflow.md` |
+| Doc | `doc-writer` (skill-based: review/create/update) | `doc-workflow.md` |
 | AGIA | `agia` (skill-based: audit/update/test/optimize/create-skill) | `agia-workflow.md` |
 
 ### I/O Contracts Between Chained Agents
@@ -67,12 +66,6 @@
 | `planner(built-in)` | `implementer` | Context (inline) | Implementation plan |
 | `scout(built-in)` | `implementer` | Context (inline) | File paths + inline plan |
 | `testcase-writer` | (standalone) | CSV `source/testcase/{feature}/result/` | Testcase CSV matching template |
-| `demo-folder-creator` | `scout` | Folder path | `source/demo/{name}/` exists |
-| `implementer` | `write-spec` | HTML files | `source/demo/{name}/pages/*.html` |
-
-### Contract Reference
-
-Full schema definitions: `.claude/agents/data-contracts.md`
 
 ---
 
@@ -121,7 +114,7 @@ If exists → Continue
 | Update rejected | "Update cancelled. No changes made." |
 | Optimize rejected | "Optimization cancelled. Original preserved." |
 | Chain break detected | "WARNING: Update breaks chain '{chain}'. Downstream agent '{name}' expects {format}." |
-| I/O contract mismatch | "Agent output schema does not match data-contracts.md. Fields missing: {fields}" |
+| I/O contract mismatch | "Agent output schema does not match I/O Contracts table. Fields missing: {fields}" |
 
 ---
 
@@ -151,8 +144,6 @@ If exists → Continue
 | `.claude/agents/skills/agia/system-audit.md` | System-audit operation skill |
 | `.claude/commands/agent-audit.md` | Command entry point |
 | `.claude/agents/*.md` | Target agents for operations |
-| `.claude/agents/data-contracts.md` | I/O schema definitions for agent chains |
 | `.claude/workflows/build-app-workflow.md` | Build App chain: scout(built-in) → planner(built-in) → implementer |
 | `.claude/workflows/testcase-workflow.md` | Testcase chain: testcase-writer (skill-based) |
-| `.claude/workflows/create-demo-workflow.md` | Demo chain: demo-folder-creator → ... → write-spec |
-| `.claude/workflows/fix-demo-workflow.md` | Fix chain: scout → planner → designer → implementer |
+| `.claude/workflows/doc-workflow.md` | Doc chain: doc-writer (skill-based: review/create/update) |

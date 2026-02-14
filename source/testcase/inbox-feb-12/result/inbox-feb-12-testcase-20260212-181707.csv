@@ -1,0 +1,59 @@
+ID,Level 1,Level 2,Title,Steps,Description,Expected Result,Priority
+US1-001,US1 - Switch between All Chats and Unread view,AC1 - Switching to Unread View,CLICK Unread filter from All Chats view,"Precondition: User is on the main chat dashboard in the ""All Chats"" view with both Read and Unread messages present
+1. CLICK **[Unread]** category filter",Filter transition,"- SHOULD transition to the filtered view
+- SHOULD display only messages with ""Unread"" status",Critical
+US1-002,,,CLICK Unread filter with no unread messages,"Precondition: User is on the main chat dashboard in the ""All Chats"" view with no Unread messages
+1. CLICK **[Unread]** category filter",Empty state,"- SHOULD transition to the filtered view
+- SHOULD display ""No unread messages"" empty state",High
+US1-003,,AC2 - Switching back to All Chats,CLICK All Chats from Unread view,"Precondition: User is currently viewing the ""Unread"" filtered list
+1. CLICK **[All Chats]** category view",Filter removal,"- SHOULD remove the filter
+- SHOULD display all messages (Read and Unread) in chronological order",Critical
+US1-004,,,CLICK All Chats after reading all messages in Unread view,"Precondition: User is in the ""Unread"" view and has read all unread messages (now showing empty state)
+1. CLICK **[All Chats]** category view",View restoration,"- SHOULD remove the filter
+- SHOULD display all messages (Read and Unread) in chronological order",High
+US2-001,US2 - Unread view filters out read messages,AC1 - Filtering logic application,APPLY Unread filter with mixed message statuses,"Precondition: User has a total of 10 messages (7 Read, 3 Unread)
+1. CLICK **[Unread]** filter",Filtering logic,"- SHOULD hide the 7 ""Read"" messages
+- SHOULD display only the 3 ""Unread"" messages in the list",Critical
+US2-002,,,APPLY Unread filter with all read messages,"Precondition: User has 10 messages, all with ""Read"" status
+1. CLICK **[Unread]** filter",Empty state,"- SHOULD hide all messages
+- SHOULD display ""No unread messages"" empty state",Medium
+US2-003,,,APPLY Unread filter with all unread messages,"Precondition: User has 10 messages, all with ""Unread"" status
+1. CLICK **[Unread]** filter",Full list display,"- SHOULD display all 10 ""Unread"" messages in the list",High
+US2-004,,AC2 - Empty state for Unread filter,CLICK Unread filter with zero unread messages,"Precondition: User has no messages with ""Unread"" status
+1. CLICK **[Unread]** filter",Empty state placeholder,"- SHOULD display ""No unread messages"" empty state or placeholder",High
+US2-005,,,CLICK Unread filter with zero total messages,"Precondition: User has no messages in the system
+1. CLICK **[Unread]** filter",Empty state,"- SHOULD display ""No unread messages"" empty state or placeholder",Low
+US3-001,US3 - Message remains visible while reading in Unread view,AC1 - Opening an unread message (Sticky View),CLICK unread message in Unread filter view,"Precondition: User is in the ""Unread"" filter view with multiple unread messages
+1. CLICK on an unread message (Message A)",Message status and visibility,"- SHOULD change the status of Message A to ""Read""
+- SHOULD decrement the Unread Count by 1
+- Message A SHOULD remain visible in the current list view",Critical
+US3-002,,,CLICK first unread message when only one exists,"Precondition: User is in the ""Unread"" filter view with exactly one unread message
+1. CLICK on the unread message (Message A)",Last message behavior,"- SHOULD change the status of Message A to ""Read""
+- SHOULD decrement the Unread Count to 0
+- Message A SHOULD remain visible in the current list view",High
+US3-003,,,CLICK unread message multiple times,"Precondition: User is in the ""Unread"" filter view
+1. CLICK on an unread message (Message A)
+2. CLICK on Message A again",Status stability,"- SHOULD keep Message A status as ""Read""
+- SHOULD NOT decrement the Unread Count again
+- Message A SHOULD remain visible in the current list view",Medium
+US3-004,,AC2 - Removing previously read message upon new selection,CLICK second unread message after reading first,"Precondition: User is in the ""Unread"" filter view and has just read Message A (which is still visible)
+1. CLICK on a different unread message (Message B)",Message removal and replacement,"- Message A SHOULD be immediately removed from the ""Unread"" list
+- Message B SHOULD now become the active ""Read"" message but remain visible",Critical
+US3-005,,,CLICK third message after reading two messages sequentially,"Precondition: User is in the ""Unread"" filter view, has read Message A, then read Message B (only B is visible)
+1. CLICK on a different unread message (Message C)",Sequential cleanup,"- Message B SHOULD be immediately removed from the ""Unread"" list
+- Message C SHOULD now become the active ""Read"" message but remain visible",Medium
+US3-006,,,CLICK unread message when previous read message is still visible,"Precondition: User is in the ""Unread"" filter view with Message A (Read, sticky) and Message B (Unread)
+1. CLICK on Message B",Previous message cleanup,"- Message A SHOULD be immediately removed from the ""Unread"" list
+- Message B SHOULD change status to ""Read"" and remain visible",High
+US3-007,,AC3 - Cleanup upon navigation,NAVIGATE away and back to Unread view after reading message,"Precondition: User has read a message in the ""Unread"" view but it is still visible due to the sticky logic
+1. CLICK **[All Chats]**
+2. CLICK **[Unread]** filter",Navigation cleanup,"- The previously read message SHOULD NOT be visible in the ""Unread"" list",Critical
+US3-008,,,NAVIGATE to different app section and return to Unread view,"Precondition: User has read Message A in the ""Unread"" view (still visible)
+1. NAVIGATE to a different section of the app (e.g., Settings)
+2. NAVIGATE back to Inbox
+3. CLICK **[Unread]** filter",Cross-section cleanup,"- Message A SHOULD NOT be visible in the ""Unread"" list",Medium
+US3-009,,,REFRESH page while in Unread view with sticky message,"Precondition: User has read Message A in the ""Unread"" view (still visible)
+1. REFRESH the page",Page refresh cleanup,"- Message A SHOULD NOT be visible in the ""Unread"" list after refresh",Low
+US3-010,,,NAVIGATE to All Chats and back without reading new messages,"Precondition: User is in the ""Unread"" view with Message A (Read, sticky) visible
+1. CLICK **[All Chats]**
+2. CLICK **[Unread]** filter (without clicking any message in All Chats)",View switch cleanup,"- Message A SHOULD NOT be visible in the ""Unread"" list",High

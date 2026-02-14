@@ -29,6 +29,7 @@ Navigate to http://localhost:3000
 |----------|---------|---------|
 | **Build App Workflow** | Code the main app (React + Express) | `/start` |
 | **Testcase Workflow** | Generate QA testcases from specs | `/testcase` |
+| **Doc Workflow** | Manage project documentation | `/doc` |
 
 ---
 
@@ -99,6 +100,43 @@ Before running `/testcase write`, ensure:
 ```
 /testcase write login-page
 /testcase update login-page
+```
+
+---
+
+## Doc Workflow
+
+**Purpose:** Review, create, and update project documentation from codebase context.
+
+### Agent Chain
+```
+doc-writer (skill-based: review / create / update)
+```
+
+### How to Run
+
+```
+/doc review                         # Audit all docs
+/doc review {doc-type}              # Audit single doc
+/doc create {doc-type}              # Generate doc from context
+/doc update {doc-type}              # Update existing doc
+```
+
+### Doc Types
+
+| Doc Type | File | Content |
+|----------|------|---------|
+| `context` | `docs/context-summary.md` | CLAUDE.md + README + workflows + agents |
+| `project-overview` | `docs/project-overview.md` | Purpose, goals, scope |
+| `codebase-summary` | `docs/codebase-summary.md` | Tech stack, structure, API endpoints |
+| `design-guidelines` | `docs/design-guidelines.md` | UI patterns, Tailwind, shadcn/ui |
+| `system-architecture` | `docs/system-architecture.md` | Agents, workflows, data flow |
+
+### Examples
+```
+/doc review
+/doc create context
+/doc update codebase-summary
 ```
 
 ---
@@ -225,6 +263,7 @@ QA-kit/
 |-------|---------|--------|
 | `testcase-writer` | Generate and manage QA testcases | write, update |
 | `import-design` | Unified import agent (validate code, single/multi image, update existing) | validate, single, multi, update |
+| `doc-writer` | Manage project documentation | review, create, update |
 | `agia` | Audit and improve agents and system files | audit, update, test, optimize, create-skill, system-audit |
 
 ### Commands (Slash Commands)
@@ -232,6 +271,7 @@ QA-kit/
 |---------|---------|
 | `/start` | Start build-app workflow for main app development |
 | `/testcase` | Manage QA testcases (write, update) |
+| `/doc` | Manage project documentation (review, create, update) |
 
 | `/import-design-by-image` | Convert UI images to design system components |
 | `/agent-audit` | Audit, update, test, or optimize agents via AGIA |
@@ -240,7 +280,6 @@ QA-kit/
 | Agent | Purpose |
 |-------|---------|
 | `agia` | Audit and improve agents and system files (skill-based: audit/update/test/optimize/create-skill/system-audit) |
-| `doc-writer` | Create user-friendly documentation for end users |
 
 ---
 
@@ -251,6 +290,7 @@ QA-kit/
 | `CLAUDE.md` | Project instructions for Claude |
 | `.claude/workflows/build-app-workflow.md` | Main app coding workflow |
 | `.claude/workflows/testcase-workflow.md` | QA testcase generation workflow |
+| `.claude/workflows/doc-workflow.md` | Documentation management workflow |
 
 | `.claude/workflows/development-rules.md` | Coding standards |
 | `.claude/agents/*.md` | Agent definitions |

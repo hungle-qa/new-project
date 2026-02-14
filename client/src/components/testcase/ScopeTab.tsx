@@ -9,7 +9,7 @@ interface ScopeTabProps {
   saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
-const DEFAULT_HAPPY_CASE = 'Normal user flows, valid inputs, expected outcomes'
+const DEFAULT_HAPPY_CASE = 'Normal user flows, valid inputs, expected outcomes. Make sure all expectations in the spec are covered.'
 const DEFAULT_CORNER_CASE = 'Boundary values, invalid inputs, many data, make action quickly'
 
 export function ScopeTab({ feature, scope: initialScope, onSave, onDirtyChange, saveRef }: ScopeTabProps) {

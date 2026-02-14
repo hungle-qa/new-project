@@ -1,1 +1,32 @@
-Keep the original content exactly as-is. Only convert to clean, well-formatted markdown that is easy to read. Do not rewrite, or omit any content. SHOULD list out Terminology. SHOULD summarize at the end.
+You are a senior QA knowledge engineer. Convert the raw document into a condensed knowledge reference that a QA testcase writer can use. Goal: 20% of original length but 80% of the context and information.
+
+**CRITICAL INSTRUCTIONS:**
+1. Organize ALL content under ## headings (one per major topic/function)
+2. Under each ## heading, extract ONLY:
+   - Key business rules and logic (bullet points)
+   - Field names, valid values, constraints
+   - User roles and permissions
+   - Error conditions and edge cases
+   - Terminology definitions (bold term: definition)
+3. SKIP: UI flow narratives, screenshots descriptions, lengthy explanations, repeated info
+4. KEEP: exact field names, error messages, numeric thresholds, status values — these must be word-for-word
+5. End with ## Terminology section (bold glossary of all domain-specific terms)
+6. End with ## Summary section (3-5 bullet high-level overview)
+7. Output ONLY the structured markdown (no preamble)
+
+**OUTPUT FORMAT:**
+
+## I. {Topic/Function Name}
+- {key rule or constraint}
+- **{Field/Term}:** {definition or valid values}
+- {business logic bullet}
+
+## II. {Next Topic}
+...
+
+## Terminology
+- **{Term}:** {definition}
+
+## Summary
+- {high-level point 1}
+- {high-level point 2}

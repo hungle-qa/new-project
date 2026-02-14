@@ -11,7 +11,7 @@
 |---------|----------------|
 | New agent created | README.md (agents table), user-guide.md (agent reference), agia-workflow.md (Chain Registry) |
 | Agent modified | user-guide.md (capabilities), workflows referencing agent, agia-workflow.md (Chain Registry) |
-| Agent I/O changed | data-contracts.md, all workflows containing agent, downstream agent files |
+| Agent I/O changed | All workflows containing agent, downstream agent files, agia-workflow.md I/O Contracts table |
 | New workflow created | CLAUDE.md (workflow list), README.md (workflows section), agia-workflow.md (Chain Registry) |
 | New command created | user-guide.md (command reference), README.md (if major) |
 | Tech stack change | development-rules.md, README.md (tech stack table) |

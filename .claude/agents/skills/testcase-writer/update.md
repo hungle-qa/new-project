@@ -9,7 +9,7 @@
 
 - CSV at `source/testcase/{feature}/result/{feature}-testcase.csv`
 - Spec at `source/testcase/{feature}/spec/`
-- Rules at `source/testcase/rule/test-rules.md`
+- Rules (cascading): `source/testcase/{feature}/rules.md` (per-feature, if exists) OR `source/testcase/rule/test-rules.md` (global fallback)
 - Strategy in `config.md` frontmatter (optional — used to maintain consistent generation approach)
 - Structure in `config.md` frontmatter (optional — if defined, new cases must follow the structure strictly). Set via Template tab > Module Structure section.
 - Scope hints in per-feature rules (`## Scope` section) — used for happy/corner case guidance
@@ -40,8 +40,11 @@ AskUserQuestion: "What would you like to update?"
 
 **Add new:**
 1. Generate new cases following template `writingStyle`, **the selected strategy approach**, and **structure** (if defined, new cases MUST use Level columns matching the tree; if empty, freestyle module assignment)
-2. Sequential IDs continuing from last existing
-3. Append to set
+2. **Tags (MANDATORY):** Assign at least one tag per case from: `happy`, `corner`, `negative`, `state`, `ui`, `a11y`, `perf`
+3. **Data Variants:** Populate `key=value | key=value` in Data Variants column for parameterized cases. Use `{key}` placeholders in Steps. Leave empty if N/A.
+4. **Single-assertion:** Each row has exactly one Expected Result verification. Split multi-SHOULD into separate rows.
+5. Sequential IDs continuing from last existing
+6. Append to set
 
 **Modify existing:**
 1. Identify targets by ID or description

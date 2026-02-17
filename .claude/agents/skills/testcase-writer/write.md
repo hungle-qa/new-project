@@ -8,7 +8,7 @@
 ## Prerequisites
 
 - Spec at `source/testcase/{feature}/spec/*.md`
-- Rules at `source/testcase/rule/test-rules.md`
+- Rules (cascading): `source/testcase/{feature}/rules.md` (per-feature, if exists) OR `source/testcase/rule/test-rules.md` (global fallback)
 - Template at `source/testcase/template/template.json` (or rules fallback)
 - Strategy in `config.md` frontmatter (optional but recommended — set via Web UI Strategy tab)
 - Structure in `config.md` frontmatter (optional — if defined, strictly controls module hierarchy; if empty, AI freestyles). Set via Template tab > Module Structure section.
@@ -51,6 +51,19 @@ Generate all testcases from digest, **guided by selected strategy** (detailed in
 - Happy paths: normal flows, valid inputs (apply Scope Happy Case hints from digest)
 - Edge cases: boundaries, empty/null, invalid inputs (apply Scope Corner Case hints from digest)
 
+**Single-assertion rule (MANDATORY):** Each row MUST have exactly one verification in Expected Result. If a scenario produces multiple SHOULD statements, split into separate rows sharing the same Steps but each with a single Expected Result line.
+
+**Tags (MANDATORY):** Assign at least one tag per testcase from: `happy`, `corner`, `negative`, `state`, `ui`, `a11y`, `perf`. Comma-separate multiple tags. Tag assignment guide:
+- `happy` — normal flow, valid input
+- `corner` — boundary, edge case
+- `negative` — invalid input, error path
+- `state` — state transition verification
+- `ui` — visual/layout check
+- `a11y` — accessibility
+- `perf` — performance-sensitive
+
+**Data Variants:** For parameterized scenarios, populate the Data Variants column with `key=value | key=value` pairs and use `{key}` placeholders in the Steps column. Each variant combination becomes its own row. Leave Data Variants empty if the case has no parameterized data.
+
 **Module assignment:**
 - **Structure defined:** STRICTLY follow tree (from digest). Test ONLY leaf nodes. Replace Module column with Level 1..N columns.
 - **Structure empty:** AI freestyles grouping. Use single Module column.
@@ -78,6 +91,8 @@ Show **summary only** (no full markdown table):
 - Per-group breakdown: Level 1 → Level 2 → testcase count per group
 - Total: {N} testcases ({X} happy, {Y} edge)
 - Priority breakdown: {Critical}, {High}, {Medium}, {Low}
+- Tag distribution: {N} happy, {N} corner, {N} negative, {N} state, {N} ui, {N} a11y, {N} perf
+- Data Variants: {N} parameterized rows (with variants), {N} static rows (no variants)
 - Dedup stats: {N} Level 1 blanked, {N} Level 2 blanked, {N} Steps blanked
 
 AskUserQuestion: "Approve testcase generation?"
@@ -102,6 +117,6 @@ AskUserQuestion: "Approve testcase generation?"
 | Error | Response |
 |-------|----------|
 | Missing spec | "No spec found. Import via Web UI first." |
-| Missing rules | "No rules found at `source/testcase/rule/test-rules.md`." |
+| Missing rules (both per-feature and global) | "No rules found (checked per-feature and global fallback)." |
 | No template | Use rules column fallback. Log: "No template.json, using rules format." |
 | Knowledge not found | Proceed without it, log warning. |

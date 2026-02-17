@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Plus, Trash2, Save, ChevronRight, ChevronDown } from 'lucide-react'
+import { genId, getMaxDepth, flattenTree } from './LevelsHelpers'
+import { StructureTemplatePreview } from './StructureTemplatePreview'
 
 export interface StructureNode {
   id: string
@@ -13,55 +15,6 @@ interface StructureTabProps {
   onSave: (structure: StructureNode[]) => Promise<void>
   onDirtyChange?: (dirty: boolean) => void
   saveRef?: (saveFn: (() => Promise<void>) | null) => void
-}
-
-let nodeCounter = 0
-function genId() {
-  return `n_${Date.now()}_${++nodeCounter}`
-}
-
-function getMaxDepth(nodes: StructureNode[], depth = 1): number {
-  let max = nodes.length > 0 ? depth : 0
-  for (const node of nodes) {
-    if (node.children.length > 0) {
-      max = Math.max(max, getMaxDepth(node.children, depth + 1))
-    }
-  }
-  return max
-}
-
-interface FlatRow {
-  levels: string[]
-}
-
-function flattenTree(nodes: StructureNode[], maxDepth: number): FlatRow[] {
-  const rows: FlatRow[] = []
-
-  function walk(children: StructureNode[], depth: number, parentLevels: string[]) {
-    for (let i = 0; i < children.length; i++) {
-      const node = children[i]
-      const levels = [...parentLevels]
-      // Fill current depth
-      levels[depth] = node.name
-      // Pad remaining levels
-      while (levels.length < maxDepth) levels.push('')
-
-      if (node.children.length === 0) {
-        rows.push({ levels })
-      } else {
-        walk(node.children, depth + 1, levels)
-        // After first child group, blank out parent levels for subsequent siblings
-      }
-
-      // Blank parent levels for next sibling
-      if (i < children.length - 1) {
-        parentLevels = parentLevels.map(() => '')
-      }
-    }
-  }
-
-  walk(nodes, 0, [])
-  return rows
 }
 
 export function StructureTab({ feature, structure: initialStructure, onSave, onDirtyChange, saveRef }: StructureTabProps) {
@@ -303,39 +256,7 @@ export function StructureTab({ feature, structure: initialStructure, onSave, onD
 
       {/* Template Preview */}
       {maxDepth > 0 && flatRows.length > 0 && (
-        <div>
-          <p className="text-xs font-medium text-gray-500 uppercase mb-2">Template Preview</p>
-          <div className="border border-gray-200 rounded-lg overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-3 py-2 text-left font-medium text-gray-600 whitespace-nowrap">ID</th>
-                  {Array.from({ length: maxDepth }, (_, i) => (
-                    <th key={i} className="px-3 py-2 text-left font-medium text-gray-600 whitespace-nowrap">
-                      Level {i + 1}
-                    </th>
-                  ))}
-                  <th className="px-3 py-2 text-left font-medium text-gray-600 whitespace-nowrap">Title</th>
-                  <th className="px-3 py-2 text-left font-medium text-gray-600 whitespace-nowrap">Step</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {flatRows.map((row, ri) => (
-                  <tr key={ri} className="hover:bg-gray-50">
-                    <td className="px-3 py-1.5 text-gray-500 font-mono">{ri + 1}</td>
-                    {row.levels.map((val, ci) => (
-                      <td key={ci} className="px-3 py-1.5 text-gray-700 whitespace-nowrap">
-                        {val}
-                      </td>
-                    ))}
-                    <td className="px-3 py-1.5 text-gray-400 italic">...</td>
-                    <td className="px-3 py-1.5 text-gray-400 italic">...</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <StructureTemplatePreview maxDepth={maxDepth} flatRows={flatRows} />
       )}
     </div>
   )

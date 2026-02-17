@@ -1,42 +1,19 @@
 import { useState, useRef, useEffect, DragEvent } from 'react'
-import { Upload, FileText, CheckCircle, AlertCircle, Settings, Square, Save, Globe, RotateCcw } from 'lucide-react'
 import { useAISettings } from '../../hooks/useAISettings'
 import { AISettingsModal } from '../AISettingsModal'
+import { PromptEditor } from './import-spec/PromptEditor'
+import { UploadStatus } from './import-spec/UploadStatus'
+import { SpecPreview } from './import-spec/SpecPreview'
+import { UploadForm } from './import-spec/UploadForm'
+import { FALLBACK_SPEC_PROMPT, UploadState } from './import-spec/importSpecUtils'
 
 interface ImportSpecTabProps {
   feature: string
 }
 
-type UploadState = 'idle' | 'uploading' | 'success' | 'error'
-
-const FALLBACK_SPEC_PROMPT = `You are a senior QA analyst. Convert the following raw content into a structured feature specification document.
-
-**CRITICAL INSTRUCTIONS:**
-
-1. Extract all feature requirements, user flows, and acceptance criteria
-2. Organize into clear sections with markdown headers
-3. Preserve all technical details, field names, error messages, and business rules
-4. Use tables for structured data (fields, validations, etc.)
-5. Include edge cases and boundary conditions if mentioned
-6. Output ONLY the structured markdown content (no preamble)
-
-**OUTPUT FORMAT:**
-# Feature Specification
-
-## Overview
-...
-
-## User Flows
-...
-
-## Requirements
-...
-
-## Acceptance Criteria
-...`
-
 export function ImportSpecTab({ feature }: ImportSpecTabProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [skipAi, setSkipAi] = useState(true)
   const [defaultPrompt, setDefaultPrompt] = useState('')
   const [savedPrompt, setSavedPrompt] = useState('')
   const [customPrompt, setCustomPrompt] = useState('')
@@ -103,6 +80,12 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
 
   const effectiveDefault = defaultPrompt || FALLBACK_SPEC_PROMPT
   const promptChanged = customPrompt.trim() !== (savedPrompt || effectiveDefault).trim()
+
+  const handlePromptChange = (value: string) => {
+    setCustomPrompt(value)
+    setPromptSaved(false)
+    setDefaultSaved(false)
+  }
 
   const handleSavePrompt = async () => {
     setSavingPrompt(true)
@@ -172,7 +155,7 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
   }
 
   const handleUpload = async () => {
-    if (!selectedFile || !isConfigured) return
+    if (!selectedFile || (!skipAi && !isConfigured)) return
 
     const controller = new AbortController()
     abortRef.current = controller
@@ -183,16 +166,21 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
     try {
       const formData = new FormData()
       formData.append('file', selectedFile)
-      if (customPrompt.trim()) {
+      if (skipAi) {
+        formData.append('skipAi', 'true')
+      } else if (customPrompt.trim()) {
         formData.append('prompt', customPrompt.trim())
+      }
+
+      const headers: Record<string, string> = {}
+      if (!skipAi) {
+        headers['X-AI-API-Key'] = settings.apiKey
+        headers['X-AI-Model'] = settings.model
       }
 
       const res = await fetch(`/api/testcase/${feature}/import-spec`, {
         method: 'POST',
-        headers: {
-          'X-AI-API-Key': settings.apiKey,
-          'X-AI-Model': settings.model,
-        },
+        headers,
         body: formData,
         signal: controller.signal,
       })
@@ -228,189 +216,52 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-gray-700">Import Specification</h3>
-          <button
-            onClick={() => setIsSettingsOpen(true)}
-            className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
-          >
-            <Settings className="w-3 h-3" />
-            AI Settings
-          </button>
-        </div>
-
-        {/* AI Status */}
-        {!isConfigured ? (
-          <div
-            onClick={() => setIsSettingsOpen(true)}
-            className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 cursor-pointer hover:bg-yellow-100"
-          >
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">AI not configured</span>
-            </div>
-            <span className="text-xs underline">Configure now</span>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg text-green-700">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm">Google Gemini connected</span>
-            </div>
-            <span className="text-xs text-green-600">{settings.model}</span>
-          </div>
-        )}
-
-        {/* Upload Zone */}
-        <div
+        {/* Upload Form */}
+        <UploadForm
+          selectedFile={selectedFile}
+          skipAi={skipAi}
+          isConfigured={isConfigured}
+          aiModel={settings.model}
+          isDragging={isDragging}
+          fileInputRef={fileInputRef}
+          onFileSelect={handleFileSelect}
           onDragEnter={(e) => { e.preventDefault(); setIsDragging(true) }}
           onDragOver={(e) => e.preventDefault()}
           onDragLeave={(e) => { e.preventDefault(); setIsDragging(false) }}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-            isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400 bg-gray-50'
-          }`}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf,.md,.txt"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f) }}
-            className="hidden"
+          onSkipAiChange={setSkipAi}
+          onSettingsClick={() => setIsSettingsOpen(true)}
+          onUploadClick={handleUpload}
+        />
+
+        {/* Custom Prompt — only when using AI */}
+        {!skipAi && uploadState !== 'uploading' && (
+          <PromptEditor
+            customPrompt={customPrompt}
+            onPromptChange={handlePromptChange}
+            promptChanged={promptChanged}
+            effectiveDefault={effectiveDefault}
+            savedPrompt={savedPrompt}
+            onSavePrompt={handleSavePrompt}
+            onSaveAndSetDefault={handleSaveAndSetDefault}
+            savingPrompt={savingPrompt}
+            savingDefault={savingDefault}
+            promptSaved={promptSaved}
+            defaultSaved={defaultSaved}
           />
-          {selectedFile ? (
-            <div className="flex items-center justify-center gap-3">
-              <FileText className="w-8 h-8 text-blue-600" />
-              <div className="text-left">
-                <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
-                <p className="text-xs text-gray-500">{(selectedFile.size / 1024).toFixed(1)} KB</p>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-              <p className="text-sm text-gray-600">Drag and drop a spec file, or click to browse</p>
-              <p className="text-xs text-gray-500">PDF, Markdown, or TXT (max 10MB)</p>
-            </div>
-          )}
-        </div>
-
-        {/* Custom Prompt */}
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <label htmlFor="specPrompt" className="text-sm font-medium text-gray-700">
-              Custom Prompt (optional)
-            </label>
-            <div className="flex items-center gap-2">
-              {promptSaved && (
-                <span className="text-xs text-green-600">Saved</span>
-              )}
-              {defaultSaved && (
-                <span className="text-xs text-green-600">Default saved</span>
-              )}
-              <button
-                onClick={() => { setCustomPrompt(savedPrompt || effectiveDefault); setPromptSaved(false); setDefaultSaved(false) }}
-                disabled={!promptChanged}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-40 disabled:cursor-default disabled:hover:bg-transparent"
-              >
-                <RotateCcw className="w-3 h-3" />
-                Use Default
-              </button>
-              <button
-                onClick={handleSavePrompt}
-                disabled={!promptChanged || savingPrompt}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-40 disabled:cursor-default"
-              >
-                {savingPrompt ? (
-                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Save className="w-3 h-3" />
-                )}
-                Save
-              </button>
-              <button
-                onClick={handleSaveAndSetDefault}
-                disabled={!promptChanged || savingDefault}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700 disabled:opacity-40 disabled:cursor-default"
-              >
-                {savingDefault ? (
-                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Globe className="w-3 h-3" />
-                )}
-                Save & Set Default
-              </button>
-            </div>
-          </div>
-          <textarea
-            id="specPrompt"
-            value={customPrompt}
-            onChange={(e) => { setCustomPrompt(e.target.value); setPromptSaved(false); setDefaultSaved(false) }}
-            rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Tells AI how to process the spec document. Edit above to customize.
-          </p>
-        </div>
-
-        {selectedFile && uploadState !== 'uploading' && (
-          <button
-            onClick={handleUpload}
-            disabled={!isConfigured}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Upload className="w-4 h-4" />
-            Import Spec
-          </button>
         )}
 
-        {uploadState === 'uploading' && (
-          <div className="flex items-center justify-between px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-center gap-2 text-sm text-blue-700">
-              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-              Processing with AI...
-            </div>
-            <button
-              onClick={handleStop}
-              className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600"
-            >
-              <Square className="w-3 h-3" />
-              Stop
-            </button>
-          </div>
-        )}
+        <UploadStatus
+          uploadState={uploadState}
+          skipAi={skipAi}
+          errorMessage={errorMessage}
+          onStop={handleStop}
+        />
 
-        {uploadState === 'success' && (
-          <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700">
-            <CheckCircle className="w-4 h-4" />
-            <span className="text-sm">Spec imported successfully!</span>
-          </div>
-        )}
-
-        {uploadState === 'error' && errorMessage && (
-          <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            <AlertCircle className="w-4 h-4" />
-            <span className="text-sm">{errorMessage}</span>
-          </div>
-        )}
-
-        {/* Spec Preview */}
-        {loadingSpec ? (
-          <div className="text-center py-4 text-gray-500 text-sm">Loading spec...</div>
-        ) : specContent ? (
-          <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Imported Spec Preview</h4>
-            <pre className="bg-gray-50 p-4 rounded-lg overflow-auto text-sm max-h-96 whitespace-pre-wrap border border-gray-200">
-              {specContent}
-            </pre>
-          </div>
-        ) : (
-          <p className="text-sm text-gray-500 text-center py-4">
-            No spec imported yet. Upload a PDF/MD/TXT file above.
-          </p>
-        )}
+        <SpecPreview
+          loading={loadingSpec}
+          content={specContent}
+        />
       </div>
 
       <AISettingsModal

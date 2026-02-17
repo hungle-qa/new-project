@@ -1,0 +1,20 @@
+No.,US,AC,Step,Title,Expectation,Priority
+1,US1 - As a user I want to switch between an "All Chats" view and an "Unread" view so that I can focus exclusively on pending items when needed,AC1 - Switching to Unread View,1. SELECT the "Unread" category filter,Unread filter on All Chats dashboard,- SHOULD transition to the filtered view,High
+2,,,,Unread-only message visibility,"- SHOULD display only messages with ""Unread"" status",High
+3,,AC2 - Switching back to All Chats,1. SELECT the "All Chats" category view,All Chats filter on Unread view,- SHOULD remove the filter,High
+4,,,,Chronological order after removing filter,"- SHOULD display all messages (Read and Unread) in chronological order",High
+5,US2 - As a user I want the "Unread" view to filter out all read messages and only display those with an active unread status,AC1 - Filtering logic application,"1. NAVIGATE to chat dashboard with 10 messages (7 Read, 3 Unread)
+2. APPLY the ""Unread"" filter",Unread filter with mixed messages,- SHOULD hide the 7 Read messages,High
+6,,,,Filtered list with three Unread messages,"- SHOULD display only the 3 Unread messages in the list",High
+7,,AC2 - Empty state for Unread filter,"1. NAVIGATE to chat dashboard with no Unread messages
+2. CLICK on the ""Unread"" filter",Empty inbox after applying Unread filter,"- SHOULD display ""No unread messages"" empty state or placeholder",Medium
+8,US3 - As a user I want the message I am currently reading to remain visible in the "Unread" list so that I don't lose my place or feel disoriented by the list shifting immediately while I am viewing it,AC1 - Opening an unread message (Sticky View),"1. NAVIGATE to ""Unread"" filter view
+2. CLICK on an unread message (Message A)",Message status after opening unread message,- SHOULD change Message A status to Read,High
+9,,,,Unread count after opening message,- SHOULD decrement Unread Count by 1,High
+10,,,,Message A visibility after opening,- SHOULD keep Message A visible in the current list view,High
+11,,AC2 - Removing previously read message upon new selection,"1. READ Message A in ""Unread"" filter view (Message A still visible)
+2. CLICK on a different unread message (Message B)",Message A removal after selecting Message B,- SHOULD immediately remove Message A from the Unread list,High
+12,,,,Message B visibility after selection,- SHOULD mark Message B as Read but remain visible in the list,High
+13,,AC3 - Cleanup upon navigation,"1. READ a message in ""Unread"" view (message still visible due to sticky logic)
+2. NAVIGATE to ""All Chats""
+3. CLICK back into ""Unread"" filter",Previously read message after navigation cycle,- SHOULD no longer display the previously read message in the Unread list,High

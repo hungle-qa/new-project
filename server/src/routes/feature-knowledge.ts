@@ -8,12 +8,12 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    const allowedExtensions = ['.pdf', '.md', '.txt']
+    const allowedExtensions = ['.pdf', '.md', '.txt', '.docx']
     const isValid = allowedExtensions.some(ext => file.originalname.toLowerCase().endsWith(ext))
     if (isValid) {
       cb(null, true)
     } else {
-      cb(new Error('Only PDF, Markdown, and TXT files are allowed'))
+      cb(new Error('Only PDF, Markdown, TXT, and DOCX files are allowed'))
     }
   },
 })
@@ -140,17 +140,18 @@ router.delete('/:name/files/:filename', async (req, res) => {
   }
 })
 
-// Import knowledge (upload file + AI processing)
+// Import knowledge (upload file + AI processing or save original)
 router.post('/:name/import', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' })
     }
 
+    const skipAi = req.body?.skipAi === 'true'
     const apiKey = req.headers['x-ai-api-key'] as string
     const model = req.headers['x-ai-model'] as string
 
-    if (!apiKey) {
+    if (!skipAi && !apiKey) {
       return res.status(400).json({ error: 'AI API key not configured' })
     }
 
@@ -158,7 +159,7 @@ router.post('/:name/import', upload.single('file'), async (req, res) => {
 
     const aiConfig = {
       provider: 'gemini' as const,
-      apiKey,
+      apiKey: apiKey || '',
       model: model || 'gemini-2.0-flash',
     }
 
@@ -168,7 +169,8 @@ router.post('/:name/import', upload.single('file'), async (req, res) => {
       req.file.originalname,
       req.file.mimetype,
       customPrompt,
-      aiConfig
+      aiConfig,
+      skipAi
     )
 
     res.status(201).json({ success: true, ...result })

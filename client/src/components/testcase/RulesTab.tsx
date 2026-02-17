@@ -16,6 +16,7 @@ export function RulesTab({ feature, onDirtyChange, saveRef }: RulesTabProps) {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
+  const [customized, setCustomized] = useState<boolean | null>(null)
 
   const hasChanges = content !== original
   const apiBase = feature ? `/api/testcase/${feature}/rules` : '/api/testcase/rules'
@@ -23,6 +24,7 @@ export function RulesTab({ feature, onDirtyChange, saveRef }: RulesTabProps) {
   useEffect(() => {
     setLoading(true)
     setShowPreview(false)
+    setCustomized(null)
     fetch(apiBase)
       .then(res => res.json())
       .then(data => {
@@ -31,7 +33,15 @@ export function RulesTab({ feature, onDirtyChange, saveRef }: RulesTabProps) {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [apiBase])
+
+    // Fetch customization status for per-feature rules
+    if (feature) {
+      fetch(`/api/testcase/${feature}/rules/status`)
+        .then(res => res.json())
+        .then(data => setCustomized(data.customized ?? null))
+        .catch(() => {})
+    }
+  }, [apiBase, feature])
 
   const handleSave = useCallback(async () => {
     setSaving(true)
@@ -65,11 +75,22 @@ export function RulesTab({ feature, onDirtyChange, saveRef }: RulesTabProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-medium text-gray-700">{feature ? 'Feature Rules' : 'Default Rules'}</h3>
-          <p className="text-xs text-gray-500 mt-0.5">
-            {feature ? 'Rules specific to this feature (cloned from default)' : 'Default rules for all new features'}
-          </p>
+        <div className="flex items-center gap-2">
+          <div>
+            <h3 className="text-sm font-medium text-gray-700">{feature ? 'Feature Rules' : 'Default Rules'}</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {feature ? 'Rules specific to this feature (cloned from default)' : 'Default rules for all new features'}
+            </p>
+          </div>
+          {feature && customized !== null && (
+            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+              customized
+                ? 'bg-green-100 text-green-700'
+                : 'bg-gray-100 text-gray-600'
+            }`}>
+              {customized ? 'Customized' : 'Matches Default'}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <button

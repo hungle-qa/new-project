@@ -16,9 +16,9 @@ operation = first word, feature-name = remaining
 
 ### 2. Validate
 
-- Valid operations: `write`, `update`
+- Valid operations: `write`, `write-lite`, `update`
 - feature-name: REQUIRED for both
-- Invalid → "Unknown operation '{op}'. Use: write, update"
+- Invalid → "Unknown operation '{op}'. Use: write, write-lite, update"
 - Missing name → "Please provide feature name: /testcase {op} {feature-name}"
 
 ### 3. Check Prerequisites
@@ -29,6 +29,8 @@ operation = first word, feature-name = remaining
 | `write` | Spec in `source/testcase/{feature}/spec/` | "No spec. Import via Web UI first." |
 | `write` | Rules at `source/testcase/rule/test-rules.md` (global default) or `source/testcase/{feature}/rules.md` (per-feature, includes Scope) | "No rules. Add to source/testcase/rule/test-rules.md" |
 | `write` | Strategy in config (optional) | Proceed without — uses balanced approach. Recommend setting via Testcase Manager > Strategy tab. |
+| `write-lite` | Spec in `source/testcase/{feature}/spec/` | "No spec. Import via Web UI first." |
+| `write-lite` | Rules at `source/testcase/rule/test-rules.md` or `source/testcase/{feature}/rules.md` (optional — proceeds with defaults if missing) | Warning only, not blocking. |
 | `update` | CSV at `source/testcase/{feature}/result/` | "Run `/testcase write {feature}` first." |
 
 ### 4. Route to Skill
@@ -38,6 +40,7 @@ Read `.claude/agents/testcase-writer.md`, then load matching skill:
 | Operation | Skill File |
 |-----------|------------|
 | `write` | `.claude/agents/skills/testcase-writer/write.md` |
+| `write-lite` | `.claude/agents/skills/testcase-writer/write-lite.md` |
 | `update` | `.claude/agents/skills/testcase-writer/update.md` |
 
 ---
@@ -47,6 +50,7 @@ Read `.claude/agents/testcase-writer.md`, then load matching skill:
 | Operation | Gate |
 |-----------|------|
 | `write` | Full set preview → before writing CSV |
+| `write-lite` | **NONE** — writes immediately, shows summary after |
 | `update` | Before/after diff → before writing CSV |
 
 ---
@@ -97,7 +101,8 @@ The agent uses a **context-digest** system (defined in `testcase-writer.md`) to 
 | File | Purpose |
 |------|---------|
 | `.claude/agents/testcase-writer.md` | Master agent + digest system |
-| `.claude/agents/skills/testcase-writer/write.md` | Write skill |
+| `.claude/agents/skills/testcase-writer/write.md` | Write skill (full) |
+| `.claude/agents/skills/testcase-writer/write-lite.md` | Write-lite skill (spec-only, no digest) |
 | `.claude/agents/skills/testcase-writer/update.md` | Update skill |
 | `.claude/commands/testcase.md` | Command entry point |
 | `source/testcase/rule/test-rules.md` | Global default rules |

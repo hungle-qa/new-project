@@ -1,11 +1,13 @@
 import { Router } from 'express'
-import { DesignSystemService } from '../services/DesignSystemService'
+import { DesignSystemComponentService } from '../services/DesignSystemComponentService'
+import { DesignSystemIconService } from '../services/DesignSystemIconService'
+import { DesignSystemRulesService } from '../services/DesignSystemRulesService'
 
 const router = Router()
 
 router.get('/', async (req, res) => {
   try {
-    const items = await DesignSystemService.getAll()
+    const items = await DesignSystemComponentService.getAll()
     res.json(items)
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch design system components' })
@@ -16,7 +18,7 @@ router.get('/', async (req, res) => {
 
 router.get('/rules', async (req, res) => {
   try {
-    const rules = await DesignSystemService.getRules()
+    const rules = await DesignSystemRulesService.getRules()
     res.json(rules)
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch design rules' })
@@ -25,7 +27,7 @@ router.get('/rules', async (req, res) => {
 
 router.put('/rules', async (req, res) => {
   try {
-    const result = await DesignSystemService.updateRules(req.body)
+    const result = await DesignSystemRulesService.updateRules(req.body)
     res.json(result)
   } catch (error) {
     if (error instanceof Error) {
@@ -37,7 +39,7 @@ router.put('/rules', async (req, res) => {
 
 router.get('/:name', async (req, res) => {
   try {
-    const item = await DesignSystemService.getByName(req.params.name)
+    const item = await DesignSystemComponentService.getByName(req.params.name)
     if (!item) {
       return res.status(404).json({ error: 'Component not found' })
     }
@@ -49,7 +51,7 @@ router.get('/:name', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const result = await DesignSystemService.create(req.body)
+    const result = await DesignSystemComponentService.create(req.body)
     res.status(201).json(result)
   } catch (error) {
     res.status(400).json({ error: 'Failed to create component' })
@@ -58,7 +60,7 @@ router.post('/', async (req, res) => {
 
 router.put('/:name', async (req, res) => {
   try {
-    const result = await DesignSystemService.update(req.params.name, req.body)
+    const result = await DesignSystemComponentService.update(req.params.name, req.body)
     res.json(result)
   } catch (error) {
     if (error instanceof Error && error.message === 'Component not found') {
@@ -70,7 +72,7 @@ router.put('/:name', async (req, res) => {
 
 router.delete('/:name', async (req, res) => {
   try {
-    const success = await DesignSystemService.delete(req.params.name)
+    const success = await DesignSystemComponentService.delete(req.params.name)
     if (!success) {
       return res.status(404).json({ error: 'Component not found' })
     }
@@ -86,7 +88,7 @@ router.patch('/:name/status', async (req, res) => {
     if (!status) {
       return res.status(400).json({ error: 'Status is required' })
     }
-    const result = await DesignSystemService.updateStatus(req.params.name, status)
+    const result = await DesignSystemComponentService.updateStatus(req.params.name, status)
     res.json(result)
   } catch (error) {
     if (error instanceof Error && error.message === 'Component not found') {
@@ -100,7 +102,7 @@ router.patch('/:name/status', async (req, res) => {
 
 router.get('/icons/list', async (req, res) => {
   try {
-    const icons = await DesignSystemService.getAllIcons()
+    const icons = await DesignSystemIconService.getAllIcons()
     res.json(icons)
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch icons' })
@@ -109,7 +111,7 @@ router.get('/icons/list', async (req, res) => {
 
 router.get('/icons/:name', async (req, res) => {
   try {
-    const icon = await DesignSystemService.getIconByName(req.params.name)
+    const icon = await DesignSystemIconService.getIconByName(req.params.name)
     if (!icon) {
       return res.status(404).json({ error: 'Icon not found' })
     }
@@ -125,7 +127,7 @@ router.post('/icons', async (req, res) => {
     if (!name || !svg) {
       return res.status(400).json({ error: 'Name and SVG content are required' })
     }
-    const result = await DesignSystemService.createIcon({ name, svg, category, tags })
+    const result = await DesignSystemIconService.createIcon({ name, svg, category, tags })
     res.status(201).json(result)
   } catch (error) {
     if (error instanceof Error) {
@@ -137,7 +139,7 @@ router.post('/icons', async (req, res) => {
 
 router.put('/icons/:name', async (req, res) => {
   try {
-    const result = await DesignSystemService.updateIcon(req.params.name, req.body)
+    const result = await DesignSystemIconService.updateIcon(req.params.name, req.body)
     res.json(result)
   } catch (error) {
     if (error instanceof Error && error.message === 'Icon not found') {
@@ -149,7 +151,7 @@ router.put('/icons/:name', async (req, res) => {
 
 router.delete('/icons/:name', async (req, res) => {
   try {
-    const success = await DesignSystemService.deleteIcon(req.params.name)
+    const success = await DesignSystemIconService.deleteIcon(req.params.name)
     if (!success) {
       return res.status(404).json({ error: 'Icon not found' })
     }

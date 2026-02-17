@@ -1,5 +1,5 @@
 ---
-description: Manage QA testcases - write and update testcases
+description: Manage QA testcases - write, write-lite, and update testcases
 argument-hint: <operation> <feature-name>
 ---
 
@@ -14,6 +14,7 @@ argument-hint: <operation> <feature-name>
 | Operation | Usage | Description |
 |-----------|-------|-------------|
 | `write` | `/testcase write {feature}` | Generate testcases from spec + template + rules |
+| `write-lite` | `/testcase write-lite {feature}` | Generate spec-driven testcases (lean — spec + rules only, no digest) |
 | `update` | `/testcase update {feature}` | Update existing testcases (add, edit, remove) |
 
 ---
@@ -22,11 +23,12 @@ argument-hint: <operation> <feature-name>
 
 **Format:** `<operation> <feature-name>`
 
-- `operation` — REQUIRED (write, update)
+- `operation` — REQUIRED (write, write-lite, update)
 - `feature-name` — REQUIRED for both operations
 
 **Examples:**
 - `/testcase write login-page` -> Generate testcases for login-page
+- `/testcase write-lite login-page` -> Generate lean spec-driven testcases for login-page
 - `/testcase update login-page` -> Update existing testcases for login-page
 
 ---
@@ -36,6 +38,7 @@ argument-hint: <operation> <feature-name>
 | Operation | Prerequisites |
 |-----------|---------------|
 | `write` | Template exists + spec exists + rules exist |
+| `write-lite` | Spec exists (rules optional — defaults used if missing) |
 | `update` | Testcase CSV exists for feature |
 
 ---
@@ -46,7 +49,7 @@ argument-hint: <operation> <feature-name>
 
 **Execution:**
 1. Parse operation and feature-name from arguments
-2. Validate operation is valid (write/update)
+2. Validate operation is valid (write/write-lite/update)
 3. Check prerequisites for the operation
 4. Route to `testcase-writer` agent with matching skill
 5. Return results
@@ -56,7 +59,8 @@ argument-hint: <operation> <feature-name>
 ## Quick Reference
 
 ```
-/testcase write {feature}           -> Generate testcases
+/testcase write {feature}           -> Generate testcases (full)
+/testcase write-lite {feature}      -> Generate testcases (lean, spec-only)
 /testcase update {feature}          -> Update existing testcases
 ```
 

@@ -88,7 +88,8 @@ export class FeatureKnowledgeService {
     filename: string,
     mimeType: string,
     customPrompt: string,
-    aiConfig: AIConfig
+    aiConfig: AIConfig,
+    skipAi?: boolean
   ): Promise<{ content: string }> {
     let rawContent: string
 
@@ -100,11 +101,20 @@ export class FeatureKnowledgeService {
       rawContent = fileBuffer.toString('utf-8')
     } else if (mimeType === 'text/plain' || filename.endsWith('.txt')) {
       rawContent = fileBuffer.toString('utf-8')
+    } else if (
+      mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+      filename.endsWith('.docx')
+    ) {
+      const mammoth = await import('mammoth')
+      const result = await mammoth.extractRawText({ buffer: fileBuffer })
+      rawContent = result.value
     } else {
-      throw new Error('Unsupported file type. Only PDF, Markdown, and TXT files are supported.')
+      throw new Error('Unsupported file type. Only PDF, Markdown, TXT, and DOCX files are supported.')
     }
 
-    const structured = await AIService.structureKnowledge(rawContent, customPrompt, aiConfig)
+    const structured = skipAi
+      ? { content: rawContent }
+      : await AIService.structureKnowledge(rawContent, customPrompt, aiConfig)
 
     // If re-importing same file, delete old section first
     const existing = await this.getByName(name)

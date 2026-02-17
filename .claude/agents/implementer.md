@@ -118,30 +118,51 @@ Write code, then verify:
 
 - **Ask First**: ALWAYS list actions and get approval before ANY coding
 - **Wireframe for UI**: Any task with UI changes MUST show wireframe before approval
+- **Modular Monolith**: Every feature is a self-contained module (see Architecture below)
 - **DRY**: Reuse existing components and utilities
 - **TypeScript**: Strict typing, no `any`
 - **Clean**: Proper error handling, no hardcoded values
 - **File-based**: No database, use markdown files
 
+## Architecture: Modular Monolith
+
+**Module = Domain Feature.** Each module owns its full vertical slice: data → service → route → page → components.
+
+| Module | Service | Route | Page | Components |
+|--------|---------|-------|------|------------|
+| Design System | DesignSystemService | design-system.ts | DesignSystemPage | components/design-system/ |
+| Feature Knowledge | FeatureKnowledgeService | feature-knowledge.ts | FeatureKnowledgePage | components/feature-knowledge/ |
+| Testcase | TestcaseService | testcase.ts | TestcaseManagerPage | components/testcase/ |
+
+**Rules:**
+- **No cross-module imports** — modules communicate via API only, never import another module's service or component
+- **New feature = new module** — create: service + route + page + components subfolder
+- **Shared code** — only truly generic utilities go in shared folders (hooks/, utils/)
+- **Colocation** — module-specific components live in `components/{module}/`, not top-level
+
 ## Project Structure
 
 ```
 source/
-├── design-system/      # Component docs (.md)
-├── feature-knowledge/  # Feature knowledge items
-└── testcase/           # QA testcase data
+├── design-system/      # [MODULE] Component docs (.md)
+├── feature-knowledge/  # [MODULE] Feature knowledge items
+└── testcase/           # [MODULE] QA testcase data
 
 client/
 ├── src/
-│   ├── components/     # Reusable React components
-│   ├── pages/          # Page components
-│   ├── hooks/          # Custom hooks
-│   └── utils/          # Helpers
+│   ├── components/
+│   │   ├── design-system/    # [MODULE] Design System components
+│   │   ├── feature-knowledge/ # [MODULE] Feature Knowledge components
+│   │   ├── testcase/          # [MODULE] Testcase components
+│   │   └── *.tsx              # Shared components only
+│   ├── pages/          # Page components (one per module)
+│   ├── hooks/          # Shared hooks only (generic)
+│   └── utils/          # Shared helpers only (generic)
 
 server/
-├── routes/             # Express routes
-├── services/           # File-based services
-└── utils/              # Server utilities
+├── routes/             # Express routes (one per module)
+├── services/           # File-based services (one per module)
+└── utils/              # Shared server utilities
 ```
 
 ## Implementation Patterns
@@ -212,3 +233,5 @@ export function {Name}({ ...props }: {Name}Props) { return (/* JSX */) }
 - Modify files outside scope
 - Use `any` type in TypeScript
 - Skip error handling
+- Import another module's service/component directly (use API)
+- Put module-specific code in shared folders (hooks/, utils/)

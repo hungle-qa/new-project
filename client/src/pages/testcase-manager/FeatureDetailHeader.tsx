@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Trash2, RefreshCw, Check, Pencil } from 'lucide-react'
 
 interface FeatureDetailHeaderProps {
@@ -51,6 +52,27 @@ export function FeatureDetailHeader({
   setShowDigestLiteWarnings,
   onDelete,
 }: FeatureDetailHeaderProps) {
+  const [liteStatus, setLiteStatus] = useState<{ status: string; reason?: string } | null>(null)
+
+  useEffect(() => {
+    if (!feature) return
+    setLiteStatus(null)
+    fetch(`/api/testcase/${feature}/context-digest-lite/status`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => { if (data) setLiteStatus(data) })
+      .catch(() => {})
+  }, [feature])
+
+  // Refresh freshness after digest-lite update completes
+  useEffect(() => {
+    if (digestLiteDone && feature) {
+      fetch(`/api/testcase/${feature}/context-digest-lite/status`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => { if (data) setLiteStatus(data) })
+        .catch(() => {})
+    }
+  }, [digestLiteDone, feature])
+
   const handleUpdateContext = async () => {
     if (!feature || digestUpdating) return
     setDigestUpdating(true)
@@ -180,6 +202,19 @@ export function FeatureDetailHeader({
               </>
             )}
           </button>
+          {liteStatus && (
+            <span
+              className={`px-2 py-1 text-xs font-medium rounded-md ${
+                liteStatus.status === 'FRESH'
+                  ? 'text-green-700 bg-green-50 border border-green-200'
+                  : 'text-amber-700 bg-amber-50 border border-amber-200'
+              }`}
+              title={liteStatus.reason ? `Reason: ${liteStatus.reason}` : undefined}
+            >
+              {liteStatus.status === 'FRESH' ? 'Fresh' : 'Stale'}
+              {liteStatus.reason === 'low-quality-digest' && ' (low quality)'}
+            </span>
+          )}
           {digestLiteWarnings.length > 0 && (
             <button
               onClick={() => setShowDigestLiteWarnings(!showDigestLiteWarnings)}

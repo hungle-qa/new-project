@@ -33,7 +33,7 @@ export function UploadZone({ selectedFile, isDragging, onFileSelect, onDragState
       <input
         ref={fileInputRef}
         type="file"
-        accept=".pdf,.md,.txt,.docx"
+        accept=".pdf,.md,.txt"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) onFileSelect(f) }}
         className="hidden"
       />
@@ -49,7 +49,7 @@ export function UploadZone({ selectedFile, isDragging, onFileSelect, onDragState
         <div>
           <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
           <p className="text-sm text-gray-600">Drag and drop a file, or click to browse</p>
-          <p className="text-xs text-gray-500">PDF, Markdown, TXT, or DOCX (max 10MB)</p>
+          <p className="text-xs text-gray-500">PDF, Markdown, or TXT (max 10MB)</p>
         </div>
       )}
     </div>

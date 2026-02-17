@@ -101,15 +101,8 @@ export class FeatureKnowledgeService {
       rawContent = fileBuffer.toString('utf-8')
     } else if (mimeType === 'text/plain' || filename.endsWith('.txt')) {
       rawContent = fileBuffer.toString('utf-8')
-    } else if (
-      mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-      filename.endsWith('.docx')
-    ) {
-      const mammoth = await import('mammoth')
-      const result = await mammoth.extractRawText({ buffer: fileBuffer })
-      rawContent = result.value
     } else {
-      throw new Error('Unsupported file type. Only PDF, Markdown, TXT, and DOCX files are supported.')
+      throw new Error('Unsupported file type. Only PDF, Markdown, and TXT files are supported.')
     }
 
     const structured = skipAi

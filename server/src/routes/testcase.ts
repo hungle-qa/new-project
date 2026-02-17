@@ -12,12 +12,12 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    const allowedExtensions = ['.pdf', '.md', '.txt', '.docx']
+    const allowedExtensions = ['.pdf', '.md', '.txt']
     const isValid = allowedExtensions.some(ext => file.originalname.toLowerCase().endsWith(ext))
     if (isValid) {
       cb(null, true)
     } else {
-      cb(new Error('Only PDF, Markdown, TXT, and DOCX files are allowed'))
+      cb(new Error('Only PDF, Markdown, and TXT files are allowed'))
     }
   },
 })

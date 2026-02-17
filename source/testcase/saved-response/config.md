@@ -1,7 +1,7 @@
 ---
-name: saved-response---upgrade-path
-created: '2026-02-16'
-updated: '2026-02-16'
+name: saved-response
+created: '2026-02-17'
+updated: '2026-02-17'
 strategy: ''
 structure: []
 scope:

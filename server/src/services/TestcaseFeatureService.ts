@@ -143,19 +143,19 @@ export class TestcaseFeatureService {
     let rawContent: string
 
     if (mimeType === 'application/pdf') {
-      const pdfParse = await import('pdf-parse')
-      rawContent = (await pdfParse.default(fileBuffer)).text
+      if (skipAi) {
+        const { parsePdfWithBullets } = await import('./PdfBulletParser')
+        rawContent = await parsePdfWithBullets(fileBuffer)
+      } else {
+        const pdfParse = await import('pdf-parse')
+        rawContent = (await pdfParse.default(fileBuffer)).text
+      }
     } else if (mimeType === 'text/markdown' || filename.endsWith('.md')) {
       rawContent = fileBuffer.toString('utf-8')
     } else if (mimeType === 'text/plain' || filename.endsWith('.txt')) {
       rawContent = fileBuffer.toString('utf-8')
-    } else if (
-      mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-      filename.endsWith('.docx')
-    ) {
-      rawContent = (await (await import('mammoth')).extractRawText({ buffer: fileBuffer })).value
     } else {
-      throw new Error('Unsupported file type. Only PDF, Markdown, TXT, and DOCX files are supported.')
+      throw new Error('Unsupported file type. Only PDF, Markdown, and TXT files are supported.')
     }
 
     const finalContent = skipAi

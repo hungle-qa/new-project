@@ -4,6 +4,11 @@ declare module 'pdf-parse' {
     numpages: number
     info: Record<string, unknown>
   }
-  function pdfParse(dataBuffer: Buffer): Promise<PDFData>
+  interface PDFOptions {
+    pagerender?: (pageData: any) => Promise<string>
+    max?: number
+    version?: string
+  }
+  function pdfParse(dataBuffer: Buffer, options?: PDFOptions): Promise<PDFData>
   export = pdfParse
 }

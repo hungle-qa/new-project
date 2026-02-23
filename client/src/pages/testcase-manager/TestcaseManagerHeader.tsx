@@ -1,10 +1,12 @@
 import { Plus, ScrollText, Table } from 'lucide-react'
-import { TabType } from './types'
+import { TabType, TestcaseMode } from './types'
 
 interface TestcaseManagerHeaderProps {
   featureCount: number
   activeTab: TabType
   isGlobalTabActive: boolean
+  mode: TestcaseMode
+  onModeChange: (mode: TestcaseMode) => void
   onGlobalTab: (tab: TabType) => void
   onCreateClick: () => void
 }
@@ -13,6 +15,8 @@ export function TestcaseManagerHeader({
   featureCount,
   activeTab,
   isGlobalTabActive,
+  mode,
+  onModeChange,
   onGlobalTab,
   onCreateClick
 }: TestcaseManagerHeaderProps) {
@@ -42,6 +46,14 @@ export function TestcaseManagerHeader({
           <Table className="w-4 h-4" />
           Default Template
         </button>
+        <select
+          value={mode}
+          onChange={(e) => onModeChange(e.target.value as TestcaseMode)}
+          className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md bg-white hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="full">Full</option>
+          <option value="lite">Lite</option>
+        </select>
       </div>
       <div className="flex items-center gap-4">
         <span className="text-sm text-gray-500">{featureCount} features</span>

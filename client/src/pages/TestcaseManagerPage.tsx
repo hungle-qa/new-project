@@ -7,7 +7,7 @@ import { DeleteFeatureModal } from './testcase-manager/DeleteFeatureModal'
 import { TestcaseManagerHeader } from './testcase-manager/TestcaseManagerHeader'
 import { FeatureDetailPanel } from './testcase-manager/FeatureDetailPanel'
 import { GlobalTabsPanel } from './testcase-manager/GlobalTabsPanel'
-import { FeatureConfig, FeatureSummary, TabType } from './testcase-manager/types'
+import { FeatureConfig, FeatureSummary, TabType, TestcaseMode, getVisibleTabs } from './testcase-manager/types'
 
 export function TestcaseManagerPage() {
   const [features, setFeatures] = useState<FeatureSummary[]>([])
@@ -26,6 +26,7 @@ export function TestcaseManagerPage() {
   const [digestDone, setDigestDone] = useState(false)
   const [digestWarnings, setDigestWarnings] = useState<string[]>([])
   const [showDigestWarnings, setShowDigestWarnings] = useState(false)
+  const [mode, setMode] = useState<TestcaseMode>('full')
 
   // Unsaved changes guard
   const [isDirty, setIsDirty] = useState(false)
@@ -93,10 +94,12 @@ export function TestcaseManagerPage() {
     }
   }
 
+  const firstVisibleTab = () => getVisibleTabs(mode)[0].id
+
   const handleSelectFeature = (name: string) => {
     guardedNavigate(() => {
       setSelectedFeature(name)
-      setActiveTab('strategy')
+      setActiveTab(firstVisibleTab())
       loadConfig(name)
     })
   }
@@ -104,7 +107,7 @@ export function TestcaseManagerPage() {
   const handleCreated = (name: string) => {
     fetchFeatures()
     setSelectedFeature(name)
-    setActiveTab('strategy')
+    setActiveTab(firstVisibleTab())
     loadConfig(name)
   }
 
@@ -166,6 +169,14 @@ export function TestcaseManagerPage() {
     guardedNavigate(() => setActiveTab(tab))
   }
 
+  const handleModeChange = (newMode: TestcaseMode) => {
+    setMode(newMode)
+    const visible = getVisibleTabs(newMode)
+    if (selectedFeature && !visible.some(t => t.id === activeTab)) {
+      setActiveTab(visible[0].id)
+    }
+  }
+
   const handleGlobalTab = (tab: TabType) => {
     guardedNavigate(() => {
       setSelectedFeature(null)
@@ -185,6 +196,8 @@ export function TestcaseManagerPage() {
         featureCount={features.length}
         activeTab={activeTab}
         isGlobalTabActive={!selectedFeature}
+        mode={mode}
+        onModeChange={handleModeChange}
         onGlobalTab={handleGlobalTab}
         onCreateClick={() => setIsCreateOpen(true)}
       />
@@ -208,6 +221,7 @@ export function TestcaseManagerPage() {
               feature={selectedFeature}
               config={config}
               activeTab={activeTab}
+              mode={mode}
               isEditing={isEditing}
               editName={editName}
               setEditName={setEditName}

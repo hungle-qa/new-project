@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Download, FileText, Eye, Trash2, Copy, Check } from 'lucide-react'
+import { FileText, Eye, Trash2, Copy, Check } from 'lucide-react'
 import { parseCSV } from './csvUtils'
 import { CsvPreviewModal } from './CsvPreviewModal'
+import { TestcaseMode } from '../../pages/testcase-manager/types'
 
 interface ReviewExportTabProps {
   feature: string
+  mode: TestcaseMode
 }
 
-export function ReviewExportTab({ feature }: ReviewExportTabProps) {
+export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
   const [csvFiles, setCsvFiles] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [previewFile, setPreviewFile] = useState<string | null>(null)
@@ -16,6 +18,7 @@ export function ReviewExportTab({ feature }: ReviewExportTabProps) {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [copiedCmd, setCopiedCmd] = useState<'write' | 'write-lite' | null>(null)
+  const [copiedFile, setCopiedFile] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
@@ -54,10 +57,6 @@ export function ReviewExportTab({ feature }: ReviewExportTabProps) {
     setPreviewContent(null)
   }
 
-  const handleDownload = (filename: string) => {
-    window.open(`/api/testcase/${feature}/results/${filename}?download=true`, '_blank')
-  }
-
   const handleDelete = async (filename: string) => {
     setDeleting(true)
     try {
@@ -76,6 +75,29 @@ export function ReviewExportTab({ feature }: ReviewExportTabProps) {
     }
   }
 
+  const handleCopyTsv = async (filename: string) => {
+    try {
+      const res = await fetch(`/api/testcase/${feature}/results/${filename}`)
+      const data = await res.json()
+      if (data.content) {
+        const rows = parseCSV(data.content)
+        const tsv = rows.map(row =>
+          row.map(cell => {
+            if (cell.includes('\t') || cell.includes('\n') || cell.includes('"')) {
+              return `"${cell.replace(/"/g, '""')}"`
+            }
+            return cell
+          }).join('\t')
+        ).join('\n')
+        await navigator.clipboard.writeText(tsv)
+        setCopiedFile(filename)
+        setTimeout(() => setCopiedFile(null), 2000)
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   if (loading) {
     return <div className="text-center py-8 text-gray-500 text-sm">Loading results...</div>
   }
@@ -85,7 +107,7 @@ export function ReviewExportTab({ feature }: ReviewExportTabProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-gray-700">Generated Testcase Results</h3>
         <div className="flex items-center gap-1.5">
-          {(['write', 'write-lite'] as const).map(cmd => {
+          {(mode === 'lite' ? ['write-lite'] as const : mode === 'full' ? ['write'] as const : ['write', 'write-lite'] as const).map(cmd => {
             const isCopied = copiedCmd === cmd
             const label = cmd === 'write' ? 'Full' : 'Lite'
             return (
@@ -115,7 +137,11 @@ export function ReviewExportTab({ feature }: ReviewExportTabProps) {
           <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500 text-sm mb-1">No testcase results yet</p>
           <p className="text-xs text-gray-400">
-            Run <code className="bg-gray-100 px-1 py-0.5 rounded">/testcase write {feature}</code> (full) or <code className="bg-gray-100 px-1 py-0.5 rounded">/testcase write-lite {feature}</code> (lite) to generate
+            {mode === 'lite' ? (
+              <>Run <code className="bg-gray-100 px-1 py-0.5 rounded">/testcase write-lite {feature}</code> to generate</>
+            ) : (
+              <>Run <code className="bg-gray-100 px-1 py-0.5 rounded">/testcase write {feature}</code> to generate</>
+            )}
           </p>
         </div>
       ) : (
@@ -141,11 +167,14 @@ export function ReviewExportTab({ feature }: ReviewExportTabProps) {
                     Preview
                   </button>
                   <button
-                    onClick={() => handleDownload(filename)}
-                    className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
+                    onClick={() => handleCopyTsv(filename)}
+                    className={`flex items-center gap-1 px-2 py-1 text-xs rounded ${
+                      copiedFile === filename
+                        ? 'text-green-600 bg-green-50'
+                        : 'text-gray-600 bg-gray-100 hover:bg-gray-200'
+                    }`}
                   >
-                    <Download className="w-3 h-3" />
-                    Download
+                    {copiedFile === filename ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy TSV</>}
                   </button>
                   <button
                     onClick={() => setConfirmDelete(filename)}

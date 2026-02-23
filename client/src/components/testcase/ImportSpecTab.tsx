@@ -9,9 +9,11 @@ import { FALLBACK_SPEC_PROMPT, UploadState } from './import-spec/importSpecUtils
 
 interface ImportSpecTabProps {
   feature: string
+  onDirtyChange?: (dirty: boolean) => void
+  saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
-export function ImportSpecTab({ feature }: ImportSpecTabProps) {
+export function ImportSpecTab({ feature, onDirtyChange, saveRef }: ImportSpecTabProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [skipAi, setSkipAi] = useState(true)
   const [defaultPrompt, setDefaultPrompt] = useState('')
@@ -259,8 +261,12 @@ export function ImportSpecTab({ feature }: ImportSpecTabProps) {
         />
 
         <SpecPreview
+          feature={feature}
           loading={loadingSpec}
           content={specContent}
+          onContentChange={setSpecContent}
+          onDirtyChange={onDirtyChange}
+          saveRef={saveRef}
         />
       </div>
 

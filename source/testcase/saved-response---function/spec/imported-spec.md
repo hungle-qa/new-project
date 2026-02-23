@@ -1,16 +1,7 @@
 
 
 Saved Response Specifications (WEB)
-Items Note
-Product Item AI-206: Customer Support | Smart Response, Saved Respon se, FAQ Base
-Design https://www.figma.com/design/Adj9bljV5m2lwDoyMV8uEf/I
-        nbox?node-id=11570-34305 Connect your Figma account
-US Epic AIT-1382: Customer Support | Saved Responses QA SUCCESS
-Document @Long Nguyen Phi
-Owner
-Related Event Tracking - Tracking events
-Document
-        Evaluation metric - Saved Response - Evaluation Metrics Spe c
+
 1. Context & Objective
 2. Feature Design
 3. Specifications
@@ -29,11 +20,8 @@ User Story 2: As a coach who frequently messages clients, I want to create a sav
 AC1: Add “Save this response” button to Coach's non-text message
 AC2: Add new saved response from the conversation
 1. Context & Objective
-Users might often repeat similar messages when communicating with clients, leading to inefficiency and inconsistency. The Saved Response feature allows users to create and
+Users might often repeat similar messages when communicating with clients, leading to inefficiency and inconsistency. The Saved Response feature allows users to create and reuse predefined responses - to streamline communication, save time, and maintain consistent tone and quality.
 
-reuse predefined responses - to streamline communication, save time, and maintain consistent tone and quality.
-2. Feature Design https://www.figma.com/design/Adj9bljV5m2lwDoyMV
-8uEf/Inbox?node-id=11609-95526&t=NWLSPvgVkzxO2jpk-4 Connect yo ur Figma account
 3. Specifications
 3. 1. Permissions
 “Saved Responses” feature is available is available on the Pro plan and above.
@@ -271,7 +259,7 @@ AC2: Add
 I am in I click On click the button, then show the new saved response UvKE9u from the a on popup same as AC1 above conversati Nk-4 Co on conver “Saved Adjust the popup title to “Add To nnect yo sation this
 Saved Responses”
                     ur Figm detail respons
-Leave Title field blank a accou e”
+Leave Title field blank a accounte”
 Pre-populate the Coach's nt button message into the Message field
   If the Coach's message is over
   10,000 characters, then cut the first 10,000 characters of the message to be filled in the field

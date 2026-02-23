@@ -5,12 +5,13 @@ import { ImportSpecTab } from '../../components/testcase/ImportSpecTab'
 import { RulesTab } from '../../components/testcase/RulesTab'
 import { TemplateTab } from '../../components/testcase/TemplateTab'
 import { ReviewExportTab } from '../../components/testcase/ReviewExportTab'
-import { FeatureConfig, TabType } from './types'
+import { FeatureConfig, TabType, TestcaseMode } from './types'
 
 interface FeatureTabContentProps {
   activeTab: TabType
   feature: string
   config: FeatureConfig
+  mode: TestcaseMode
   onSaveConfig: (updates: Partial<FeatureConfig>) => Promise<void>
   onDirtyChange: (dirty: boolean) => void
   onSaveRef: (fn: (() => Promise<void>) | null) => void
@@ -20,6 +21,7 @@ export function FeatureTabContent({
   activeTab,
   feature,
   config,
+  mode,
   onSaveConfig,
   onDirtyChange,
   onSaveRef
@@ -54,7 +56,7 @@ export function FeatureTabContent({
         />
       )}
       {activeTab === 'import-spec' && (
-        <ImportSpecTab feature={feature} />
+        <ImportSpecTab feature={feature} onDirtyChange={onDirtyChange} saveRef={onSaveRef} />
       )}
       {activeTab === 'rules' && (
         <RulesTab
@@ -73,7 +75,7 @@ export function FeatureTabContent({
         />
       )}
       {activeTab === 'review-export' && (
-        <ReviewExportTab feature={feature} />
+        <ReviewExportTab feature={feature} mode={mode} />
       )}
     </div>
   )

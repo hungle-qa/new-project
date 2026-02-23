@@ -35,7 +35,7 @@ Extract every US (id + title), AC (id + description), Given/When/Then. Every AC 
 
 **GWT Mapping:** Given → first step(s) IF unique context, DROP if obvious. When → numbered steps. Then → `- SHOULD ...` in Expectation.
 
-**Title (NEVER empty):** Every row MUST have a Title. Short noun-phrase label, NOT steps. Max ~8 words, unique per row. Describes WHAT, not HOW. Example: "Pro plan", "Free plan - hover tooltip". If Title is blank → you have a bug. Fix before writing.
+**Title (NEVER empty):** Every row MUST have a Title. Short noun-phrase label, NOT steps. Max ~8 words, unique per row. Describes WHAT, not HOW. **No AC prefix repetition:** Do NOT repeat context already present in the AC column. If AC = "Workspace is in Free Plan", title should be "hover tooltip" not "Free plan - hover tooltip". If AC = "Update Billing Page...", title should be "Pro plan highlight" not "Billing - Pro plan highlight". The AC provides the grouping context — the Title differentiates rows WITHIN that group. Example good titles: "button disabled with upgrade icon", "Owner/Admin click navigates to billing", "Pro plan display option". If Title is blank → you have a bug. Fix before writing.
 
 **Rules:**
 1. Every AC → at least one row
@@ -43,17 +43,35 @@ Extract every US (id + title), AC (id + description), Given/When/Then. Every AC 
 3. **Single-assertion (STRICT):** Each row = exactly ONE `- SHOULD ...` verifying ONE thing. If a SHOULD contains "and" or "+" joining two checks → split into separate rows. Example: "- SHOULD block function and show popup" → row 1: "- SHOULD block function", row 2: "- SHOULD show popup".
 4. Priority: rules mapping if available; default High (main) / Medium (secondary)
 
-**Ordering:** E2E flow within each AC: setup → action → verify. **Sub-component grouping:** When multiple sub-components share the same AC (e.g., Pro plan and Studio plan), group ALL cases for one sub-component together before moving to the next. Do NOT interleave. Example: Pro-show → Pro-highlight → Studio-show → Studio-no-highlight (CORRECT). Pro-show → Studio-show → Pro-highlight → Studio-no-highlight (WRONG — interleaved).
+**Ordering (lifecycle):** Within each AC, order rows by this lifecycle:
+1. **Empty/default state** — What user sees before any interaction (empty list, disabled buttons, placeholders)
+2. **Change/action** — User interactions, invalid actions FIRST then valid actions (e.g., input max chars → paste truncation → valid input)
+3. **Progress after action** — What happens during/after action (loading, state changes)
+4. **End action** — Closing actions (Save, Cancel, Close, Submit)
+5. **Verify result** — Final outcomes (toast messages, UI updates, data persistence)
+
+**Lifecycle applies at EVERY level:** This ordering applies to the AC as a whole AND to each sub-component within the AC. Example: FREQUENTLY USED section → "hidden when empty" (empty state) MUST come BEFORE "shows top 5" (populated state). Never show populated/active state before its empty/default state.
+
+**Sub-component grouping:** When multiple sub-components share the same AC (e.g., Pro plan and Studio plan), group ALL cases for one sub-component together before moving to the next. Do NOT interleave.
+
+**IDs:** Sequential from 1. **CSV columns:** `No., US, AC, Step, Title, Expectation, Priority`
+
+**Dedup (merged-cell):** Group by US → AC. US/AC/Steps → blank if same as previous row. Title NEVER blanked.
 
 **High-level steps:** "Login as Admin" not detailed login steps. Detail only feature-specific actions.
 
-**Dedup (merged-cell):** Group by US → AC. US/AC/Steps → blank if same as previous row. Title NEVER blanked.
+**Step continuation (CRITICAL):** Within the same AC, NEVER repeat setup steps already established in a prior row. Treat all rows in an AC as ONE continuous numbered flow:
+- **First row:** Show ALL steps including setup (e.g., `1. Login as Coach\n2. Open a conversation in Inbox\n3. Click Saved Responses button\n4. Verify modal`)
+- **Subsequent rows:** Show ONLY the new/different step(s) with continued numbering. If prior row ended at step 4, next row starts at step 5.
+- **Alternative paths:** When a row branches from an earlier step (e.g., different way to trigger same action), continue from the shared step number, not from step 1. Example: Row 3 = "1. Login\n2. Open conversation\n3. Click button\n4. Verify modal", Row 4 = "3. Press Ctrl/Cmd + K\n4. Verify modal" (shares steps 1-2, diverges at step 3).
+- **NEVER restart from step 1** in subsequent rows of the same AC unless the setup is fundamentally different (e.g., different role or different precondition)
+
+**Verify step (MANDATORY):** Every testcase SHOULD end with a verification step. Format: `{N}. Verify {component/button/screen/element}`. This is the final step that tells the tester what to check. Example: `4. Verify tooltip displays correctly`. Exception: If the row has blank steps (deduped from prior row with same steps), no verify step needed.
 
 **Variant dedup (CRITICAL):**
 - **Case A — Same expectation:** Merge into ONE row. Title = "Trial / Pro / Studio / Bundle plan", Steps use `{plan}` placeholder.
 - **Case B — Different expectation:** Row 1 = full Steps + variant Title. Row 2+ = Steps blank, variant Title, specific Expectation.
 
-**IDs:** Sequential from 1. **CSV columns:** `No., US, AC, Step, Title, Expectation, Priority`
 
 ### Step 4: Write CSV (JSON-first approach)
 
@@ -65,9 +83,10 @@ Output the testcase matrix as a **JSON array of objects** with these exact keys:
 
 ```json
 [
-  { "no": 1, "us": "US1: title", "ac": "AC1: desc", "step": "1. Do X\n2. Do Y", "title": "My title", "expectation": "- SHOULD verify Z", "priority": "High" },
-  { "no": 2, "us": null, "ac": null, "step": "1. Do X\n2. Do Y\n3. Do Z", "title": "Different title", "expectation": "- SHOULD verify W", "priority": "High" },
-  { "no": 3, "us": null, "ac": null, "step": null, "title": "Variant title", "expectation": "- SHOULD verify V", "priority": "Medium" }
+  { "no": 1, "us": "US1: title", "ac": "AC1: desc", "step": "1. Login as Coach\n2. Open feature\n3. Click button\n4. Verify modal", "title": "modal shown on click", "expectation": "- SHOULD display modal", "priority": "High" },
+  { "no": 2, "us": null, "ac": null, "step": "3. Press shortcut Ctrl+K\n4. Verify modal", "title": "modal shown via shortcut", "expectation": "- SHOULD display modal via shortcut", "priority": "High" },
+  { "no": 3, "us": null, "ac": null, "step": "5. Click X button\n6. Verify modal closes", "title": "X button closes modal", "expectation": "- SHOULD close the modal", "priority": "High" },
+  { "no": 4, "us": null, "ac": null, "step": null, "title": "Variant title", "expectation": "- SHOULD verify V", "priority": "Medium" }
 ]
 ```
 
@@ -114,11 +133,3 @@ fs.writeFileSync('source/testcase/{feature}/result/{feature}-testcase-lite-{time
 **Context Preview (MANDATORY in summary):** After the summary table, show:
 1. **Spec understood** — For each US/AC, list the reconstructed GIVEN/WHEN/THEN in bullet form so user can verify what agent parsed
 2. **Rules applied** — List key rules from rules.md that influenced generation (priority mapping, ordering, constraints)
-
-## Error Handling
-
-| Error | Response |
-|-------|----------|
-| No spec | "No spec found. Import via Web UI first." |
-| No rules | "No rules found. Using default priority (High/Medium)." |
-| Empty GWT | "AC {id} missing Given/When/Then. Add structured criteria." |

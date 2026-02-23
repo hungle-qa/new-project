@@ -1,11 +1,12 @@
 import { FeatureDetailHeader } from './FeatureDetailHeader'
 import { FeatureTabContent } from './FeatureTabContent'
-import { FeatureConfig, TabType, featureTabs } from './types'
+import { FeatureConfig, TabType, TestcaseMode, getVisibleTabs } from './types'
 
 interface FeatureDetailPanelProps {
   feature: string
   config: FeatureConfig
   activeTab: TabType
+  mode: TestcaseMode
   isEditing: boolean
   editName: string
   setEditName: (name: string) => void
@@ -32,6 +33,7 @@ export function FeatureDetailPanel(props: FeatureDetailPanelProps) {
       {/* Header */}
       <FeatureDetailHeader
         feature={props.feature}
+        mode={props.mode}
         isEditing={props.isEditing}
         editName={props.editName}
         setEditName={props.setEditName}
@@ -50,7 +52,7 @@ export function FeatureDetailPanel(props: FeatureDetailPanelProps) {
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200 overflow-x-auto">
-        {featureTabs.map(({ id, label, icon: Icon }) => (
+        {getVisibleTabs(props.mode).map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => props.onTabChange(id)}
@@ -71,6 +73,7 @@ export function FeatureDetailPanel(props: FeatureDetailPanelProps) {
         activeTab={props.activeTab}
         feature={props.feature}
         config={props.config}
+        mode={props.mode}
         onSaveConfig={props.onSaveConfig}
         onDirtyChange={props.onDirtyChange}
         onSaveRef={props.onSaveRef}

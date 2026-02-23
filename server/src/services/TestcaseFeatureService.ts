@@ -176,9 +176,29 @@ export class TestcaseFeatureService {
     } catch { return null }
   }
 
+  static async updateSpec(name: string, content: string): Promise<void> {
+    const specPath = path.join(SOURCE_DIR, name, 'spec', 'imported-spec.md')
+    await fs.writeFile(specPath, content)
+  }
+
   static async getResults(name: string): Promise<string[]> {
     try {
-      return (await fs.readdir(path.join(SOURCE_DIR, name, 'result'))).filter(f => f.endsWith('.csv'))
+      const resultDir = path.join(SOURCE_DIR, name, 'result')
+      const files = await fs.readdir(resultDir)
+      const csvFiles = files.filter(f => f.endsWith('.csv'))
+
+      // Get file stats for sorting by modification time
+      const filesWithStats = await Promise.all(
+        csvFiles.map(async (file) => {
+          const stats = await fs.stat(path.join(resultDir, file))
+          return { file, mtime: stats.mtime }
+        })
+      )
+
+      // Sort by modification time descending (newest first)
+      filesWithStats.sort((a, b) => b.mtime.getTime() - a.mtime.getTime())
+
+      return filesWithStats.map(f => f.file)
     } catch { return [] }
   }
 

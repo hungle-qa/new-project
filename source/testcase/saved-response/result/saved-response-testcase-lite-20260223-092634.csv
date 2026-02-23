@@ -1,0 +1,49 @@
+No.,US,AC,Step,Title,Expectation,Priority
+1,"US1: As a coach, I should be able to see the ""Saved Responses"" button in Inbox if the workspace subscription is a Paid plan (from Pro) or Trial Plan",AC1: Workspace is in Trial or Paid plans,"1. Login as Coach
+2. Ensure workspace is in {plan}
+3. Open Inbox tab
+4. Verify ""Saved Responses"" button",button enabled,"- SHOULD display ""Saved Responses"" button as enabled in the inbox chat",High
+2,,,,save and use saved message,- SHOULD allow user to save and use saved message as current behavior,High
+3,,AC2: Workspace is in Free Plan,"1. Login as Coach
+2. Ensure workspace is in Free Plan
+3. Open Inbox tab
+4. Verify ""Saved Responses"" button",button disabled with upgrade icon,"- SHOULD disable the ""Saved Responses"" button and show upgrade icon",High
+4,,,"5. Hover on the upgrade icon
+6. Verify tooltip",hover tooltip,"- SHOULD display tooltip ""Upgrade to use Save Response feature""",High
+5,,,,hover button state,- SHOULD change button state as in the design,Medium
+6,,,"1. Login as Owner/Admin
+2. Ensure workspace is in Free Plan
+3. Open Inbox tab
+4. Click ""Saved Responses"" button
+5. Verify billing page",Owner/Admin click navigates to billing,"- SHOULD navigate to billing page which focuses on ""Pro"" plan",High
+7,,,,billing page current behavior,- SHOULD display other current behavior in billing page following current logics,Medium
+8,,,"1. Login as Trainer
+2. Ensure workspace is in Free Plan
+3. Open Inbox tab
+4. Click ""Saved Responses"" button
+5. Verify pop-up",Trainer click shows upgrade pop-up,- SHOULD show pop-up informing trainer to reach out to workspace owner for upgrade,High
+9,,,,Trainer pop-up shows owner name,- SHOULD display workspace owner's name in the pop-up,Medium
+10,,,,Trainer pop-up same as broadcast,- SHOULD show same pop-up design as broadcast feature upgrade pop-up,Medium
+11,,,"6. Click ""x"" on pop-up
+7. Verify pop-up closes",Trainer close pop-up,- SHOULD close the upgrade pop-up,Medium
+12,,"AC3: Update Billing Page with ""Saved Responses"" option","1. Login as Owner/Admin
+2. Navigate to Billing page
+3. View ""Compare"" section
+4. Verify ""Saved Responses"" option in Pro plan",Pro plan display option,"- SHOULD display ""Saved Responses"" option in Pro plan in ""Compare"" section",High
+13,,,,Pro plan highlight,"- SHOULD highlight ""Saved Responses"" option in ""Pro"" plan",High
+14,,,"5. Verify ""Saved Responses"" option in Studio plan",Studio plan display option,"- SHOULD display ""Saved Responses"" option in Studio plan in ""Compare"" section",High
+15,,,,Studio plan no highlight,"- SHOULD not highlight ""Saved Responses"" option in ""Studio"" plan",High
+16,,,,option title,"- SHOULD display title ""Saved Responses""",Medium
+17,,,"6. Hover on ""Saved Responses"" option
+7. Verify tooltip",hover tooltip,"- SHOULD show tooltip ""Save and reuse message templates to respond to client inquiries instantly from your Inbox.""",High
+18,,,"1. Login as Owner/Admin
+2. Ensure workspace is in Bundle plan
+3. Navigate to Billing page
+4. View billing modal
+5. Verify ""Saved Responses"" option",Bundle plan no option,"- SHOULD not display ""Saved Responses"" option in the billing modal",Medium
+19,,AC4: Downgrade plan case,"1. Login as Trainer
+2. Ensure workspace is in {plan}
+3. Open Saved Responses function
+4. Admin/Owner downgrades workspace to Free plan
+5. Verify Saved Responses function",block Saved Responses function,- SHOULD block the Saved Responses function,High
+20,,,,request trainer log out with pop-up,- SHOULD request the trainer to log out and show pop-up same as broadcast feature downgrade,High

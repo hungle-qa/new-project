@@ -1,7 +1,9 @@
 import { Trash2, RefreshCw, Check, Pencil } from 'lucide-react'
+import { TestcaseMode } from './types'
 
 interface FeatureDetailHeaderProps {
   feature: string
+  mode: TestcaseMode
   isEditing: boolean
   editName: string
   setEditName: (name: string) => void
@@ -20,6 +22,7 @@ interface FeatureDetailHeaderProps {
 
 export function FeatureDetailHeader({
   feature,
+  mode,
   isEditing,
   editName,
   setEditName,
@@ -83,40 +86,44 @@ export function FeatureDetailHeader({
           )}
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleUpdateContext}
-            disabled={digestUpdating}
-            className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-md transition-colors ${
-              digestDone
-                ? 'text-green-600 bg-green-50 border border-green-200'
-                : 'text-gray-600 bg-gray-100 hover:bg-gray-200 border border-gray-200'
-            } disabled:opacity-50`}
-          >
-            {digestUpdating ? (
-              <>
-                <span className="w-3.5 h-3.5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-                Updating...
-              </>
-            ) : digestDone ? (
-              <>
-                <Check className="w-4 h-4" />
-                Updated!
-              </>
-            ) : (
-              <>
-                <RefreshCw className="w-4 h-4" />
-                Update Context
-              </>
-            )}
-          </button>
-          {digestWarnings.length > 0 && (
-            <button
-              onClick={() => setShowDigestWarnings(!showDigestWarnings)}
-              className="flex items-center gap-1 px-2 py-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md hover:bg-amber-100"
-              title="Digest generation warnings"
-            >
-              <span className="font-medium">{digestWarnings.length}</span> warning{digestWarnings.length > 1 ? 's' : ''}
-            </button>
+          {mode === 'full' && (
+            <>
+              <button
+                onClick={handleUpdateContext}
+                disabled={digestUpdating}
+                className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-md transition-colors ${
+                  digestDone
+                    ? 'text-green-600 bg-green-50 border border-green-200'
+                    : 'text-gray-600 bg-gray-100 hover:bg-gray-200 border border-gray-200'
+                } disabled:opacity-50`}
+              >
+                {digestUpdating ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                    Updating...
+                  </>
+                ) : digestDone ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Updated!
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    Update Context
+                  </>
+                )}
+              </button>
+              {digestWarnings.length > 0 && (
+                <button
+                  onClick={() => setShowDigestWarnings(!showDigestWarnings)}
+                  className="flex items-center gap-1 px-2 py-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md hover:bg-amber-100"
+                  title="Digest generation warnings"
+                >
+                  <span className="font-medium">{digestWarnings.length}</span> warning{digestWarnings.length > 1 ? 's' : ''}
+                </button>
+              )}
+            </>
           )}
           <button
             onClick={onDelete}

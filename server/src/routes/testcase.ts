@@ -191,6 +191,15 @@ router.get('/:feature/spec', async (req, res) => {
   } catch (error) { res.status(500).json({ error: 'Failed to fetch spec' }) }
 })
 
+// Update spec
+router.put('/:feature/spec', async (req, res) => {
+  try {
+    if (typeof req.body.content !== 'string') return res.status(400).json({ error: 'Content is required' })
+    await TestcaseFeatureService.updateSpec(req.params.feature, req.body.content)
+    res.json({ success: true })
+  } catch (error) { res.status(500).json({ error: 'Failed to update spec' }) }
+})
+
 // Results
 router.get('/:feature/results', async (req, res) => {
   try { res.json(await TestcaseFeatureService.getResults(req.params.feature)) }

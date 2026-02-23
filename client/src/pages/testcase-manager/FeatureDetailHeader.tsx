@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { Trash2, RefreshCw, Check, Pencil } from 'lucide-react'
 
 interface FeatureDetailHeaderProps {
@@ -16,14 +15,6 @@ interface FeatureDetailHeaderProps {
   setDigestDone: (done: boolean) => void
   setDigestWarnings: (warnings: string[]) => void
   setShowDigestWarnings: (show: boolean) => void
-  digestLiteUpdating: boolean
-  digestLiteDone: boolean
-  digestLiteWarnings: string[]
-  showDigestLiteWarnings: boolean
-  setDigestLiteUpdating: (updating: boolean) => void
-  setDigestLiteDone: (done: boolean) => void
-  setDigestLiteWarnings: (warnings: string[]) => void
-  setShowDigestLiteWarnings: (show: boolean) => void
   onDelete: () => void
 }
 
@@ -42,36 +33,8 @@ export function FeatureDetailHeader({
   setDigestDone,
   setDigestWarnings,
   setShowDigestWarnings,
-  digestLiteUpdating,
-  digestLiteDone,
-  digestLiteWarnings,
-  showDigestLiteWarnings,
-  setDigestLiteUpdating,
-  setDigestLiteDone,
-  setDigestLiteWarnings,
-  setShowDigestLiteWarnings,
   onDelete,
 }: FeatureDetailHeaderProps) {
-  const [liteStatus, setLiteStatus] = useState<{ status: string; reason?: string } | null>(null)
-
-  useEffect(() => {
-    if (!feature) return
-    setLiteStatus(null)
-    fetch(`/api/testcase/${feature}/context-digest-lite/status`)
-      .then(res => res.ok ? res.json() : null)
-      .then(data => { if (data) setLiteStatus(data) })
-      .catch(() => {})
-  }, [feature])
-
-  // Refresh freshness after digest-lite update completes
-  useEffect(() => {
-    if (digestLiteDone && feature) {
-      fetch(`/api/testcase/${feature}/context-digest-lite/status`)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => { if (data) setLiteStatus(data) })
-        .catch(() => {})
-    }
-  }, [digestLiteDone, feature])
 
   const handleUpdateContext = async () => {
     if (!feature || digestUpdating) return
@@ -91,27 +54,6 @@ export function FeatureDetailHeader({
       }
     } finally {
       setDigestUpdating(false)
-    }
-  }
-
-  const handleUpdateContextLite = async () => {
-    if (!feature || digestLiteUpdating) return
-    setDigestLiteUpdating(true)
-    setDigestLiteDone(false)
-    setDigestLiteWarnings([])
-    setShowDigestLiteWarnings(false)
-    try {
-      const res = await fetch(`/api/testcase/${feature}/context-digest-lite`, { method: 'POST' })
-      if (res.ok) {
-        const data = await res.json()
-        setDigestLiteDone(true)
-        if (data.warnings?.length > 0) {
-          setDigestLiteWarnings(data.warnings)
-        }
-        setTimeout(() => setDigestLiteDone(false), 3000)
-      }
-    } finally {
-      setDigestLiteUpdating(false)
     }
   }
 
@@ -177,54 +119,6 @@ export function FeatureDetailHeader({
             </button>
           )}
           <button
-            onClick={handleUpdateContextLite}
-            disabled={digestLiteUpdating}
-            className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-md transition-colors ${
-              digestLiteDone
-                ? 'text-green-600 bg-green-50 border border-green-200'
-                : 'text-gray-600 bg-gray-100 hover:bg-gray-200 border border-gray-200'
-            } disabled:opacity-50`}
-          >
-            {digestLiteUpdating ? (
-              <>
-                <span className="w-3.5 h-3.5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-                Updating...
-              </>
-            ) : digestLiteDone ? (
-              <>
-                <Check className="w-4 h-4" />
-                Updated!
-              </>
-            ) : (
-              <>
-                <RefreshCw className="w-4 h-4" />
-                Update Context Lite
-              </>
-            )}
-          </button>
-          {liteStatus && (
-            <span
-              className={`px-2 py-1 text-xs font-medium rounded-md ${
-                liteStatus.status === 'FRESH'
-                  ? 'text-green-700 bg-green-50 border border-green-200'
-                  : 'text-amber-700 bg-amber-50 border border-amber-200'
-              }`}
-              title={liteStatus.reason ? `Reason: ${liteStatus.reason}` : undefined}
-            >
-              {liteStatus.status === 'FRESH' ? 'Fresh' : 'Stale'}
-              {liteStatus.reason === 'low-quality-digest' && ' (low quality)'}
-            </span>
-          )}
-          {digestLiteWarnings.length > 0 && (
-            <button
-              onClick={() => setShowDigestLiteWarnings(!showDigestLiteWarnings)}
-              className="flex items-center gap-1 px-2 py-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md hover:bg-amber-100"
-              title="Digest lite generation warnings"
-            >
-              <span className="font-medium">{digestLiteWarnings.length}</span> warning{digestLiteWarnings.length > 1 ? 's' : ''}
-            </button>
-          )}
-          <button
             onClick={onDelete}
             className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 bg-red-50 rounded-md hover:bg-red-100"
           >
@@ -237,19 +131,6 @@ export function FeatureDetailHeader({
         <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-md">
           <ul className="space-y-1">
             {digestWarnings.map((w, i) => (
-              <li key={i} className="text-xs text-amber-800 flex items-start gap-1.5">
-                <span className="mt-0.5 shrink-0">&#x26A0;</span>
-                {w}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {showDigestLiteWarnings && digestLiteWarnings.length > 0 && (
-        <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-md">
-          <p className="text-xs font-medium text-amber-800 mb-1">Context Lite warnings:</p>
-          <ul className="space-y-1">
-            {digestLiteWarnings.map((w, i) => (
               <li key={i} className="text-xs text-amber-800 flex items-start gap-1.5">
                 <span className="mt-0.5 shrink-0">&#x26A0;</span>
                 {w}

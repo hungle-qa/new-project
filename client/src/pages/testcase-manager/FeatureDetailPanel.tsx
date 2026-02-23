@@ -19,14 +19,6 @@ interface FeatureDetailPanelProps {
   setDigestDone: (done: boolean) => void
   setDigestWarnings: (warnings: string[]) => void
   setShowDigestWarnings: (show: boolean) => void
-  digestLiteUpdating: boolean
-  digestLiteDone: boolean
-  digestLiteWarnings: string[]
-  showDigestLiteWarnings: boolean
-  setDigestLiteUpdating: (updating: boolean) => void
-  setDigestLiteDone: (done: boolean) => void
-  setDigestLiteWarnings: (warnings: string[]) => void
-  setShowDigestLiteWarnings: (show: boolean) => void
   onDelete: () => void
   onTabChange: (tab: TabType) => void
   onSaveConfig: (updates: Partial<FeatureConfig>) => Promise<void>
@@ -53,14 +45,6 @@ export function FeatureDetailPanel(props: FeatureDetailPanelProps) {
         setDigestDone={props.setDigestDone}
         setDigestWarnings={props.setDigestWarnings}
         setShowDigestWarnings={props.setShowDigestWarnings}
-        digestLiteUpdating={props.digestLiteUpdating}
-        digestLiteDone={props.digestLiteDone}
-        digestLiteWarnings={props.digestLiteWarnings}
-        showDigestLiteWarnings={props.showDigestLiteWarnings}
-        setDigestLiteUpdating={props.setDigestLiteUpdating}
-        setDigestLiteDone={props.setDigestLiteDone}
-        setDigestLiteWarnings={props.setDigestLiteWarnings}
-        setShowDigestLiteWarnings={props.setShowDigestLiteWarnings}
         onDelete={props.onDelete}
       />
 

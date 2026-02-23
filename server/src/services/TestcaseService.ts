@@ -2,5 +2,4 @@
 export { TestcaseFeatureService } from './TestcaseFeatureService'
 export { TestcaseConfigService } from './TestcaseConfigService'
 export { TestcaseDigestService } from './TestcaseDigestService'
-export { TestcaseDigestLiteService } from './TestcaseDigestLiteService'
 export * from './TestcaseTypes'

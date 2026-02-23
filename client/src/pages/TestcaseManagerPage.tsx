@@ -26,10 +26,6 @@ export function TestcaseManagerPage() {
   const [digestDone, setDigestDone] = useState(false)
   const [digestWarnings, setDigestWarnings] = useState<string[]>([])
   const [showDigestWarnings, setShowDigestWarnings] = useState(false)
-  const [digestLiteUpdating, setDigestLiteUpdating] = useState(false)
-  const [digestLiteDone, setDigestLiteDone] = useState(false)
-  const [digestLiteWarnings, setDigestLiteWarnings] = useState<string[]>([])
-  const [showDigestLiteWarnings, setShowDigestLiteWarnings] = useState(false)
 
   // Unsaved changes guard
   const [isDirty, setIsDirty] = useState(false)
@@ -225,14 +221,6 @@ export function TestcaseManagerPage() {
               setDigestDone={setDigestDone}
               setDigestWarnings={setDigestWarnings}
               setShowDigestWarnings={setShowDigestWarnings}
-              digestLiteUpdating={digestLiteUpdating}
-              digestLiteDone={digestLiteDone}
-              digestLiteWarnings={digestLiteWarnings}
-              showDigestLiteWarnings={showDigestLiteWarnings}
-              setDigestLiteUpdating={setDigestLiteUpdating}
-              setDigestLiteDone={setDigestLiteDone}
-              setDigestLiteWarnings={setDigestLiteWarnings}
-              setShowDigestLiteWarnings={setShowDigestLiteWarnings}
               onDelete={() => setIsDeleteConfirmOpen(true)}
               onTabChange={handleTabChange}
               onSaveConfig={saveConfig}

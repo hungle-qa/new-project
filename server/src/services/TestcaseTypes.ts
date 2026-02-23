@@ -3,7 +3,6 @@ import path from 'path'
 export const SOURCE_DIR = path.join(__dirname, '../../../source/testcase')
 export const EXCLUDED_DIRS = ['rule', 'template', 'strategy']
 export const CURRENT_DIGEST_VERSION = 2
-export const CURRENT_DIGEST_LITE_VERSION = 1
 
 export interface StructureNode {
   id: string

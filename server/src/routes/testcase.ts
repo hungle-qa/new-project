@@ -3,7 +3,6 @@ import multer from 'multer'
 import { TestcaseFeatureService } from '../services/TestcaseFeatureService'
 import { TestcaseConfigService } from '../services/TestcaseConfigService'
 import { TestcaseDigestService } from '../services/TestcaseDigestService'
-import { TestcaseDigestLiteService } from '../services/TestcaseDigestLiteService'
 import globalRoutes from './testcase-global'
 
 const router = Router()
@@ -107,16 +106,6 @@ router.post('/:feature/context-digest', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to generate context digest' })
   }
-})
-
-router.post('/:feature/context-digest-lite', async (req, res) => {
-  try { res.json(await TestcaseDigestLiteService.generateContextDigestLite(req.params.feature)) }
-  catch (error) { res.status(500).json({ error: error instanceof Error ? error.message : 'Failed to generate context digest lite' }) }
-})
-
-router.get('/:feature/context-digest-lite/status', async (req, res) => {
-  try { res.json(await TestcaseDigestLiteService.checkDigestLiteFreshness(req.params.feature)) }
-  catch (error) { res.status(500).json({ error: 'Failed to check digest lite status' }) }
 })
 
 // --- Per-feature Rules/Template Status ---

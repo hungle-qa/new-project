@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { X, Tag, Expand } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { X, Tag, Expand, StickyNote } from 'lucide-react'
 import {
   extractUniqueTags,
   expandVariantRows,
@@ -14,11 +14,17 @@ interface CsvPreviewModalProps {
   filename: string
   content: string[][]
   loading: boolean
+  feature: string
+  initialNote?: string
   onClose: () => void
+  onNoteSaved?: (filename: string, note: string) => void
 }
 
-export function CsvPreviewModal({ filename, content, loading, onClose }: CsvPreviewModalProps) {
+export function CsvPreviewModal({ filename, content, loading, feature, initialNote, onClose, onNoteSaved }: CsvPreviewModalProps) {
   const headers = content.length > 0 ? content[0] : []
+  const [showNote, setShowNote] = useState(!!initialNote)
+  const [noteText, setNoteText] = useState(initialNote || '')
+  const [saving, setSaving] = useState(false)
 
   const visibleIndices = useMemo(() => {
     return headers
@@ -49,6 +55,21 @@ export function CsvPreviewModal({ filename, content, loading, onClose }: CsvPrev
   // Local filter state
   const { filteredRows, selectedTags, toggleTag, clearTags, expandVariantsOn, toggleExpand } = useTagFilter(content, tagColIdx, variantColIdx, stepsColIdx)
 
+  const toggleNote = () => setShowNote(prev => !prev)
+
+  const handleSaveNote = async () => {
+    setSaving(true)
+    try {
+      await fetch(`/api/testcase/${feature}/results/${filename}/note`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: noteText }),
+      })
+      onNoteSaved?.(filename, noteText)
+    } catch { /* ignore */ }
+    finally { setSaving(false) }
+  }
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
@@ -64,9 +85,22 @@ export function CsvPreviewModal({ filename, content, loading, onClose }: CsvPrev
                 </p>
               )}
             </div>
-            <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded">
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleNote}
+                className={`flex items-center gap-1 px-2.5 py-1.5 text-xs rounded border transition-colors ${
+                  showNote
+                    ? 'bg-yellow-100 text-yellow-800 border-yellow-300'
+                    : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                }`}
+              >
+                <StickyNote className="w-3.5 h-3.5" />
+                Take Note
+              </button>
+              <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Filter Bar */}
@@ -120,6 +154,29 @@ export function CsvPreviewModal({ filename, content, loading, onClose }: CsvPrev
             </div>
           )}
 
+          {/* Note Area */}
+          {showNote && (
+            <div className="px-6 py-3 border-b border-yellow-200 bg-yellow-50">
+              <div className="flex gap-2">
+                <textarea
+                  value={noteText}
+                  onChange={(e) => setNoteText(e.target.value)}
+                  rows={5}
+                  placeholder="Document issues, observations, or notes about this testcase..."
+                  className="flex-1 px-3 py-2 text-sm text-gray-700 border border-yellow-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  autoFocus
+                />
+                <button
+                  onClick={handleSaveNote}
+                  disabled={saving}
+                  className="self-end px-3 py-1.5 text-xs font-medium text-yellow-800 bg-yellow-200 border border-yellow-400 rounded hover:bg-yellow-300 disabled:opacity-50"
+                >
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Body */}
           <div className="flex-1 overflow-auto">
             {loading ? (
@@ -165,8 +222,6 @@ function renderMarkdownBold(text: string) {
 }
 
 // Hook for tag filtering and variant expansion
-import { useState } from 'react'
-
 function useTagFilter(content: string[][], tagColIdx: number, variantColIdx: number, stepsColIdx: number) {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
   const [expandVariantsOn, setExpandVariantsOn] = useState(false)

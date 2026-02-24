@@ -1,0 +1,166 @@
+No.,US,AC,Step,Title,Expectation,Priority
+1,US1: Save and quickly insert predefined responses in chats,AC1: Add Saved Response button in Editor nav,"1. Login as Coach
+2. Open a conversation in Inbox
+3. Verify Saved Responses button in Editor nav",button position next to GIF,- SHOULD display Saved Responses button next to GIF button,High
+2,,,"3. Hover over Saved Responses button
+4. Verify tooltip",button hover tooltip,"- SHOULD show tooltip ""Saved Responses""",Medium
+3,,AC2: Saved Response popup,"1. Login as Coach
+2. Open a conversation in Inbox
+3. Click Saved Responses button
+4. Verify Saved Responses modal",popup opens on button click,- SHOULD display Saved Responses modal with saved responses list,Critical
+4,,,"3. Press Ctrl/Cmd + K
+4. Verify Saved Responses modal",popup opens via keyboard shortcut,- SHOULD display Saved Responses modal,High
+5,,,"5. Click X button
+6. Verify modal closed",X button closes popup,- SHOULD close the modal,High
+6,,,"5. Press Esc key
+6. Verify modal closed",Esc key closes popup,- SHOULD close the modal,Medium
+7,,,"1. Login as Coach with no saved responses
+2. Open a conversation in Inbox
+3. Click Saved Responses button
+4. Verify modal empty state",empty saved responses list,"- SHOULD display empty state with message ""Your saved responses list is empty. Start by creating your first one to save time during chats.""",High
+8,,,5. Verify Create New button,Create New button position,- SHOULD display Create New button in top-right corner of modal,Medium
+9,,,"5. Hover over Create New button
+6. Verify tooltip",Create New button hover tooltip,"- SHOULD show tooltip ""Create New""",Low
+10,,,5. Verify FREQUENTLY USED section (no responses used),FREQUENTLY USED hidden when empty,- SHOULD hide FREQUENTLY USED section when no responses have usage count,Medium
+11,,,5. Verify FREQUENTLY USED section (responses used frequently),FREQUENTLY USED top 5 most-used,- SHOULD show top 5 most-used saved responses in FREQUENTLY USED section,Medium
+12,,,,FREQUENTLY USED fewer than 5,- SHOULD show all available responses when fewer than 5 frequently used,Medium
+13,,,,FREQUENTLY USED sort order,"- SHOULD sort by usage_count descending, then title A-Z when equal",Medium
+14,,,"5. Select a saved response from popup
+6. Reopen Saved Responses popup
+7. Verify FREQUENTLY USED section",usage count increment per selection,- SHOULD increment usage count for that response per user,Medium
+15,,,5. Verify ALL section,ALL section sorted A-Z,- SHOULD list all saved responses sorted by title A-Z in ALL section,Medium
+16,,,,first response selected by default,- SHOULD select the first saved response in the list by default,Medium
+17,,,"5. Press Down/Up arrow keys
+6. Verify selection changes",arrow key navigation,- SHOULD move selection between responses using Up/Down arrow keys,Medium
+18,,,5. Verify right-side detail panel,selected response detail display,- SHOULD show title and message detail of current selected response on right side,High
+19,,,"5. Hover between saved response titles
+6. Verify detail panel updates",hover to preview message detail,- SHOULD update right-side detail when hovering between titles,Medium
+20,,,"5. Hover over message detail area
+6. Verify 3-dot button",3-dot button on hover over detail,- SHOULD show 3-dot button when hovering over message detail,Medium
+21,,,5. Verify message detail with long content,scrollable long message,- SHOULD allow scrolling when message content is long,Low
+22,,,5. Verify saved responses list with more than 20 items,pagination load 20 with load more,- SHOULD load 20 items initially and show Load more on scroll down,Medium
+23,,,5. Verify footer,footer shortcuts display,- SHOULD display list of shortcuts in footer,Low
+24,,AC3: Search box behaviors,"1. Login as Coach
+2. Open a conversation in Inbox
+3. Click Saved Responses button
+4. Verify Search box",default placeholder,"- SHOULD display empty search box with placeholder ""Search saved response""",Medium
+25,,,"5. Click on Search box
+6. Verify placeholder change",focus placeholder change,"- SHOULD change placeholder to ""Enter keyword..."" on focus",Low
+26,,,"5. Type text in Search box
+6. Verify x icon",x icon on input,- SHOULD display x icon when inputting text,Medium
+27,,,"7. Clear text via x icon or Backspace
+8. Verify search cleared",clear search input,- SHOULD remove search text and show full list,Medium
+28,,,"5. Type 1 character in Search box
+6. Verify search results",search starts from 1 character,- SHOULD start searching from 1 character input,Medium
+29,,,,search by title and message,- SHOULD return results where title or message contains search keyword,High
+30,,,,case-insensitive partial match,- SHOULD match case-insensitively and partially,Medium
+31,,,"5. Search with keyword that has no matches
+6. Verify no results",no results found display,"- SHOULD display ""Search results (0)""",Medium
+32,,,"5. Search with keyword that has matches
+6. Verify results",results found with count,"- SHOULD display ""Search results ({N})"" with matching count",Medium
+33,,,,first search result selected,- SHOULD select first search result by default,Medium
+34,,,,search results pagination,- SHOULD load 20 results with Load more on scroll,Low
+35,,AC4: 3-dot button behaviors,"1. Login as Coach
+2. Open a conversation in Inbox
+3. Click Saved Responses button
+4. Hover over a saved response item
+5. Click 3-dot button
+6. Verify submenu",submenu options,"- SHOULD show submenu with ""Edit response"" and ""Delete response"" options",High
+36,,AC5: Add a new saved response,"1. Login as Coach
+2. Open a conversation in Inbox
+3. Click Saved Responses button
+4. Click Create New button
+5. Verify Create Saved Response popup",popup display,"- SHOULD display Create Saved Response popup with title ""Create Saved Response""",High
+37,,,"6. Click X button
+7. Verify popup closed",X button closes popup,- SHOULD close Create Saved Response popup,Medium
+38,,,6. Verify TITLE field,title field default state,"- SHOULD display empty TITLE field with placeholder ""Name this response for easy search""",Medium
+39,,,,title field required,- SHOULD mark TITLE as required field,High
+40,,,"6. Hover over info icon next to TITLE label
+7. Verify tooltip",title field info tooltip,"- SHOULD show tooltip ""Used to organize responses. This won't appear in messages.""",Low
+41,,,"6. Input 140 characters in TITLE field
+7. Attempt to input more
+8. Verify input blocked",title field max 140 characters,- SHOULD not allow input beyond 140 characters,Medium
+42,,,"6. Paste text longer than 140 characters in TITLE field
+7. Verify pasted content",title field paste truncation,- SHOULD paste only first 140 characters,Medium
+43,,,6. Verify MESSAGE field,message field default state,"- SHOULD display empty MESSAGE field with placeholder ""Write the full message you want to send to clients""",Medium
+44,,,,message field required,- SHOULD mark MESSAGE as required field,High
+45,,,"6. Paste formatted text in MESSAGE field
+7. Verify formatting cleared",message field clears formatting on paste,- SHOULD clear text-formatting when pasting formatted text,Medium
+46,,,"6. Input text in MESSAGE field
+7. Verify character counter",message field character counter,"- SHOULD show character count as ""{X}/10000""",Medium
+47,,,"6. Input 10,000 characters in MESSAGE field
+7. Attempt to input more
+8. Verify input blocked",message field max 10000 characters,"- SHOULD not allow input beyond 10,000 characters",Medium
+48,,,"6. Paste text longer than 10,000 characters in MESSAGE field
+7. Verify pasted content",message field paste truncation,"- SHOULD paste only first 10,000 characters",Medium
+49,,,6. Verify Cancel button,Cancel button always enabled,- SHOULD display Cancel button in enabled state,Low
+50,,,"6. Click Cancel button
+7. Verify popup closed",Cancel button closes popup,- SHOULD close Create Saved Response popup,Medium
+51,,,6. Verify Save button with empty fields,Save button disabled by default,- SHOULD display Save button in disabled state when fields are empty,High
+52,,,"6. Input text in both TITLE and MESSAGE fields
+7. Verify Save button",Save button enabled with input,- SHOULD enable Save button when both TITLE and MESSAGE have input,High
+53,,,"6. Input TITLE and MESSAGE
+7. Click Save button
+8. Verify result",save new response success,"- SHOULD add new saved response and show toast ""New Saved Response created.""",Critical
+54,,AC6: Edit a saved response,"1. Login as Coach
+2. Open a conversation in Inbox
+3. Click Saved Responses button
+4. Click 3-dot on a saved response
+5. Click Edit response
+6. Verify Edit Saved Response popup",edit popup display,"- SHOULD display Edit Saved Response popup with title ""Edit Saved Response""",High
+55,,,,title field pre-populated,- SHOULD pre-populate TITLE field with current saved response title,High
+56,,,"7. Click X button without making changes
+8. Verify popup closed",X close without changes,- SHOULD close popup when no changes made,Medium
+57,,,"7. Edit TITLE or MESSAGE field
+8. Click X button
+9. Verify discard popup",X close with unsaved changes,"- SHOULD show Discard Changes popup with title ""Discard Changes?"" and warning text",High
+58,,,"10. Click Cancel on Discard Changes popup
+11. Verify discard popup closed",discard popup cancel,- SHOULD close Discard Changes popup and return to edit form,Medium
+59,,,"10. Click Discard Changes button
+11. Verify all popups closed",discard changes confirmed,- SHOULD close all popups without saving changes,Medium
+60,,,"7. Edit content
+8. Click Save button
+9. Verify result",edit save success,"- SHOULD save changes and show toast ""Saved Response updated successfully.""",Critical
+61,,AC7: Delete a saved response,"1. Login as Coach
+2. Open a conversation in Inbox
+3. Click Saved Responses button
+4. Click 3-dot on a saved response
+5. Click Delete response
+6. Verify confirmation popup",delete confirmation popup,"- SHOULD show confirmation popup with title ""Delete Response?"" and warning text about permanent deletion",High
+62,,,"7. Click Cancel
+8. Verify popup closed",cancel delete,- SHOULD close confirmation popup without deleting,Medium
+63,,,"7. Click OK
+8. Verify response deleted",confirm delete,"- SHOULD delete the response and show toast ""Saved Response deleted.""",Critical
+64,,AC8: Add saved response to chat box by selecting an item,"1. Login as Coach
+2. Open a conversation in Inbox
+3. Type some text in chatbox
+4. Click Saved Responses button
+5. Click on a saved response title or press Enter
+6. Verify chatbox",append response via click or Enter,- SHOULD append full message content into chatbox behind current text,Critical
+65,US2: Create a saved response from a conversation message,"AC1: Add ""Save this response"" button to Coach's non-text message","1. Login as Coach on Pro/Studio plan
+2. Open a conversation in Inbox
+3. Hover over a Coach's non-text message
+4. Verify Save this response button",button position between 3-dot and Reply,- SHOULD display Save this response button between 3-dot and Reply buttons,High
+66,,,"4. Hover over Save this response button
+5. Verify tooltip",button hover tooltip,"- SHOULD show tooltip ""Save this response""",Medium
+67,,,"4. Click Save this response button
+5. Verify popup",button click shows add popup,- SHOULD show add new saved response popup,High
+68,,,"1. Login as Coach on Free plan
+2. Open a conversation in Inbox
+3. Hover over a Coach's non-text message
+4. Verify message actions",button hidden on non-paid plan,- SHOULD not display Save this response button,High
+69,,AC2: Add new saved response from the conversation,"1. Login as Coach on Pro/Studio plan
+2. Open a conversation in Inbox
+3. Hover over a Coach's non-text message
+4. Click Save this response button
+5. Verify popup",popup title adjusted,"- SHOULD show popup with title ""Add To Saved Responses""",High
+70,,,,Title field blank,- SHOULD leave Title field blank,Medium
+71,,,,Message field pre-populated,- SHOULD pre-populate Message field with Coach's message content,High
+72,,,"1. Login as Coach
+2. Open a conversation with Coach's message over 10,000 characters
+3. Hover over the message
+4. Click Save this response button
+5. Verify Message field",message truncation over 10000 chars,"- SHOULD fill first 10,000 characters of message into Message field",Medium
+73,,,"6. Input Title
+7. Click Save button
+8. Verify result",save from conversation success,"- SHOULD add new saved response and show toast ""Response has been saved""",Critical

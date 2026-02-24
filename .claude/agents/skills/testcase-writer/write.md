@@ -20,10 +20,11 @@
 
 ### Step 1: Load Context (Digest System)
 
-1. Run the **Digest Freshness Check** from the master agent (`testcase-writer.md` → Context Digest System)
-2. If `FRESH` → Read only `source/testcase/{feature}/context-digest.md`. Show: "Using cached context digest."
+1. Read `.claude/agents/skills/testcase-writer/digest-system.md` for digest freshness check and generation format.
+2. Run the **Digest Freshness Check** (defined in digest-system.md)
+3. If `FRESH` → Read only `source/testcase/{feature}/context-digest.md`. Show: "Using cached context digest."
    - **Scope guard:** If cached digest lacks `## Test Scope` or `digest-version: 2` → treat as STALE, regenerate.
-3. If `STALE` → Read all source files in order, then generate digest:
+4. If `STALE` → Read all source files in order, then generate digest:
    - Config → Spec → Feature Knowledge → Knowledge files → Rules → Template → Components
    - **Build Test Scope:** Diff spec user stories/ACs against feature knowledge topics. Topics referenced in spec ACs → TESTABLE. Topics NOT referenced → OUT OF SCOPE.
    - Write digest to `source/testcase/{feature}/context-digest.md` (using digest-version 2 format)

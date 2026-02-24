@@ -24,7 +24,7 @@ export type TestcaseMode = 'lite' | 'full'
 
 export type TabType = 'strategy' | 'knowledge' | 'components' | 'import-spec' | 'review-export' | 'rules' | 'template' | 'default-rules' | 'default-template'
 
-const liteTabs: TabType[] = ['rules', 'import-spec', 'review-export']
+const liteTabs: TabType[] = ['import-spec', 'review-export']
 
 export function getVisibleTabs(mode: TestcaseMode) {
   return mode === 'lite' ? featureTabs.filter(t => liteTabs.includes(t.id)) : featureTabs

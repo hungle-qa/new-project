@@ -22,11 +22,12 @@
 
 1. Check CSV exists → if not: "No testcases found. Run `/testcase write {feature}` first."
 2. Read existing CSV
-3. Run **Digest Freshness Check** from master agent (`testcase-writer.md` → Context Digest System)
+3. Read `.claude/agents/skills/testcase-writer/digest-system.md` for digest freshness check and generation format.
+4. Run **Digest Freshness Check** (defined in digest-system.md)
    - If `FRESH` → Read only `source/testcase/{feature}/context-digest.md`
      - **Scope guard:** If cached digest lacks `## Test Scope` or `digest-version: 2` (legacy digest) → treat as STALE, regenerate using digest-version 2 format.
    - If `STALE` → Read all sources, generate digest (digest-version 2 format)
-4. Show: "Loaded {N} existing testcases + context."
+5. Show: "Loaded {N} existing testcases + context."
 
 ### Step 2: Ask Update Intent
 

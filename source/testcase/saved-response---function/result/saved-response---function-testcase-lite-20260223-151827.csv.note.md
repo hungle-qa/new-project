@@ -1,0 +1,2 @@
+- Improve rule repeat step: I see 1. Click Saved Responses button repeat many times. Make sure any repeat is remove.
+- Check why rows 6, 7, 8 don't merge (it is very simple).

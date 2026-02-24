@@ -215,7 +215,39 @@ export class TestcaseFeatureService {
   static async deleteResultFile(name: string, filename: string): Promise<boolean> {
     try {
       await fs.unlink(path.join(SOURCE_DIR, name, 'result', filename))
+      // Also delete associated note if exists
+      const notePath = path.join(SOURCE_DIR, name, 'result', `${filename}.note.md`)
+      await fs.unlink(notePath).catch(() => {})
       return true
     } catch { return false }
+  }
+
+  static async getResultNote(name: string, filename: string): Promise<string | null> {
+    try {
+      return await fs.readFile(path.join(SOURCE_DIR, name, 'result', `${filename}.note.md`), 'utf-8')
+    } catch { return null }
+  }
+
+  static async saveResultNote(name: string, filename: string, note: string): Promise<void> {
+    const notePath = path.join(SOURCE_DIR, name, 'result', `${filename}.note.md`)
+    if (!note.trim()) {
+      await fs.unlink(notePath).catch(() => {})
+    } else {
+      await fs.writeFile(notePath, note)
+    }
+  }
+
+  static async getResultNotes(name: string): Promise<Record<string, string>> {
+    try {
+      const resultDir = path.join(SOURCE_DIR, name, 'result')
+      const files = await fs.readdir(resultDir)
+      const noteFiles = files.filter(f => f.endsWith('.note.md'))
+      const notes: Record<string, string> = {}
+      for (const nf of noteFiles) {
+        const csvName = nf.replace('.note.md', '')
+        notes[csvName] = await fs.readFile(path.join(resultDir, nf), 'utf-8')
+      }
+      return notes
+    } catch { return {} }
   }
 }

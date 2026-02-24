@@ -37,13 +37,31 @@ Rewrite the target agent prompt using AI-Native Structural Format:
 
 ---
 
-## Phase 2: SHOW DIFF
+## Phase 2: SHOW DIFF (MANDATORY)
 
-Display before/after changes:
-```diff
-- Old instruction
-+ New instruction
+For EVERY changed rule/section, display a **Before/After comparison** using fenced code blocks. One pair per change. This is NON-NEGOTIABLE — the user must see exactly what changed.
+
+**Format per change:**
+
 ```
+### Change {N}: {short label}
+
+**Before:**
+```
+{exact old text}
+```
+
+**After:**
+```
+{exact new text}
+```
+```
+
+**Rules:**
+- Show the FULL text of the changed block (not just the changed line)
+- If a rule was ADDED (no prior version), show `**Before:** *(no rule)*`
+- If a rule was REMOVED, show `**After:** *(removed)*`
+- NEVER use generic diff format (`+`/`-` lines) — always use labeled Before/After blocks
 
 ---
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { FileText, Eye, Trash2, Copy, Check } from 'lucide-react'
+import { FileText, Eye, Trash2, Copy, Check, StickyNote } from 'lucide-react'
 import { parseCSV } from './csvUtils'
 import { CsvPreviewModal } from './CsvPreviewModal'
 import { TestcaseMode } from '../../pages/testcase-manager/types'
@@ -19,15 +19,21 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
   const [deleting, setDeleting] = useState(false)
   const [copiedCmd, setCopiedCmd] = useState<'write' | 'write-lite' | null>(null)
   const [copiedFile, setCopiedFile] = useState<string | null>(null)
+  const [notes, setNotes] = useState<Record<string, string>>({})
+  const [hoveredNote, setHoveredNote] = useState<string | null>(null)
+  const [copiedNote, setCopiedNote] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
     setPreviewFile(null)
     setPreviewContent(null)
-    fetch(`/api/testcase/${feature}/results`)
-      .then(res => res.json())
-      .then(data => {
-        setCsvFiles(data)
+    Promise.all([
+      fetch(`/api/testcase/${feature}/results`).then(r => r.json()),
+      fetch(`/api/testcase/${feature}/results/notes`).then(r => r.json()),
+    ])
+      .then(([files, notesData]) => {
+        setCsvFiles(files)
+        setNotes(notesData)
         setLoading(false)
       })
       .catch(() => setLoading(false))
@@ -159,6 +165,34 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
                   )}
                 </div>
                 <div className="flex gap-2">
+                  <div
+                    className="relative"
+                    onMouseEnter={() => notes[filename] ? setHoveredNote(filename) : undefined}
+                    onMouseLeave={() => setHoveredNote(null)}
+                  >
+                    <button
+                      onClick={() => {
+                        if (!notes[filename]) return
+                        const cmd = `/agent-audit update write-lite\nFile: ${filename}\nNote:\n${notes[filename]}`
+                        navigator.clipboard.writeText(cmd)
+                        setCopiedNote(filename)
+                        setTimeout(() => setCopiedNote(null), 2000)
+                      }}
+                      disabled={!notes[filename]}
+                      title={notes[filename] ? 'Copy audit update command with note' : 'No note — add one in Preview'}
+                      className="p-0.5 rounded hover:bg-yellow-100 disabled:cursor-default disabled:hover:bg-transparent"
+                    >
+                      {copiedNote === filename
+                        ? <Check className="w-4 h-4 text-green-500" />
+                        : <StickyNote className={`w-4 h-4 ${notes[filename] ? 'text-yellow-500' : 'text-gray-300'}`} />
+                      }
+                    </button>
+                    {hoveredNote === filename && notes[filename] && copiedNote !== filename && (
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 text-xs text-gray-700 bg-yellow-50 border border-yellow-200 rounded shadow-lg whitespace-pre-wrap z-20">
+                        {notes[filename]}
+                      </div>
+                    )}
+                  </div>
                   <button
                     onClick={() => handlePreview(filename)}
                     className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
@@ -216,7 +250,17 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
           filename={previewFile}
           content={previewContent}
           loading={loadingPreview}
+          feature={feature}
+          initialNote={notes[previewFile] || ''}
           onClose={handleClosePreview}
+          onNoteSaved={(fn, note) => {
+            setNotes(prev => {
+              const next = { ...prev }
+              if (note.trim()) next[fn] = note
+              else delete next[fn]
+              return next
+            })
+          }}
         />
       )}
     </div>

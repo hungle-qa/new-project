@@ -206,6 +206,12 @@ router.get('/:feature/results', async (req, res) => {
   catch (error) { res.status(500).json({ error: 'Failed to fetch results' }) }
 })
 
+// --- Result Notes (must be before /:filename to avoid route conflict) ---
+router.get('/:feature/results/notes', async (req, res) => {
+  try { res.json(await TestcaseFeatureService.getResultNotes(req.params.feature)) }
+  catch (error) { res.status(500).json({ error: 'Failed to fetch notes' }) }
+})
+
 router.get('/:feature/results/:filename', async (req, res) => {
   try {
     const content = await TestcaseFeatureService.getResultFile(req.params.feature, req.params.filename)
@@ -215,6 +221,14 @@ router.get('/:feature/results/:filename', async (req, res) => {
     }
     res.json({ content })
   } catch (error) { res.status(500).json({ error: 'Failed to fetch result file' }) }
+})
+
+router.put('/:feature/results/:filename/note', async (req, res) => {
+  try {
+    if (typeof req.body.note !== 'string') return res.status(400).json({ error: 'Note text is required' })
+    await TestcaseFeatureService.saveResultNote(req.params.feature, req.params.filename, req.body.note)
+    res.json({ success: true })
+  } catch (error) { res.status(500).json({ error: 'Failed to save note' }) }
 })
 
 router.delete('/:feature/results/:filename', async (req, res) => {

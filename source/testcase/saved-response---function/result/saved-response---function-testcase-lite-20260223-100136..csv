@@ -1,0 +1,406 @@
+No.,US,AC,Step,Title,Expectation,Priority
+1,"US1: As a coach who frequently messages clients, I want to save and quickly insert predefined responses in chats",AC1: Add Saved Response button in Editor nav,"1. Login as Coach
+2. Navigate to conversation in Inbox
+3. Verify Editor nav",button displayed next to GIF,- SHOULD display Saved Responses button next to GIF button,High
+2,,,"1. Login as Coach
+2. Navigate to conversation in Inbox
+3. Hover over Saved Responses button
+4. Verify tooltip",tooltip on hover,"- SHOULD show tooltip ""Saved Responses \""",Medium
+3,,AC2: Saved Response popup,"1. Login as Coach
+2. Navigate to conversation in Inbox
+3. Click Saved Responses button
+4. Verify modal",modal opens on button click,- SHOULD display Saved Responses modal,Critical
+4,,,"1. Login as Coach with Pro/Studio plan
+2. Navigate to conversation in Inbox
+3. Use shortcut Ctrl/Command + K
+4. Verify modal",modal opens via keyboard shortcut,- SHOULD display Saved Responses modal via Ctrl/Command + K,High
+5,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Verify X button",X button in modal header,- SHOULD display X button in modal header,Medium
+6,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Click X button
+4. Verify modal closes",close via X button,- SHOULD close modal when X button clicked,High
+7,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Verify Search box",Search box displayed,- SHOULD display Search box,High
+8,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Verify Create new button",Create new button in top-right,- SHOULD display Create new button in top-right corner,High
+9,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Hover over Create new button
+4. Verify tooltip",tooltip on Create new hover,"- SHOULD show tooltip ""Create New""",Medium
+10,,,"1. Login as Coach with empty saved responses
+2. Open Saved Responses modal
+3. Verify empty state message",empty state message,"- SHOULD display empty state with text ""Your saved responses list is empty. Start by creating your first one to save time during chats.""",High
+11,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Verify list structure",list displays below Search box,- SHOULD display list of saved-response items below Search box,High
+12,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Verify left-side panel",title list on left side,- SHOULD show list of title's saved responses on left-side of modal,High
+13,,,,latest updated time ordering,- SHOULD order saved responses by latest updated time,Medium
+14,,,"1. Login as Coach with frequently used responses
+2. Open Saved Responses modal
+3. Verify FREQUENTLY USED section",FREQUENTLY USED section displayed,- SHOULD display FREQUENTLY USED section,High
+15,,,,top 5 most-used responses,- SHOULD show top 5 most-used saved responses by that user,High
+16,,,,fewer than 5 responses,- SHOULD show all available responses when fewer than 5,Medium
+17,,,,sort by usage_count descending,- SHOULD sort by usage_count descending (most used to least used),Medium
+18,,,,equal usage_count sort by title,- SHOULD sort by title ascending (A–Z) when usage_count is equal,Low
+19,,,"1. Login as Coach without frequently used responses
+2. Open Saved Responses modal
+3. Verify FREQUENTLY USED section absence",hide FREQUENTLY USED when empty,- SHOULD hide FREQUENTLY USED section when no frequently used responses exist,Medium
+20,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Verify ALL section",ALL section displayed,- SHOULD display ALL section,High
+21,,,,ALL section sort by title A-Z,- SHOULD list all saved responses sorted by title A-Z,High
+22,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Verify default selection",first response selected by default,- SHOULD select the first saved response in the list by default,High
+23,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Press arrow keys (Up/Down)
+4. Verify navigation",arrow-key navigation,"- SHOULD allow user to use arrow-keys (Up, Down) to move between responses",High
+24,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Verify right-side panel",message detail on right side,- SHOULD show message detail of current-selecting saved response on right-side,High
+25,,,,message detail content format,- SHOULD display {title} and {message_detail},High
+26,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Hover over message detail
+4. Verify 3-dot button",3-dot button on hover,- SHOULD show 3-dot button when hovering over message detail,High
+27,,,"1. Login as Coach with long message
+2. Open Saved Responses modal
+3. Select response with long message
+4. Verify scrolling",scroll long message,- SHOULD allow scrolling if the message is long,Medium
+28,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Hover over title of saved-response item
+4. Verify message detail update",hover updates message detail,- SHOULD show message detail when hovering over title,High
+29,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Click on title of saved-response item
+4. Verify chatbox fill",click fills chatbox,- SHOULD fill saved response into chatbox when clicking title,Critical
+30,,,"1. Login as Coach with more than 20 saved responses
+2. Open Saved Responses modal
+3. Verify initial load",load first 20 items,- SHOULD load first 20 items,High
+31,,,"1. Login as Coach with more than 20 saved responses
+2. Open Saved Responses modal
+3. Scroll down to bottom
+4. Verify Load more",Load more on scroll,- SHOULD display Load more and get next 20 items when user scrolls down,High
+32,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Verify footer",footer with shortcuts,- SHOULD show footer with list of shortcuts,Medium
+33,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Press Esc key
+4. Verify modal closes",close via Esc key,- SHOULD close modal when Esc key pressed,High
+34,,AC3: Search box behaviors,"1. Login as Coach
+2. Open Saved Responses modal
+3. Verify Search box placeholder",default placeholder text,"- SHOULD display placeholder ""Search saved response""",Medium
+35,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Focus on Search box
+4. Verify placeholder change",focused placeholder text,"- SHOULD change placeholder to ""Enter keyword..."" when focused",Low
+36,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Input text in Search box
+4. Verify x icon",x icon on input,- SHOULD display x icon when inputting text,Medium
+37,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Input text in Search box
+4. Use backspace to remove text
+5. Verify list restored",clear via backspace,- SHOULD remove search input and show full list when using backspace,High
+38,,,"1. Login as Coach
+2. Open Saved Responses modal
+3. Input text in Search box
+4. Click x icon
+5. Verify list restored",clear via x icon,- SHOULD remove search input and show full list when clicking x icon,High
+39,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Input 1 character in Search box
+4. Verify search starts",search from 1 character,- SHOULD start searching from 1 character,High
+40,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Input keyword matching title
+4. Verify search results",search by title,- SHOULD return saved responses where title contains the search keyword,High
+41,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Input keyword matching message
+4. Verify search results",search by message,- SHOULD return saved responses where message contains the search keyword,High
+42,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Input keyword in different case
+4. Verify search results",case-insensitive search,- SHOULD perform case-insensitive matching,Medium
+43,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Input partial keyword
+4. Verify search results",partial match search,- SHOULD return results where keyword appears anywhere within title or message field,High
+44,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Input keyword with no matches
+4. Verify result count",no results count display,"- SHOULD show ""Search results (0)"" below Search box",High
+45,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Input keyword with matches
+4. Verify result count",matching results count display,"- SHOULD show ""Search results ({number_of_matched_results})"" below Search box",High
+46,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Input keyword with matches
+4. Verify results list",matching results list,- SHOULD show list of results same as AC2,High
+47,,,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Input keyword with matches
+4. Verify default selection",first result selected by default,- SHOULD select the first result by default,High
+48,,,"1. Login as Coach with more than 20 matching results
+2. Open Saved Responses modal
+3. Search with keyword
+4. Verify initial load",search results load first 20,- SHOULD load first 20 items in search results,Medium
+49,,,"1. Login as Coach with more than 20 matching results
+2. Open Saved Responses modal
+3. Search with keyword
+4. Scroll down to bottom
+5. Verify Load more",search results Load more on scroll,- SHOULD display Load more and get next 20 items in search results when user scrolls down,Medium
+50,,AC4: 3-dot button behaviors,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Click 3-dot button on a saved response item
+4. Verify submenu",submenu displayed on 3-dot click,- SHOULD show submenu with options,High
+51,,,,Edit response option,- SHOULD display Edit response option in submenu,High
+52,,,,Delete response option,- SHOULD display Delete response option in submenu,High
+53,,AC5: Add a new saved response,"1. Login as Coach
+2. Open Saved Responses modal
+3. Click Create new button
+4. Verify popup",Create Saved Response popup opens,- SHOULD display Create Saved Response popup,Critical
+54,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Verify popup title",popup title,"- SHOULD display title ""Create Saved Response""",Medium
+55,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Verify X button",X button in popup,- SHOULD display X button,Medium
+56,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Click X button
+4. Verify popup closes",close via X button,- SHOULD close popup when X button clicked,High
+57,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Verify TITLE field",TITLE field displayed,- SHOULD display TITLE field,High
+58,,,,TITLE field with info icon,- SHOULD display info icon next to TITLE field,Low
+59,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Hover over info icon
+4. Verify tooltip",TITLE info tooltip,"- SHOULD show tooltip ""Used to organize responses. This wonʼt appear in messages.""",Low
+60,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Verify TITLE field default state",TITLE field empty by default,"- SHOULD display empty TITLE field with placeholder ""Name this response for easy search""",Medium
+61,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Input all character types in TITLE field
+4. Verify input accepted",TITLE allows all characters,- SHOULD allow all characters in TITLE field,Medium
+62,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Input 140 characters in TITLE field
+4. Verify input blocked",TITLE max 140 characters input block,- SHOULD block input after 140 characters,High
+63,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Paste text exceeding 140 characters in TITLE field
+4. Verify truncation",TITLE paste truncation at 140 chars,- SHOULD paste only first 140 characters when pasted text exceeds limit,High
+64,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Verify MESSAGE field",MESSAGE field displayed,- SHOULD display MESSAGE field,High
+65,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Verify MESSAGE field default state",MESSAGE field empty by default,"- SHOULD display empty MESSAGE field with placeholder ""Write the full message you want to send to clilents""",Medium
+66,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Input any characters in MESSAGE field
+4. Verify input accepted",MESSAGE allows any characters,- SHOULD allow any characters in MESSAGE field,Medium
+67,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Attempt text-formatting in MESSAGE field
+4. Verify formatting blocked",MESSAGE no text-formatting,- SHOULD not allow text-formatting in MESSAGE field,Medium
+68,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Paste formatted text in MESSAGE field
+4. Verify formatting cleared",MESSAGE clear formatting on paste,- SHOULD clear text-formatting when user pastes formatted text,Medium
+69,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Input text in MESSAGE field
+4. Verify character count",MESSAGE character count display,"- SHOULD show character count as ""{X}/10000""",Medium
+70,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Input 10000 characters in MESSAGE field
+4. Verify input blocked",MESSAGE max 10000 characters input block,- SHOULD block input after 10000 characters,High
+71,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Paste text exceeding 10000 characters in MESSAGE field
+4. Verify truncation",MESSAGE paste truncation at 10000 chars,- SHOULD paste only first 10000 characters when pasted text exceeds limit,High
+72,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Verify Cancel button",Cancel button displayed,- SHOULD display Cancel button,Medium
+73,,,,Cancel button always enabled,- SHOULD keep Cancel button always enabled,Low
+74,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Click Cancel button
+4. Verify popup closes",close via Cancel button,- SHOULD close popup when Cancel button clicked,High
+75,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Verify Save button default state",Save button disabled by default,- SHOULD display Save button disabled by default,High
+76,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Input in both TITLE and MESSAGE fields
+4. Verify Save button enabled",Save button enabled with both fields,- SHOULD enable Save button when both TITLE and MESSAGE fields have input,High
+77,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Input in both TITLE and MESSAGE fields
+4. Click Save button
+5. Verify saved response added",add new saved response,- SHOULD add new saved response to the list,Critical
+78,,,"1. Login as Coach
+2. Open Create Saved Response popup
+3. Input in both TITLE and MESSAGE fields
+4. Click Save button
+5. Verify toast message",success toast on save,"- SHOULD display toast ""New Saved Response created.""",High
+79,,AC6: Edit a saved response,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Click 3-dot button and select Edit response
+4. Verify popup",Edit Saved Response popup opens,- SHOULD display Edit Saved Response popup,Critical
+80,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Verify popup title",popup title,"- SHOULD display title ""Edit Saved Response""",Medium
+81,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Verify X button",X button in popup,- SHOULD display X button,Medium
+82,,,"1. Login as Coach
+2. Open Edit Saved Response popup without changes
+3. Click X button
+4. Verify popup closes",close via X when no changes,- SHOULD close popup when X button clicked with no changes,High
+83,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Make at least 1 change
+4. Click X button
+5. Verify Discard changes popup",Discard changes popup on X with changes,- SHOULD show Discard changes popup when X button clicked with changes,High
+84,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Make changes
+4. Click X button
+5. Verify Discard changes popup title",Discard changes popup title,"- SHOULD display title ""Discard Changes?""",Medium
+85,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Make changes
+4. Click X button
+5. Verify Discard changes popup text",Discard changes popup text,"- SHOULD display text ""Are you sure you want to go? Changes have not been saved yet.""",Medium
+86,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Make changes
+4. Click X button
+5. Click Cancel in Discard changes popup
+6. Verify popup closes",close Discard changes via Cancel,- SHOULD close Discard changes popup when Cancel button clicked,Medium
+87,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Make changes
+4. Click X button
+5. Click X icon in Discard changes popup
+6. Verify popup closes",close Discard changes via X icon,- SHOULD close Discard changes popup when X icon clicked,Medium
+88,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Make changes
+4. Click X button
+5. Click Discard Changes button
+6. Verify changes discarded",discard changes and close,- SHOULD close Discard changes popup and return to previous page without saving changes,High
+89,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Verify TITLE field pre-populated",TITLE field pre-populated,- SHOULD pre-populate TITLE field with existing value,High
+90,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Edit TITLE field
+4. Click Save button
+5. Verify update saved",update saved response,- SHOULD update saved response with new values,Critical
+91,,,"1. Login as Coach
+2. Open Edit Saved Response popup
+3. Edit fields
+4. Click Save button
+5. Verify toast message",success toast on update,"- SHOULD display toast ""Saved Response updated successfully.""",High
+92,,AC7: Delete a saved response,"1. Login as Coach with saved responses
+2. Open Saved Responses modal
+3. Click 3-dot button and select Delete response
+4. Verify confirmation popup",Delete confirmation popup opens,- SHOULD display confirmation popup,Critical
+93,,,"1. Login as Coach
+2. Open Delete confirmation popup
+3. Verify popup title",popup title,"- SHOULD display title ""Delete Response?""",Medium
+94,,,"1. Login as Coach
+2. Open Delete confirmation popup
+3. Verify popup text",popup text,"- SHOULD display text ""This response will be permanently deleted and canʼt be recovered. Are you sure you want to proceed?""",Medium
+95,,,"1. Login as Coach
+2. Open Delete confirmation popup
+3. Verify Cancel button",Cancel button displayed,- SHOULD display Cancel button,Medium
+96,,,"1. Login as Coach
+2. Open Delete confirmation popup
+3. Click Cancel button
+4. Verify popup closes",close via Cancel button,- SHOULD close popup when Cancel button clicked,High
+97,,,"1. Login as Coach
+2. Open Delete confirmation popup
+3. Verify OK button",OK button displayed,- SHOULD display OK button,Medium
+98,,,"1. Login as Coach
+2. Open Delete confirmation popup
+3. Click OK button
+4. Verify response deleted",delete saved response,- SHOULD delete saved response,Critical
+99,,,"1. Login as Coach
+2. Open Delete confirmation popup
+3. Click OK button
+4. Verify toast message",success toast on delete,"- SHOULD display toast ""Saved Response deleted.""",High
+100,,AC8: Add saved response to chat box by selecting an item,"1. Login as Coach with saved responses
+2. Open conversation in Inbox
+3. Open Saved Responses modal
+4. Click title of a saved-response item
+5. Verify content appended",append message to chatbox,- SHOULD append full message content into chatbox,Critical
+101,,,"1. Login as Coach with saved responses
+2. Open conversation in Inbox
+3. Type text in chatbox
+4. Open Saved Responses modal
+5. Click title of a saved-response item
+6. Verify placement",append behind existing text,- SHOULD place saved response behind current text in chatbox,High
+102,,,"1. Login as Coach with saved responses
+2. Open conversation in Inbox
+3. Open Saved Responses modal
+4. Select a saved-response item
+5. Press Enter key
+6. Verify content appended",append via Enter key,- SHOULD append full message content into chatbox when Enter pressed,High
+103,"US2: As a coach who frequently messages clients, I want to create a saved response from a message in the conversation","AC1: Add ""Save this response"" button to Coach's non-text message","1. Login as Coach with Pro/Studio plan
+2. Navigate to conversation in Inbox
+3. Hover over Coach's non-text message
+4. Verify button displayed",button between 3-dot and Reply,- SHOULD display button between 3-dot and Reply buttons,High
+104,,,"1. Login as Coach with Pro/Studio plan
+2. Navigate to conversation in Inbox
+3. Hover over Save this response button
+4. Verify tooltip",tooltip on hover,"- SHOULD show tooltip ""Saved this response""",Medium
+105,,,"1. Login as Coach with Free plan
+2. Navigate to conversation in Inbox
+3. Hover over Coach's non-text message
+4. Verify button not displayed",button hidden on Free plan,- SHOULD not show button when workspace is on Free plan,High
+106,,AC2: Add new saved response from the conversation,"1. Login as Coach with Pro/Studio plan
+2. Navigate to conversation in Inbox
+3. Hover over Coach's non-text message
+4. Click Save this response button
+5. Verify popup",Add To Saved Responses popup opens,- SHOULD display Add To Saved Responses popup,Critical
+107,,,"1. Login as Coach
+2. Open Add To Saved Responses popup
+3. Verify popup title",popup title,"- SHOULD display title ""Add To Saved Responses""",Medium
+108,,,"1. Login as Coach
+2. Open Add To Saved Responses popup
+3. Verify TITLE field",TITLE field blank,- SHOULD display blank TITLE field,High
+109,,,"1. Login as Coach
+2. Open Add To Saved Responses popup
+3. Verify MESSAGE field",MESSAGE field pre-populated,- SHOULD pre-populate MESSAGE field with Coach's message,High
+110,,,"1. Login as Coach with message exceeding 10000 characters
+2. Open Add To Saved Responses popup
+3. Verify MESSAGE field truncation",MESSAGE truncated at 10000 chars,- SHOULD fill first 10000 characters when Coach's message exceeds limit,High
+111,,,"1. Login as Coach
+2. Open Add To Saved Responses popup
+3. Input TITLE
+4. Click Saved button
+5. Verify saved response added",add message as saved response,- SHOULD add message as new saved response,Critical
+112,,,"1. Login as Coach
+2. Open Add To Saved Responses popup
+3. Input TITLE
+4. Click Saved button
+5. Verify toast message",success toast on save,"- SHOULD display toast ""Response has been saved""",High

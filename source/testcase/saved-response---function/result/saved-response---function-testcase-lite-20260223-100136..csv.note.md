@@ -1,0 +1,3 @@
+- You have removed the logic repeat step. I don't want repeat the same step. like 1. Login as Coach 2. Navigate to conversation in Inbox.... So you must remove this and reset the step to 1.
+- SHOULD not separate the case if it is the same expectation. Ex: Row 6 and 33.
+- Remove rule each expectation = 1 row. You can merge expectations if it is simple. Dont merge if it is complex.

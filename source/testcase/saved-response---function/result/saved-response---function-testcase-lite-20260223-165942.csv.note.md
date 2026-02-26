@@ -1,3 +1,4 @@
+- Only show 99 cases.
 - Number of steps: update each case should reset to 1.
 - Rows 7 and 29 are the same.
 - Row 43: SHOULD summary by bullet, don't show same as AC2.

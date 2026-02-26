@@ -48,7 +48,7 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
       const data = await res.json()
 
       if (data.content) {
-        const rows = parseCSV(data.content).slice(0, 100)
+        const rows = parseCSV(data.content)
         setPreviewContent(rows)
       }
     } catch {

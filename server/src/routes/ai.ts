@@ -32,4 +32,27 @@ router.post('/test', async (req, res) => {
   }
 })
 
+// List available AI models
+router.get('/models', async (req, res) => {
+  try {
+    const apiKey = req.headers['x-ai-api-key'] as string
+
+    if (!apiKey) {
+      return res.status(400).json({
+        success: false,
+        error: 'API key is required'
+      })
+    }
+
+    const models = await AIService.listModels(apiKey)
+    res.json({ success: true, models })
+  } catch (error) {
+    console.error('AI models error:', error)
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch models'
+    })
+  }
+})
+
 export default router

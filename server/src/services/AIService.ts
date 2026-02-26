@@ -53,10 +53,15 @@ export interface AIConfig {
   model?: string
 }
 
+export interface AIModel {
+  id: string
+  displayName: string
+}
+
 export class AIService {
   private static async callWithRetry(
     model: ReturnType<GoogleGenerativeAI['getGenerativeModel']>,
-    prompt: string,
+    prompt: string | Array<{ inlineData: { data: string; mimeType: string } } | string>,
     maxRetries = 5
   ) {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -128,6 +133,52 @@ ${rawContent}`
   }
 
   /**
+   * Structure spec from PDF buffer via Gemini multimodal (skip text extraction)
+   */
+  static async structureSpecFromPdf(
+    pdfBuffer: Buffer,
+    customPrompt: string,
+    config: AIConfig
+  ): Promise<StructuredSpec> {
+    if (!config.apiKey) {
+      throw new Error('API key is required. Please configure AI settings.')
+    }
+
+    const instructions = customPrompt || DEFAULT_SPEC_PROMPT
+
+    const prompt = `${instructions}
+
+**FORMATTING RULES:**
+- For markdown tables: use <br> tags to break long content into readable lines within cells. Each cell should be readable without horizontal scrolling.
+
+---
+
+**Convert the attached PDF into structured spec format.**`
+
+    try {
+      const genAI = new GoogleGenerativeAI(config.apiKey)
+      const model = genAI.getGenerativeModel({
+        model: config.model || 'gemini-2.0-flash'
+      })
+
+      const result = await this.callWithRetry(model, [
+        { inlineData: { data: pdfBuffer.toString('base64'), mimeType: 'application/pdf' } },
+        prompt
+      ])
+      const content = result.response.text().trim()
+
+      return { content }
+    } catch (error) {
+      console.error('AI Service Error (PDF multimodal):', error)
+      throw new Error(
+        error instanceof Error
+          ? `Failed to structure spec from PDF: ${error.message}`
+          : 'Failed to structure spec from PDF with AI'
+      )
+    }
+  }
+
+  /**
    * Structure raw document content into knowledge markdown
    */
   static async structureKnowledge(
@@ -172,6 +223,40 @@ Output ONLY the structured content (no preamble).`
           : 'Failed to structure knowledge with AI'
       )
     }
+  }
+
+  /**
+   * List available Gemini models that support generateContent
+   */
+  static async listModels(apiKey: string): Promise<AIModel[]> {
+    if (!apiKey) {
+      throw new Error('API key is required')
+    }
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`
+    )
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}))
+      const message = (errorBody as { error?: { message?: string } }).error?.message || `HTTP ${response.status}`
+      throw new Error(`Failed to fetch models: ${message}`)
+    }
+
+    const data = await response.json() as {
+      models: Array<{
+        name: string
+        displayName: string
+        supportedGenerationMethods: string[]
+      }>
+    }
+
+    return data.models
+      .filter((m) => m.supportedGenerationMethods.includes('generateContent'))
+      .map((m) => ({
+        id: m.name.replace('models/', ''),
+        displayName: m.displayName,
+      }))
   }
 
   /**

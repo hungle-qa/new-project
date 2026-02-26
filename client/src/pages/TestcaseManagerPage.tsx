@@ -26,7 +26,7 @@ export function TestcaseManagerPage() {
   const [digestDone, setDigestDone] = useState(false)
   const [digestWarnings, setDigestWarnings] = useState<string[]>([])
   const [showDigestWarnings, setShowDigestWarnings] = useState(false)
-  const [mode, setMode] = useState<TestcaseMode>('full')
+  const [mode, setMode] = useState<TestcaseMode>('lite')
 
   // Unsaved changes guard
   const [isDirty, setIsDirty] = useState(false)

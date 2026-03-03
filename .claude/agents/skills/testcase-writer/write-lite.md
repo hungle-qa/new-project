@@ -64,7 +64,8 @@ JSON-first approach — see OUTPUT FORMAT below.
 
 - **GWT mapping:** Given → first step(s) IF unique context, DROP if obvious. When → numbered steps. Then → `- SHOULD ...` in Expectation.
 - **High-level:** "Login as Admin" not detailed login steps. Detail only feature-specific actions.
-- **Prerequisite skip (MANDATORY):** Within each AC, first row shows full steps. Subsequent rows → start steps at the UNIQUE action (skip prerequisites). Prerequisites are implied from AC context.
+- **Session prerequisite (MANDATORY):** Session-level setup steps (login as a role, navigate to the test entry point) are written in full ONCE — on the first testcase row where that session context appears. All subsequent rows sharing the SAME session context (same role + same entry point) start steps at the first UNIQUE action; the session setup is implied. If a new session context appears (different role OR different entry point), write it in full once for that context, then skip it in all subsequent rows of that group. "Session context" = role + entry point (e.g., "Coach + open a conversation").
+- **Prerequisite skip (MANDATORY):** Within each AC, first row shows full steps (excluding session prerequisites already implied above). Subsequent rows → start steps at the UNIQUE action (skip prerequisites). Prerequisites are implied from AC context.
 - **Step numbering (MANDATORY):** Each row MUST restart step numbering at 1.
 - **Verify step (MANDATORY):** Every testcase SHOULD end with `{N}. Verify {component/element}`. Exception: rows with blank steps (deduped from prior row).
 - **Same-position dedup (CRITICAL):** When multiple rows verify different aspects of the SAME element at the SAME verify step → Steps on FIRST row only, subsequent rows → Steps `null`. Scope: same element, same step, different verification. Differentiate via Title + Expectation only.
@@ -132,6 +133,7 @@ Output the testcase matrix as a **JSON array of objects** with these short keys:
 6. Close/dismiss merged (identical expectation) or adjacent
 7. No duplicate expectations — identical ones merged into one row
 8. No AC references — all expectations explicit and standalone
+9. Session prerequisites written only once per session context — not repeated across AC boundaries
 
 ### CSV Conversion (JSON-first via Node.js)
 

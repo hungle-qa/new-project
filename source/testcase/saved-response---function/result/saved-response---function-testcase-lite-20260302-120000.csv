@@ -1,0 +1,178 @@
+No.,US,AC,Step,Title,Expectation,Priority
+1,US1: Save and insert predefined responses in chats,AC1: Add Saved Response button in Editor nav,"1. Open a conversation
+2. Verify Editor nav",Saved Responses button placement,- SHOULD display Saved Responses button next to GIF button in Editor nav,High
+2,,,"1. Open a conversation
+2. Hover over the Saved Responses button
+3. Verify tooltip",Saved Responses button tooltip,"- SHOULD show tooltip: ""Saved Responses""",Medium
+3,,AC2: Saved Response popup,"1. Open a conversation
+2. Click the Saved Responses button OR press Ctrl/Cmd+K
+3. Verify modal",Saved Responses modal opens,- SHOULD display Saved Responses modal,High
+4,,,,modal X button exists,"- SHOULD display X button in modal
+- SHOULD close modal on X button click",High
+5,,,,modal Search box exists,- SHOULD display Search box (refer to AC3),High
+6,,,,Create new button placement and label,"- SHOULD display Create new button in top-right corner
+- SHOULD show label ""Create New"" on hover",Medium
+7,,,"1. Open Saved Responses modal with no saved responses
+2. Verify empty state",empty state message,"- SHOULD display empty state: ""{image} Your saved responses list is empty. Start by creating your first one to save time during chats.""",High
+8,,,"1. Open Saved Responses modal with saved responses present
+2. Verify list layout",list left-side titles exist,- SHOULD display list of saved response titles on the left side of the modal,High
+9,,,,FREQUENTLY USED section hidden when no frequent responses,- SHOULD hide FREQUENTLY USED section if user has no frequently used responses,Medium
+10,,,"1. Open modal with saved responses that have usage counts
+2. Verify FREQUENTLY USED section",FREQUENTLY USED section shows top 5,"- SHOULD show top 5 most-used saved responses
+- SHOULD sort by usage_count descending; when equal, sort by title ascending (A-Z)
+- SHOULD show all available responses if fewer than 5 exist",High
+11,,,"1. Open modal with saved responses
+2. Verify ALL section",ALL section list and default selection,"- SHOULD display all saved responses sorted by title A-Z
+- SHOULD select first saved response by default",High
+12,,,,arrow-key navigation in list,- SHOULD allow Up/Down arrow keys to move between responses in the list,Medium
+13,,,"1. Open modal with saved responses
+2. Observe right side panel",right-side message detail display,- SHOULD display title and message detail of currently selected saved response on the right side,High
+14,,,,hover title shows message detail,- SHOULD show message detail on the right when hovering over a saved response title,Medium
+15,,,"1. Open modal with a saved response that has a long message
+2. Verify right-side panel scrolling",long message scrollable,- SHOULD allow scrolling in right-side panel when message is long,Medium
+16,,,"1. Open modal with more than 20 saved responses
+2. Verify list pagination",pagination loads 20 items initially,"- SHOULD load 20 items per page
+- SHOULD display Load more when user scrolls down and load next 20 items",High
+17,,,"1. Open Saved Responses modal
+2. Verify footer",footer shortcuts display,- SHOULD show footer with shortcuts: X button or Esc closes the popup,Medium
+18,,,"1. Open Saved Responses modal
+2. Press Esc
+3. Verify modal state",Esc closes modal,- SHOULD close modal on Esc press,High
+19,,AC3: Search box behaviors,"1. Open Saved Responses modal
+2. Observe Search box",search box default state,"- SHOULD display search box empty by default with placeholder ""Search saved response""",Medium
+20,,,"1. Open Saved Responses modal
+2. Click/focus the Search box
+3. Verify placeholder",search box focused placeholder,"- SHOULD change placeholder to ""Enter keyword…"" when focused",Low
+21,,,"1. Open modal
+2. Type text into Search box
+3. Verify x icon",x icon appears when text entered,- SHOULD display x icon when text is entered in search box,Medium
+22,,,"1. Type text in Search box
+2. Click x icon or press Backspace
+3. Verify search box and list",clear search restores full list,"- SHOULD remove search input and restore full saved responses list
+- SHOULD hide x icon when search box is empty",High
+23,,,"1. Open modal
+2. Type 1 character in Search box
+3. Verify results",search triggers from 1 character,- SHOULD start searching from 1 character input,High
+24,,,"1. Type a keyword that matches title or message field (partial, case-insensitive)
+2. Verify results",case-insensitive partial search on title and message,"- SHOULD return all saved responses where title or message contains the keyword
+- SHOULD match case-insensitively and partially (keyword anywhere in field)",High
+25,,,"1. Type a keyword with no matching results
+2. Verify results count label",no results found label,"- SHOULD show ""Search results (0)"" below Search box",High
+26,,,"1. Type a keyword with matching results
+2. Verify results count label",matching results count label,"- SHOULD show ""Search results ({number_of_matched_results})"" below Search box",High
+27,,,,search results list and default selection,"- SHOULD display matching results list same as AC2 list format
+- SHOULD select first result by default",High
+28,,,"1. Search with more than 20 matching results
+2. Verify pagination",search results pagination,"- SHOULD load 20 results per page
+- SHOULD display Load more on scroll and load next 20 items",Medium
+29,,AC4: 3-dot button behaviors,"1. Open Saved Responses modal with saved responses
+2. Hover over a saved response message detail on the right side
+3. Click 3-dot button
+4. Verify submenu",3-dot submenu options,"- SHOULD display submenu with options: ""Edit response"" and ""Delete response""",High
+30,,AC5: Add a new saved response,"1. Open Saved Responses modal
+2. Click + Create new button
+3. Verify popup",Create Saved Response popup opens,"- SHOULD display Create Saved Response popup with title ""Create Saved Response""",High
+31,,,,create popup X button closes popup,"- SHOULD display X button
+- SHOULD close popup on X button click",High
+32,,,"1. Open Create Saved Response popup
+2. Observe TITLE field",TITLE field default state,"- SHOULD display TITLE field empty by default with placeholder ""Name this response for easy search""
+- SHOULD be a required field",High
+33,,,"1. Hover over the info icon next to TITLE field label
+2. Verify tooltip",TITLE field info tooltip,"- SHOULD show tooltip: ""Used to organize responses. This won't appear in messages..""",Low
+34,,,"1. Input text in TITLE field up to 140 characters
+2. Try to input more
+3. Verify character limit",TITLE field 140-char limit,"- SHOULD allow all characters up to 140
+- SHOULD not allow input beyond 140 characters",High
+35,,,"1. Paste text longer than 140 characters into TITLE field
+2. Verify result",TITLE paste truncates to 140 chars,- SHOULD paste only the first 140 characters when pasting text over the limit,High
+36,,,"1. Open Create Saved Response popup
+2. Observe MESSAGE field",MESSAGE field default state,"- SHOULD display MESSAGE field empty by default with placeholder ""Write the full message you want to send to clients""
+- SHOULD be a required field",High
+37,,,"1. Input text in MESSAGE field
+2. Verify character count display",MESSAGE field character count display,"- SHOULD display character count as ""{X}/10000""",Medium
+38,,,"1. Input up to 10,000 characters in MESSAGE field
+2. Try to input more
+3. Verify limit","MESSAGE field 10,000-char limit","- SHOULD not allow input beyond 10,000 characters",High
+39,,,"1. Paste text longer than 10,000 characters into MESSAGE field
+2. Verify result","MESSAGE paste truncates to 10,000 chars","- SHOULD paste only the first 10,000 characters when pasting text over the limit",High
+40,,,"1. Paste formatted text into MESSAGE field
+2. Verify formatting",MESSAGE field no text formatting,"- SHOULD not allow text formatting
+- SHOULD clear formatting when pasting a formatted text paragraph",High
+41,,,"1. Open Create Saved Response popup with no input
+2. Verify Save button state",Save button disabled by default,- SHOULD be disabled when TITLE or MESSAGE is empty,High
+42,,,"1. Input text in both TITLE and MESSAGE fields
+2. Verify Save button state",Save button enabled with both fields filled,- SHOULD enable Save button when both TITLE and MESSAGE have input,High
+43,,,"1. Fill both fields
+2. Click Save button
+3. Verify result",Save creates response and shows toast,"- SHOULD add new saved response to the list
+- SHOULD display toast: ""New Saved Response created.""",Critical
+44,,,"1. Open Create Saved Response popup
+2. Click Cancel button
+3. Verify popup state",Cancel button closes popup,"- SHOULD always be enabled
+- SHOULD close popup on Cancel click",High
+45,,AC6: Edit a saved response,"1. Open Saved Responses modal
+2. Hover over a saved response to show 3-dot
+3. Click 3-dot button
+4. Click Edit response
+5. Verify popup",Edit Saved Response popup opens,"- SHOULD display Edit Saved Response popup with title ""Edit Saved Response""",High
+46,,,,TITLE and MESSAGE fields pre-populated,"- SHOULD pre-populate TITLE field with existing shortcut
+- SHOULD pre-populate MESSAGE field with existing full message",High
+47,,,"1. Open Edit popup with no changes made
+2. Click X button
+3. Verify popup state",X button closes popup when no changes,- SHOULD close Edit popup if no changes have been made,High
+48,,,"1. Open Edit popup
+2. Make at least 1 change
+3. Click X button
+4. Verify Discard Changes popup",X button shows Discard Changes popup when changes made,"- SHOULD display Discard Changes popup with title ""Discard Changes?""
+- SHOULD display text: ""Are you sure you want to go? Changes have not been saved yet.""",High
+49,,,"1. In Discard Changes popup
+2. Click Cancel button or X icon
+3. Verify",Discard popup Cancel / X closes discard popup only,- SHOULD close Discard Changes popup (return to Edit popup),High
+50,,,"1. In Discard Changes popup
+2. Click Discard Changes button
+3. Verify",Discard Changes button discards edits,- SHOULD close Discard Changes popup and Edit popup without saving changes,High
+51,,,"1. Open Edit popup with no changes
+2. Click Cancel button
+3. Verify",Cancel button closes Edit popup when no changes,- SHOULD close Edit popup if no changes have been made,High
+52,,,"1. Open Edit popup
+2. Make at least 1 change
+3. Click Cancel button
+4. Verify Discard Changes popup",Cancel button shows Discard Changes popup when changes made,- SHOULD display Discard Changes popup with same content as X button flow,High
+53,,,"1. Fill both TITLE and MESSAGE fields with valid input
+2. Click Save button
+3. Verify result",Save updates response and shows toast,"- SHOULD save changes to the response
+- SHOULD display toast: ""Saved Response updated successfully.""",Critical
+54,,AC7: Delete a saved response,"1. Open Saved Responses modal
+2. Hover over a saved response
+3. Click 3-dot button
+4. Click Delete response
+5. Verify confirmation popup",Delete confirmation popup shown,"- SHOULD display confirmation popup with title ""Delete Response?""
+- SHOULD display text: ""This response will be permanently deleted and can't be recovered. Are you sure you want to proceed?""",High
+55,,,"1. In Delete confirmation popup
+2. Click Cancel button
+3. Verify",Cancel closes delete popup,- SHOULD close the confirmation popup without deleting,High
+56,,,"1. In Delete confirmation popup
+2. Click OK button
+3. Verify result",OK deletes response and shows toast,"- SHOULD delete the saved response
+- SHOULD display toast: ""Saved Response deleted.""",Critical
+57,,AC8: Add saved response to chat box,"1. Open Saved Responses modal
+2. Click title of a saved response OR press Enter
+3. Verify chatbox",response appended to chatbox,"- SHOULD append full message content into chatbox, placed after any existing text",Critical
+58,US2: Create saved response from a conversation message,AC1: Add Save this response button to Coach's non-text message,"1. Open a conversation detail (workspace on Pro/Studio paid plan)
+2. Hover over a non-text message sent by the Coach
+3. Verify button",Save this response button visible on hover,- SHOULD display Save this response button between 3-dot and Reply buttons on Coach's non-text message,High
+59,,,,Save this response button tooltip,"- SHOULD show tooltip ""Saved this response"" on hover",Low
+60,,,"1. Hover over a non-text message on a workspace WITHOUT Saved Response feature (free plan)
+2. Verify button",button hidden on non-paid plan,- SHOULD NOT display Save this response button when workspace is not on a paid plan with Saved Response feature,High
+61,,AC2: Add new saved response from the conversation,"1. Hover over a Coach's non-text message
+2. Click Save this response button
+3. Verify popup",Add To Saved Responses popup opens,"- SHOULD display popup with title ""Add To Saved Responses""
+- SHOULD display Title field blank
+- SHOULD pre-populate Message field with the Coach's message",High
+62,,,"1. Coach's message is over 10,000 characters
+2. Click Save this response button
+3. Verify Message field content","message truncated at 10,000 chars in pre-populate","- SHOULD cut and fill only the first 10,000 characters of the Coach's message into the Message field",High
+63,,,"1. Fill Title field and verify Message is pre-populated
+2. Click Save button
+3. Verify result",Save adds response and shows toast,"- SHOULD add message as a new saved response
+- SHOULD display toast: ""Response has been saved""",Critical

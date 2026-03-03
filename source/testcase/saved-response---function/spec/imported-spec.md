@@ -1,49 +1,335 @@
-### Acceptance Criteria
 
-**US1 - As a coach who frequently messages clients, I want to save and quickly insert predefined responses in chats, so that I can respond faster and maintain consistency in my communication without typing the same messages repeatedly**
+GIVEN: The project structure and objectives.
 
-| AC ID | Description | Given | When | Then |
-|-------|-------------|-------|------|------|
-| AC1 | Add Saved Response button in Editor nav | I am in a conversation | I observe the Editor nav | Add a Saved Responses button next to GIF button<br>Hover over the button will show a tooltip: "Saved Responses" |
-| AC2 | Saved Response popup | I am in a conversation | I click on Saved Responses button OR using shortcut Ctrl/command K | Saved Responses modal is shown (Figma: https://www.figma.com/design/Adj9bljV5m2lwDoyMV8uEf/Inbox?node-id=12205-83759&t=XBqWVsEyi950aUXa-4)<br>It shows list of MY saved responses, contains:<br>- X button: on click, close the modal (updated Dec 31)<br>- Search box (refer to AC3)<br>- "+" - "Create new" button:<br>  - Placed in top-right corner<br>  - Hovering will display as "⊕ Create New"<br>  - When clicked, refer to AC5<br>- If there are no saved responses, display: {image}<br>  "Your saved responses list is empty.<br>  Start by creating your first one to save time during chats."<br>- If having saved responses, display list of saved-response items below Search box, as:<br>  - On the left-side of the modal, show list of title's saved responses:<br>    - Order by latest updated time<br>    - Divided into 2 sections:<br>      - FREQUENTLY USED section:<br>        - Show the responses that the user interacts with most often.<br>        - A response's usage count is incremented each time the response is selected (appended into chatbox) by the user.<br>        - Usage count is per user<br>        - If there is no frequently used saved responses, then hide this section<br>        - If having list of frequently used saved responses, then show Top 5 most-used saved responses by that user<br>        - If there are fewer than 5 responses, show all available responses<br>        - Sort by usage_count descending (most used → least used). When usage_count is equal, sort by title ascending (A-Z)<br>      - ALL section:<br>        - List all saved responses, sort by title A-Z<br>  - Select the first saved response in the list by default<br>  - Allow user to use arrow-keys (Up, Down) to move between responses in the list<br>  - On the right-side of the modal, show the message detail of current-selecting saved response, as: {title} {message_detail}<br>  - Hover over the message detail will show a 3-dot (refer to AC4)<br>  - Allow scrolling if the message is long<br>  - Hover between title of saved-responses list to view its message detail<br>  - Allow to click on the title of a saved-response item to fill it in chatbox (refer to AC8)<br>  - Apply pagination:<br>    - Load every 20 items<br>    - When user scrolls down, display Load more and get the next 20 items<br>  - Footer shows list of shortcut as: ↑↓ to navigate | to select | Esc to close<br>  - Click X button OR shortcut Esc will close the popup (updated Dec 31) |
-| AC3 | Search box behaviors | I am in a conversation | I observe the Saved Responses popup | Search box in Saved Responses popup (Figma: https://www.figma.com/design/Adj9bljV5m2lwDoyMV8uEf/Inbox?node-id=12203-76586&t=VeYPtxksTXviQgJW-4):<br>- Empty by default, with placeholder: "Search saved response"<br>- When focus to the box, change placeholder to "Enter keyword..."<br>- Allow input text to search for responses:<br>  - Display x icon when inputting text<br>  - Remove text by backspace or click on x icon<br>  - Should remove search input and show back the full list<br>- Searching rules:<br>  - Start searching from 1 char<br>  - Search based on title and message → return all saved responses where either the title or message field contains the search keyword<br>  - Matching is case-insensitive and partial → the result is valid if the search keyword appears anywhere within either field<br>- Searching results are shown:<br>  - If having no results found, show: {image}<br>    Show number of matching results below Search box: "Search results (0)"<br>  - If having matching results found:<br>    Show number of matching results below Search box: "Search results ({number_of_matched_results})"<br>    Show list of results same as AC2 above<br>    Select the first result to view by default<br>    Apply pagination: Load every 20 items. When user scrolls down, display Load more and get the next 20 items |
-| AC4 | 3-dot button behaviors | I am viewing Saved Responses popup | I click on 3-dot button on a saved response item | A submenu is shown, containing options: Edit response, Delete response |
-| AC5 | Add a new saved response | I am viewing Saved Responses popup | I click on + Create new button | Create Saved Response popup is shown (Figma: https://www.figma.com/design/Adj9bljV5m2lwDoyMV8uEf/Inbox?node-id=11606-94948&t=NWLSPvgVkzxO2jpk-4)<br>- Title: "Create Saved Response"<br>- [X] button: On clicking X button, close the popup<br>- TITLE field:<br>  - Add a ⓘ next to field title<br>  - When hover over the ⓘ Then show a tooltip: "Used to organize responses. This won't appear in messages.."<br>  - Required field<br>  - Empty by default, with placeholder: "Name this response for easy search"<br>  - Allow all characters<br>  - Allow to input maximum 140 char<br>    - Cannot input anymore if inputted max 140 char<br>    - If user pastes a text more than 140 char, then cut off and paste the first 140 char into the field<br>- MESSAGE field:<br>  - Required field<br>  - Empty by default, with placeholder: "Write the full message you want to send to clients"<br>  - Allow to input any characters<br>  - Not allow text-formatting<br>  - If user paste a text paragraph, clear text-formatting (if any)<br>  - Allow to input maximum 10,000 char<br>    - Character count is shown as "{X}/10000", {X} is total number of characters<br>    - Cannot input anymore if inputted max 500 char (*Note: Potential discrepancy with 10,000 char limit - treating 10,000 as max message length and 500 as input buffer limit*)<br>    - If user pastes a text more than 10,000 char, then cut off and paste the first 10,000 char into the field<br>- Cancel button:<br>  - Always enable<br>  - On clicking Cancel button, close the popup<br>- Save button:<br>  - Disable by default<br>  - Enable if having input in both TITLE & MESSAGE fields<br>  - On clicking Save button, add a new saved response to the list.<br>  - Once successfully saved, display a toast "New Saved Response created." |
-| AC6 | Edit a saved response | I am viewing Saved Responses popup | I click on 3-dot button and click Edit response option | Edit Saved Response popup is shown (Figma: https://www.figma.com/design/Adj9bljV5m2lwDoyMV8uEf/Inbox?node-id=11606-94949&t=NWLSPvgVkzxO2jpk-4)<br>- Title: "Edit Saved Response"<br>- [X] button. On clicking [X] button:<br>  - If user has made no changes, close the popup<br>  - If user has made at least 1 change, show the Discard change pop up:<br>    - Title: "Discard Changes?"<br>    - Text: "Are you sure you want to go? Changes have not been saved yet."<br>    - Cancel button or [X] icon → On click, close the Discard changes pop up<br>    - Discard Changes button → On click, close the Discard changes pop up & back to the previous page without saving changes<br>- TITLE field:<br>  - Pre-populate the title<br>  - Keep other behaviors same as AC5 above<br>- MESSAGE field:<br>  - Pre-populate the full message<br>  - Keep other behaviors same as AC5 above<br>- Cancel button:<br>  - Always enable<br>  - On clicking Cancel button:<br>    - If user has made no changes, close the popup<br>    - If user has made at least 1 change, show the Discard change pop up (same as [X] button behavior)<br>- Save button:<br>  - Enable if having input in both TITLE & MESSAGE fields<br>  - On clicking Save button, save new changes for that response.<br>  - Once successfully saved, display a toast "Saved Response updated successfully." |
-| AC7 | Delete a saved response | I am viewing Saved Responses popup | I click on 3-dot button and click Delete response option | A confirmation popup is shown:<br>- Title: "Delete Response?"<br>- Text: "This response will be permanently deleted and can't be recovered.<br>  Are you sure you want to proceed?"<br>- Cancel button: On click, close the popup<br>- OK button:<br>  - On click, close the popup and process to delete the response<br>  - Once successfully deleted, display a toast "Saved Response deleted." |
-| AC8 | Add saved response to chat box by selecting an item in Saved Response popup | I am viewing Saved Responses popup | I click on title of a saved response item or hit ENTER | Append the full message content into the chatbox, place it behind the current text (if any) |
+WHEN: Analyzing the context and objective.
 
-**US2 - As a coach who frequently messages clients, I want to create a saved response from a message in the conversation, so that I add a new saved response quicker**
+THEN: The following goals are established:
 
-| AC ID | Description | Given | When | Then |
-|-------|-------------|-------|------|------|
-| AC1 | Add "Save this response" button to Coach's non-text message | I am in a conversation detail | I hover over a non-text message of the Coach | Add a button between 3-dot and Reply buttons for those non-text message of the Coach<br>Hover the button shows a tooltip "Save this response"<br>On click the button, show add a new saved response popup (refer to AC2 of US2)<br>Note: Only show this button on hovering message if the workspace is in paid-plan including Saved Response feature (Pro, Studio plan) |
-| AC2 | Add new saved response from the conversation | I am in a conversation detail | I click on "Saved this response" button | On click the button, then show the popup same as AC5 of US1 ("Create Saved Response" popup)<br>Adjust the popup title to "Add To Saved Responses"<br>Leave Title field blank<br>Pre-populate the Coach's message into the Message field<br>If the Coach's message is over 10,000 characters, then cut the first 10,000 characters of the message to be filled in the field<br>On click [Saved] button will add that message as a new saved response, and show a toast "Response has been saved" |
+* Users often repeat similar messages when communicating with clients, leading to inefficiency and inconsistency.
 
-### Requirements
 
-| REQ-ID | Description | User Story |
-|--------|-------------|------------|
-| REQ-1 | "Saved Responses" feature availability | US1, US2 |
-| REQ-2 | Workspace permission for "Saved Responses" | US1, US2 |
-| REQ-3 | Saved Responses list privacy | US1 |
-| REQ-4 | Add Saved Response button in Editor nav | US1 |
-| REQ-5 | Saved Response modal display and content | US1 |
-| REQ-6 | Search functionality within Saved Responses | US1 |
-| REQ-7 | 3-dot menu actions (Edit/Delete) | US1 |
-| REQ-8 | Create New Saved Response flow | US1 |
-| REQ-9 | Edit Existing Saved Response flow | US1 |
-| REQ-10 | Delete Saved Response flow | US1 |
-| REQ-11 | Insert Saved Response into chat | US1 |
-| REQ-12 | Quick Save response from conversation | US2 |
+* The Saved Response feature allows users to create and reuse predefined responses to streamline communication, save time, and maintain consistent tone and quality.
 
-### Edge Cases
 
-*   **No Saved Responses State:** The modal displays a specific message and image when the user has no saved responses (AC2, US1).
-*   **No Search Results:** The search functionality handles and displays "Search results (0)" with an image when no matches are found (AC3, US1).
-*   **Character Limits & Pasting:** TITLE field limits to 140 characters, truncating pasted text. MESSAGE field limits to 10,000 characters, truncating pasted text, and an input limit of 500 characters (AC5, US1).
-*   **Save Button Initial State:** The Save button is disabled by default and only enabled when both TITLE & MESSAGE fields have input (AC5, US1).
-*   **Discard Changes Prompt:** If a user makes changes in the Edit Saved Response popup and attempts to close via [X] or Cancel, a "Discard Changes?" confirmation popup is shown (AC6, US1).
-*   **Delete Confirmation:** Deleting a saved response requires confirmation via a popup, outlining the permanent nature of the deletion (AC7, US1).
-*   **Message Truncation from Conversation:** When creating a saved response from a conversation, messages longer than 10,000 characters are truncated to the first 10,000 characters (AC2, US2).
-*   **Feature Availability based on Plan:** The "Save this response" button only appears if the workspace is on a Pro or Studio plan (AC1, US2).
+GIVEN: The feature specifications.
+
+WHEN: Evaluating the permissions for the Saved Responses feature.
+
+THEN: The following rules apply:
+
+* The feature is available on the Pro plan and above.
+
+
+* All Coaches in the workspace can use the feature as long as the workspace has permission to use it.
+
+
+* The Saved Responses list is private per user.
+
+
+
+GIVEN: User Story 1: As a coach who frequently messages clients, I want to save and quickly insert predefined responses in chats, so that I can respond faster and maintain consistency in my communication without typing the same messages repeatedly.
+
+WHEN: Addressing AC1: Add Saved Response button in Editor nav.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation.
+
+
+* WHEN: I observe the Editor nav.
+
+
+* THEN: Add a Saved Responses button next to the GIF button.
+
+
+* THEN: Hovering over the button will show a tooltip: Saved Responses.
+
+
+
+WHEN: Addressing AC2: Saved Response popup.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation.
+
+
+* WHEN: I click on the Saved Responses button or use shortcut Ctrl/command K.
+
+
+* THEN: The Saved Responses modal is shown 
+
+
+* THEN: The modal shows a list of MY saved responses.
+
+
+* THEN: It contains an X button to close the modal.
+
+
+* THEN: It contains a Search box.
+
+
+* THEN: It contains a Create new button in the top-right corner.
+
+
+* THEN: Hovering on Create new shows Create New tooltip.
+
+
+* THEN: Clicking Create new triggers AC5.
+
+
+* THEN: If the list is empty, display: {image} Your saved responses list is empty. Start by creating your first one to save time during chats..
+
+
+* THEN: If having saved responses, display list items below the Search box, ordered by latest updated time.
+
+
+* THEN: Divide the list into 2 sections: FREQUENTLY USED and ALL.
+
+
+* THEN: In FREQUENTLY USED, show responses the user interacts with most often, incremented each time the response is appended to the chatbox.
+
+
+* THEN: Usage count is per user.
+
+
+* THEN: If no frequently used responses, hide this section.
+
+
+* THEN: If available, show Top 5 most-used responses, sorted by usage_count descending, then by title A-Z.
+
+
+* THEN: In ALL section, list all saved responses sorted by title A-Z.
+
+
+* THEN: Select the first saved response by default.
+
+
+* THEN: Allow using Up and Down arrow-keys to move between responses.
+
+
+* THEN: On the right-side of the modal, show message details: {title} and {message_detail}.
+
+
+* THEN: Hovering over message detail shows a 3-dot button (refer to AC4).
+
+
+* THEN: Allow scrolling for long messages.
+
+
+* THEN: Hovering between titles in the list updates the message detail view.
+
+
+* THEN: Clicking on a title fills the chatbox (refer to AC1).
+
+
+* THEN: Apply pagination: load every 20 items and show Load more on scroll.
+
+
+* THEN: Footer shows shortcuts: X button or Esc to close popup.
+
+
+
+WHEN: Addressing AC3: Search box behaviors.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation.
+
+
+* WHEN: I observe the Saved Responses popup.
+
+
+* THEN: Show Search box 
+
+
+* THEN: Empty by default with placeholder: Search saved response.
+
+
+* THEN: When focused, placeholder changes to: Enter keyword....
+
+
+* THEN: Allow input to search, displaying an x icon.
+
+
+* THEN: Clicking x icon or using backspace removes text and shows back the full list.
+
+
+* THEN: Start searching from 1 character.
+
+
+* THEN: Search based on title and message field (case-insensitive and partial match).
+
+
+* THEN: If no results found, show: Search results (0).
+
+
+* THEN: If results found, show: Search results ({number_of_matched_results}) and list results as per AC2.
+
+
+* THEN: Select the first result by default.
+
+
+* THEN: Apply pagination: load every 20 items.
+
+
+
+WHEN: Addressing AC4: 3-dot button behaviors.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the 3-dot button on a saved response item.
+
+
+* THEN: A submenu is shown containing options: Edit response and Delete response.
+
+
+
+WHEN: Addressing AC5: Add a new saved response.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the + Create new button.
+
+
+* THEN: Create Saved Response popup is shown 
+
+
+* THEN: Title is Create Saved Response.
+
+
+* THEN: [X] button closes the popup.
+
+
+* THEN: TITLE field is required, has a tooltip (Used to organize responses. This won't appear in messages..), and a placeholder (Name this response for easy search).
+
+
+* THEN: TITLE field allows 140 characters max; excess text is cut off on paste.
+
+
+* THEN: MESSAGE field is required, has a placeholder (Write the full message you want to send to clients), and does not allow text-formatting.
+
+
+* THEN: MESSAGE field allows 10,000 characters max; character count shown as {X}/10000; excess text is cut off on paste.
+
+
+* THEN: Cancel button is always enabled and closes the popup.
+
+
+* THEN: Save button is disabled by default; enabled if both TITLE and MESSAGE are filled.
+
+
+* THEN: On Save, display toast: New Saved Response created..
+
+
+
+WHEN: Addressing AC6: Edit a saved response.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the 3-dot button and click the Edit response option.
+
+
+* THEN: Edit Saved Response popup is shown
+
+
+* THEN: Title is Edit Saved Response.
+
+
+* THEN: [X] button or Cancel button closes popup if no changes; else shows Discard Changes? popup.
+
+
+* THEN: Discard Changes? popup has text: Are you sure you want to go? Changes have not been saved yet..
+
+
+* THEN: TITLE and MESSAGE fields are pre-populated with existing data; behaviors follow AC5.
+
+
+* THEN: Save button enabled if fields are filled; shows toast: Saved Response updated successfully..
+
+
+
+WHEN: Addressing AC7: Delete a saved response.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the 3-dot button and click the Delete response option.
+
+
+* THEN: A confirmation popup is shown: Delete Response?.
+
+
+* THEN: Text: This response will be permanently deleted and can't be recovered. Are you sure you want to proceed?.
+
+
+* THEN: OK button deletes the response and shows toast: Saved Response deleted..
+
+
+
+WHEN: Addressing AC8: Add saved response to chat box by selecting an item in Saved Response popup.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the title of a saved response item or hit ENTER.
+
+
+* THEN: Append the full message content into the chatbox, behind current text.
+
+
+
+GIVEN: User Story 2: As a coach who frequently messages clients, I want to create a saved response from a message in the conversation, so that I add a new saved response quicker.
+
+WHEN: Addressing AC1: Add Save this response button to Coach's non-text message.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation.
+
+
+* WHEN: I hover over a non-text message of the Coach.
+
+
+* THEN: Add a button between 3-dot and Reply buttons 
+
+
+* THEN: Tooltip shows: Saved this response.
+
+
+* THEN: Button only shows if workspace is on a paid plan (Pro, Studio).
+
+
+
+WHEN: Addressing AC2: Add new saved response from the conversation.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation detail.
+
+
+* WHEN: I click on the Saved this response button.
+
+
+* THEN: Show popup titled Add To Saved Responses.
+
+
+* THEN: Leave Title field blank.
+
+
+* THEN: Pre-populate Message field with the Coach's message (max 10,000 characters).
+
+
+* THEN: Clicking Save adds the response and shows toast: Response has been saved.

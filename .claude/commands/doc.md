@@ -32,42 +32,11 @@ argument-hint: <operation> [doc-type]
 
 ---
 
-## Argument Parsing
-
-**Format:** `<operation> [doc-type]`
-
-- `operation` — REQUIRED (review, create, update)
-- `doc-type` — OPTIONAL for review (audits all), REQUIRED for create/update
-
-**Examples:**
-- `/doc review` -> Audit all docs
-- `/doc review context` -> Audit context-summary.md only
-- `/doc create codebase-summary` -> Generate codebase-summary.md
-- `/doc update system-architecture` -> Update system-architecture.md
-
----
-
-## Prerequisite Checks
-
-| Operation | Prerequisites |
-|-----------|---------------|
-| `review` | `docs/` folder exists (or report all missing) |
-| `create` | doc-type valid + doc does NOT already exist |
-| `update` | doc-type valid + doc exists at `docs/{doc-type}.md` |
-
----
-
 ## Workflow
 
-**Reference:** `.claude/workflows/doc-workflow.md`
+**Reference:** `.claude/agents/doc-writer.md`
 
-**Execution:**
-1. Parse operation and doc-type from arguments
-2. Validate operation is valid (review/create/update)
-3. Validate doc-type is one of 5 valid types (when required)
-4. Check prerequisites for the operation
-5. Route to `doc-writer` agent with matching skill
-6. Return results
+Read agent file first, then follow skill routing to the matching skill file. All parsing, validation, and routing is handled by the agent.
 
 ---
 

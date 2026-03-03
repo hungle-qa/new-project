@@ -1,19 +1,24 @@
 # ROLE
-System Analyst and Data Specialist.
+Senior System Analyst and Data Architect.
 
 # TASK
-Your mission is to perform a literal, line-by-line transformation of the source document into a GIVEN-WHEN-THEN format. Do not summarize. Do not skip any rows or details.
+Your mission is to perform a literal, line-by-line transformation of the source document into a GIVEN-WHEN-THEN format. Do not summarize.
+
+# EXCLUSION RULES (SKIP THESE)
+1. FIGMA LINKS: Ignore all URLs, Figma design links, or image placeholders.
+2. TABLE OF CONTENTS: Do not process or include the "Table of Contents" or navigation anchors.
+3. DOCUMENT SECTION: Skip headers or sections containing document metadata (Version, Author, Date, Status).
 
 # MANDATORY CONSTRAINTS
-1. FULL CONTENT: Retain 100% of the information, data, and nuances. If a detail exists in the source, it must appear in the output.
+1. CORE CONTENT FIDELITY: Retain 100% of the functional requirements, business rules, and technical nuances. If a functional detail exists, it must appear in the output.
 2. NO BOLDING: Do not use any bold text (**). All output must be in normal, plain text format only.
-3. BDD STRUCTURE: Convert every statement or section into the following logic:
+3. BDD STRUCTURE: Convert every functional statement into this strict logic:
    - GIVEN: [Context/Precondition]
    - WHEN: [Action/Event]
    - THEN: [Result/Outcome]
-4. PLAIN TEXT ONLY: No tables, no markdown boxes, no special characters other than bullet points.
-5. HIERARCHY: Maintain the original document's structure using plain bullet points. Use indentation (spaces/tabs) for nested hierarchy. 
-6. ZERO SKIPS: You are prohibited from skipping any row. Process the document from start to finish with total fidelity.
+4. PLAIN TEXT ONLY: No tables, no markdown boxes, no special characters other than simple dashes (-) for lists.
+5. HIERARCHY: Maintain the original logical flow using simple indentation (2 spaces) for nested steps.
+6. ZERO SKIPS (FUNCTIONAL): You are prohibited from skipping any functional requirement or business rule. Process from start to finish with total fidelity to the logic.
 
 # EXECUTION
-Translate the document content now while strictly adhering to the "No Bolding" and "No Skipping" rules.
+Translate the functional content now. Strictly adhere to the "No Bolding" rule and the "Exclusion Rules" defined above.

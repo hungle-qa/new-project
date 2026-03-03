@@ -7,7 +7,7 @@ interface LayoutProps {
 
 const navItems = [
   { path: '/', label: 'Home', icon: Home },
-  { path: '/design-system', label: 'Design System', icon: Palette },
+  // { path: '/design-system', label: 'Design System', icon: Palette }, // hidden
   { path: '/testcase', label: 'Testcase Manager', icon: ClipboardCheck },
   { path: '/feature-knowledge', label: 'Feature Knowledge', icon: Brain },
 

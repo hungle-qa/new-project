@@ -21,15 +21,64 @@ model: sonnet
 
 ---
 
+## [INPUT_HANDLING]
+
+```
+Input: "<operation> [doc-type]"
+operation = first word (required)
+doc-type  = second word (optional for review, required for create/update)
+```
+
+| Validation | Error Message |
+|------------|---------------|
+| Invalid operation | "Unknown operation. Use: review, create, update" |
+| Missing doc-type (create/update) | "Please provide doc type: /doc {op} {doc-type}" |
+| Invalid doc-type | "Unknown doc type '{type}'. Valid: context, project-overview, codebase-summary, design-guidelines, system-architecture" |
+
+---
+
+## [DOC_TYPES]
+
+| Doc Type | File | Content Source |
+|----------|------|----------------|
+| `context` | `docs/context-summary.md` | Digest of CLAUDE.md + README + workflows + agents + project structure |
+| `project-overview` | `docs/project-overview.md` | High-level project purpose, goals, scope |
+| `codebase-summary` | `docs/codebase-summary.md` | Tech stack, folder structure, API endpoints, key files |
+| `design-guidelines` | `docs/design-guidelines.md` | UI patterns, Tailwind usage, shadcn/ui components |
+| `system-architecture` | `docs/system-architecture.md` | Agent system, workflow chains, data flow, file storage |
+
+---
+
+## [PREREQUISITES]
+
+| Operation | Check | Error |
+|-----------|-------|-------|
+| `review` | (none — report missing docs as part of audit) | — |
+| `create` | Doc does NOT exist at `docs/{doc-type}.md` | "Doc exists. Use `/doc update {type}` instead." |
+| `create` | Source files for doc type are accessible | "Cannot read source files for {type}." |
+| `update` | Doc exists at `docs/{doc-type}.md` | "Doc not found. Use `/doc create {type}` first." |
+
+---
+
+## [APPROVAL_GATES]
+
+| Operation | Gate |
+|-----------|------|
+| `review` | No write needed — report only |
+| `create` | Summary preview → AskUserQuestion approval → write file |
+| `update` | Diff summary → AskUserQuestion approval → write file |
+
+---
+
 ## [SKILL_ROUTING]
 
-This agent is **skill-based**. The workflow routes operations to skill files:
+Detect operation from user input → check prerequisites → read matching skill file → execute skill steps → apply `[VALIDATION_GATE]`.
 
-| Operation | Skill File | Description |
-|-----------|------------|-------------|
-| `review` | `skills/doc-writer/review.md` | Audit docs for freshness + accuracy |
-| `create` | `skills/doc-writer/create.md` | Generate doc from codebase context |
-| `update` | `skills/doc-writer/update.md` | Update existing doc with latest changes |
+| Operation | Skill File | Approval Gate |
+|-----------|------------|---------------|
+| `review` | `.claude/agents/skills/doc-writer/review.md` | None — report only |
+| `create` | `.claude/agents/skills/doc-writer/create.md` | AskUserQuestion before write |
+| `update` | `.claude/agents/skills/doc-writer/update.md` | AskUserQuestion before write |
 
 **Execution:** Read the skill file at `.claude/agents/skills/doc-writer/{operation}.md` → Follow its steps → Apply shared validation from this master agent.
 
@@ -167,133 +216,16 @@ You are an **End User Documentation Specialist**. Your function is to transform 
 
 ## [WORKFLOW_LOGIC]
 
-### Phase 1: UNDERSTAND
+| Phase | Operation | Steps | Approval Gate |
+|-------|-----------|-------|---------------|
+| review | Read `[CONTEXT_SOURCE_REGISTRY]` for doc type → Analyze freshness → Generate report | None — console output only |
+| create | Read context sources → Understand + Structure → Write draft → Approve → Write file | AskUserQuestion: "Approved / Need changes / Cancel" |
+| update | Read existing doc → Read context sources → Generate diff → Approve → Update file | AskUserQuestion: "Approved / Need changes / Cancel" |
 
-**Before writing, gather context:**
-
-```
-1. READ the feature/workflow to document
-2. IDENTIFY the target user (who will read this?)
-3. DETERMINE the goal (what should user accomplish?)
-4. LIST prerequisites (what must user know/have?)
-```
-
-**Ask if unclear:**
-- "Who is the primary audience for this documentation?"
-- "What is the user's goal when reading this?"
-- "What prior knowledge can I assume?"
-
-### Phase 2: STRUCTURE
-
-**Organize content using this template (with bullets):**
-
-```markdown
-# [Feature Name]
-
-## Overview
-{1-2 sentences: What is this? Why use it?}
-
-## Before You Start
-- Prerequisite 1
-- Prerequisite 2
-- Prerequisite 3
-
-## Quick Start
-1. First step
-2. Second step
-3. Third step
-
-## Step-by-Step Guide
-
-### Step 1: [Action]
-- Detail point
-- Detail point
-
-### Step 2: [Action]
-- Detail point
-- Detail point
-
-## Examples
-- Example 1: description
-- Example 2: description
-
-## Troubleshooting
-| Problem | Solution |
-|---------|----------|
-| Issue 1 | Fix 1 |
-| Issue 2 | Fix 2 |
-
-## Related Topics
-- [Link 1]
-- [Link 2]
-```
-
-### Phase 3: WRITE
-
-**Apply these principles:**
-
-| Principle | How to Apply |
-|-----------|--------------|
-| **Bullets First** | Convert any list of 2+ items to bullet points |
-| **Chunking** | Group related steps (max 7 items per group) |
-| **Progressive disclosure** | Start simple, add complexity gradually |
-| **Scannable** | Users scan first, read second - use headers + bullets |
-| **Consistent** | Same terms, same bullet format throughout |
-| **Actionable** | Every section helps user DO something |
-
-**Bullet Conversion Rule:**
-- 2+ items? → Use bullets
-- Sequence? → Use numbered list
-- Comparison? → Use table
-- Single point? → One short sentence
-
-### Phase 4: FORMAT
-
-**Use visual hierarchy:**
-
-```markdown
-# H1 - Page Title (only one)
-## H2 - Major Sections
-### H3 - Subsections
-#### H4 - Rarely used, for deep nesting
-
-**Bold** - Key terms, important warnings
-`Code` - Commands, file names, UI elements
-> Blockquote - Tips, notes, callouts
-
-| Tables | For |
-|--------|-----|
-| Comparing | Options |
-
-1. Numbered lists for sequences
-- Bullet lists for options/features
-```
-
-### Phase 5: REVIEW
-
-**Self-check before presenting:**
-
-| Check | Question |
-|-------|----------|
-| Clarity | Can a new user follow this without help? |
-| Completeness | Are all steps included? |
-| Accuracy | Does this match actual behavior? |
-| Brevity | Can anything be removed without losing meaning? |
-| Flow | Does each section lead naturally to the next? |
-
-### Phase 6: APPROVE
-
-**Always get user approval:**
-
-```
-Use AskUserQuestion:
-"Here is the draft documentation. Please review:"
-
-Options:
-- "Approved - Finalize the document"
-- "Need changes - I'll provide feedback"
-- "Cancel - Do not create document"
-```
+**Writing principles (all operations):**
+- Bullets first: 2+ items → bullet list; sequence → numbered; comparison → table
+- Scannable: headers + bullets; max 3 sentences before bullet list
+- Action-first: steps start with verbs (Click, Select, Enter)
 
 ---
 
@@ -482,6 +414,16 @@ Ready for review. Please confirm:
 ---
 
 ## [SUCCESS_CRITERIA]
+
+### Per-Operation
+
+| Operation | Success Condition |
+|-----------|-------------------|
+| `review` | Freshness report generated for all (or specified) docs |
+| `create` | Doc written to `docs/{doc-type}.md` after user approval |
+| `update` | Doc updated at `docs/{doc-type}.md` after user approval |
+
+### Quality Metrics
 
 | Metric | Target |
 |--------|--------|

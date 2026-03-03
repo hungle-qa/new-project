@@ -11,15 +11,11 @@ argument-hint: [feature description]
 
 ---
 
-## Execution
+## Workflow
 
-Read and follow `.claude/workflows/build-app-workflow.md` — it handles:
-1. Clarification (app vs docs)
-2. Task classification (EASY / MEDIUM / HARD)
-3. User messaging (show classification before coding)
-4. Skill loading + implementer dispatch
+**Reference:** `.claude/agents/implementer.md`
 
-**Classification happens in the workflow, NOT here. This command is a thin router.**
+Read agent file first, then follow skill routing to the matching skill file. All clarification checks, classification, and routing is handled by the agent.
 
 ---
 

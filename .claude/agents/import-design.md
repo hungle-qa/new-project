@@ -53,6 +53,50 @@ Detect mode and load the matching skill file. Execute its unique steps. All shar
 | Component file exists + no keywords | ASK user |
 | Component file doesn't exist | CREATE |
 
+### File Existence Check
+
+```
+If component name provided:
+  Check: source/design-system/{ComponentName}.md
+
+  If NO IMAGES:
+    If EXISTS   → MODE = UPDATE, ACTION = UPDATE
+    If NOT EXISTS → ERROR: "Component not found. Use CREATE with images."
+
+  If HAS IMAGES:
+    If EXISTS + edit keywords → ACTION = EDIT
+    If EXISTS + no keywords   → ASK user: "Create new or edit existing?"
+    If NOT EXISTS             → ACTION = CREATE
+```
+
+### Full Detection Table
+
+| Signal | Mode | Action | Next Step |
+|--------|------|--------|-----------|
+| HTML/CSS pasted, no images | VALIDATE | CREATE | `validate.md` |
+| 1 image + "import"/"create" | SINGLE | CREATE | `single.md` |
+| 1 image + "edit"/"update" | SINGLE | EDIT | `single.md` |
+| 2+ images + "import"/"create" | MULTI | CREATE | `multi.md` |
+| 2+ images + "edit"/"update" | MULTI | EDIT | `multi.md` |
+| "hover", "disabled", "states" | MULTI | — | `multi.md` |
+| No images + "update {Name}" | UPDATE | UPDATE | `update.md` |
+| No images + component name + file exists | UPDATE | UPDATE | `update.md` |
+| No images + component name + file NOT found | ERROR | — | Report error |
+| Unclear / no context | ASK | — | AskUserQuestion |
+
+### Clarification Question (if UNCLEAR)
+
+```
+Use AskUserQuestion:
+"I can help you with component management. What would you like to do?"
+
+Options:
+- "Import from single image (one state)"
+- "Import from multiple images (different states)"
+- "Update existing component (no image needed)"
+- "Validate pasted HTML/CSS code"
+```
+
 **After detecting mode:** Read the matching skill file and execute its unique steps. Then follow the shared logic below.
 
 ---

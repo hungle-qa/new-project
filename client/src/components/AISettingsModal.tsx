@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { X, Key, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react'
+import { X, Key, CheckCircle, AlertCircle, ExternalLink, RefreshCw } from 'lucide-react'
 import { useAISettings, AISettings } from '../hooks/useAISettings'
 
 interface AISettingsModalProps {
@@ -8,6 +8,17 @@ interface AISettingsModalProps {
   onSave?: (settings: AISettings) => void
 }
 
+interface AIModel {
+  id: string
+  displayName: string
+}
+
+const DEFAULT_MODELS: AIModel[] = [
+  { id: 'gemini-2.0-flash', displayName: 'Gemini 2.0 Flash (Recommended)' },
+  { id: 'gemini-1.5-flash', displayName: 'Gemini 1.5 Flash' },
+  { id: 'gemini-1.5-pro', displayName: 'Gemini 1.5 Pro' },
+]
+
 export function AISettingsModal({ isOpen, onClose, onSave }: AISettingsModalProps) {
   const { settings, saveSettings, isConfigured } = useAISettings()
   const [apiKey, setApiKey] = useState('')
@@ -15,6 +26,10 @@ export function AISettingsModal({ isOpen, onClose, onSave }: AISettingsModalProp
   const [testing, setTesting] = useState(false)
   const [testResult, setTestResult] = useState<'success' | 'error' | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
+  const [availableModels, setAvailableModels] = useState<AIModel[]>(DEFAULT_MODELS)
+  const [fetchingModels, setFetchingModels] = useState(false)
+  const [modelsError, setModelsError] = useState('')
+  const [modelsFetched, setModelsFetched] = useState(false)
 
   // Load current settings when modal opens
   useEffect(() => {
@@ -23,6 +38,9 @@ export function AISettingsModal({ isOpen, onClose, onSave }: AISettingsModalProp
       setModel(settings.model)
       setTestResult(null)
       setErrorMessage('')
+      setAvailableModels(DEFAULT_MODELS)
+      setModelsError('')
+      setModelsFetched(false)
     }
   }, [isOpen, settings])
 
@@ -55,11 +73,45 @@ export function AISettingsModal({ isOpen, onClose, onSave }: AISettingsModalProp
         setTestResult('error')
         setErrorMessage(data.error || 'Connection test failed')
       }
-    } catch (error) {
+    } catch {
       setTestResult('error')
       setErrorMessage('Failed to connect to server')
     } finally {
       setTesting(false)
+    }
+  }
+
+  const handleFetchModels = async () => {
+    if (!apiKey.trim()) return
+
+    setFetchingModels(true)
+    setModelsError('')
+
+    try {
+      const response = await fetch('/api/ai/models', {
+        headers: {
+          'X-AI-API-Key': apiKey,
+        },
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        const fetched: AIModel[] = data.models
+        setAvailableModels(fetched.length > 0 ? fetched : DEFAULT_MODELS)
+        setModelsFetched(true)
+        // Keep current model selection if it exists in the new list, otherwise default
+        const currentExists = fetched.some((m) => m.id === model)
+        if (!currentExists && fetched.length > 0) {
+          setModel(fetched[0].id)
+        }
+      } else {
+        setModelsError(data.error || 'Failed to fetch models')
+      }
+    } catch {
+      setModelsError('Failed to connect to server')
+    } finally {
+      setFetchingModels(false)
     }
   }
 
@@ -130,6 +182,9 @@ export function AISettingsModal({ isOpen, onClose, onSave }: AISettingsModalProp
                 onChange={(e) => {
                   setApiKey(e.target.value)
                   setTestResult(null)
+                  setModelsFetched(false)
+                  setModelsError('')
+                  setAvailableModels(DEFAULT_MODELS)
                 }}
                 placeholder="Enter your Gemini API key"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -141,19 +196,48 @@ export function AISettingsModal({ isOpen, onClose, onSave }: AISettingsModalProp
 
             {/* Model Selection */}
             <div>
-              <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-1">
-                Model
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="model" className="block text-sm font-medium text-gray-700">
+                  Model
+                </label>
+                <button
+                  onClick={handleFetchModels}
+                  disabled={fetchingModels || !apiKey.trim()}
+                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {fetchingModels ? (
+                    <>
+                      <RefreshCw className="w-3 h-3 animate-spin" />
+                      Fetching...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-3 h-3" />
+                      {modelsFetched ? 'Refresh Models' : 'Fetch Models'}
+                    </>
+                  )}
+                </button>
+              </div>
               <select
                 id="model"
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="gemini-2.0-flash">Gemini 2.0 Flash (Recommended)</option>
-                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                {availableModels.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.displayName}
+                  </option>
+                ))}
               </select>
+              {modelsError && (
+                <p className="text-xs text-red-600 mt-1">{modelsError}</p>
+              )}
+              {modelsFetched && !modelsError && (
+                <p className="text-xs text-green-600 mt-1">
+                  {availableModels.length} models loaded from API
+                </p>
+              )}
             </div>
 
             {/* Test Connection Button */}

@@ -140,27 +140,29 @@ export class TestcaseFeatureService {
     name: string, fileBuffer: Buffer, filename: string,
     mimeType: string, customPrompt: string, aiConfig: AIConfig, skipAi?: boolean
   ): Promise<{ specPath: string }> {
-    let rawContent: string
+    let finalContent: string
 
-    if (mimeType === 'application/pdf') {
-      if (skipAi) {
+    if (mimeType === 'application/pdf' && !skipAi) {
+      // Send raw PDF bytes to Gemini multimodal — skip text extraction
+      finalContent = (await AIService.structureSpecFromPdf(fileBuffer, customPrompt, aiConfig)).content
+    } else {
+      let rawContent: string
+
+      if (mimeType === 'application/pdf') {
         const { parsePdfWithBullets } = await import('./PdfBulletParser')
         rawContent = await parsePdfWithBullets(fileBuffer)
+      } else if (mimeType === 'text/markdown' || filename.endsWith('.md')) {
+        rawContent = fileBuffer.toString('utf-8')
+      } else if (mimeType === 'text/plain' || filename.endsWith('.txt')) {
+        rawContent = fileBuffer.toString('utf-8')
       } else {
-        const pdfParse = await import('pdf-parse')
-        rawContent = (await pdfParse.default(fileBuffer)).text
+        throw new Error('Unsupported file type. Only PDF, Markdown, and TXT files are supported.')
       }
-    } else if (mimeType === 'text/markdown' || filename.endsWith('.md')) {
-      rawContent = fileBuffer.toString('utf-8')
-    } else if (mimeType === 'text/plain' || filename.endsWith('.txt')) {
-      rawContent = fileBuffer.toString('utf-8')
-    } else {
-      throw new Error('Unsupported file type. Only PDF, Markdown, and TXT files are supported.')
-    }
 
-    const finalContent = skipAi
-      ? rawContent
-      : (await AIService.structureSpec(rawContent, customPrompt, aiConfig)).content
+      finalContent = skipAi
+        ? rawContent
+        : (await AIService.structureSpec(rawContent, customPrompt, aiConfig)).content
+    }
 
     const specDir = path.join(SOURCE_DIR, name, 'spec')
     await fs.mkdir(specDir, { recursive: true })

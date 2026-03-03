@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { FileText, Eye, Trash2, Copy, Check, StickyNote } from 'lucide-react'
+import { FileText, Eye, Trash2, Copy, Check, StickyNote, Download } from 'lucide-react'
 import { parseCSV } from './csvUtils'
 import { CsvPreviewModal } from './CsvPreviewModal'
 import { TestcaseMode } from '../../pages/testcase-manager/types'
@@ -104,6 +104,30 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
     }
   }
 
+  const handleExportMd = async (filename: string) => {
+    try {
+      const res = await fetch(`/api/testcase/${feature}/results/${filename}`)
+      const data = await res.json()
+      if (data.content) {
+        const rows = parseCSV(data.content)
+        if (rows.length === 0) return
+        const [header, ...body] = rows
+        const separator = header.map(() => '---')
+        const toRow = (cells: string[]) => `| ${cells.map(c => c.replace(/\|/g, '\\|').replace(/\n/g, ' ')).join(' | ')} |`
+        const md = [toRow(header), toRow(separator), ...body.map(toRow)].join('\n')
+        const blob = new Blob([md], { type: 'text/markdown' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = filename.replace(/\.csv$/i, '.md')
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   if (loading) {
     return <div className="text-center py-8 text-gray-500 text-sm">Loading results...</div>
   }
@@ -124,6 +148,7 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
                   setCopiedCmd(cmd)
                   setTimeout(() => setCopiedCmd(null), 2000)
                 }}
+                title={`Copy /testcase ${cmd} ${feature} command`}
                 className={`flex items-center gap-1 px-2.5 py-1 text-xs rounded-md transition-colors ${
                   isCopied
                     ? 'text-green-600 bg-green-50 border border-green-200'
@@ -195,13 +220,14 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
                   </div>
                   <button
                     onClick={() => handlePreview(filename)}
-                    className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
+                    title="Preview testcase table"
+                    className="flex items-center px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
                   >
                     <Eye className="w-3 h-3" />
-                    Preview
                   </button>
                   <button
                     onClick={() => handleCopyTsv(filename)}
+                    title={copiedFile === filename ? 'Copied!' : 'Copy as TSV (paste into spreadsheet)'}
                     className={`flex items-center gap-1 px-2 py-1 text-xs rounded ${
                       copiedFile === filename
                         ? 'text-green-600 bg-green-50'
@@ -211,11 +237,19 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
                     {copiedFile === filename ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy TSV</>}
                   </button>
                   <button
+                    onClick={() => handleExportMd(filename)}
+                    title="Export as Markdown file (.md)"
+                    className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
+                  >
+                    <Download className="w-3 h-3" />
+                    Export .md
+                  </button>
+                  <button
                     onClick={() => setConfirmDelete(filename)}
-                    className="flex items-center gap-1 px-2 py-1 text-xs text-red-600 bg-red-50 rounded hover:bg-red-100"
+                    title="Delete this file permanently"
+                    className="flex items-center px-2 py-1 text-xs text-red-600 bg-red-50 rounded hover:bg-red-100"
                   >
                     <Trash2 className="w-3 h-3" />
-                    Delete
                   </button>
                 </div>
               </div>
@@ -226,6 +260,7 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
                   <div className="flex gap-2">
                     <button
                       onClick={() => setConfirmDelete(null)}
+                      title="Cancel deletion"
                       className="px-2 py-1 text-xs text-gray-600 bg-white border border-gray-200 rounded hover:bg-gray-50"
                     >
                       Cancel
@@ -233,6 +268,7 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
                     <button
                       onClick={() => handleDelete(filename)}
                       disabled={deleting}
+                      title="Confirm permanent deletion"
                       className="px-2 py-1 text-xs text-white bg-red-600 rounded hover:bg-red-700 disabled:opacity-50"
                     >
                       {deleting ? 'Deleting...' : 'Delete'}

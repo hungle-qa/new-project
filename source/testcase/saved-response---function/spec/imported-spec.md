@@ -1,267 +1,335 @@
 
+GIVEN: The project structure and objectives.
 
-Saved Response Specifications (WEB)
+WHEN: Analyzing the context and objective.
 
-1. Context & Objective
-2. Feature Design
-3. Specifications
-3. 1. Permissions
-3. 2. Acceptant Criteria
-User Story 1: As a coach who frequently messages clients, I want to save and quickly insert predefined responses in chats, so that I can respond faster and maintain consistency in my communication without typing the same messages repeatedly
-AC1: Add Saved Response button in Editor nav
-AC2: Saved Response popup
-AC3: Search box behaviors
-AC4: 3-dot button behaviors
-AC5: Add a new saved response
-AC6: Edit a saved response
-AC7: Delete a saved response
-AC8: Add saved response to chat box by selecting an item in Saved Response popup
-User Story 2: As a coach who frequently messages clients, I want to create a saved response from a message in the conversation, so that I add a new saved response quicker
-AC1: Add “Save this response” button to Coach's non-text message
-AC2: Add new saved response from the conversation
-1. Context & Objective
-Users might often repeat similar messages when communicating with clients, leading to inefficiency and inconsistency. The Saved Response feature allows users to create and reuse predefined responses - to streamline communication, save time, and maintain consistent tone and quality.
+THEN: The following goals are established:
 
-3. Specifications
-3. 1. Permissions
-“Saved Responses” feature is available is available on the Pro plan and above.
-All Coaches in the workspace can use “Saved Responses” feature as long as the workspace has permission to use it.
-Saved Responses list is private per user
-3. 2. Acceptant Criteria
-      N
-User Story 1: As a coach who frequently messages clients, I want to save and quickly insert predefined responses in chats, so that I can respond faster and maintain consistency in my communication without typing the same messages repeatedly AIT-1383: [Customer Support] [Saved Response] Allow Coach to qu ickly insert saved responses in chat by using Saved Response feature in Inbox QA SUCCESS
-AC1: Add
-    I am in I
-Saved Add a Saved Responses
-Response button in a observe button next to GIF button
-Editor nav conver the
-                  Hover over the button will show a sation Editor tooltip: ”Saved Responses \ ”
-          nav
-AC2:
-    I am in I click Saved Responses modal is shown
-Saved
-Response popup a on https://www.figma.com/design/Ad conver j9bljV5m2lwDoyMV8uEf/Inbox?nod
-          Saved sation e-id=12205-83759&t=XBqWVsEyi9
-          Respo
-                  50aUXa-4 Connect your Figma acc nses
+* Users often repeat similar messages when communicating with clients, leading to inefficiency and inconsistency.
 
-ount which shows list of MY saved butto responses, contains:
-n
-X button: on click, close the modal
-OR
-(updated Dec 31)
-using
-Search box (refer to AC3)
-shortcut
-  - “Create new” button
-Ctrl/
-  Placed in top-right corner comma
-  Hovering will display as “
-nd K
-  Create New”
-  When I click on the button, then refer to AC5
-If there are no saved responses, display:
-”{image}
-Your saved responses list is empty.
-Start by creating your first one to save time during chats.”
-If having saved responses, display list of saved-response items below Search box, as:
-  On the left-side of the modal, show list of title's saved responses:
-  Order by latest updated time
-  Divided into 2 sections:
-    FREQUENTLY USED
-    section
-      Show the responses that the user interacts with most often.
-      A responseʼs usage
 
-count is incremented each time the response is selected (appenđe into chatbox) by the user.
-Usage count is per user
-If there is no frequently used saved responses, then hide this section
-If having list of frequently used saved responses, then show
-Top 5 most-used saved responses by that user
-- If there are fewer than
-5 responses, show all available responses
-- Sort by
-usage_count descending (most used
-→ least used). When usage_count is equal, sort by title ascending (A–Z)
-ALL section
-List all saved responses, sort by title A-Z
-Select the first saved response in the list by default
-Allow user to use arrow-keys
-(Up, Down) to move between responses in the list
-On the right-side of the modal, show the message detail of current-selecting saved response, as:
-{title}
-{message_detail}
+* The Saved Response feature allows users to create and reuse predefined responses to streamline communication, save time, and maintain consistent tone and quality.
 
-Hover over the message detail will show a 3-dot (refer to AC4)
-Allow scrolling if the message is long
-Hover between title of saved-
-responses list to view its mesage detail
-Allow to click on the title of a saved-response item to fill it in chatbox (refer to AC1)
-Apply pagination:
-Load every 20 items
-When user scrolls down, display Load more and get the next 20 items
-Footer shows list of shortcut as:
-Click X button OR shortcut Esc will close the popup (updated Dec
-31. 
-AC3:
-I am in I Search box in Saved Responses
-Search box a observe popup https://www.figma.com/desig behaviors conver the n/Adj9bljV5m2lwDoyMV8uEf/Inbox?n sation Saved ode-id=12203-76586&t=VeYPtxksTXvi
-Respons QgJW-4 Connect your Figma accoun es t :
-popup
-Empty by default, with placeholder:
-“Search saved response”
-When focus to the box, change placeholder to “Enter keyword...”
-Allow input text to search for responses:
-Display x icon when inputting text
-Remove text by backspace or click on x icon
 
-Should remove search input and show back the full list
-Searching rules:
-Start searching from 1 char
-Search based on title and message → return all saved responses where either the title or message field contains the search keyword
-Matching is case-insensitive and partial → the result is valid if the search keyword appears anywhere within either field
-Searching results are shown:
-If having no results found, show:
-Show number of matching results below Search box:
-“Search results (0)”
-If having matching results found:
-Show number of matching results below Search box:
-“Search results
-( {number_of_matche d_results} )”
-Show list of results same as
-AC2 above
-Select the first result to view by default
-Apply pagination:
+GIVEN: The feature specifications.
 
-                  Load every 20 items
-                  When user scrolls down, display Load more and get the next 20 items
-AC4: 3-
-I am I click A submenu is shown, containing dot button behaviors viewin on 3-dot options:
-g button
-            Edit response
-Saved on a
-            Delete response
-Respo saved nses respons popup e item
-AC5: Add
-I am I click Create Saved Response popup is a new saved response viewin on + shown https://www.figma.com/desig g n/Adj9bljV5m2lwDoyMV8uEf/Inbox?n
-      Creat
-Saved ode-id=11606-94948&t=NWLSPvgVk e
-Respo zxO2jpk-4 Connect your Figma accou new nses nt :
-    button popup
-            Title: “Create Saved Response”
-            [X] button
-              On clicking X button, close the popup
-            TITLE field
-              Add a next to field title
-              When hover over the
-              Then show a tooltip:
-              “Used to organize responses.
-              This wonʼt appear in messages..”
-              Required field
+WHEN: Evaluating the permissions for the Saved Responses feature.
 
-Empty by default, with placeholder: “Name this response for easy search”
-Allow all characters
-Allow to input maximum 140 char
-  Cannot input anymore if inputted max 140 char
-  If user pastes a text more than
-  140 char, then cut off and paste the first 140 char into the field
-MESSAGE field
-Required field
-Empty by default, with placeholder: “Write the full message you want to send to clilents”
-Allow to input any characters
-  Not allow text-formatting
-  If user paste a text paragraph, clear text-formatting (if any)
-Allow to input maximum 10,000
-char
-  Character count is shown as
-  “{X}/10000”, {X} is total number of characters
-  Cannot input anymore if inputted max 500 char
-  If user pastes a text more than
-  10,000 char, then cut off and paste the first 10,000 char into the field
-Cancel button
-Always enable
-On clicking Cancel button, close the popup
-Save button
-Disable by default
+THEN: The following rules apply:
 
-Enable if having input in both
-TITLE & MESSAGE fields
-On clicking Save button, add a new saved response to the list.
-Once successfully saved, display a toast “New Saved Response created.”
-AC6: Edit
-I am I click Edit Saved Response popup is shown a saved response viewin on 3-dot https://www.figma.com/design/Adj9
-g button bljV5m2lwDoyMV8uEf/Inbox?node-id
-Saved and =11606-94949&t=NWLSPvgVkzxO2jp
-Respo click k-4 Connect your Figma account :
-nses
-Edit
-Title: “Edit Saved Response”
-popup respo [X] button. On clicking [X] button:
-nse If use has made no changes, close the popup option
-If user has made at least 1
-changes, show the Discard change pop up:
-  Title: “Discard Changes?”
-  Text: “Are you sure you want to go? Changes have not been saved yet.”
-  Cancel button or [X] icon → On click, close the Discard changes pop up
-  Discard Changes button → On click, close the
-  Discard changes pop up & back to the previous page without saving changes
-TITLE field
-Pre-populate the shortcut
+* The feature is available on the Pro plan and above.
 
-Keep other behaviors same as
-AC5:
-AC5:
 
-                  a toast “Saved Response updated successfully.”
-AC7:
-    I am I click A confirmation popup is shown:
-Delete a saved response viewin on 3-dot
-                  Title: “Delete Response?”
-    g button
-                  Text: “This response will be
-    Saved and permanently deleted and canʼt be
-    Respo click recovered.
-    nses
-          Delet
-                  Are you sure you want to proceed?”
-    popup e
-                  Cancel button respo
-                  On click, close the popup nse
-                  OK button option
-                  On click, close the popup and process to delete the response
-                  Once successfully deleted, display a toast “Saved Response deleted.”
-AC8: Add
-    I am I click Append the full message content into saved response to chat viewin on title the chatbox, place it behind the current box by selecting g of a text (if any)
-an item in
-Saved Saved saved
-Response popup Respo respons nses e item or popup hit
-          ENTE
-          R
-User Story 2: As a coach who frequently messages clients, I want to create a saved response from a message in the conversation, so that I add a new saved response quicker AIT-1811: Customer Support | Sa ved Response | Quick add an existed-message to Saved Response QA SUCCESS
-AC1: Add
-    I am in I hover Add a button between 3-dot and https://
-“Save this response”
-button to a over a Reply buttons for those non-text www.fig
-Coach's non-text conver non-text message of the Coach ma.com/
-message sation messag design/A
-                  Hover the button shows a tooltip detail e of the dj9bljV5
-                  “Saved this response”
-          Coach m2lwDo
-                  On click the button, show add a yMV8uE
-                  new saved response popup f/Inbox?
-                  Note: Only show this button on node-id=
-                  hovering message if the workspace
+* All Coaches in the workspace can use the feature as long as the workspace has permission to use it.
 
-is in paid-plan including Saved 13382-7
-Response feature (Pro, Studio plan) 265&t=Q
-                    llQNMfF
-AC2: Add
-I am in I click On click the button, then show the new saved response UvKE9u from the a on popup same as AC1 above conversati Nk-4 Co on conver “Saved Adjust the popup title to “Add To nnect yo sation this
-Saved Responses”
-                    ur Figm detail respons
-Leave Title field blank a accounte”
-Pre-populate the Coach's nt button message into the Message field
-  If the Coach's message is over
-  10,000 characters, then cut the first 10,000 characters of the message to be filled in the field
-On click [Saved] button will add that message as a new saved response, and show a toast
-“Response has been saved”
+
+* The Saved Responses list is private per user.
+
+
+
+GIVEN: User Story 1: As a coach who frequently messages clients, I want to save and quickly insert predefined responses in chats, so that I can respond faster and maintain consistency in my communication without typing the same messages repeatedly.
+
+WHEN: Addressing AC1: Add Saved Response button in Editor nav.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation.
+
+
+* WHEN: I observe the Editor nav.
+
+
+* THEN: Add a Saved Responses button next to the GIF button.
+
+
+* THEN: Hovering over the button will show a tooltip: Saved Responses.
+
+
+
+WHEN: Addressing AC2: Saved Response popup.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation.
+
+
+* WHEN: I click on the Saved Responses button or use shortcut Ctrl/command K.
+
+
+* THEN: The Saved Responses modal is shown 
+
+
+* THEN: The modal shows a list of MY saved responses.
+
+
+* THEN: It contains an X button to close the modal.
+
+
+* THEN: It contains a Search box.
+
+
+* THEN: It contains a Create new button in the top-right corner.
+
+
+* THEN: Hovering on Create new shows Create New tooltip.
+
+
+* THEN: Clicking Create new triggers AC5.
+
+
+* THEN: If the list is empty, display: {image} Your saved responses list is empty. Start by creating your first one to save time during chats..
+
+
+* THEN: If having saved responses, display list items below the Search box, ordered by latest updated time.
+
+
+* THEN: Divide the list into 2 sections: FREQUENTLY USED and ALL.
+
+
+* THEN: In FREQUENTLY USED, show responses the user interacts with most often, incremented each time the response is appended to the chatbox.
+
+
+* THEN: Usage count is per user.
+
+
+* THEN: If no frequently used responses, hide this section.
+
+
+* THEN: If available, show Top 5 most-used responses, sorted by usage_count descending, then by title A-Z.
+
+
+* THEN: In ALL section, list all saved responses sorted by title A-Z.
+
+
+* THEN: Select the first saved response by default.
+
+
+* THEN: Allow using Up and Down arrow-keys to move between responses.
+
+
+* THEN: On the right-side of the modal, show message details: {title} and {message_detail}.
+
+
+* THEN: Hovering over message detail shows a 3-dot button (refer to AC4).
+
+
+* THEN: Allow scrolling for long messages.
+
+
+* THEN: Hovering between titles in the list updates the message detail view.
+
+
+* THEN: Clicking on a title fills the chatbox (refer to AC1).
+
+
+* THEN: Apply pagination: load every 20 items and show Load more on scroll.
+
+
+* THEN: Footer shows shortcuts: X button or Esc to close popup.
+
+
+
+WHEN: Addressing AC3: Search box behaviors.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation.
+
+
+* WHEN: I observe the Saved Responses popup.
+
+
+* THEN: Show Search box 
+
+
+* THEN: Empty by default with placeholder: Search saved response.
+
+
+* THEN: When focused, placeholder changes to: Enter keyword....
+
+
+* THEN: Allow input to search, displaying an x icon.
+
+
+* THEN: Clicking x icon or using backspace removes text and shows back the full list.
+
+
+* THEN: Start searching from 1 character.
+
+
+* THEN: Search based on title and message field (case-insensitive and partial match).
+
+
+* THEN: If no results found, show: Search results (0).
+
+
+* THEN: If results found, show: Search results ({number_of_matched_results}) and list results as per AC2.
+
+
+* THEN: Select the first result by default.
+
+
+* THEN: Apply pagination: load every 20 items.
+
+
+
+WHEN: Addressing AC4: 3-dot button behaviors.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the 3-dot button on a saved response item.
+
+
+* THEN: A submenu is shown containing options: Edit response and Delete response.
+
+
+
+WHEN: Addressing AC5: Add a new saved response.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the + Create new button.
+
+
+* THEN: Create Saved Response popup is shown 
+
+
+* THEN: Title is Create Saved Response.
+
+
+* THEN: [X] button closes the popup.
+
+
+* THEN: TITLE field is required, has a tooltip (Used to organize responses. This won't appear in messages..), and a placeholder (Name this response for easy search).
+
+
+* THEN: TITLE field allows 140 characters max; excess text is cut off on paste.
+
+
+* THEN: MESSAGE field is required, has a placeholder (Write the full message you want to send to clients), and does not allow text-formatting.
+
+
+* THEN: MESSAGE field allows 10,000 characters max; character count shown as {X}/10000; excess text is cut off on paste.
+
+
+* THEN: Cancel button is always enabled and closes the popup.
+
+
+* THEN: Save button is disabled by default; enabled if both TITLE and MESSAGE are filled.
+
+
+* THEN: On Save, display toast: New Saved Response created..
+
+
+
+WHEN: Addressing AC6: Edit a saved response.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the 3-dot button and click the Edit response option.
+
+
+* THEN: Edit Saved Response popup is shown
+
+
+* THEN: Title is Edit Saved Response.
+
+
+* THEN: [X] button or Cancel button closes popup if no changes; else shows Discard Changes? popup.
+
+
+* THEN: Discard Changes? popup has text: Are you sure you want to go? Changes have not been saved yet..
+
+
+* THEN: TITLE and MESSAGE fields are pre-populated with existing data; behaviors follow AC5.
+
+
+* THEN: Save button enabled if fields are filled; shows toast: Saved Response updated successfully..
+
+
+
+WHEN: Addressing AC7: Delete a saved response.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the 3-dot button and click the Delete response option.
+
+
+* THEN: A confirmation popup is shown: Delete Response?.
+
+
+* THEN: Text: This response will be permanently deleted and can't be recovered. Are you sure you want to proceed?.
+
+
+* THEN: OK button deletes the response and shows toast: Saved Response deleted..
+
+
+
+WHEN: Addressing AC8: Add saved response to chat box by selecting an item in Saved Response popup.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am viewing the Saved Responses popup.
+
+
+* WHEN: I click on the title of a saved response item or hit ENTER.
+
+
+* THEN: Append the full message content into the chatbox, behind current text.
+
+
+
+GIVEN: User Story 2: As a coach who frequently messages clients, I want to create a saved response from a message in the conversation, so that I add a new saved response quicker.
+
+WHEN: Addressing AC1: Add Save this response button to Coach's non-text message.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation.
+
+
+* WHEN: I hover over a non-text message of the Coach.
+
+
+* THEN: Add a button between 3-dot and Reply buttons 
+
+
+* THEN: Tooltip shows: Saved this response.
+
+
+* THEN: Button only shows if workspace is on a paid plan (Pro, Studio).
+
+
+
+WHEN: Addressing AC2: Add new saved response from the conversation.
+
+THEN: The following criteria must be met:
+
+* GIVEN: I am in a conversation detail.
+
+
+* WHEN: I click on the Saved this response button.
+
+
+* THEN: Show popup titled Add To Saved Responses.
+
+
+* THEN: Leave Title field blank.
+
+
+* THEN: Pre-populate Message field with the Coach's message (max 10,000 characters).
+
+
+* THEN: Clicking Save adds the response and shows toast: Response has been saved.

@@ -1,1 +1,1 @@
-Good job.
+Old spec: Good job.

@@ -24,28 +24,6 @@ export function TestcaseManagerHeader({
     <div className="flex justify-between items-center mb-6">
       <div className="flex items-center gap-3">
         <h1 className="text-2xl font-bold text-gray-900">Testcase Manager</h1>
-        <button
-          onClick={() => onGlobalTab('default-rules')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
-            activeTab === 'default-rules' && isGlobalTabActive
-              ? 'text-blue-600 bg-blue-50 border border-blue-200'
-              : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
-          }`}
-        >
-          <ScrollText className="w-4 h-4" />
-          Default Rules
-        </button>
-        <button
-          onClick={() => onGlobalTab('default-template')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
-            activeTab === 'default-template' && isGlobalTabActive
-              ? 'text-blue-600 bg-blue-50 border border-blue-200'
-              : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
-          }`}
-        >
-          <Table className="w-4 h-4" />
-          Default Template
-        </button>
         <select
           value={mode}
           onChange={(e) => onModeChange(e.target.value as TestcaseMode)}
@@ -53,7 +31,34 @@ export function TestcaseManagerHeader({
         >
           <option value="full">Full</option>
           <option value="lite">Lite</option>
+          <option value="lite-v2">Lite v2</option>
         </select>
+        {mode === 'full' && (
+          <>
+            <button
+              onClick={() => onGlobalTab('default-rules')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
+                activeTab === 'default-rules' && isGlobalTabActive
+                  ? 'text-blue-600 bg-blue-50 border border-blue-200'
+                  : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <ScrollText className="w-4 h-4" />
+              Default Rules
+            </button>
+            <button
+              onClick={() => onGlobalTab('default-template')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
+                activeTab === 'default-template' && isGlobalTabActive
+                  ? 'text-blue-600 bg-blue-50 border border-blue-200'
+                  : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <Table className="w-4 h-4" />
+              Default Template
+            </button>
+          </>
+        )}
       </div>
       <div className="flex items-center gap-4">
         <span className="text-sm text-gray-500">{featureCount} features</span>

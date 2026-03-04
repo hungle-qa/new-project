@@ -26,7 +26,7 @@ export function TestcaseManagerPage() {
   const [digestDone, setDigestDone] = useState(false)
   const [digestWarnings, setDigestWarnings] = useState<string[]>([])
   const [showDigestWarnings, setShowDigestWarnings] = useState(false)
-  const [mode, setMode] = useState<TestcaseMode>('lite')
+  const [mode, setMode] = useState<TestcaseMode>('lite-v2')
 
   // Unsaved changes guard
   const [isDirty, setIsDirty] = useState(false)
@@ -97,10 +97,16 @@ export function TestcaseManagerPage() {
   const firstVisibleTab = () => getVisibleTabs(mode)[0].id
 
   const handleSelectFeature = (name: string) => {
-    guardedNavigate(() => {
+    guardedNavigate(async () => {
       setSelectedFeature(name)
-      setActiveTab(firstVisibleTab())
       loadConfig(name)
+      try {
+        const res = await fetch(`/api/testcase/${name}/results`)
+        const results = await res.json()
+        setActiveTab(Array.isArray(results) && results.length > 0 ? 'review-export' : firstVisibleTab())
+      } catch {
+        setActiveTab(firstVisibleTab())
+      }
     })
   }
 

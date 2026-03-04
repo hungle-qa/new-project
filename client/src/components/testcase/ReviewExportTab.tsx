@@ -1,8 +1,33 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FileText, Eye, Trash2, Copy, Check, StickyNote, Download } from 'lucide-react'
 import { parseCSV } from './csvUtils'
 import { CsvPreviewModal } from './CsvPreviewModal'
 import { TestcaseMode } from '../../pages/testcase-manager/types'
+
+function Tooltip({ text, children, align = 'center' }: { text: string; children: React.ReactNode; align?: 'center' | 'right' }) {
+  const posClass = align === 'right' ? 'right-0' : 'left-1/2 -translate-x-1/2'
+  return (
+    <div className="relative group">
+      {children}
+      <div className={`absolute bottom-full ${posClass} mb-1.5 px-2 py-1 text-xs text-white bg-gray-800 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50`}>
+        {text}
+      </div>
+    </div>
+  )
+}
+
+interface ResultMetadata {
+  test_count: number
+  est_input_tokens: number | null
+  est_output_tokens: number | null
+  est_total_tokens: number | null
+  rows_per_token: number | null
+}
+
+interface ResultWithMetadata {
+  filename: string
+  metadata: ResultMetadata | null
+}
 
 interface ReviewExportTabProps {
   feature: string
@@ -10,7 +35,7 @@ interface ReviewExportTabProps {
 }
 
 export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
-  const [csvFiles, setCsvFiles] = useState<string[]>([])
+  const [results, setResults] = useState<ResultWithMetadata[]>([])
   const [loading, setLoading] = useState(true)
   const [previewFile, setPreviewFile] = useState<string | null>(null)
   const [previewContent, setPreviewContent] = useState<string[][] | null>(null)
@@ -31,8 +56,8 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
       fetch(`/api/testcase/${feature}/results`).then(r => r.json()),
       fetch(`/api/testcase/${feature}/results/notes`).then(r => r.json()),
     ])
-      .then(([files, notesData]) => {
-        setCsvFiles(files)
+      .then(([resultsData, notesData]) => {
+        setResults(Array.isArray(resultsData) ? resultsData : [])
         setNotes(notesData)
         setLoading(false)
       })
@@ -68,7 +93,7 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
     try {
       const res = await fetch(`/api/testcase/${feature}/results/${filename}`, { method: 'DELETE' })
       if (res.ok) {
-        setCsvFiles(prev => prev.filter(f => f !== filename))
+        setResults(prev => prev.filter(r => r.filename !== filename))
         if (previewFile === filename) {
           handleClosePreview()
         }
@@ -141,29 +166,29 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
             const isCopied = copiedCmd === cmd
             const label = cmd === 'write' ? 'Full' : 'Lite'
             return (
-              <button
-                key={cmd}
-                onClick={() => {
-                  navigator.clipboard.writeText(`/testcase ${cmd} ${feature}`)
-                  setCopiedCmd(cmd)
-                  setTimeout(() => setCopiedCmd(null), 2000)
-                }}
-                title={`Copy /testcase ${cmd} ${feature} command`}
-                className={`flex items-center gap-1 px-2.5 py-1 text-xs rounded-md transition-colors ${
-                  isCopied
-                    ? 'text-green-600 bg-green-50 border border-green-200'
-                    : 'text-gray-600 bg-gray-100 hover:bg-gray-200 border border-gray-200'
-                }`}
-              >
-                {isCopied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                {isCopied ? 'Copied!' : `Copy: ${cmd} (${label})`}
-              </button>
+              <Tooltip key={cmd} text={`Copy /testcase ${cmd} ${feature} to clipboard`} align="right">
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`/testcase ${cmd} ${feature}`)
+                    setCopiedCmd(cmd)
+                    setTimeout(() => setCopiedCmd(null), 2000)
+                  }}
+                  className={`flex items-center gap-1 px-2.5 py-1 text-xs rounded-md transition-colors ${
+                    isCopied
+                      ? 'text-green-600 bg-green-50 border border-green-200'
+                      : 'text-gray-600 bg-gray-100 hover:bg-gray-200 border border-gray-200'
+                  }`}
+                >
+                  {isCopied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  {isCopied ? 'Copied!' : `Copy: ${cmd} (${label})`}
+                </button>
+              </Tooltip>
             )
           })}
         </div>
       </div>
 
-      {csvFiles.length === 0 ? (
+      {results.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
           <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500 text-sm mb-1">No testcase results yet</p>
@@ -177,16 +202,30 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
         </div>
       ) : (
         <div className="space-y-3">
-          {csvFiles.map(filename => (
+          {results.map(({ filename, metadata }) => (
             <div key={filename}>
               <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm font-medium text-gray-900">{filename}</span>
+                <div className="flex items-center gap-3 min-w-0">
+                  <FileText className="w-4 h-4 text-gray-400 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-sm font-medium text-gray-900 block truncate">{filename}</span>
+                    {metadata && (
+                      <span className="text-xs text-gray-400">
+                        {metadata.test_count} rows
+                        {metadata.est_total_tokens != null && (
+                          <> &middot; ~{metadata.est_total_tokens.toLocaleString()} tokens
+                            {metadata.rows_per_token != null && (
+                              <> ({metadata.rows_per_token} tok/row)</>
+                            )}
+                          </>
+                        )}
+                      </span>
+                    )}
+                  </div>
                   {filename.includes('-lite-') ? (
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-700 border border-amber-300">Lite</span>
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-700 border border-amber-300 shrink-0">Lite</span>
                   ) : (
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 border border-blue-300">Full</span>
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 border border-blue-300 shrink-0">Full</span>
                   )}
                 </div>
                 <div className="flex gap-2">
@@ -213,29 +252,31 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
                       }
                     </button>
                     {hoveredNote === filename && notes[filename] && copiedNote !== filename && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 text-xs text-gray-700 bg-yellow-50 border border-yellow-200 rounded shadow-lg whitespace-pre-wrap z-20">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 text-xs text-gray-700 bg-yellow-50 border border-yellow-200 rounded shadow-lg whitespace-pre-wrap z-50">
                         {notes[filename]}
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={() => handlePreview(filename)}
-                    title="Preview testcase table"
-                    className="flex items-center px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
-                  >
-                    <Eye className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={() => handleCopyTsv(filename)}
-                    title={copiedFile === filename ? 'Copied!' : 'Copy as TSV (paste into spreadsheet)'}
-                    className={`flex items-center gap-1 px-2 py-1 text-xs rounded ${
-                      copiedFile === filename
-                        ? 'text-green-600 bg-green-50'
-                        : 'text-gray-600 bg-gray-100 hover:bg-gray-200'
-                    }`}
-                  >
-                    {copiedFile === filename ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy TSV</>}
-                  </button>
+                  <Tooltip text="Preview testcase table">
+                    <button
+                      onClick={() => handlePreview(filename)}
+                      className="flex items-center px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
+                    >
+                      <Eye className="w-3 h-3" />
+                    </button>
+                  </Tooltip>
+                  <Tooltip text="Copy as TSV — paste directly into spreadsheet">
+                    <button
+                      onClick={() => handleCopyTsv(filename)}
+                      className={`flex items-center gap-1 px-2 py-1 text-xs rounded ${
+                        copiedFile === filename
+                          ? 'text-green-600 bg-green-50'
+                          : 'text-gray-600 bg-gray-100 hover:bg-gray-200'
+                      }`}
+                    >
+                      {copiedFile === filename ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy TSV</>}
+                    </button>
+                  </Tooltip>
                   <button
                     onClick={() => handleExportMd(filename)}
                     title="Export as Markdown file (.md)"

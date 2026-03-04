@@ -4,17 +4,31 @@ import matter from 'gray-matter'
 import { AIService, AIConfig } from './AIService'
 import { getDigestScaffold } from './TestcaseDigestScaffold'
 import {
-  SOURCE_DIR,
+  FEATURE_DIR,
   EXCLUDED_DIRS,
   FeatureSummary,
   FeatureConfig,
   ComponentMapping,
+  CornerCaseQuestion,
 } from './TestcaseTypes'
+
+export interface ResultMetadata {
+  test_count: number
+  est_input_tokens: number | null
+  est_output_tokens: number | null
+  est_total_tokens: number | null
+  rows_per_token: number | null
+}
+
+export interface ResultWithMetadata {
+  filename: string
+  metadata: ResultMetadata | null
+}
 
 export class TestcaseFeatureService {
   static async getAllFeatures(): Promise<FeatureSummary[]> {
     try {
-      const entries = await fs.readdir(SOURCE_DIR, { withFileTypes: true })
+      const entries = await fs.readdir(FEATURE_DIR, { withFileTypes: true })
       const dirs = entries.filter(e => e.isDirectory() && !EXCLUDED_DIRS.includes(e.name))
 
       const summaries: FeatureSummary[] = []
@@ -35,7 +49,7 @@ export class TestcaseFeatureService {
   }
 
   static async createFeature(name: string): Promise<{ name: string; path: string }> {
-    const featureDir = path.join(SOURCE_DIR, name)
+    const featureDir = path.join(FEATURE_DIR, name)
 
     await fs.mkdir(featureDir, { recursive: true })
     await fs.mkdir(path.join(featureDir, 'spec'), { recursive: true })
@@ -62,7 +76,7 @@ export class TestcaseFeatureService {
 
   static async getFeatureConfig(name: string): Promise<FeatureConfig | null> {
     try {
-      const configPath = path.join(SOURCE_DIR, name, 'config.md')
+      const configPath = path.join(FEATURE_DIR, name, 'config.md')
       const fileContent = await fs.readFile(configPath, 'utf-8')
       const { data, content } = matter(fileContent)
 
@@ -103,7 +117,7 @@ export class TestcaseFeatureService {
       linked_knowledge: merged.linked_knowledge, components: merged.components,
     }
 
-    const configPath = path.join(SOURCE_DIR, name, 'config.md')
+    const configPath = path.join(FEATURE_DIR, name, 'config.md')
     await fs.writeFile(configPath, matter.stringify(body, frontmatter))
 
     return this.getFeatureConfig(name)
@@ -111,8 +125,8 @@ export class TestcaseFeatureService {
 
   static async renameFeature(oldName: string, newName: string): Promise<string | null> {
     try {
-      const oldDir = path.join(SOURCE_DIR, oldName)
-      const newDir = path.join(SOURCE_DIR, newName)
+      const oldDir = path.join(FEATURE_DIR, oldName)
+      const newDir = path.join(FEATURE_DIR, newName)
 
       try { await fs.access(newDir); return null } catch { /* Good */ }
 
@@ -129,7 +143,7 @@ export class TestcaseFeatureService {
 
   static async deleteFeature(name: string): Promise<boolean> {
     try {
-      await fs.rm(path.join(SOURCE_DIR, name), { recursive: true, force: true })
+      await fs.rm(path.join(FEATURE_DIR, name), { recursive: true, force: true })
       return true
     } catch {
       return false
@@ -164,7 +178,7 @@ export class TestcaseFeatureService {
         : (await AIService.structureSpec(rawContent, customPrompt, aiConfig)).content
     }
 
-    const specDir = path.join(SOURCE_DIR, name, 'spec')
+    const specDir = path.join(FEATURE_DIR, name, 'spec')
     await fs.mkdir(specDir, { recursive: true })
     const specPath = path.join(specDir, 'imported-spec.md')
     await fs.writeFile(specPath, finalContent)
@@ -174,18 +188,18 @@ export class TestcaseFeatureService {
 
   static async getSpec(name: string): Promise<string | null> {
     try {
-      return await fs.readFile(path.join(SOURCE_DIR, name, 'spec', 'imported-spec.md'), 'utf-8')
+      return await fs.readFile(path.join(FEATURE_DIR, name, 'spec', 'imported-spec.md'), 'utf-8')
     } catch { return null }
   }
 
   static async updateSpec(name: string, content: string): Promise<void> {
-    const specPath = path.join(SOURCE_DIR, name, 'spec', 'imported-spec.md')
+    const specPath = path.join(FEATURE_DIR, name, 'spec', 'imported-spec.md')
     await fs.writeFile(specPath, content)
   }
 
   static async getResults(name: string): Promise<string[]> {
     try {
-      const resultDir = path.join(SOURCE_DIR, name, 'result')
+      const resultDir = path.join(FEATURE_DIR, name, 'result')
       const files = await fs.readdir(resultDir)
       const csvFiles = files.filter(f => f.endsWith('.csv'))
 
@@ -204,34 +218,66 @@ export class TestcaseFeatureService {
     } catch { return [] }
   }
 
+  static async saveResultMetadata(
+    name: string,
+    csvFilename: string,
+    metadata: ResultMetadata
+  ): Promise<void> {
+    const metaPath = path.join(FEATURE_DIR, name, 'result', `${csvFilename}.metadata.json`)
+    await fs.writeFile(metaPath, JSON.stringify(metadata, null, 2))
+  }
+
+  static async getResultMetadata(
+    name: string,
+    csvFilename: string
+  ): Promise<ResultMetadata | null> {
+    try {
+      const metaPath = path.join(FEATURE_DIR, name, 'result', `${csvFilename}.metadata.json`)
+      const raw = await fs.readFile(metaPath, 'utf-8')
+      return JSON.parse(raw) as ResultMetadata
+    } catch { return null }
+  }
+
+  static async listResultsWithMetadata(name: string): Promise<ResultWithMetadata[]> {
+    const filenames = await this.getResults(name)
+    return Promise.all(
+      filenames.map(async (filename) => {
+        const metadata = await this.getResultMetadata(name, filename)
+        return { filename, metadata }
+      })
+    )
+  }
+
   static async getResultFile(name: string, filename: string): Promise<string | null> {
     try {
-      return await fs.readFile(path.join(SOURCE_DIR, name, 'result', filename), 'utf-8')
+      return await fs.readFile(path.join(FEATURE_DIR, name, 'result', filename), 'utf-8')
     } catch { return null }
   }
 
   static getResultFilePath(name: string, filename: string): string {
-    return path.join(SOURCE_DIR, name, 'result', filename)
+    return path.join(FEATURE_DIR, name, 'result', filename)
   }
 
   static async deleteResultFile(name: string, filename: string): Promise<boolean> {
     try {
-      await fs.unlink(path.join(SOURCE_DIR, name, 'result', filename))
-      // Also delete associated note if exists
-      const notePath = path.join(SOURCE_DIR, name, 'result', `${filename}.note.md`)
+      await fs.unlink(path.join(FEATURE_DIR, name, 'result', filename))
+      // Also delete associated note and metadata sidecar if they exist
+      const notePath = path.join(FEATURE_DIR, name, 'result', `${filename}.note.md`)
       await fs.unlink(notePath).catch(() => {})
+      const metaPath = path.join(FEATURE_DIR, name, 'result', `${filename}.metadata.json`)
+      await fs.unlink(metaPath).catch(() => {})
       return true
     } catch { return false }
   }
 
   static async getResultNote(name: string, filename: string): Promise<string | null> {
     try {
-      return await fs.readFile(path.join(SOURCE_DIR, name, 'result', `${filename}.note.md`), 'utf-8')
+      return await fs.readFile(path.join(FEATURE_DIR, name, 'result', `${filename}.note.md`), 'utf-8')
     } catch { return null }
   }
 
   static async saveResultNote(name: string, filename: string, note: string): Promise<void> {
-    const notePath = path.join(SOURCE_DIR, name, 'result', `${filename}.note.md`)
+    const notePath = path.join(FEATURE_DIR, name, 'result', `${filename}.note.md`)
     if (!note.trim()) {
       await fs.unlink(notePath).catch(() => {})
     } else {
@@ -241,7 +287,7 @@ export class TestcaseFeatureService {
 
   static async getResultNotes(name: string): Promise<Record<string, string>> {
     try {
-      const resultDir = path.join(SOURCE_DIR, name, 'result')
+      const resultDir = path.join(FEATURE_DIR, name, 'result')
       const files = await fs.readdir(resultDir)
       const noteFiles = files.filter(f => f.endsWith('.note.md'))
       const notes: Record<string, string> = {}
@@ -251,5 +297,17 @@ export class TestcaseFeatureService {
       }
       return notes
     } catch { return {} }
+  }
+
+  static async getCornerCaseQuestions(name: string): Promise<CornerCaseQuestion[]> {
+    try {
+      const filePath = path.join(FEATURE_DIR, name, 'corner-case-questions.json')
+      return JSON.parse(await fs.readFile(filePath, 'utf-8'))
+    } catch { return [] }
+  }
+
+  static async saveCornerCaseQuestions(name: string, questions: CornerCaseQuestion[]): Promise<void> {
+    const filePath = path.join(FEATURE_DIR, name, 'corner-case-questions.json')
+    await fs.writeFile(filePath, JSON.stringify(questions, null, 2))
   }
 }

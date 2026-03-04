@@ -82,23 +82,33 @@ Use Build App Workflow for:
 testcase-writer (skill-based: write / update)
 ```
 
+### Operations
+
+| Operation | Usage | Description |
+|-----------|-------|-------------|
+| `write` | `/testcase write {feature}` | Generate testcases from spec + template + rules |
+| `write-lite` | `/testcase write-lite {feature}` | Lean testcases — spec + rules only, no digest |
+| `update` | `/testcase update {feature}` | Update existing testcases (add, edit, remove) |
+
 ### How to Run
 
 ```
-/testcase write {feature}           # Generate testcases
+/testcase write {feature}           # Generate testcases (full)
+/testcase write-lite {feature}      # Generate testcases (lean, spec-only)
 /testcase update {feature}          # Update existing testcases
 ```
 
 ### Prerequisites
 
-Before running `/testcase write`, ensure:
-1. Template CSV exists in `source/testcase/template/`
+Before running `/testcase write` or `/testcase write-lite`, ensure:
+1. Template CSV exists in `source/testcase/template/` (write only)
 2. Rules exist at `source/testcase/rule/test-rules.md`
 3. Feature spec imported via the Web UI (Testcase Manager > Import Spec tab)
 
 ### Examples
 ```
 /testcase write login-page
+/testcase write-lite login-page
 /testcase update login-page
 ```
 
@@ -178,11 +188,13 @@ QA-kit/
 │   ├── testcase/              # QA testcase data (testcase workflow)
 │   │   ├── rule/              # test-rules.md (testcase generation rules)
 │   │   ├── template/          # Imported CSV templates
-│   │   └── {feature-name}/    # Per-feature testcase data
-│   │       ├── config.md      # Feature config (levels, scope, components)
-│   │       ├── spec/          # Extracted spec from PDF
-│   │       ├── knowledge/     # Knowledge files (PDF/MD/TXT)
-│   │       └── result/        # Generated testcase CSVs
+│   │   ├── strategy/          # Strategy guides (spec-driven, scenario-based, etc.)
+│   │   └── feature/           # All user-created feature folders
+│   │       └── {feature-name}/    # Per-feature testcase data
+│   │           ├── config.md      # Feature config (levels, scope, components)
+│   │           ├── spec/          # Extracted spec from PDF
+│   │           ├── knowledge/     # Knowledge files (PDF/MD/TXT)
+│   │           └── result/        # Generated testcase CSVs
 │   └── design-system/         # HTML/CSS components (.md)
 │
 ├── client/                    # React Frontend (build-app workflow)
@@ -270,7 +282,7 @@ QA-kit/
 | Command | Purpose |
 |---------|---------|
 | `/start` | Start build-app workflow for main app development |
-| `/testcase` | Manage QA testcases (write, update) |
+| `/testcase` | Manage QA testcases (write, write-lite, update) |
 | `/doc` | Manage project documentation (review, create, update) |
 
 | `/import-design-by-image` | Convert UI images to design system components |
@@ -288,13 +300,14 @@ QA-kit/
 | File | Purpose |
 |------|---------|
 | `CLAUDE.md` | Project instructions for Claude |
-| `.claude/workflows/build-app-workflow.md` | Main app coding workflow |
-| `.claude/workflows/testcase-workflow.md` | QA testcase generation workflow |
-| `.claude/workflows/doc-workflow.md` | Documentation management workflow |
-
+| `.claude/agents/implementer.md` | Build app workflow |
+| `.claude/agents/testcase-writer.md` | QA testcase generation workflow |
+| `.claude/agents/doc-writer.md` | Documentation management workflow |
+| `.claude/agents/import-design.md` | Import design components workflow |
+| `.claude/agents/agia.md` | Agent audit + improvement workflow |
 | `.claude/workflows/development-rules.md` | Coding standards |
-| `.claude/agents/*.md` | Agent definitions |
 | `.claude/agents/skills/` | Skill files for skill-based agents |
+| `.claude/commands/*.md` | Slash command definitions |
 
 ---
 

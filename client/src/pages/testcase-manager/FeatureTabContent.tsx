@@ -5,6 +5,7 @@ import { ImportSpecTab } from '../../components/testcase/ImportSpecTab'
 import { RulesTab } from '../../components/testcase/RulesTab'
 import { TemplateTab } from '../../components/testcase/TemplateTab'
 import { ReviewExportTab } from '../../components/testcase/ReviewExportTab'
+import { CornerCasesTab } from '../../components/testcase/CornerCasesTab'
 import { FeatureConfig, TabType, TestcaseMode } from './types'
 
 interface FeatureTabContentProps {
@@ -73,6 +74,9 @@ export function FeatureTabContent({
           onDirtyChange={onDirtyChange}
           saveRef={onSaveRef}
         />
+      )}
+      {activeTab === 'corner-cases' && (
+        <CornerCasesTab feature={feature} />
       )}
       {activeTab === 'review-export' && (
         <ReviewExportTab feature={feature} mode={mode} />

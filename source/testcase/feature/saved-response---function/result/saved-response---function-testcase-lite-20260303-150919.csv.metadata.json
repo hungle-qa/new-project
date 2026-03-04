@@ -1,0 +1,7 @@
+{
+  "test_count": 67,
+  "est_input_tokens": 5389,
+  "est_output_tokens": 3614,
+  "est_total_tokens": 9003,
+  "rows_per_token": 0.0074
+}

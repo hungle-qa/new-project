@@ -115,7 +115,7 @@ Detect operation from user input → validate agent at `.claude/agents/{agent-na
 | scout(built-in) | planner(built-in) | Context (inline) | File paths, patterns, relevant code |
 | planner(built-in) | implementer | Context (inline) | Implementation plan |
 | scout(built-in) | implementer | Context (inline) | File paths + inline plan |
-| testcase-writer | (standalone) | CSV `source/testcase/{feature}/result/` | Testcase CSV matching template |
+| testcase-writer | (standalone) | CSV `source/testcase/feature/{feature}/result/` | Testcase CSV matching template |
 
 ### Validation Procedure
 

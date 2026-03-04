@@ -1,6 +1,8 @@
 import path from 'path'
 
-export const SOURCE_DIR = path.join(__dirname, '../../../source/testcase')
+export const BASE_SOURCE_DIR = path.join(__dirname, '../../../source')
+export const SOURCE_DIR = path.join(BASE_SOURCE_DIR, 'testcase')
+export const FEATURE_DIR = path.join(SOURCE_DIR, 'feature')
 export const EXCLUDED_DIRS = ['rule', 'template', 'strategy']
 export const CURRENT_DIGEST_VERSION = 2
 
@@ -63,6 +65,13 @@ export function getKnowledgeItemName(entry: LinkedKnowledgeEntry): string {
 
 export function getKnowledgeSections(entry: LinkedKnowledgeEntry): string[] {
   return typeof entry === 'string' ? [] : entry.sections
+}
+
+export interface CornerCaseQuestion {
+  id: number
+  question: string
+  approved: boolean
+  note: string
 }
 
 export function filterContentBySections(content: string, sections: string[]): string {

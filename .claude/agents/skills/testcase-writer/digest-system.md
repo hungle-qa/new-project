@@ -2,7 +2,7 @@
 
 **Purpose:** Avoid re-reading 7+ files on every run. Pre-compile all context into one digest file per feature.
 
-**Digest location:** `source/testcase/{feature}/context-digest.md`
+**Digest location:** `source/testcase/feature/{feature}/context-digest.md`
 
 **Note:** `write-lite` does NOT use digest — reads spec + rules directly. Skip digest for `write-lite`.
 
@@ -16,7 +16,7 @@ Call the server API to check if digest needs regenerating:
 curl -s http://localhost:3001/api/testcase/{feature-name}/digest-status
 ```
 
-Response: `{"status":"FRESH"}` or `{"status":"STALE","reason":"source/testcase/{feature}/config.md"}`
+Response: `{"status":"FRESH"}` or `{"status":"STALE","reason":"source/testcase/feature/{feature}/config.md"}`
 
 - If `status` is `STALE` → regenerate digest (read all sources, write digest)
 - If `status` is `FRESH` → read only the digest file, skip all individual reads
@@ -25,7 +25,7 @@ Response: `{"status":"FRESH"}` or `{"status":"STALE","reason":"source/testcase/{
 
 ## Digest Generation
 
-When STALE, read sources and write to `source/testcase/{feature}/context-digest.md`:
+When STALE, read sources and write to `source/testcase/feature/{feature}/context-digest.md`:
 
 ```markdown
 ---

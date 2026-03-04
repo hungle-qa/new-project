@@ -43,8 +43,15 @@ export const DEFAULT_KNOWLEDGE_PROMPT = `Extract ONLY these sections from the do
 SKIP entirely: full function detail prose, help center URLs, notification tables, document status tables, cURL commands, related documents table, changelog entries.
 Keep terminology exact — do not rename buttons, screens, or features.`
 
+export interface TokenStats {
+  input_tokens: number
+  output_tokens: number
+  total_tokens: number
+}
+
 export interface StructuredSpec {
   content: string
+  tokens?: TokenStats
 }
 
 export interface AIConfig {
@@ -120,8 +127,16 @@ ${rawContent}`
 
       const result = await this.callWithRetry(model, prompt)
       const content = result.response.text().trim()
+      const usage = result.response.usageMetadata
+      const tokens: TokenStats | undefined = usage
+        ? {
+            input_tokens: usage.promptTokenCount ?? 0,
+            output_tokens: usage.candidatesTokenCount ?? 0,
+            total_tokens: usage.totalTokenCount ?? 0,
+          }
+        : undefined
 
-      return { content }
+      return { content, tokens }
     } catch (error) {
       console.error('AI Service Error:', error)
       throw new Error(
@@ -166,8 +181,16 @@ ${rawContent}`
         prompt
       ])
       const content = result.response.text().trim()
+      const usage = result.response.usageMetadata
+      const tokens: TokenStats | undefined = usage
+        ? {
+            input_tokens: usage.promptTokenCount ?? 0,
+            output_tokens: usage.candidatesTokenCount ?? 0,
+            total_tokens: usage.totalTokenCount ?? 0,
+          }
+        : undefined
 
-      return { content }
+      return { content, tokens }
     } catch (error) {
       console.error('AI Service Error (PDF multimodal):', error)
       throw new Error(

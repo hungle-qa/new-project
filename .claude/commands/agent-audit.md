@@ -22,30 +22,11 @@ argument-hint: <operation> <agent-name>
 
 ---
 
-## Argument Parsing
-
-**Format:** `<operation> <agent-name>`
-
-**Examples:**
-- `/agent-audit audit import-design` → Audit the import-design agent
-- `/agent-audit update scout` → Update scout with fixes
-- `/agent-audit test planner` → Run tests on planner agent
-- `/agent-audit optimize implementer` → Optimize implementer for token efficiency
-- `/agent-audit create-skill planner` → Split planner into skill-based architecture
-- `/agent-audit system-audit` → Check system docs consistency
-
----
-
 ## Workflow
 
-**Reference:** `.claude/workflows/agia-workflow.md`
+**Reference:** `.claude/agents/agia.md`
 
-**Execution:**
-1. Parse operation and agent-name from arguments
-2. Validate agent exists at `.claude/agents/{agent-name}.md`
-3. Route to appropriate workflow phase
-4. Execute using `agia` agent
-5. Return formatted report
+Read agent file first, then follow skill routing to the matching skill file. All parsing, validation, and routing is handled by the agent.
 
 ---
 

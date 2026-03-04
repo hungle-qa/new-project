@@ -202,7 +202,7 @@ router.put('/:feature/spec', async (req, res) => {
 
 // Results
 router.get('/:feature/results', async (req, res) => {
-  try { res.json(await TestcaseFeatureService.getResults(req.params.feature)) }
+  try { res.json(await TestcaseFeatureService.listResultsWithMetadata(req.params.feature)) }
   catch (error) { res.status(500).json({ error: 'Failed to fetch results' }) }
 })
 
@@ -237,6 +237,22 @@ router.delete('/:feature/results/:filename', async (req, res) => {
     if (!success) return res.status(404).json({ error: 'Result file not found' })
     res.json({ success: true })
   } catch (error) { res.status(500).json({ error: 'Failed to delete result file' }) }
+})
+
+// --- Corner Case Questions ---
+router.get('/:feature/corner-cases', async (req, res) => {
+  try {
+    const questions = await TestcaseFeatureService.getCornerCaseQuestions(req.params.feature)
+    res.json(questions)
+  } catch (error) { res.status(500).json({ error: 'Failed to fetch corner case questions' }) }
+})
+
+router.put('/:feature/corner-cases', async (req, res) => {
+  try {
+    if (!Array.isArray(req.body)) return res.status(400).json({ error: 'Questions array is required' })
+    await TestcaseFeatureService.saveCornerCaseQuestions(req.params.feature, req.body)
+    res.json({ ok: true })
+  } catch (error) { res.status(500).json({ error: 'Failed to save corner case questions' }) }
 })
 
 export default router

@@ -7,9 +7,9 @@
 
 ## Prerequisites
 
-- CSV at `source/testcase/{feature}/result/{feature}-testcase.csv`
-- Spec at `source/testcase/{feature}/spec/`
-- Rules (cascading): `source/testcase/{feature}/rules.md` (per-feature, if exists) OR `source/testcase/rule/test-rules.md` (global fallback)
+- CSV at `source/testcase/feature/{feature}/result/{feature}-testcase.csv`
+- Spec at `source/testcase/feature/{feature}/spec/`
+- Rules (cascading): `source/testcase/feature/{feature}/rules.md` (per-feature, if exists) OR `source/testcase/rule/test-rules.md` (global fallback)
 - Strategy in `config.md` frontmatter (optional — used to maintain consistent generation approach)
 - Structure in `config.md` frontmatter (optional — if defined, new cases must follow the structure strictly). Set via Template tab > Module Structure section.
 - Scope hints in per-feature rules (`## Scope` section) — used for happy/corner case guidance
@@ -24,7 +24,7 @@
 2. Read existing CSV
 3. Read `.claude/agents/skills/testcase-writer/digest-system.md` for digest freshness check and generation format.
 4. Run **Digest Freshness Check** (defined in digest-system.md)
-   - If `FRESH` → Read only `source/testcase/{feature}/context-digest.md`
+   - If `FRESH` → Read only `source/testcase/feature/{feature}/context-digest.md`
      - **Scope guard:** If cached digest lacks `## Test Scope` or `digest-version: 2` (legacy digest) → treat as STALE, regenerate using digest-version 2 format.
    - If `STALE` → Read all sources, generate digest (digest-version 2 format)
 5. Show: "Loaded {N} existing testcases + context."
@@ -73,7 +73,7 @@ AskUserQuestion: "Apply these changes?"
 
 ### Step 5: Write Updated CSV
 
-1. Write to `source/testcase/{feature}/result/{feature}-testcase.csv`
+1. Write to `source/testcase/feature/{feature}/result/{feature}-testcase.csv`
 2. Confirm: "Done! {A} added, {M} modified, {R} removed."
 
 ---

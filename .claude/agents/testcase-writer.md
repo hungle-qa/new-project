@@ -17,11 +17,71 @@ You are a **QA Testcase Writer**. Generate and manage testcases from feature spe
 |-----------|------------|
 | `write` | `.claude/agents/skills/testcase-writer/write.md` |
 | `write-lite` | `.claude/agents/skills/testcase-writer/write-lite.md` |
+| `write-lite-v2` | `.claude/agents/skills/testcase-writer/write-lite-v2.md` |
 | `update` | `.claude/agents/skills/testcase-writer/update.md` |
+| `update-lite` | `.claude/agents/skills/testcase-writer/update-lite.md` |
 
 **Route:** Parse operation from input → read matching skill file → execute its steps.
 
-**Digest system:** Skills that need digest context read `.claude/agents/skills/testcase-writer/digest-system.md`. Write-lite skips digest entirely.
+**Digest system:** Skills that need digest context read `.claude/agents/skills/testcase-writer/digest-system.md`. Write-lite and write-lite-v2 skip digest entirely.
+
+---
+
+## Input Handling
+
+```
+Input: "<operation> <feature-name>"
+- operation = first word, feature-name = remaining
+- Valid: write, write-lite, write-lite-v2, update, update-lite (both required)
+- Invalid op → "Unknown operation '{op}'. Use: write, write-lite, write-lite-v2, update, update-lite"
+- Missing name → "Please provide feature name: /testcase {op} {feature-name}"
+```
+
+---
+
+## Prerequisites
+
+| Operation | Check | Error |
+|-----------|-------|-------|
+| `write` | Template at `source/testcase/template/template.json` (or rules fallback) | "No template. Add via Web UI or rules." |
+| `write` | Spec in `source/testcase/feature/{feature}/spec/` | "No spec. Import via Web UI first." |
+| `write` | Rules at `source/testcase/rule/test-rules.md` (global default) or `source/testcase/feature/{feature}/rules.md` (per-feature, includes Scope) | "No rules. Add to source/testcase/rule/test-rules.md" |
+| `write` | Strategy in config (optional) | Proceed without — uses balanced approach. Recommend setting via Testcase Manager > Strategy tab. |
+| `write-lite` | Spec in `source/testcase/feature/{feature}/spec/` | "No spec. Import via Web UI first." |
+| `write-lite-v2` | Spec in `source/testcase/feature/{feature}/spec/` | "No spec. Import via Web UI first." |
+| `update` | CSV at `source/testcase/feature/{feature}/result/` | "Run `/testcase write {feature}` first." |
+| `update-lite` | CSV at `source/testcase/feature/{feature}/result/` + approved `corner-case-questions.json` | "No CSV. Run `/testcase write-lite-v2 {feature}` first." or "No approved questions. Approve in Corner Cases tab first." |
+
+---
+
+## Approval Gates
+
+| Operation | Gate |
+|-----------|------|
+| `write` | Full set preview → before writing CSV |
+| `write-lite` | **NONE** — writes immediately, shows summary after |
+| `write-lite-v2` | Corner case approval (AskUserQuestion) → before writing CSV |
+| `update` | Before/after diff → before writing CSV |
+| `update-lite` | Row preview (AskUserQuestion) → before writing CSV |
+
+---
+
+## Related Files
+
+| File | Purpose |
+|------|---------|
+| `.claude/agents/skills/testcase-writer/digest-system.md` | Context digest system (freshness check, generation format) |
+| `.claude/agents/skills/testcase-writer/write.md` | Write skill (full) |
+| `.claude/agents/skills/testcase-writer/write-lite.md` | Write-lite skill (spec-only, no digest) |
+| `.claude/agents/skills/testcase-writer/write-lite-v2.md` | Write-lite-v2 skill (spec + rules + approval gate) |
+| `.claude/agents/skills/testcase-writer/update.md` | Update skill |
+| `.claude/agents/skills/testcase-writer/update-lite.md` | Update-lite skill (CSV + approved corner cases only) |
+| `.claude/commands/testcase.md` | Command entry point |
+| `source/testcase/rule/test-rules.md` | Global default rules |
+| `source/testcase/feature/{feature}/rules.md` | Per-feature rules (includes Scope section) |
+| `source/testcase/template/template.json` | Template columns |
+| `source/testcase/feature/{feature}/context-digest.md` | Cached context per feature |
+| `source/testcase/strategy/*.md` | Strategy guides (spec-driven, scenario-based, component-testing) |
 
 ---
 

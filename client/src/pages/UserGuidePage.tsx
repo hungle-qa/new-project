@@ -1,27 +1,21 @@
 import { useState } from 'react'
-import { BookOpen, AlertCircle } from 'lucide-react'
+import { BookOpen } from 'lucide-react'
 import {
   type TabType,
   type WebAppSubTab,
-  type GuideSection,
+  type RichSection,
   tabs,
   webAppSubTabs,
   webAppSubTabContent,
-  guideContent,
-  useWebappContent
+  buildAppContent,
+  trainAgentContent,
+  commandsContent,
 } from './user-guide/guideData'
 
 export function UserGuidePage() {
   const [activeTab, setActiveTab] = useState<TabType>('edit-app')
-  const [activeWebAppSubTab, setActiveWebAppSubTab] = useState<WebAppSubTab>('design-system')
+  const [activeWebAppSubTab, setActiveWebAppSubTab] = useState<WebAppSubTab>('overview')
 
-  const getContent = (): GuideSection => {
-    if (activeTab === 'use-webapp') {
-      return activeWebAppSubTab ? webAppSubTabContent[activeWebAppSubTab] : useWebappContent
-    }
-    return guideContent[activeTab as Exclude<TabType, 'use-webapp'>]
-  }
-  const content = getContent()
 
   return (
     <div>
@@ -71,143 +65,92 @@ export function UserGuidePage() {
         </div>
       )}
 
-      {/* Content */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-8">
-        {/* Overview */}
-        <Section title="Overview">
-          <p className="text-gray-700">{content.overview}</p>
-        </Section>
+      {/* Rich content for Use Web App and Build App */}
+      {activeTab === 'use-webapp' ? (
+        <div className="space-y-4">
+          {webAppSubTabContent[activeWebAppSubTab].sections.map((section, i) => (
+            <RichSectionCard key={i} section={section} />
+          ))}
+        </div>
+      ) : activeTab === 'edit-app' ? (
+        <div className="space-y-4">
+          {buildAppContent.sections.map((section, i) => (
+            <RichSectionCard key={i} section={section} />
+          ))}
+        </div>
+      ) : activeTab === 'train-agent' ? (
+        <div className="space-y-4">
+          {trainAgentContent.sections.map((section, i) => (
+            <RichSectionCard key={i} section={section} />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {commandsContent.sections.map((section, i) => (
+            <RichSectionCard key={i} section={section} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
-        {/* Workflow */}
-        <Section title="Workflow">
-          <div className="flex flex-wrap items-center gap-2 text-sm mb-2">
-            {content.workflow.steps.map((step, i) => (
-              <span key={i} className="flex items-center gap-2">
-                <span className="px-3 py-1.5 bg-indigo-100 text-indigo-800 rounded-lg font-mono">
-                  {step}
-                </span>
-                {i < content.workflow.steps.length - 1 && (
-                  <span className="text-gray-400">→</span>
-                )}
-              </span>
-            ))}
-          </div>
-          {content.workflow.description && (
-            <p className="text-sm text-gray-500 mt-2">{content.workflow.description}</p>
-          )}
-        </Section>
-
-        {/* Input */}
-        <Section title="Input">
-          <FormattedList items={content.input} />
-        </Section>
-
-        {/* Process */}
-        <Section title="Process">
-          <FormattedList items={content.process} />
-        </Section>
-
-        {/* Output */}
-        <Section title="Output">
-          <FormattedList items={content.output} />
-        </Section>
-
-        {/* Examples */}
-        <Section title="Examples">
-          <ul className="space-y-2">
-            {content.examples.map((item, i) => (
-              <li key={i} className="px-3 py-2 bg-gray-50 rounded-lg font-mono text-sm text-gray-800">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        {/* Note */}
-        <Section title="Note" icon={AlertCircle}>
-          <FormattedList items={content.note} variant="note" />
-        </Section>
+function RichSectionCard({ section }: { section: RichSection }) {
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-5 space-y-3">
+      {/* Title */}
+      <div className="flex items-center gap-2">
+        <h2 className="text-base font-semibold text-gray-900">{section.title}</h2>
+        {section.upcoming && (
+          <span className="px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-700 rounded-full">
+            Upcoming
+          </span>
+        )}
       </div>
-    </div>
-  )
-}
 
-function Section({
-  title,
-  icon: Icon,
-  children
-}: {
-  title: string
-  icon?: typeof AlertCircle
-  children: React.ReactNode
-}) {
-  return (
-    <div>
-      <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-3">
-        {Icon && <Icon className="w-4 h-4 text-amber-500" />}
-        {title}
-      </h2>
-      {children}
-    </div>
-  )
-}
+      {/* Flow chips */}
+      {section.flow && (
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          {section.flow.map((step, i) => (
+            <span key={i} className="flex items-center gap-2">
+              <span className="px-3 py-1.5 bg-indigo-100 text-indigo-800 rounded-lg font-mono text-xs">
+                {step}
+              </span>
+              {i < section.flow!.length - 1 && (
+                <span className="text-gray-400 text-xs">→</span>
+              )}
+            </span>
+          ))}
+        </div>
+      )}
 
-function FormattedList({
-  items,
-  variant = 'default'
-}: {
-  items: string[]
-  variant?: 'default' | 'note'
-}) {
-  // Check if item is a heading (starts with number + period or has specific pattern)
-  const isHeading = (item: string) => /^\d+\.\s/.test(item) || /^⚠️/.test(item)
-  const isSubHeading = (item: string) => item.includes('→') && !item.startsWith(' ')
-  const isEmpty = (item: string) => item.trim() === ''
-
-  return (
-    <div className="space-y-2 text-gray-700">
-      {items.map((item, i) => {
-        if (isEmpty(item)) {
-          return <div key={i} className="h-2" />
-        }
-
-        if (isHeading(item)) {
-          return (
-            <h3 key={i} className="font-semibold text-gray-900 mt-4 first:mt-0">
-              {item}
-            </h3>
-          )
-        }
-
-        if (isSubHeading(item)) {
-          const [label, command] = item.split('→').map(s => s.trim())
-          return (
-            <div key={i} className="flex items-center gap-2 pl-4">
-              <span className="text-gray-600">{label}</span>
-              <span className="text-gray-400">→</span>
-              <code className="px-2 py-0.5 bg-gray-100 rounded text-sm font-mono text-indigo-600">
-                {command}
-              </code>
-            </div>
-          )
-        }
-
-        if (variant === 'note') {
-          return (
-            <div key={i} className="flex items-start gap-2 pl-4">
-              <span className="text-amber-500 mt-0.5">•</span>
+      {/* Bullets */}
+      {section.bullets && (
+        <ul className="space-y-2">
+          {section.bullets.map((item, i) => (
+            <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+              <span className="text-indigo-400 mt-0.5 shrink-0">•</span>
               <span>{item}</span>
-            </div>
-          )
-        }
+            </li>
+          ))}
+        </ul>
+      )}
 
-        // Regular content with indentation
-        return (
-          <p key={i} className="pl-4 text-gray-600">
-            {item}
-          </p>
-        )
-      })}
+      {/* Code block */}
+      {section.code && (
+        <div className="px-4 py-3 bg-gray-900 rounded-lg font-mono text-sm text-green-400">
+          {section.code}
+        </div>
+      )}
+
+      {/* Pro-tip */}
+      {section.protip && (
+        <div className="flex items-start gap-2 px-4 py-3 bg-indigo-50 border border-indigo-200 rounded-lg text-sm text-indigo-800">
+          <span className="shrink-0 font-semibold">💡 Pro-tip:</span>
+          <span>{section.protip}</span>
+        </div>
+      )}
     </div>
   )
 }
+

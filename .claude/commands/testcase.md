@@ -19,40 +19,11 @@ argument-hint: <operation> <feature-name>
 
 ---
 
-## Argument Parsing
-
-**Format:** `<operation> <feature-name>`
-
-- `operation` — REQUIRED (write, write-lite, update)
-- `feature-name` — REQUIRED for both operations
-
-**Examples:**
-- `/testcase write login-page` -> Generate testcases for login-page
-- `/testcase write-lite login-page` -> Generate lean spec-driven testcases for login-page
-- `/testcase update login-page` -> Update existing testcases for login-page
-
----
-
-## Prerequisite Checks
-
-| Operation | Prerequisites |
-|-----------|---------------|
-| `write` | Template exists + spec exists + rules exist |
-| `write-lite` | Spec exists (rules optional — defaults used if missing) |
-| `update` | Testcase CSV exists for feature |
-
----
-
 ## Workflow
 
-**Reference:** `.claude/workflows/testcase-workflow.md`
+**Reference:** `.claude/agents/testcase-writer.md`
 
-**Execution:**
-1. Parse operation and feature-name from arguments
-2. Validate operation is valid (write/write-lite/update)
-3. Check prerequisites for the operation
-4. Route to `testcase-writer` agent with matching skill
-5. Return results
+Delegates all parsing, validation, prerequisite checks, and skill routing to the `testcase-writer` agent.
 
 ---
 

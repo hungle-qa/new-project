@@ -3,6 +3,7 @@ import path from 'path'
 import { TestcaseFeatureService } from './TestcaseFeatureService'
 import {
   SOURCE_DIR,
+  FEATURE_DIR,
   TemplateColumn,
   FeatureConfig,
 } from './TestcaseTypes'
@@ -45,7 +46,7 @@ export class TestcaseConfigService {
 
   static async getSpecPrompt(name: string): Promise<string> {
     try {
-      const promptPath = path.join(SOURCE_DIR, name, 'spec', 'prompt.txt')
+      const promptPath = path.join(FEATURE_DIR, name, 'spec', 'prompt.txt')
       return (await fs.readFile(promptPath, 'utf-8')).trim()
     } catch {
       return ''
@@ -53,7 +54,7 @@ export class TestcaseConfigService {
   }
 
   static async saveSpecPrompt(name: string, prompt: string): Promise<void> {
-    const specDir = path.join(SOURCE_DIR, name, 'spec')
+    const specDir = path.join(FEATURE_DIR, name, 'spec')
     await fs.mkdir(specDir, { recursive: true })
     await fs.writeFile(path.join(specDir, 'prompt.txt'), prompt.trim())
   }
@@ -84,13 +85,13 @@ export class TestcaseConfigService {
   static async getFeatureRules(name: string): Promise<string> {
     let rulesContent: string
     try {
-      const rulesPath = path.join(SOURCE_DIR, name, 'rules.md')
+      const rulesPath = path.join(FEATURE_DIR, name, 'rules.md')
       rulesContent = await fs.readFile(rulesPath, 'utf-8')
     } catch {
       // Clone from global default on first access
       const globalRules = await this.getRules()
       if (globalRules) {
-        const featureDir = path.join(SOURCE_DIR, name)
+        const featureDir = path.join(FEATURE_DIR, name)
         await fs.mkdir(featureDir, { recursive: true })
         await fs.writeFile(path.join(featureDir, 'rules.md'), globalRules)
       }
@@ -111,7 +112,7 @@ export class TestcaseConfigService {
   }
 
   static async saveFeatureRules(name: string, content: string): Promise<void> {
-    const featureDir = path.join(SOURCE_DIR, name)
+    const featureDir = path.join(FEATURE_DIR, name)
     await fs.mkdir(featureDir, { recursive: true })
     await fs.writeFile(path.join(featureDir, 'rules.md'), content)
   }
@@ -120,14 +121,14 @@ export class TestcaseConfigService {
 
   static async getFeatureTemplate(name: string): Promise<TemplateColumn[]> {
     try {
-      const templatePath = path.join(SOURCE_DIR, name, 'template.json')
+      const templatePath = path.join(FEATURE_DIR, name, 'template.json')
       const raw = await fs.readFile(templatePath, 'utf-8')
       return JSON.parse(raw)
     } catch {
       // Clone from global default on first access
       const globalTemplate = await this.getTemplate()
       if (globalTemplate.length > 0) {
-        const featureDir = path.join(SOURCE_DIR, name)
+        const featureDir = path.join(FEATURE_DIR, name)
         await fs.mkdir(featureDir, { recursive: true })
         await fs.writeFile(
           path.join(featureDir, 'template.json'),
@@ -139,7 +140,7 @@ export class TestcaseConfigService {
   }
 
   static async saveFeatureTemplate(name: string, columns: TemplateColumn[]): Promise<void> {
-    const featureDir = path.join(SOURCE_DIR, name)
+    const featureDir = path.join(FEATURE_DIR, name)
     await fs.mkdir(featureDir, { recursive: true })
     await fs.writeFile(
       path.join(featureDir, 'template.json'),
@@ -151,7 +152,7 @@ export class TestcaseConfigService {
 
   static async checkRulesCustomized(name: string): Promise<{ customized: boolean }> {
     try {
-      const featureRulesPath = path.join(SOURCE_DIR, name, 'rules.md')
+      const featureRulesPath = path.join(FEATURE_DIR, name, 'rules.md')
       const featureRules = await fs.readFile(featureRulesPath, 'utf-8')
       const globalRules = await this.getRules()
       // Compare trimmed content — ignore trailing whitespace differences
@@ -168,7 +169,7 @@ export class TestcaseConfigService {
     extraColumns: string[]
   }> {
     try {
-      const featureTemplatePath = path.join(SOURCE_DIR, name, 'template.json')
+      const featureTemplatePath = path.join(FEATURE_DIR, name, 'template.json')
       const featureRaw = await fs.readFile(featureTemplatePath, 'utf-8')
       const featureCols: TemplateColumn[] = JSON.parse(featureRaw)
       const globalCols = await this.getTemplate()

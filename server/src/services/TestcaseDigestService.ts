@@ -5,6 +5,8 @@ import { TestcaseFeatureService } from './TestcaseFeatureService'
 import { TestcaseConfigService } from './TestcaseConfigService'
 import {
   SOURCE_DIR,
+  FEATURE_DIR,
+  BASE_SOURCE_DIR,
   CURRENT_DIGEST_VERSION,
   getKnowledgeItemName,
   getKnowledgeSections,
@@ -21,7 +23,7 @@ import {
 
 export class TestcaseDigestService {
   static async checkDigestFreshness(name: string): Promise<{ status: 'FRESH' | 'STALE'; reason?: string }> {
-    const digestPath = path.join(SOURCE_DIR, name, 'context-digest.md')
+    const digestPath = path.join(FEATURE_DIR, name, 'context-digest.md')
 
     let digestTime: number
     try {
@@ -43,17 +45,17 @@ export class TestcaseDigestService {
     const config = await TestcaseFeatureService.getFeatureConfig(name)
 
     const filesToCheck = [
-      path.join(SOURCE_DIR, name, 'config.md'),
-      path.join(SOURCE_DIR, name, 'rules.md'),
-      path.join(SOURCE_DIR, name, 'template.json'),
+      path.join(FEATURE_DIR, name, 'config.md'),
+      path.join(FEATURE_DIR, name, 'rules.md'),
+      path.join(FEATURE_DIR, name, 'template.json'),
       path.join(SOURCE_DIR, 'rule', 'test-rules.md'),
       path.join(SOURCE_DIR, 'template', 'template.json'),
     ]
 
     try {
-      const specFiles = await fs.readdir(path.join(SOURCE_DIR, name, 'spec'))
+      const specFiles = await fs.readdir(path.join(FEATURE_DIR, name, 'spec'))
       for (const f of specFiles) {
-        if (f.endsWith('.md')) filesToCheck.push(path.join(SOURCE_DIR, name, 'spec', f))
+        if (f.endsWith('.md')) filesToCheck.push(path.join(FEATURE_DIR, name, 'spec', f))
       }
     } catch { /* no spec dir */ }
 
@@ -62,17 +64,17 @@ export class TestcaseDigestService {
     }
 
     for (const entry of config?.linked_knowledge || []) {
-      filesToCheck.push(path.join(SOURCE_DIR, '../../source/feature-knowledge', getKnowledgeItemName(entry), 'config.md'))
+      filesToCheck.push(path.join(BASE_SOURCE_DIR, 'feature-knowledge', getKnowledgeItemName(entry), 'config.md'))
     }
 
     for (const comp of config?.components || []) {
-      filesToCheck.push(path.join(SOURCE_DIR, '../../source/design-system', `${comp.name}.md`))
+      filesToCheck.push(path.join(BASE_SOURCE_DIR, 'design-system', `${comp.name}.md`))
     }
 
     for (const f of filesToCheck) {
       try {
         if ((await fs.stat(f)).mtimeMs > digestTime) {
-          return { status: 'STALE', reason: path.relative(path.join(SOURCE_DIR, '../..'), f) }
+          return { status: 'STALE', reason: path.relative(BASE_SOURCE_DIR, f) }
         }
       } catch { /* skip */ }
     }
@@ -114,7 +116,7 @@ export class TestcaseDigestService {
 
       try {
         const kContent = await fs.readFile(
-          path.join(SOURCE_DIR, '../../source/feature-knowledge', kName, 'config.md'), 'utf-8'
+          path.join(BASE_SOURCE_DIR, 'feature-knowledge', kName, 'config.md'), 'utf-8'
         )
         const parsed = matter(kContent)
         knowledgeSections.push(`### ${kName}\n${filterContentBySections(parsed.content, selectedSections)}`)
@@ -148,10 +150,10 @@ export class TestcaseDigestService {
 
     const now = new Date().toISOString()
     const sources = [
-      `source/testcase/${name}/config.md`,
-      `source/testcase/${name}/spec/*.md`,
-      `source/testcase/${name}/rules.md`,
-      `source/testcase/${name}/template.json`,
+      `source/testcase/feature/${name}/config.md`,
+      `source/testcase/feature/${name}/spec/*.md`,
+      `source/testcase/feature/${name}/rules.md`,
+      `source/testcase/feature/${name}/template.json`,
       ...(config.strategy ? [`source/testcase/strategy/${config.strategy}.md`] : []),
       ...(config.linked_knowledge || []).map(k => `source/feature-knowledge/${getKnowledgeItemName(k)}/config.md`),
     ]
@@ -220,7 +222,7 @@ ${terminologySection}
 ${componentSection}
 ${warnings.length > 0 ? `\n## Warnings\n${warnings.map(w => `- ${w}`).join('\n')}\n` : ''}`
 
-    await fs.writeFile(path.join(SOURCE_DIR, name, 'context-digest.md'), digest)
+    await fs.writeFile(path.join(FEATURE_DIR, name, 'context-digest.md'), digest)
     return { digest, warnings }
   }
 }

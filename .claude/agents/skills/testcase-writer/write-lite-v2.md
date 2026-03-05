@@ -121,11 +121,7 @@ source/testcase/feature/{feature}/result/{feature}-testcase-lite-{timestamp}.csv
 Contents:
 ```json
 {
-  "test_count": N,
-  "est_input_tokens": null,
-  "est_output_tokens": null,
-  "est_total_tokens": null,
-  "rows_per_token": null
+  "test_count": N
 }
 ```
 

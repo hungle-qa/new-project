@@ -1,6 +1,6 @@
-import { Code, Monitor, Bot, LayoutDashboard, Zap, Clock, Terminal } from 'lucide-react'
+import { Code, Monitor, Bot, LayoutDashboard, Zap, Clock, Terminal, FolderTree } from 'lucide-react'
 
-export type TabType = 'edit-app' | 'use-webapp' | 'train-agent' | 'commands'
+export type TabType = 'edit-app' | 'use-webapp' | 'train-agent' | 'commands' | 'claude-directory'
 export type WebAppSubTab = 'overview' | 'lite' | 'full'
 
 export interface GuideSection {
@@ -31,6 +31,7 @@ export const tabs: { id: TabType; label: string; icon: typeof Code }[] = [
   { id: 'use-webapp', label: 'Use Web App', icon: Monitor },
   { id: 'train-agent', label: 'Train Agent', icon: Bot },
   { id: 'commands', label: 'Commands', icon: Terminal },
+  { id: 'claude-directory', label: '.claude Directory', icon: FolderTree },
 ]
 
 export const webAppSubTabs: { id: WebAppSubTab; label: string; icon: typeof LayoutDashboard }[] = [
@@ -386,6 +387,86 @@ export const commandsContent: WebAppRichContent = {
       ],
       code: '/ship "feat: add export button to review tab"',
       protip: 'Run /ship when you\'re happy with everything on the branch. One command: commit → push → merge → back.',
+    },
+  ],
+}
+
+export const claudeDirectoryContent: WebAppRichContent = {
+  sections: [
+    {
+      title: '🗂 What is the .claude Directory?',
+      bullets: [
+        'The .claude/ directory is the AI brain of QA-kit — it defines how every agent thinks and acts.',
+        'It contains three types of files: commands (slash commands), agents (executors), and skills (step-by-step instructions).',
+        'Commands are thin routers. Agents read commands and route to the right skill. Skills do the actual work.',
+        'Nothing in this directory touches app code — it is pure agent configuration.',
+      ],
+    },
+    {
+      title: '🔄 How Commands → Agents → Skills Work Together',
+      flow: ['You type /command', 'Command routes to Agent', 'Agent reads Skill', 'Skill executes steps'],
+      bullets: [
+        'You type a slash command (e.g. /testcase write login-page) in the terminal.',
+        'The command file reads: "delegate to testcase-writer agent".',
+        'The testcase-writer agent parses the operation ("write") and loads the matching skill file.',
+        'The skill file contains the step-by-step workflow the agent follows to completion.',
+        'Skills are swappable — agents can grow new capabilities just by adding a new skill file.',
+      ],
+      protip: 'Commands never contain logic. Agents never contain step details. Skills contain everything. This separation keeps each layer focused and easy to audit.',
+    },
+    {
+      title: '⌨️ Slash Commands (.claude/commands/)',
+      bullets: [
+        '/start — entry point for building or fixing app features. Routes to the implementer agent.',
+        '/testcase — generate and manage QA testcases. Routes to the testcase-writer agent.',
+        '/doc — create, update, and review project documentation. Routes to the doc-writer agent.',
+        '/import-design-by-image — convert UI images or pasted code into design system components. Routes to the import-design agent.',
+        '/agent-audit — audit, test, optimize, and improve agents. Routes to the agia agent.',
+        '/ship — commit, push, and merge the current branch into main. Runs git steps directly.',
+      ],
+      code: '/testcase write-lite login-page',
+    },
+    {
+      title: '🤖 Agents (.claude/agents/)',
+      bullets: [
+        'implementer — writes production TypeScript/React code. Classifies tasks as EASY/MEDIUM/HARD and routes to the matching skill.',
+        'testcase-writer — generates and updates QA testcase CSVs. Parses the operation (write / write-lite / update) and routes to the matching skill.',
+        'import-design — unified design import agent. Detects mode (VALIDATE / SINGLE / MULTI / UPDATE) from context and routes to the matching skill.',
+        'doc-writer — manages project docs. Routes review / create / update operations to matching skill files.',
+        'agia — Agent Intelligence Architect. Audits and improves other agents. Routes audit / update / test / optimize / create-skill / system-audit to matching skills.',
+      ],
+    },
+    {
+      title: '🧩 Skills (.claude/agents/skills/)',
+      bullets: [
+        'implementer/: easy.md · medium.md · hard.md — scoped workflows by task complexity.',
+        'testcase-writer/: write.md · write-lite.md · write-lite-v2.md · update.md · update-lite.md · digest-system.md — full, lean, and update pipelines.',
+        'import-design/: validate.md · single.md · multi.md · update.md — four import modes.',
+        'doc-writer/: review.md · create.md · update.md — documentation lifecycle operations.',
+        'agia/: audit.md · update.md · test.md · optimize.md · create-skill.md · system-audit.md — agent improvement operations.',
+      ],
+      protip: 'To add a new capability to an agent, create a new skill file under its folder and add a routing entry in the agent file. No other files need to change.',
+    },
+    {
+      title: '📐 Routing Examples',
+      bullets: [
+        '/start Add export button  →  implementer  →  reads task → MEDIUM → loads medium.md',
+        '/testcase write-lite login-page  →  testcase-writer  →  parses "write-lite" → loads write-lite.md',
+        '/testcase update login-page  →  testcase-writer  →  parses "update" → loads update.md',
+        '/import-design-by-image [1 image]  →  import-design  →  detects SINGLE mode → loads single.md',
+        '/agent-audit audit testcase-writer  →  agia  →  parses "audit" → loads audit.md',
+        '/doc create codebase-summary  →  doc-writer  →  parses "create" → loads create.md',
+      ],
+      code: '/agent-audit audit testcase-writer',
+    },
+    {
+      title: '📁 Directory Layout',
+      bullets: [
+        '.claude/commands/ — one .md file per slash command. Each file is a thin router with a description, argument hint, and an agent reference.',
+        '.claude/agents/ — one .md file per agent. Each file defines the agent role, skill routing table, and shared logic.',
+        '.claude/agents/skills/{agent-name}/ — one .md file per skill. Each file contains the full step-by-step workflow for that operation.',
+        '.claude/workflows/ — shared rules files (e.g. development-rules.md). Read by agents as reference — not routable.',
+      ],
     },
   ],
 }

@@ -103,7 +103,7 @@ AskUserQuestion: "Approve testcase generation?"
 
 ### Step 5: Write CSV
 
-1. Generate timestamp: `YYYYMMDD-HHmmss` (e.g., `20260211-143000`)
+1. Run `date +"%Y%m%d-%H%M%S"` and capture output as `{timestamp}`. Use exact captured value. Never infer or hallucinate it.
 2. Write the CSV content **stored from Step 3** directly to `source/testcase/feature/{feature}/result/{feature}-testcase-{timestamp}.csv`
 3. Write metadata sidecar (MANDATORY — run via Bash immediately after CSV is written):
 

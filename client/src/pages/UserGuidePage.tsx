@@ -10,6 +10,7 @@ import {
   buildAppContent,
   trainAgentContent,
   commandsContent,
+  claudeDirectoryContent,
 } from './user-guide/guideData'
 
 export function UserGuidePage() {
@@ -84,9 +85,15 @@ export function UserGuidePage() {
             <RichSectionCard key={i} section={section} />
           ))}
         </div>
-      ) : (
+      ) : activeTab === 'commands' ? (
         <div className="space-y-4">
           {commandsContent.sections.map((section, i) => (
+            <RichSectionCard key={i} section={section} />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {claudeDirectoryContent.sections.map((section, i) => (
             <RichSectionCard key={i} section={section} />
           ))}
         </div>

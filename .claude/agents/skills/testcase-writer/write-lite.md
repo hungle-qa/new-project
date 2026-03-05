@@ -187,24 +187,7 @@ for (let i = 0; i < csv.length; i++) {
 }
 const testCount = Math.max(0, rows - 1);
 
-// Token estimation (use CSV as output proxy — _temp.json already deleted)
-const csvChars = csv.length;
-const specDir = 'source/testcase/feature/{feature}/spec';
-let specChars = 0;
-try {
-  fs.readdirSync(specDir).filter(f => f.endsWith('.md')).forEach(f => {
-    specChars += fs.readFileSync(path.join(specDir, f), 'utf-8').length;
-  });
-} catch(e) {}
-let skillChars = 0;
-try { skillChars = fs.readFileSync('.claude/agents/skills/testcase-writer/write-lite.md', 'utf-8').length; } catch(e) {}
-
-const estInput = Math.ceil((specChars + skillChars) / 4);
-const estOutput = Math.ceil(csvChars / 4);
-const estTotal = estInput + estOutput;
-const rowsPerToken = estTotal > 0 ? Math.round((testCount / estTotal) * 10000) / 10000 : null;
-
-const metadata = { test_count: testCount, est_input_tokens: estInput, est_output_tokens: estOutput, est_total_tokens: estTotal, rows_per_token: rowsPerToken };
+const metadata = { test_count: testCount };
 fs.writeFileSync('source/testcase/feature/{feature}/result/{feature}-testcase-lite-{timestamp}.csv.metadata.json', JSON.stringify(metadata, null, 2));
 "
 ```

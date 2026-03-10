@@ -1,12 +1,12 @@
 ---
 digest-version: 3
 generated: 2026-03-10T05:00:36.144Z
-feature: booking
+feature: booking-us10-11
 sources:
-  - source/testcase/feature/booking/config.md
-  - source/testcase/feature/booking/spec/*.md
-  - source/testcase/feature/booking/rules.md
-  - source/testcase/feature/booking/template.json
+  - source/testcase/feature/booking-us10-11/config.md
+  - source/testcase/feature/booking-us10-11/spec/*.md
+  - source/testcase/feature/booking-us10-11/rules.md
+  - source/testcase/feature/booking-us10-11/template.json
 ---
 
 ## Config

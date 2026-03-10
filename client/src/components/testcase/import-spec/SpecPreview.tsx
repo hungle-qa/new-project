@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Save, Eye, Edit3 } from 'lucide-react'
+import { useToast } from '../../../hooks/useToast'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -14,6 +15,7 @@ interface SpecPreviewProps {
 }
 
 export function SpecPreview({ feature, loading, content, onContentChange, onDirtyChange, saveRef }: SpecPreviewProps) {
+  const { showToast } = useToast()
   const [editContent, setEditContent] = useState('')
   const [original, setOriginal] = useState('')
   const [saving, setSaving] = useState(false)
@@ -40,7 +42,12 @@ export function SpecPreview({ feature, loading, content, onContentChange, onDirt
       if (res.ok) {
         setOriginal(editContent)
         onContentChange?.(editContent)
+        showToast('Saved successfully')
+      } else {
+        showToast('Save failed', 'error')
       }
+    } catch {
+      showToast('Save failed', 'error')
     } finally {
       setSaving(false)
     }

@@ -1,5 +1,6 @@
 import { useState, useRef, DragEvent } from 'react'
 import { Upload, Loader2, ChevronDown, ChevronUp, ArrowLeft, Save, CheckCircle, AlertCircle, Info, Copy, Check } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 import { useAISettings } from '../../hooks/useAISettings'
 import { AISettingsModal } from '../AISettingsModal'
 
@@ -29,6 +30,7 @@ interface Analysis {
 type WizardStep = 'upload' | 'review' | 'save'
 
 export function LearnTab() {
+  const { showToast } = useToast()
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [step, setStep] = useState<WizardStep>('upload')
   const [file, setFile] = useState<File | null>(null)
@@ -148,8 +150,11 @@ export function LearnTab() {
 
       setSaved(true)
       setStep('save')
+      showToast('Template & rules saved')
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : 'Save failed')
+      const msg = err instanceof Error ? err.message : 'Save failed'
+      setSaveError(msg)
+      showToast(msg, 'error')
     } finally {
       setSaving(false)
     }

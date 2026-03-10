@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Save, Eye, Edit3 } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -12,6 +13,7 @@ interface RulesTabProps {
 }
 
 export function RulesTab({ globalRuleName, onDirtyChange, saveRef }: RulesTabProps) {
+  const { showToast } = useToast()
   const [content, setContent] = useState('')
   const [original, setOriginal] = useState('')
   const [loading, setLoading] = useState(true)
@@ -47,11 +49,16 @@ export function RulesTab({ globalRuleName, onDirtyChange, saveRef }: RulesTabPro
       })
       if (res.ok) {
         setOriginal(content)
+        showToast('Saved successfully')
+      } else {
+        showToast('Save failed', 'error')
       }
+    } catch {
+      showToast('Save failed', 'error')
     } finally {
       setSaving(false)
     }
-  }, [content, apiBase])
+  }, [content, apiBase, showToast])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

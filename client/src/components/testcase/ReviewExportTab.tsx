@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FileText, Eye, Trash2, Copy, Check, StickyNote, Download } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 import { parseCSV } from './csvUtils'
 import { CsvPreviewModal } from './CsvPreviewModal'
 import { TestcaseMode } from '../../pages/testcase-manager/types'
@@ -35,6 +36,7 @@ interface ReviewExportTabProps {
 }
 
 export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
+  const { showToast } = useToast()
   const [results, setResults] = useState<ResultWithMetadata[]>([])
   const [loading, setLoading] = useState(true)
   const [previewFile, setPreviewFile] = useState<string | null>(null)
@@ -93,13 +95,16 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
     try {
       const res = await fetch(`/api/testcase/${feature}/results/${filename}`, { method: 'DELETE' })
       if (res.ok) {
+        showToast('Result deleted')
         setResults(prev => prev.filter(r => r.filename !== filename))
         if (previewFile === filename) {
           handleClosePreview()
         }
+      } else {
+        showToast('Delete failed', 'error')
       }
     } catch {
-      // ignore
+      showToast('Delete failed', 'error')
     } finally {
       setDeleting(false)
       setConfirmDelete(null)

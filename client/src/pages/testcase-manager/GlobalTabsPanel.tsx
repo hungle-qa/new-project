@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Plus, Trash2, Pencil, Check, X } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 import { RulesTab } from '../../components/testcase/RulesTab'
 import { TemplateTab } from '../../components/testcase/TemplateTab'
 import { LearnTab } from '../../components/testcase/LearnTab'
@@ -16,6 +17,7 @@ export function GlobalTabsPanel({
   onDirtyChange,
   onSaveRef
 }: GlobalTabsPanelProps) {
+  const { showToast } = useToast()
   const isLearn = activeTab === 'learn'
   const isRules = activeTab === 'default-rules'
   const [items, setItems] = useState<string[]>([])
@@ -63,8 +65,13 @@ export function GlobalTabsPanel({
         setSelected(null)
         await fetchItems()
         setSelected(data.name)
+        showToast('Created successfully')
+      } else {
+        showToast('Create failed', 'error')
       }
-    } catch { /* ignore */ }
+    } catch {
+      showToast('Create failed', 'error')
+    }
   }
 
   const handleRename = async (oldName: string) => {
@@ -86,8 +93,13 @@ export function GlobalTabsPanel({
         setRenamingItem(null)
         if (selected === oldName) setSelected(data.name)
         await fetchItems()
+        showToast('Renamed successfully')
+      } else {
+        showToast('Rename failed', 'error')
       }
-    } catch { /* ignore */ }
+    } catch {
+      showToast('Rename failed', 'error')
+    }
   }
 
   const handleDelete = async (name: string) => {
@@ -98,10 +110,15 @@ export function GlobalTabsPanel({
     try {
       const res = await fetch(endpoint, { method: 'DELETE' })
       if (res.ok) {
+        showToast('Deleted successfully')
         if (selected === name) setSelected(null)
         await fetchItems()
+      } else {
+        showToast('Delete failed', 'error')
       }
-    } catch { /* ignore */ }
+    } catch {
+      showToast('Delete failed', 'error')
+    }
   }
 
   return (

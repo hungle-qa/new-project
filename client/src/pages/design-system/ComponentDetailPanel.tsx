@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Eye, Code, FileCode, Copy, Check, Pencil, Trash2, Palette, RefreshCw } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 import { TailwindDevTools } from '../../components/design-system/TailwindDevTools'
 
 interface DesignComponent {
@@ -47,8 +48,8 @@ export function ComponentDetailPanel({
   onVisualEditorChange
 }: ComponentDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>('preview')
+  const { showToast } = useToast()
   const [copied, setCopied] = useState(false)
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -59,11 +60,11 @@ export function ComponentDetailPanel({
   const handleRefreshClick = useCallback(async () => {
     try {
       await onRefresh()
-      setToast({ message: 'Component refreshed', type: 'success' })
+      showToast('Component refreshed')
     } catch {
-      setToast({ message: 'Failed to refresh', type: 'error' })
+      showToast('Failed to refresh', 'error')
     }
-  }, [onRefresh])
+  }, [onRefresh, showToast])
 
   const tabs = [
     { id: 'preview' as TabType, label: 'Preview', icon: Eye },
@@ -268,27 +269,6 @@ export function ComponentDetailPanel({
         )}
       </div>
 
-      {/* Toast Notification */}
-      {toast && (
-        <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg transition-all ${
-          toast.type === 'success'
-            ? 'bg-green-600 text-white'
-            : 'bg-red-600 text-white'
-        }`}>
-          {toast.type === 'success' ? (
-            <Check className="w-4 h-4" />
-          ) : (
-            <span className="w-4 h-4 flex items-center justify-center">✕</span>
-          )}
-          <span className="text-sm font-medium">{toast.message}</span>
-          <button
-            onClick={() => setToast(null)}
-            className="ml-2 hover:opacity-80"
-          >
-            ✕
-          </button>
-        </div>
-      )}
     </div>
   )
 }

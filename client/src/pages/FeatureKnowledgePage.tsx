@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Plus, Brain, FileUp, BookOpen, Eye, Trash2 } from 'lucide-react'
+import { useToast } from '../hooks/useToast'
 import { CreateKnowledgeModal } from '../components/feature-knowledge/CreateKnowledgeModal'
 import { ImportTab } from '../components/feature-knowledge/ImportTab'
 import { PreviewTab } from '../components/feature-knowledge/PreviewTab'
@@ -26,6 +27,7 @@ const tabs = [
 ]
 
 export function FeatureKnowledgePage() {
+  const { showToast } = useToast()
   const [items, setItems] = useState<string[]>([])
   const [selectedItem, setSelectedItem] = useState<string | null>(null)
   const [itemData, setItemData] = useState<KnowledgeItem | null>(null)
@@ -121,12 +123,17 @@ export function FeatureKnowledgePage() {
     try {
       const res = await fetch(`/api/feature-knowledge/${selectedItem}`, { method: 'DELETE' })
       if (res.ok) {
+        showToast('Knowledge deleted')
         setSelectedItem(null)
         setItemData(null)
         setIsDeleteConfirmOpen(false)
         setIsDirty(false)
         fetchItems()
+      } else {
+        showToast('Delete failed', 'error')
       }
+    } catch {
+      showToast('Delete failed', 'error')
     } finally {
       setDeleting(false)
     }

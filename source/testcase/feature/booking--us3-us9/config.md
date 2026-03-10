@@ -1,10 +1,10 @@
 ---
-name: saved-response---function
-created: '2026-02-21'
+name: booking--us1-us9-
+created: '2026-03-10'
 updated: '2026-03-10'
 strategy: ''
 rule: phuong-rule-claude
-template: ''
+template: phuong-temp-claude
 structure: []
 linked_knowledge: []
 components: []

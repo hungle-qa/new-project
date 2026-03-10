@@ -36,6 +36,8 @@
 | `.claude/agents/skills/agia/*` | `relationships/agents.md` |
 | `.claude/agents/skills/brainstorm/*` | `relationships/agents.md` |
 | `.claude/workflows/*` | `relationships/agents.md` |
+| `.claude/rules/*` | `relationships/agents.md` |
+| `.claude/code-rules/*` | `relationships/agents.md` |
 | `CLAUDE.md` | `relationships/agents.md` |
 
 ## Update Rules

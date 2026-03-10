@@ -254,7 +254,6 @@ export function TestcaseManagerPage() {
           ) : activeTab === 'default-rules' || activeTab === 'default-template' || activeTab === 'learn' ? (
             <GlobalTabsPanel
               activeTab={activeTab}
-              onTabChange={handleTabChange}
               onDirtyChange={handleDirtyChange}
               onSaveRef={handleSaveRef}
             />

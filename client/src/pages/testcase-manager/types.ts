@@ -1,4 +1,4 @@
-import { Compass, ScrollText, Table, BookOpen, FileUp, FileSpreadsheet, CheckSquare, GraduationCap } from 'lucide-react'
+import { ScrollText, Table, FileUp, FileSpreadsheet, GraduationCap, Settings } from 'lucide-react'
 import { StructureNode } from '../../components/testcase/LevelsTab'
 import { LinkedKnowledgeEntry } from '../../components/testcase/types'
 
@@ -23,10 +23,10 @@ export interface FeatureSummary {
 
 export type TestcaseMode = 'lite' | 'lite-v2' | 'full'
 
-export type TabType = 'strategy' | 'knowledge' | 'components' | 'import-spec' | 'review-export' | 'rules' | 'template' | 'default-rules' | 'default-template' | 'corner-cases' | 'learn'
+export type TabType = 'strategy' | 'knowledge' | 'components' | 'import-spec' | 'review-export' | 'config' | 'default-rules' | 'default-template' | 'corner-cases' | 'learn'
 
 const liteTabs: TabType[] = ['import-spec', 'review-export']
-const liteV2Tabs: TabType[] = ['import-spec', 'rules', 'review-export']
+const liteV2Tabs: TabType[] = ['import-spec', 'config', 'review-export']
 
 export function getVisibleTabs(mode: TestcaseMode) {
   if (mode === 'lite') return featureTabs.filter(t => liteTabs.includes(t.id))
@@ -35,8 +35,7 @@ export function getVisibleTabs(mode: TestcaseMode) {
 }
 
 export const featureTabs = [
-  { id: 'rules' as TabType, label: 'Rules', icon: ScrollText },
-  { id: 'template' as TabType, label: 'Template', icon: Table },
+  { id: 'config' as TabType, label: 'Config', icon: Settings },
   { id: 'import-spec' as TabType, label: 'Import Spec', icon: FileUp },
   { id: 'review-export' as TabType, label: 'Review & Export', icon: FileSpreadsheet },
 ]

@@ -24,6 +24,10 @@
 
 /brainstorm ────────────→ brainstorm.md ──→ app-build.md
                                            ai-workflow.md
+
+/rulecode ─────────────→ (standalone command, no agent)
+                          reads: .claude/rules/code-rules.md
+                          writes: .claude/code-rules/{category}.md
 ```
 
 ### Path Convention
@@ -94,4 +98,6 @@
 | `brainstorm.md` | `commands/brainstorm.md`, `app-build.md`, `ai-workflow.md` |
 | `CLAUDE.md` | Workflow table matches actual agents/commands |
 | `development-rules.md` | All implementer skills |
+| `commands/rulecode.md` | `.claude/rules/code-rules.md`, `.claude/code-rules/*` |
+| `.claude/rules/code-rules.md` | `commands/rulecode.md`, `.claude/code-rules/*` |
 | Add/remove agent | `CLAUDE.md` workflow table, `agia.md` Chain Registry, this file |

@@ -22,11 +22,9 @@ Store combined content as `{spec_content}`.
 
 ## Step 2: Load Rules
 
-Read `source/testcase/feature/{feature}/rules.md`.
+Read `config.md` frontmatter `rule` field → read `source/testcase/rule/{rule-from-config}.md` (defaults to `test-rules`).
 
-If not found, fall back to `source/testcase/rule/test-rules.md` (global default).
-
-If neither found: proceed without rules (note this in output).
+If global rule file not found: proceed without rules (note this in output).
 
 Store as `{rules_content}`.
 

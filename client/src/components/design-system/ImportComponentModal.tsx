@@ -33,7 +33,13 @@ const CATEGORIES = [
 export function ImportComponentModal({ isOpen, onClose, onSubmit, initialData, mode = 'create' }: ImportComponentModalProps) {
   useEffect(() => {
     if (!isOpen) return
-    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        document.querySelector<HTMLFormElement>('#import-form')?.requestSubmit()
+      }
+    }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Save, Plus } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 import { ColumnRulesModal } from './template/ColumnRulesModal'
 import { ColumnEditorTable } from './template/ColumnEditorTable'
 import { TemplatePreview } from './template/TemplatePreview'
@@ -16,6 +17,7 @@ interface TemplateTabProps {
 }
 
 export function TemplateTab({ globalTemplateName, onDirtyChange, saveRef }: TemplateTabProps) {
+  const { showToast } = useToast()
   const apiBase = globalTemplateName
     ? `/api/testcase/templates/${globalTemplateName}`
     : '/api/testcase/template'
@@ -57,11 +59,16 @@ export function TemplateTab({ globalTemplateName, onDirtyChange, saveRef }: Temp
       })
       if (res.ok) {
         setOriginal(JSON.stringify(toSave))
+        showToast('Saved successfully')
+      } else {
+        showToast('Save failed', 'error')
       }
+    } catch {
+      showToast('Save failed', 'error')
     } finally {
       setSaving(false)
     }
-  }, [columns, apiBase])
+  }, [columns, apiBase, showToast])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

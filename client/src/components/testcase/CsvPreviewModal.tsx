@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { X, Tag, Expand, StickyNote } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 import {
   extractUniqueTags,
   expandVariantRows,
@@ -21,6 +22,7 @@ interface CsvPreviewModalProps {
 }
 
 export function CsvPreviewModal({ filename, content, loading, feature, initialNote, onClose, onNoteSaved }: CsvPreviewModalProps) {
+  const { showToast } = useToast()
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -75,7 +77,10 @@ export function CsvPreviewModal({ filename, content, loading, feature, initialNo
         body: JSON.stringify({ note: noteText }),
       })
       onNoteSaved?.(filename, noteText)
-    } catch { /* ignore */ }
+      showToast('Note saved')
+    } catch {
+      showToast('Save failed', 'error')
+    }
     finally { setSaving(false) }
   }
 

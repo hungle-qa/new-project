@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Eye } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 import { ImportComponentModal, ComponentData } from '../../components/design-system/ImportComponentModal'
 import { ComponentDetailPanel } from './ComponentDetailPanel'
 import { DeleteComponentModal } from './DeleteComponentModal'
@@ -23,6 +24,7 @@ interface ComponentsViewProps {
 
 
 export function ComponentsView({ components, onComponentsChange, onImportModalOpen }: ComponentsViewProps) {
+  const { showToast } = useToast()
   // Pass the import modal opener to parent
   useEffect(() => {
     onImportModalOpen(() => setIsImportModalOpen(true))
@@ -165,6 +167,7 @@ export function ComponentsView({ components, onComponentsChange, onImportModalOp
       setIsDeleteConfirmOpen(false)
     } catch (err) {
       console.error('Delete failed:', err)
+      showToast('Delete failed', 'error')
     } finally {
       setDeleting(false)
     }
@@ -191,6 +194,7 @@ export function ComponentsView({ components, onComponentsChange, onImportModalOp
       handleSelect(selected.name)
     } catch (err) {
       console.error('Status update failed:', err)
+      showToast('Status update failed', 'error')
     }
   }
 
@@ -221,8 +225,9 @@ export function ComponentsView({ components, onComponentsChange, onImportModalOp
       }
     } catch (err) {
       console.error('Auto-save failed:', err)
+      showToast('Auto-save failed', 'error')
     }
-  }, [selected, description, html, css])
+  }, [selected, description, html, css, showToast])
 
   // Refresh component data from API
   const handleRefresh = useCallback(async () => {

@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { ToastProvider } from './hooks/useToast'
 import { HomePage } from './pages/HomePage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
 import { TestcaseManagerPage } from './pages/TestcaseManagerPage'
@@ -8,6 +9,7 @@ import { UserGuidePage } from './pages/UserGuidePage'
 
 function App() {
   return (
+    <ToastProvider>
     <Layout>
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -19,6 +21,7 @@ function App() {
         <Route path="/user-guide" element={<UserGuidePage />} />
       </Routes>
     </Layout>
+    </ToastProvider>
   )
 }
 

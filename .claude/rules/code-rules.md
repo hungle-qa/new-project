@@ -10,7 +10,7 @@
 | react-state.md | state, useState, closure, re-render, controlled, uncontrolled | Stale closures, re-renders, controlled components |
 | file-io.md | file, path, fs, readFile, writeFile, temp, cleanup, race condition | Path handling, race conditions, temp file cleanup |
 | typescript-types.md | type, interface, any, narrowing, discriminated, import type | Type narrowing, any escapes, import types |
-| tailwind-styling.md | tailwind, className, shadcn, dark mode, responsive, breakpoint | Class ordering, shadcn/ui overrides |
+| tailwind-styling.md | tailwind, className, shadcn, dark mode, responsive, breakpoint, scroll, overflow, scrollbar, layout shift | Class ordering, shadcn/ui overrides, scrollbar layout shift |
 | ui-keyboard.md | popup, modal, dialog, keyboard, shortcut, hotkey, ESC, Ctrl+Enter | Keyboard shortcuts for popups/modals/dialogs |
 | node-eval.md | node -e, node eval, inline script, zsh, histexpand | Never use node -e; write temp .js file instead |
 

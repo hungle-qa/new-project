@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useToast } from '../../hooks/useToast'
 import { useAISettings } from '../../hooks/useAISettings'
 import { AISettingsModal } from '../AISettingsModal'
 import { PromptEditor } from './import/PromptEditor'
@@ -18,6 +19,7 @@ interface ImportTabProps {
 type UploadState = 'idle' | 'uploading' | 'success' | 'error'
 
 export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported, onDirtyChange, saveRef }: ImportTabProps) {
+  const { showToast } = useToast()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [skipAi, setSkipAi] = useState(true)
   const [defaultPrompt, setDefaultPrompt] = useState('')
@@ -110,8 +112,13 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
         setLastSavedPrompt(customPrompt.trim())
         setPromptSaved(true)
         onImported()
+        showToast('Prompt saved')
         setTimeout(() => setPromptSaved(false), 2000)
+      } else {
+        showToast('Save failed', 'error')
       }
+    } catch {
+      showToast('Save failed', 'error')
     } finally {
       setSavingPrompt(false)
     }
@@ -140,8 +147,14 @@ export function ImportTab({ knowledgeName, sourceFiles, savedPrompt, onImported,
       }
       if (defaultRes.ok) {
         setDefaultSaved(true)
+        showToast('Saved as default')
         setTimeout(() => setDefaultSaved(false), 2000)
       }
+      if (!itemRes.ok || !defaultRes.ok) {
+        showToast('Save failed', 'error')
+      }
+    } catch {
+      showToast('Save failed', 'error')
     } finally {
       setSavingDefault(false)
     }

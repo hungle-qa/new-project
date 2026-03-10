@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Save, AlertCircle, Plus } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 import { AddRuleForm, type DesignRule } from './rules/AddRuleForm'
 import { RulesPreview } from './rules/RulesPreview'
-import { Toast } from './rules/Toast'
 import { RulesTable } from './rules/RulesTable'
 import { useRulesValidation } from './rules/useRulesValidation'
 import { LoadingSpinner, ErrorState } from './rules/LoadingState'
@@ -13,12 +13,12 @@ interface DesignRulesData {
 }
 
 export function RulesEditor() {
+  const { showToast } = useToast()
   const [rulesData, setRulesData] = useState<DesignRulesData | null>(null)
   const [originalData, setOriginalData] = useState<DesignRulesData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
   const [newRule, setNewRule] = useState<Omit<DesignRule, 'id' | 'isCore'>>({
     token: '',
@@ -81,9 +81,9 @@ export function RulesEditor() {
       }
 
       setOriginalData(JSON.parse(JSON.stringify(rulesData))) // Update original after successful save
-      setToast({ message: 'Design rules updated successfully!', type: 'success' })
+      showToast('Design rules updated')
     } catch (err) {
-      setToast({ message: err instanceof Error ? err.message : 'Failed to save rules', type: 'error' })
+      showToast(err instanceof Error ? err.message : 'Failed to save rules', 'error')
     } finally {
       setSaving(false)
     }
@@ -142,9 +142,9 @@ export function RulesEditor() {
       }
 
       setOriginalData(JSON.parse(JSON.stringify(updatedData)))
-      setToast({ message: 'New rule added and saved!', type: 'success' })
+      showToast('New rule added and saved')
     } catch (err) {
-      setToast({ message: err instanceof Error ? err.message : 'Failed to save new rule', type: 'error' })
+      showToast(err instanceof Error ? err.message : 'Failed to save new rule', 'error')
     } finally {
       setSaving(false)
     }
@@ -184,15 +184,6 @@ export function RulesEditor() {
           Edit baseline styling rules for all components in the design system
         </p>
       </div>
-
-      {/* Toast notification */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
 
       {/* Error Messages */}
       {error && (

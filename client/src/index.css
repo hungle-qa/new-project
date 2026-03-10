@@ -6,6 +6,28 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
+/* Overlay scrollbar — prevents layout shift when scrollbar appears/disappears */
+html {
+  overflow-y: auto;
+  overflow-y: overlay;
+  scrollbar-gutter: stable;
+}
+
+/* Thin scrollbar for WebKit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
 /* Toast slide-in animation */
 @keyframes slide-in {
   from {

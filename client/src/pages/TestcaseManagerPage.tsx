@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Layers } from 'lucide-react'
+import { useToast } from '../hooks/useToast'
 import { CreateFeatureModal } from '../components/testcase/CreateFeatureModal'
 import { UnsavedChangesModal } from '../components/UnsavedChangesModal'
 import { FeatureSidebar } from './testcase-manager/FeatureSidebar'
@@ -10,6 +11,7 @@ import { GlobalTabsPanel } from './testcase-manager/GlobalTabsPanel'
 import { FeatureConfig, FeatureSummary, TabType, TestcaseMode, getVisibleTabs } from './testcase-manager/types'
 
 export function TestcaseManagerPage() {
+  const { showToast } = useToast()
   const [features, setFeatures] = useState<FeatureSummary[]>([])
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null)
   const [config, setConfig] = useState<FeatureConfig | null>(null)
@@ -126,12 +128,17 @@ export function TestcaseManagerPage() {
     try {
       const res = await fetch(`/api/testcase/${selectedFeature}`, { method: 'DELETE' })
       if (res.ok) {
+        showToast('Feature deleted')
         setSelectedFeature(null)
         setConfig(null)
         setIsDeleteConfirmOpen(false)
         setIsDirty(false)
         fetchFeatures()
+      } else {
+        showToast('Delete failed', 'error')
       }
+    } catch {
+      showToast('Delete failed', 'error')
     } finally {
       setDeleting(false)
     }
@@ -139,14 +146,21 @@ export function TestcaseManagerPage() {
 
   const saveConfig = async (updates: Partial<FeatureConfig>) => {
     if (!selectedFeature) return
-    const res = await fetch(`/api/testcase/${selectedFeature}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates),
-    })
-    if (res.ok) {
-      const data = await res.json()
-      setConfig(data)
+    try {
+      const res = await fetch(`/api/testcase/${selectedFeature}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setConfig(data)
+        showToast('Saved successfully')
+      } else {
+        showToast('Save failed', 'error')
+      }
+    } catch {
+      showToast('Save failed', 'error')
     }
   }
 
@@ -171,6 +185,9 @@ export function TestcaseManagerPage() {
       setIsEditing(false)
       fetchFeatures()
       loadConfig(newName)
+      showToast('Renamed successfully')
+    } else {
+      showToast('Rename failed', 'error')
     }
   }
 

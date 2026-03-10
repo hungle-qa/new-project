@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { FileText, Pencil, Save, X } from 'lucide-react'
+import { useToast } from '../../hooks/useToast'
 
 interface PreviewTabProps {
   knowledgeName: string
@@ -11,6 +12,7 @@ interface PreviewTabProps {
 }
 
 export function PreviewTab({ knowledgeName, content, sourceFiles, onSaved, onDirtyChange, saveRef }: PreviewTabProps) {
+  const { showToast } = useToast()
   const [isEditing, setIsEditing] = useState(false)
   const [editContent, setEditContent] = useState(content)
   const [saving, setSaving] = useState(false)
@@ -44,7 +46,12 @@ export function PreviewTab({ knowledgeName, content, sourceFiles, onSaved, onDir
       if (res.ok) {
         setIsEditing(false)
         onSaved()
+        showToast('Saved successfully')
+      } else {
+        showToast('Save failed', 'error')
       }
+    } catch {
+      showToast('Save failed', 'error')
     } finally {
       setSaving(false)
     }

@@ -1,8 +1,0 @@
-# Agent output files - temporary data for workflow chain
-# These files are generated during agent execution
-# and can be safely deleted after workflow completion
-
-*.json
-
-# Keep this .gitignore file
-!.gitignore

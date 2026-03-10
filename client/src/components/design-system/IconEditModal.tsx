@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 
 interface Icon {
@@ -10,6 +10,12 @@ interface Icon {
 }
 
 export function IconEditModal({ icon, onClose, onSuccess }: { icon: Icon; onClose: () => void; onSuccess: () => void }) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   const [svg, setSvg] = useState(icon.svg)
   const [category, setCategory] = useState(icon.category || 'general')
   const [tags, setTags] = useState((icon.tags || []).join(', '))

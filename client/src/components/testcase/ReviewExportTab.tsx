@@ -42,7 +42,7 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
   const [loadingPreview, setLoadingPreview] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
-  const [copiedCmd, setCopiedCmd] = useState<'write' | 'write-lite' | null>(null)
+  const [copiedCmd, setCopiedCmd] = useState<'write' | 'write-deep' | 'write-lite' | null>(null)
   const [copiedFile, setCopiedFile] = useState<string | null>(null)
   const [notes, setNotes] = useState<Record<string, string>>({})
   const [hoveredNote, setHoveredNote] = useState<string | null>(null)
@@ -162,9 +162,9 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-gray-700">Generated Testcase Results</h3>
         <div className="flex items-center gap-1.5">
-          {(mode === 'lite' ? ['write-lite'] as const : mode === 'full' ? ['write'] as const : ['write', 'write-lite'] as const).map(cmd => {
+          {(mode === 'lite' ? ['write-lite'] as const : mode === 'full' ? ['write', 'write-deep'] as const : ['write', 'write-lite'] as const).map(cmd => {
             const isCopied = copiedCmd === cmd
-            const label = cmd === 'write' ? 'Full' : 'Lite'
+            const label = cmd === 'write' ? 'Full' : cmd === 'write-deep' ? 'Deep' : 'Lite'
             return (
               <Tooltip key={cmd} text={`Copy /testcase ${cmd} ${feature} to clipboard`} align="right">
                 <button
@@ -237,13 +237,15 @@ export function ReviewExportTab({ feature, mode }: ReviewExportTabProps) {
                     <button
                       onClick={() => {
                         if (!notes[filename]) return
-                        const cmd = `/agent-audit update write-lite\nFile: ${filename}\nNote:\n${notes[filename]}`
+                        const cmd = mode === 'full'
+                          ? `Update the feature/${feature}/rules.md based on file ${filename}:\nNote:\n${notes[filename]}`
+                          : `/agent-audit update write-lite\nFile: ${filename}\nNote:\n${notes[filename]}`
                         navigator.clipboard.writeText(cmd)
                         setCopiedNote(filename)
                         setTimeout(() => setCopiedNote(null), 2000)
                       }}
                       disabled={!notes[filename]}
-                      title={notes[filename] ? 'Copy audit update command with note' : 'No note — add one in Preview'}
+                      title={notes[filename] ? (mode === 'full' ? 'Copy rules update command with note' : 'Copy audit update command with note') : 'No note — add one in Preview'}
                       className="p-0.5 rounded hover:bg-yellow-100 disabled:cursor-default disabled:hover:bg-transparent"
                     >
                       {copiedNote === filename

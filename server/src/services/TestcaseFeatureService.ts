@@ -61,8 +61,9 @@ export class TestcaseFeatureService {
       created: today,
       updated: today,
       strategy: '',
+      rule: '',
+      template: '',
       structure: [],
-      scope: { happy_case: '', corner_case: '', negative_case: '' },
       linked_knowledge: [],
       components: [],
     }
@@ -85,8 +86,9 @@ export class TestcaseFeatureService {
         created: data.created || '',
         updated: data.updated || '',
         strategy: data.strategy || '',
+        rule: data.rule || '',
+        template: data.template || '',
         structure: data.structure || [],
-        scope: { happy_case: '', corner_case: '', negative_case: '', ...(data.scope || {}) },
         linked_knowledge: data.linked_knowledge || [],
         components: data.components || [],
         content,
@@ -113,7 +115,8 @@ export class TestcaseFeatureService {
 
     const frontmatter: Record<string, unknown> = {
       name: merged.name, created: merged.created, updated: merged.updated,
-      strategy: merged.strategy, structure: merged.structure, scope: merged.scope,
+      strategy: merged.strategy, rule: merged.rule, template: merged.template,
+      structure: merged.structure,
       linked_knowledge: merged.linked_knowledge, components: merged.components,
     }
 

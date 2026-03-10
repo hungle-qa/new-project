@@ -147,6 +147,29 @@ router.put('/:feature/template', async (req, res) => {
   } catch (error) { res.status(500).json({ error: 'Failed to save feature template' }) }
 })
 
+// --- Per-feature Sync (re-clone from selected global) ---
+router.post('/:feature/rules/sync', async (req, res) => {
+  try {
+    const { ruleName } = req.body
+    if (!ruleName || typeof ruleName !== 'string') return res.status(400).json({ error: 'Rule name is required' })
+    await TestcaseConfigService.syncFeatureRules(req.params.feature, ruleName)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to sync rules' })
+  }
+})
+
+router.post('/:feature/template/sync', async (req, res) => {
+  try {
+    const { templateName } = req.body
+    if (!templateName || typeof templateName !== 'string') return res.status(400).json({ error: 'Template name is required' })
+    await TestcaseConfigService.syncFeatureTemplate(req.params.feature, templateName)
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to sync template' })
+  }
+})
+
 // --- Per-feature Spec Prompt ---
 router.get('/:feature/spec-prompt', async (req, res) => {
   try { res.json({ prompt: await TestcaseConfigService.getSpecPrompt(req.params.feature) }) }

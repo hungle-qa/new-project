@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Plus } from 'lucide-react'
 
 interface CreateFeatureModalProps {
@@ -8,6 +8,13 @@ interface CreateFeatureModalProps {
 }
 
 export function CreateFeatureModal({ isOpen, onClose, onCreated }: CreateFeatureModalProps) {
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
   const [name, setName] = useState('')
   const [creating, setCreating] = useState(false)
   const [error, setError] = useState('')

@@ -26,6 +26,51 @@ export class TestcaseConfigService {
     await fs.writeFile(path.join(rulesDir, 'test-rules.md'), content)
   }
 
+  // --- Multi-Rule CRUD ---
+
+  static async listRules(): Promise<string[]> {
+    try {
+      const rulesDir = path.join(SOURCE_DIR, 'rule')
+      const files = await fs.readdir(rulesDir)
+      return files.filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+    } catch {
+      return []
+    }
+  }
+
+  static async getRule(name: string): Promise<string> {
+    try {
+      return await fs.readFile(path.join(SOURCE_DIR, 'rule', `${name}.md`), 'utf-8')
+    } catch {
+      return ''
+    }
+  }
+
+  static async saveRule(name: string, content: string): Promise<void> {
+    const rulesDir = path.join(SOURCE_DIR, 'rule')
+    await fs.mkdir(rulesDir, { recursive: true })
+    await fs.writeFile(path.join(rulesDir, `${name}.md`), content)
+  }
+
+  static async renameRule(oldName: string, newName: string): Promise<boolean> {
+    try {
+      const rulesDir = path.join(SOURCE_DIR, 'rule')
+      await fs.rename(path.join(rulesDir, `${oldName}.md`), path.join(rulesDir, `${newName}.md`))
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  static async deleteRule(name: string): Promise<boolean> {
+    try {
+      await fs.unlink(path.join(SOURCE_DIR, 'rule', `${name}.md`))
+      return true
+    } catch {
+      return false
+    }
+  }
+
   // --- Default Spec Prompt ---
 
   static async getDefaultPrompt(): Promise<string> {
@@ -80,6 +125,55 @@ export class TestcaseConfigService {
     )
   }
 
+  // --- Multi-Template CRUD ---
+
+  static async listTemplates(): Promise<string[]> {
+    try {
+      const templateDir = path.join(SOURCE_DIR, 'template')
+      const files = await fs.readdir(templateDir)
+      return files.filter(f => f.endsWith('.json')).map(f => f.replace('.json', ''))
+    } catch {
+      return []
+    }
+  }
+
+  static async getTemplateByName(name: string): Promise<TemplateColumn[]> {
+    try {
+      const raw = await fs.readFile(path.join(SOURCE_DIR, 'template', `${name}.json`), 'utf-8')
+      return JSON.parse(raw)
+    } catch {
+      return []
+    }
+  }
+
+  static async saveTemplateByName(name: string, columns: TemplateColumn[]): Promise<void> {
+    const templateDir = path.join(SOURCE_DIR, 'template')
+    await fs.mkdir(templateDir, { recursive: true })
+    await fs.writeFile(
+      path.join(templateDir, `${name}.json`),
+      JSON.stringify(columns, null, 2)
+    )
+  }
+
+  static async renameTemplate(oldName: string, newName: string): Promise<boolean> {
+    try {
+      const templateDir = path.join(SOURCE_DIR, 'template')
+      await fs.rename(path.join(templateDir, `${oldName}.json`), path.join(templateDir, `${newName}.json`))
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  static async deleteTemplate(name: string): Promise<boolean> {
+    try {
+      await fs.unlink(path.join(SOURCE_DIR, 'template', `${name}.json`))
+      return true
+    } catch {
+      return false
+    }
+  }
+
   // --- Per-feature Rules ---
 
   static async getFeatureRules(name: string): Promise<string> {
@@ -88,24 +182,16 @@ export class TestcaseConfigService {
       const rulesPath = path.join(FEATURE_DIR, name, 'rules.md')
       rulesContent = await fs.readFile(rulesPath, 'utf-8')
     } catch {
-      // Clone from global default on first access
-      const globalRules = await this.getRules()
+      // Clone from selected global rule (or default) on first access
+      const config = await TestcaseFeatureService.getFeatureConfig(name)
+      const ruleName = config?.rule || 'test-rules'
+      const globalRules = await this.getRule(ruleName)
       if (globalRules) {
         const featureDir = path.join(FEATURE_DIR, name)
         await fs.mkdir(featureDir, { recursive: true })
         await fs.writeFile(path.join(featureDir, 'rules.md'), globalRules)
       }
       rulesContent = globalRules
-    }
-
-    // Auto-migrate scope from config into rules if not already present
-    if (!rulesContent.includes('## Scope')) {
-      const config = await TestcaseFeatureService.getFeatureConfig(name)
-      if (config?.scope && (config.scope.happy_case || config.scope.corner_case)) {
-        const scopeSection = `\n\n## Scope\n\n### Happy Case\n${config.scope.happy_case || 'Normal user flows, valid inputs, expected outcomes.'}\n\n### Corner Case\n${config.scope.corner_case || 'Boundary values, invalid inputs.'}\n`
-        rulesContent += scopeSection
-        await this.saveFeatureRules(name, rulesContent)
-      }
     }
 
     return rulesContent
@@ -125,8 +211,10 @@ export class TestcaseConfigService {
       const raw = await fs.readFile(templatePath, 'utf-8')
       return JSON.parse(raw)
     } catch {
-      // Clone from global default on first access
-      const globalTemplate = await this.getTemplate()
+      // Clone from selected global template (or default) on first access
+      const config = await TestcaseFeatureService.getFeatureConfig(name)
+      const templateName = config?.template || 'template'
+      const globalTemplate = await this.getTemplateByName(templateName)
       if (globalTemplate.length > 0) {
         const featureDir = path.join(FEATURE_DIR, name)
         await fs.mkdir(featureDir, { recursive: true })
@@ -145,6 +233,25 @@ export class TestcaseConfigService {
     await fs.writeFile(
       path.join(featureDir, 'template.json'),
       JSON.stringify(columns, null, 2)
+    )
+  }
+
+  // --- Sync (re-clone from selected global) ---
+
+  static async syncFeatureRules(featureName: string, ruleName: string): Promise<void> {
+    const globalRules = await this.getRule(ruleName)
+    const featureDir = path.join(FEATURE_DIR, featureName)
+    await fs.mkdir(featureDir, { recursive: true })
+    await fs.writeFile(path.join(featureDir, 'rules.md'), globalRules)
+  }
+
+  static async syncFeatureTemplate(featureName: string, templateName: string): Promise<void> {
+    const globalTemplate = await this.getTemplateByName(templateName)
+    const featureDir = path.join(FEATURE_DIR, featureName)
+    await fs.mkdir(featureDir, { recursive: true })
+    await fs.writeFile(
+      path.join(featureDir, 'template.json'),
+      JSON.stringify(globalTemplate, null, 2)
     )
   }
 

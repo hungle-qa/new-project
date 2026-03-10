@@ -1,10 +1,17 @@
-# CLAUDE.md - Project Instructions
+# CLAUDE.md — Project Instructions
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Project
 
-## Role & Responsibilities
+QA-kit is a testcase generation platform. Import UI components and specs, generate testcases from rules and templates. File-based storage (no database).
 
-Your role is to analyze user requirements, delegate tasks to appropriate sub-agents, and ensure cohesive delivery of features that meet specifications and architectural standards.
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React + TypeScript |
+| Backend | Express + TypeScript |
+| Styling | Tailwind CSS + shadcn/ui |
+| Storage | File-based (no DB) |
 
 ## Workflows
 
@@ -15,24 +22,21 @@ Your role is to analyze user requirements, delegate tasks to appropriate sub-age
 | Doc | `.claude/agents/doc-writer.md` | `/doc` |
 | Import Design | `.claude/agents/import-design.md` | `/import-design-by-image` |
 | Agent Audit | `.claude/agents/agia.md` | `/agent-audit` |
+| Brainstorm | `.claude/agents/brainstorm.md` | `/brainstorm` |
 
-- Development rules: `./.claude/workflows/development-rules.md`
-- Slash commands: `./.claude/commands/*.md`
+- Development rules: `.claude/workflows/development-rules.md`
+- Slash commands: `.claude/commands/*.md`
+- Lite skill shared rules: `.claude/agents/skills/testcase-writer/lite-shared.md`
 
-**IMPORTANT:** You must follow strictly the development rules in `./.claude/workflows/development-rules.md` file.
-**IMPORTANT:** Before you plan or proceed any implementation, always read the `./README.md` file first to get context.
-**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports.
-**IMPORTANT:** In reports, list any unresolved questions at the end, if any.
+## Rules
 
-## Documentation Management
+- Follow `.claude/workflows/development-rules.md` strictly for coding standards
+- Keep docs in `./docs` folder updated
+- Always use `localhost` for server URLs — never `127.0.0.1`
+- Sacrifice grammar for concision in reports
+- List unresolved questions at end of reports, if any
 
-We keep all important docs in `./docs` folder and keep updating them.
+## Server URLs
 
-**IMPORTANT:** *MUST READ* and *MUST COMPLY* all *INSTRUCTIONS* in project `./CLAUDE.md`, especially *WORKFLOWS* section is *CRITICALLY IMPORTANT*, this rule is *MANDATORY. NON-NEGOTIABLE. NO EXCEPTIONS. MUST REMEMBER AT ALL TIMES!!!*
-
-## Server Configuration Rules
-
-**MANDATORY:** Always use `localhost` for server URLs. Never use `127.0.0.1` or other IP addresses.
-- Proxy target: `http://localhost:3001`
-- API calls: `http://localhost:3001/api/*`
 - Client dev server: `http://localhost:3000`
+- API / proxy target: `http://localhost:3001`

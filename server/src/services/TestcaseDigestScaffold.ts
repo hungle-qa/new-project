@@ -38,7 +38,7 @@ No strategy selected — use default balanced approach.
 <!-- [FORMAT — How to write testcases] -->
 
 ## Template Columns
-(no writing styles defined)
+(no column rules defined)
 Full column order: (not yet configured)
 
 ## Merged Column Order

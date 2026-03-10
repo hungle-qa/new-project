@@ -1,6 +1,6 @@
-import { Code, Monitor, Bot, LayoutDashboard, Zap, Clock, Terminal } from 'lucide-react'
+import { Code, Monitor, Bot, LayoutDashboard, Zap, Clock, Terminal, FolderTree } from 'lucide-react'
 
-export type TabType = 'edit-app' | 'use-webapp' | 'train-agent' | 'commands'
+export type TabType = 'edit-app' | 'use-webapp' | 'train-agent' | 'commands' | 'claude-directory'
 export type WebAppSubTab = 'overview' | 'lite' | 'full'
 
 export interface GuideSection {
@@ -31,6 +31,7 @@ export const tabs: { id: TabType; label: string; icon: typeof Code }[] = [
   { id: 'use-webapp', label: 'Use Web App', icon: Monitor },
   { id: 'train-agent', label: 'Train Agent', icon: Bot },
   { id: 'commands', label: 'Commands', icon: Terminal },
+  { id: 'claude-directory', label: '.claude Directory', icon: FolderTree },
 ]
 
 export const webAppSubTabs: { id: WebAppSubTab; label: string; icon: typeof LayoutDashboard }[] = [
@@ -160,14 +161,69 @@ export const webAppSubTabContent: Record<WebAppSubTab, WebAppRichContent> = {
   full: {
     sections: [
       {
-        title: '🚧 Full Mode — Coming Soon',
-        upcoming: true,
+        title: '🎯 Full Mode Overview',
         bullets: [
-          'Full mode uses a deep digest pipeline for richer testcase coverage.',
+          'Full mode uses a deep digest pipeline — compiles spec, rules, template, strategy, and linked knowledge into one context document.',
           'Includes design system component mapping — links UI components to testcase steps.',
           'Better for complex features with many interactive states, modals, and edge cases.',
-          'Stay tuned — this tab will be updated when Full mode is released.',
+          'Adds global tools: Default Rules, Default Template, and Learn — visible only in Full mode.',
         ],
+      },
+      {
+        title: '🎓 Learn from Testcase',
+        bullets: [
+          'Upload an existing testcase CSV + optional spec to reverse-engineer your team\'s conventions.',
+          'AI analyzes column formatting, case ordering, coverage patterns, and priority rules.',
+          'Review and edit the analysis before saving — nothing is saved without your approval.',
+          'Saves as new named template + new named rule — never overwrites your defaults.',
+          'Use it when onboarding from another tool or extracting patterns from a well-written testcase.',
+        ],
+      },
+      {
+        title: '🔄 Learn Workflow',
+        flow: ['Upload CSV', 'Add Spec (optional)', 'Analyze', 'Review & Edit', 'Name & Save'],
+        bullets: [
+          'Upload CSV — drag-and-drop or browse for a .csv testcase file.',
+          'Add Spec — paste spec text or select an existing feature\'s spec for better analysis.',
+          'Analyze — AI extracts patterns: column rules (formatting, style) and QA rules (ordering, coverage, priority).',
+          'Review & Edit — every column rule and QA rule section is editable. AI reasoning shown for reference.',
+          'Name & Save — choose names for the new template and rule. They appear in Default Template and Default Rules.',
+        ],
+        protip: 'The more rows in your CSV, the more accurate the pattern detection. 10+ rows gives good results. 30+ is ideal.',
+      },
+      {
+        title: '🔧 Analyze — Technical Details',
+        bullets: [
+          'AI Provider: Google Gemini API — the same provider used for spec import. Not Claude/Opus.',
+          'API Key: Your Google AI Studio API key from AI Settings. Stored in browser localStorage only — never persisted on the server.',
+          'Model: Configurable in AI Settings (default: gemini-2.0-flash). Shown next to the Analyze button.',
+          'Flow: CSV uploaded to Express server → parsed with csv-parse → if >30 rows, sampled to 30 representative rows → prompt built with CSV + spec → single Gemini API call → structured JSON returned.',
+          'API key is passed per-request via HTTP header (X-AI-API-Key). The server forwards it to Google and discards it after the request.',
+          'Cost: Single API call per analysis. ~5K-20K input tokens depending on CSV size. Billed at Gemini Flash pricing.',
+          'Privacy: CSV content is sent to Google Gemini for analysis. No data is stored on the server beyond the request lifecycle.',
+          'Rate limiting: Auto-retry with exponential backoff if Gemini returns 429 (rate limited). Up to 2 retries.',
+        ],
+      },
+      {
+        title: '⌨️ Learn via CLI',
+        bullets: [
+          'Run /testcase learn {feature-name} to analyze a feature\'s most recent CSV + spec.',
+          'The agent presents the analysis in the terminal for your review.',
+          'After approval, saves the template and rule to the global folders.',
+          'Requires the feature to have both an imported spec and at least one result CSV.',
+        ],
+        code: '/testcase learn inbox-feb-12',
+      },
+      {
+        title: '📌 Full Mode Tips',
+        bullets: [
+          'Default Rules — manage multiple rule sets in the Default Rules tab. Each feature can select which rule to use.',
+          'Default Template — manage column definitions. Features auto-clone the global template on first access.',
+          'Context Digest — Full mode compiles all context into a digest before generation. If it says "STALE", regenerate it.',
+          'Linked Knowledge — connect feature knowledge documents for richer context in the digest.',
+          'Strategy — choose a testing strategy (e.g., balanced, exhaustive) to guide generation behavior.',
+        ],
+        protip: 'Start with Lite to get a baseline CSV, then switch to Full mode and use Learn to extract the patterns from that CSV into your template and rules.',
       },
     ],
   },
@@ -332,6 +388,7 @@ export const commandsContent: WebAppRichContent = {
         'write-lite {feature} — fast, spec-driven generation. Best for most cases. No digest needed.',
         'write {feature} — full generation with digest pipeline + component mapping. For complex features.',
         'update {feature} — add, edit, or remove rows from an existing testcase CSV.',
+        'learn {feature} — analyze existing CSV + spec to create new template and rules from patterns.',
         'Prerequisites: feature must exist in Testcase Manager + spec must be imported.',
         'Output: timestamped CSV saved to source/testcase/{feature}/result/.',
       ],
@@ -386,6 +443,87 @@ export const commandsContent: WebAppRichContent = {
       ],
       code: '/ship "feat: add export button to review tab"',
       protip: 'Run /ship when you\'re happy with everything on the branch. One command: commit → push → merge → back.',
+    },
+  ],
+}
+
+export const claudeDirectoryContent: WebAppRichContent = {
+  sections: [
+    {
+      title: '🗂 What is the .claude Directory?',
+      bullets: [
+        'The .claude/ directory is the AI brain of QA-kit — it defines how every agent thinks and acts.',
+        'It contains three types of files: commands (slash commands), agents (executors), and skills (step-by-step instructions).',
+        'Commands are thin routers. Agents read commands and route to the right skill. Skills do the actual work.',
+        'Nothing in this directory touches app code — it is pure agent configuration.',
+      ],
+    },
+    {
+      title: '🔄 How Commands → Agents → Skills Work Together',
+      flow: ['You type /command', 'Command routes to Agent', 'Agent reads Skill', 'Skill executes steps'],
+      bullets: [
+        'You type a slash command (e.g. /testcase write login-page) in the terminal.',
+        'The command file reads: "delegate to testcase-writer agent".',
+        'The testcase-writer agent parses the operation ("write") and loads the matching skill file.',
+        'The skill file contains the step-by-step workflow the agent follows to completion.',
+        'Skills are swappable — agents can grow new capabilities just by adding a new skill file.',
+      ],
+      protip: 'Commands never contain logic. Agents never contain step details. Skills contain everything. This separation keeps each layer focused and easy to audit.',
+    },
+    {
+      title: '⌨️ Slash Commands (.claude/commands/)',
+      bullets: [
+        '/start — entry point for building or fixing app features. Routes to the implementer agent.',
+        '/testcase — generate and manage QA testcases. Routes to the testcase-writer agent.',
+        '/doc — create, update, and review project documentation. Routes to the doc-writer agent.',
+        '/import-design-by-image — convert UI images or pasted code into design system components. Routes to the import-design agent.',
+        '/agent-audit — audit, test, optimize, and improve agents. Routes to the agia agent.',
+        '/ship — commit, push, and merge the current branch into main. Runs git steps directly.',
+      ],
+      code: '/testcase write-lite login-page',
+    },
+    {
+      title: '🤖 Agents (.claude/agents/)',
+      bullets: [
+        'implementer — writes production TypeScript/React code. Classifies tasks as EASY/MEDIUM/HARD and routes to the matching skill.',
+        'testcase-writer — generates and updates QA testcase CSVs. Parses the operation (write / write-lite / update) and routes to the matching skill.',
+        'import-design — unified design import agent. Detects mode (VALIDATE / SINGLE / MULTI / UPDATE) from context and routes to the matching skill.',
+        'doc-writer — manages project docs. Routes review / create / update operations to matching skill files.',
+        'agia — Agent Intelligence Architect. Audits and improves other agents. Routes audit / update / test / optimize / create-skill / system-audit to matching skills.',
+      ],
+    },
+    {
+      title: '🧩 Skills (.claude/agents/skills/)',
+      bullets: [
+        'implementer/: easy.md · medium.md · hard.md — scoped workflows by task complexity.',
+        'testcase-writer/: write.md · write-lite.md · write-lite-v2.md · update.md · update-lite.md · learn.md · digest-system.md — full, lean, update, and learn pipelines.',
+        'import-design/: validate.md · single.md · multi.md · update.md — four import modes.',
+        'doc-writer/: review.md · create.md · update.md — documentation lifecycle operations.',
+        'agia/: audit.md · update.md · test.md · optimize.md · create-skill.md · system-audit.md — agent improvement operations.',
+      ],
+      protip: 'To add a new capability to an agent, create a new skill file under its folder and add a routing entry in the agent file. No other files need to change.',
+    },
+    {
+      title: '📐 Routing Examples',
+      bullets: [
+        '/start Add export button  →  implementer  →  reads task → MEDIUM → loads medium.md',
+        '/testcase write-lite login-page  →  testcase-writer  →  parses "write-lite" → loads write-lite.md',
+        '/testcase update login-page  →  testcase-writer  →  parses "update" → loads update.md',
+        '/testcase learn inbox-feb-12  →  testcase-writer  →  parses "learn" → loads learn.md',
+        '/import-design-by-image [1 image]  →  import-design  →  detects SINGLE mode → loads single.md',
+        '/agent-audit audit testcase-writer  →  agia  →  parses "audit" → loads audit.md',
+        '/doc create codebase-summary  →  doc-writer  →  parses "create" → loads create.md',
+      ],
+      code: '/agent-audit audit testcase-writer',
+    },
+    {
+      title: '📁 Directory Layout',
+      bullets: [
+        '.claude/commands/ — one .md file per slash command. Each file is a thin router with a description, argument hint, and an agent reference.',
+        '.claude/agents/ — one .md file per agent. Each file defines the agent role, skill routing table, and shared logic.',
+        '.claude/agents/skills/{agent-name}/ — one .md file per skill. Each file contains the full step-by-step workflow for that operation.',
+        '.claude/workflows/ — shared rules files (e.g. development-rules.md). Read by agents as reference — not routable.',
+      ],
     },
   ],
 }

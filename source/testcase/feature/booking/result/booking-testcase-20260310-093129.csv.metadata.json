@@ -1,0 +1,18 @@
+{
+  "timestamp": "20260310-093129",
+  "feature": "booking",
+  "testcase_count": 85,
+  "coverage": {
+    "US10": {
+      "title": "Book a session",
+      "count": 50,
+      "acs": ["AC1", "AC2", "AC2.1", "AC3", "AC4"]
+    },
+    "US11": {
+      "title": "View sessions on calendar",
+      "count": 35,
+      "acs": ["AC1", "AC2", "AC3", "AC4"]
+    }
+  },
+  "generated_at": "2026-03-10T09:31:29Z"
+}

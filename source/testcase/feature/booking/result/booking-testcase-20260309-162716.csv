@@ -1,0 +1,605 @@
+ID,Test Scenarios,Items for Pivot Table,Step,Test Data,Expected
+,US10. Book a session for a client,,,,
+US10-1,Open Book Session popup via CTA button,US10 / AC1,"1. Navigate to Calendar page on Booking feature
+2. Click ""Book a session"" CTA button
+3. Verify the popup appears","Logged in as Owner/Admin
+Booking feature enabled","- ""Book a session"" popup is displayed
+- Background calendar is dimmed
+- Focus is trapped inside the modal
+- Popup includes: Trainer (disabled), Client, Start Date, Start Time, Type, Name, Duration, Location, Description, Add note to client, Book Session button, Cancel button, Close icon"
+US10-2,Open Book Session popup via double-click on blank space,US10 / AC1,"1. Navigate to Calendar page
+2. Double-click on a blank space on the calendar
+3. Verify the popup appears",Calendar page is displayed,"- ""Book a session"" popup is displayed
+- Background calendar is dimmed
+- Focus is trapped inside the modal"
+US10-3,Verify default field values when opening via CTA button,US10 / AC1,"1. Click ""Book a session"" CTA button
+2. Verify default values in all fields",Today's date: Mar 9 2026,"- Start date defaults to today (Mar 9, 2026)
+- Start time defaults to 7:00 AM
+- Trainer field is disabled and shows WS Owner
+- Location defaults to ""In-person""
+- Duration defaults to 30 min"
+US10-4,Verify prefilled values when clicking time slot on Day view,US10 / AC1,"1. Switch calendar to Day view
+2. Click on the 6 AM - 7 AM time slot
+3. Verify prefilled values","Day view selected
+Clicked date: Mar 9, 2026","- Start date = Mar 9, 2026
+- Start time = 6:00 AM"
+US10-5,Verify prefilled values when clicking time slot on Week view,US10 / AC1,"1. Switch calendar to Week view
+2. Click on a time slot (e.g., 10 AM - 11 AM on Mar 10)
+3. Verify prefilled values","Week view selected
+Clicked date: Mar 10, 2026","- Start date = Mar 10, 2026
+- Start time = 10:00 AM"
+US10-6,Verify prefilled values when clicking time slot on Month view,US10 / AC1,"1. Switch calendar to Month view
+2. Click on a date cell (Mar 12)
+3. Verify prefilled values","Month view selected
+Clicked date: Mar 12, 2026","- Start date = Mar 12, 2026
+- Start time defaults to 7:00 AM"
+US10-7,Search and select a client from dropdown,US10 / AC2,"1. Open Book a session popup
+2. Click ""Client"" field
+3. Verify dropdown appears with client list
+4. Type ""John"" in the search field
+5. Select a client from the filtered results","Client ""John Doe"" exists in WS
+Client is not Pending/Archived/Waiting Activation","- Searchable dropdown appears with hover state
+- Clients sorted alphabetically by name
+- First 20 clients loaded initially
+- After typing ""John"", search triggers after 200ms debounce
+- Matching clients displayed with: Profile image, Name, Email
+- Selecting client closes the dropdown"
+US10-8,Client dropdown scrolling loads next batch,US10 / AC2,"1. Open Client dropdown
+2. Scroll to bottom of initial 20 clients
+3. Verify next batch loads",WS has more than 20 eligible clients,"- First 20 clients loaded initially
+- Scrolling loads next 20 clients"
+US10-9,Client search with no matching results,US10 / AC2,"1. Open Client dropdown
+2. Type ""zzzznonexistent"" in search field
+3. Verify empty state",No client matching ""zzzznonexistent"","- Blank dropdown list displayed
+- Message: ""No clients found."""
+US10-10,Client dropdown excludes ineligible status clients,US10 / AC2,"1. Open Client dropdown
+2. Verify excluded clients are not shown","Client ""Archived User"" at status Archived
+Client ""Pending User"" at status Pending
+Client ""Waiting User"" at status Waiting Activation","- ""Archived User"" not shown in dropdown
+- ""Pending User"" not shown in dropdown
+- ""Waiting User"" not shown in dropdown"
+US10-11,Input Start Date via keyboard,US10 / AC2,"1. Click ""Start date"" field
+2. Verify entire value is highlighted
+3. Type ""Apr 15, 2026""
+4. Press Enter
+5. Verify date is applied","Typed date: Apr 15, 2026","- Entire current value highlighted on click
+- Calendar picker opens
+- As ""Apr"" is typed, picker hovers on Apr 1 of current year
+- As ""15"" is typed, picker hovers on Apr 15
+- After Enter, Start date = Apr 15, 2026
+- Calendar picker closes"
+US10-12,Start Date partial input — month only,US10 / AC2,"1. Click ""Start date"" field
+2. Type ""Jun""
+3. Verify calendar picker hover","Typed partial date: Jun","- Calendar picker hovers on Jun 1 of the current year"
+US10-13,Start Date invalid month input keeps previous hover,US10 / AC2,"1. Click ""Start date"" field
+2. Type ""Xyz""
+3. Verify calendar picker behavior","Typed invalid month: Xyz","- Calendar picker keeps hover on previous date
+- Does not update to new month"
+US10-14,Start Date click outside to apply and close,US10 / AC2,"1. Click ""Start date"" field
+2. Type ""May 20, 2026""
+3. Click outside the Start date field and calendar picker
+4. Verify date applied","Typed date: May 20, 2026","- Start date = May 20, 2026
+- Calendar picker closes"
+US10-15,Start Date out-of-range shows stop icon,US10 / AC2,"1. Open date picker
+2. Hover on a date beyond 1 year from today
+3. Verify stop icon","WS created in 2025
+Current date: Mar 9, 2026
+Hover on: Apr 2027 (out of range)","- Stop icon displayed on the hovered date"
+US10-16,Input Start Time via keyboard,US10 / AC2,"1. Click ""Start time"" field
+2. Verify entire value is highlighted
+3. Type ""02:30 PM""
+4. Press Enter
+5. Verify time is applied","Typed time: 02:30 PM","- Entire current value highlighted on click
+- Dropdown shows 15-minute increment time slots with hover state
+- Matching option ""2:30 PM"" highlighted in dropdown
+- After Enter, Start time = 2:30 PM
+- Dropdown closes"
+US10-17,Start Time click outside to apply and close,US10 / AC2,"1. Click ""Start time"" field
+2. Type ""09:00 AM""
+3. Click outside the field and dropdown
+4. Verify time applied","Typed time: 09:00 AM","- Start time = 9:00 AM
+- Dropdown closes"
+US10-18,Start Time displays coach timezone,US10 / AC2,"1. Open Book a session popup
+2. Verify timezone display on Start time field","Coach timezone: PST (UTC-8)","- Coach's timezone is displayed next to Start time field"
+US10-19,Input session Name field,US10 / AC2,"1. Click ""Name"" field
+2. Type ""Weekly Check-in""
+3. Verify input accepted","Session name: Weekly Check-in","- Name field accepts the input ""Weekly Check-in"""
+US10-20,Select Duration from dropdown,US10 / AC2,"1. Click ""Duration"" field
+2. Verify dropdown appears
+3. Select a duration","Selected duration: 45 min","- Duration dropdown displayed with time slot options
+- Selected duration: 45 min"
+US10-21,Add note to client — display textbox and input,US10 / AC2,"1. Click ""Add note to client"" button
+2. Verify textbox appears
+3. Type a note","Note text: ""Please bring your workout log""","- Textbox displayed with placeholder ""Add note to client""
+- Cursor focused in textbox
+- Note text accepted"
+US10-22,Add note to client — character counter at 450 chars,US10 / AC2,"1. Click ""Add note to client""
+2. Type 450 characters
+3. Verify counter appears","Note: 450 characters of text","- Character counter displayed when input reaches 450 characters"
+US10-23,Add note to client — blocked at 500 chars,US10 / AC2,"1. Click ""Add note to client""
+2. Type 500 characters
+3. Attempt to type more","Note: 500 characters of text","- Input cursor is blocked at 500 characters
+- No additional characters accepted"
+US10-24,Select a session type from Type dropdown,US10 / AC2,"1. Click ""Type"" field
+2. Verify searchable list of session types
+3. Select ""Strength Training""","Active session type: ""Strength Training""
+Duration: 60 min
+Location: In-person
+Description: ""Full body workout""","- Searchable list with hover state displayed
+- Session types sorted alphabetically
+- First 20 loaded, scrolling loads next 20
+- Each option shows: Name, Duration, Location icon/text, Number of client (1:1)
+- After selection, dropdown closes
+- Summary section displayed: color, name, duration, location, description
+- Name, Duration, Location, Description fields hidden from popup
+- ""Add note to client"" field still visible"
+US10-25,Search session types with no results,US10 / AC2,"1. Click ""Type"" field
+2. Type ""zzzznonexistent""
+3. Verify empty state",No session type matching search,"- Empty dropdown with message: ""No result found."""
+US10-26,No session types exist — empty state with create CTA,US10 / AC2,"1. Click ""Type"" field
+2. Verify empty state",WS has no active session types,"- Message: ""No session types yet""
+- ""Create session type"" CTA button displayed
+- Clicking CTA navigates to Session Type creation"
+US10-27,Custom session mode — no Type selected,US10 / AC2,"1. Open Book a session popup
+2. Leave Type field empty
+3. Verify all fields are editable",No session type selected,"- All editable fields displayed: Name, Duration, Location, Description
+- Full manual input allowed (Custom mode)"
+US10-28,Clear selected session type — return to Custom mode,US10 / AC2,"1. Select session type ""Strength Training""
+2. Click ""x"" icon to clear selection
+3. Verify form returns to Custom mode","Previously selected: ""Strength Training""
+Client: John Doe
+Start date: Mar 10, 2026
+Start time: 9:00 AM
+Note: ""Bring towel""","- Session type summary section cleared
+- Form returns to Custom Session mode
+- Client, Start date, Start time, Add note to client values persisted"
+US10-29,Customize selected session type via Edit icon,US10 / AC2,"1. Select session type ""Yoga Flow""
+2. Hover on ""Edit"" icon
+3. Verify tooltip
+4. Click ""Edit"" icon
+5. Verify Edit popup overlay","Selected type: ""Yoga Flow""
+Duration: 60 min
+Location: Video
+Description: ""Relaxing session""","- Tooltip on hover: ""Change duration, location or description""
+- ""Edit Yoga Flow"" popup displayed overlaying Book Session popup
+- Message: ""Changes apply to this session only.""
+- Fields pre-populated with session type values
+- Editable: Duration, Location, Description
+- CTA buttons: ""Cancel"" and ""Apply"""
+US10-30,Edit session type — Apply changes,US10 / AC2,"1. Open Edit popup for ""Yoga Flow""
+2. Verify Apply button is disabled by default
+3. Change Duration to 45 min
+4. Click ""Apply""","Changed duration: 45 min (was 60 min)","- Apply button disabled by default
+- After changing Duration, Apply button enabled
+- Clicking Apply closes Edit popup
+- Summary section updated with Duration: 45 min
+- Book session popup displayed for continued booking"
+US10-31,Edit session type — Cancel without changes,US10 / AC2,"1. Open Edit popup for ""Yoga Flow""
+2. Click ""Cancel""
+3. Verify popup closes","Selected type: ""Yoga Flow""","- Edit popup closes
+- Book session popup displayed
+- Session type info unchanged"
+US10-32,Session type In-person missing Address — Add address link,US10 / AC2.1,"1. Select session type with In-person location and no Address
+2. Verify ""Add address"" hyperlink
+3. Click ""Add address""
+4. Type address","Session type: ""Morning Run""
+Location: In-person
+Address: not provided
+Description: ""Outdoor run""","- ""Add address"" hyperlink displayed with hover state
+- Description displayed as usual
+- Clicking ""Add address"" turns it into text input
+- Coach can input address"
+US10-33,Session type missing Description — Add description link,US10 / AC2.1,"1. Select session type with no Description
+2. Verify ""Add description"" hyperlink
+3. Click ""Add description""
+4. Type description","Session type: ""Quick Chat""
+Description: not provided","- ""Add description"" hyperlink displayed with hover state
+- Clicking link opens text input for description"
+US10-34,Session type with all data provided — display normally,US10 / AC2.1,"1. Select session type with full data
+2. Verify all info displayed","Session type: ""Strength Training""
+Location: In-person
+Address: ""123 Gym St""
+Description: ""Full body workout""","- Session type info displayed as usual
+- Address and Description shown without add links"
+US10-35,Book session successfully — no overlap — future session,US10 / AC3,"1. Fill all required fields
+2. Click ""Book Session""
+3. Verify session created","Client: John Doe
+Start date: Mar 15, 2026
+Start time: 10:00 AM
+Name: Weekly Check-in
+Duration: 30 min
+Location: In-person
+No overlapping sessions","- Session saved successfully
+- Popup closes
+- Toast: ""Session has been scheduled.""
+- Session displayed on calendar at correct position
+- Calendar navigates to show the new session"
+US10-36,Book session — required fields validation,US10 / AC3,"1. Leave Client field empty
+2. Leave Name field empty
+3. Click ""Book Session""
+4. Verify validation errors","Client: empty
+Name: empty
+Start date: Mar 9, 2026
+Start time: 7:00 AM","- Required fields highlighted with inline error messages
+- Session not created"
+US10-37,Book session — overlap with existing session — Book Anyway,US10 / AC3,"1. Fill all required fields with overlapping time
+2. Click ""Book Session""
+3. Verify overlap confirmation popup
+4. Click ""Book Anyway""","Client: Jane Smith
+Start date: Mar 12, 2026
+Start time: 2:00 PM
+Duration: 60 min
+Existing session: 2:30 PM - 3:30 PM same trainer","- ""Session Overlap"" confirmation popup displayed
+- Message: ""You already have another session during this time. Are you sure you want to book this session anyway?""
+- Actions: ""Cancel"" and ""Book Anyway"" (focused)
+- Clicking ""Book Anyway"" saves the session
+- Popup closes
+- Toast: ""Session has been scheduled.""
+- Session displayed on calendar"
+US10-38,Book session — overlap — Cancel returns to form,US10 / AC3,"1. Fill all required fields with overlapping time
+2. Click ""Book Session""
+3. Verify overlap popup
+4. Click ""Cancel""","Same overlap scenario as US10-37","- Overlap confirmation popup closes
+- Returns to Book a session popup
+- All inputted data preserved"
+US10-39,Book session in the past — Past date confirmation,US10 / AC3,"1. Fill all required fields with past end time
+2. Click ""Book Session""
+3. Verify past date confirmation popup
+4. Click ""Book Anyway""","Client: John Doe
+Start date: Mar 1, 2026
+Start time: 9:00 AM
+Duration: 30 min
+(end time 9:30 AM Mar 1 is in the past)","- ""Session Date Is In the Past"" popup displayed
+- Message includes: saved as Completed, no client communication sent
+- Actions: ""Cancel"" and ""Book Anyway"" (focused)
+- Clicking ""Book Anyway"" saves session
+- No overlap check performed for past sessions"
+US10-40,Book session in the past — Cancel returns to form,US10 / AC3,"1. Fill fields with past end time
+2. Click ""Book Session""
+3. Click ""Cancel"" on past date popup",Same past date scenario,"- Confirmation popup closes
+- Returns to Book a session popup
+- All inputted data preserved"
+US10-41,Book session fails — error handling,US10 / AC3,"1. Fill all required fields
+2. Click ""Book Session""
+3. Simulate server error",Server returns error on create,"- Book a session popup stays open
+- All data input preserved
+- CTA button remains enabled
+- Toast: ""Failed to add a session. Please try again"""
+US10-42,Cancel booking with unsaved changes,US10 / AC4,"1. Open Book a session popup
+2. Input data into Client and Name fields
+3. Click ""Cancel"" button
+4. Verify discard behavior","Client: John Doe
+Name: Test Session","- Unsaved changes discarded
+- Popup closes"
+US10-43,Close popup via x icon with unsaved changes,US10 / AC4,"1. Open Book a session popup
+2. Input data into fields
+3. Click ""x"" icon
+4. Verify discard behavior","Client: Jane Smith
+Name: Morning Yoga","- Unsaved changes discarded
+- Popup closes"
+,US11. View sessions on calendar,,,,
+US11-1,View calendar with sessions — entry point,US11 / AC1,"1. Navigate to Calendar page
+2. Verify sessions are displayed","Booking feature enabled
+Multiple sessions exist","- Calendar view displayed with all sessions associated with the WS
+- Sessions rendered according to current calendar view (Day/Week/Month)"
+US11-2,Empty calendar state — no sessions,US11 / AC2,"1. Navigate to Calendar page
+2. Select a date range with no sessions","No sessions in selected date range","- Empty calendar grid displayed
+- No session cards or popovers shown
+- Calendar navigation and view switching still functional"
+US11-3,Day view — session rendering with session type color,US11 / AC3,"1. Switch to Day view
+2. Verify session color for typed session","Session ""Strength Training"" tied to session type with color Blue
+Session date: Today","- Session block displayed in Blue color (from session type)
+- Session has hover state"
+US11-4,Day view — custom session color,US11 / AC3,"1. Switch to Day view
+2. Verify color for custom session","Custom session with color Green
+Session date: Today","- Session block displayed in Green color"
+US11-5,Day view — past vs current session color distinction,US11 / AC3,"1. Switch to Day view
+2. Verify color for past and current sessions","Past session: end_time < current_time
+Current session: end_time >= current_time","- Past session displayed with distinct past color style
+- Current session displayed with active color style"
+US11-6,Day view — session block height for 15 min session,US11 / AC3,"1. Create a 15 min session
+2. Switch to Day view
+3. Verify block height","Duration: 15 min
+Start time: 10:00 AM","- Session block height = 1/4 of 1-hour time slot
+- Fixed height, not further reduced
+- Session info in 1 line: Client name, Start time, Session name"
+US11-7,Day view — session block height for 30 min session,US11 / AC3,"1. Switch to Day view
+2. Verify 30 min session block","Duration: 30 min
+Start time: 2:00 PM","- Session block height = 1/2 of 1-hour time slot
+- Session info in 1 line (duration <= 45 min)"
+US11-8,Day view — session info display for 45 min session,US11 / AC3,"1. Verify session info for 45 min session","Duration: 45 min
+Client: John Doe
+Start: 3:00 PM
+Name: Cardio","- Session info in 1 line: John Doe, 3:00 PM, Cardio"
+US11-9,Day view — session info for 50 min session (2 lines),US11 / AC3,"1. Verify session info for 50 min session","Duration: 50 min
+Client: Jane Smith
+Start: 4:00 PM
+Name: Flexibility","- Session info in 2 lines
+- Line 1: Jane Smith, 4:00 PM
+- Line 2: Flexibility"
+US11-10,Day view — session info for 60 min session (3 lines),US11 / AC3,"1. Verify session info for 60 min session","Duration: 60 min
+Client: John Doe
+Start: 10:00 AM
+End: 11:00 AM
+Name: Strength Training","- Session info in 3 lines
+- Line 1: John Doe
+- Line 2: 10:00 AM – 11:00 AM (same am/pm, both displayed)
+- Line 3: Strength Training"
+US11-11,Day view — 60 min session time across AM/PM boundary,US11 / AC3,"1. Verify time display for cross-AM/PM session","Duration: 60 min
+Start: 11:30 AM
+End: 12:30 PM","- Line 2: 11:30 – 12:30 PM (different am/pm, only end time shows PM)"
+US11-12,Day view — overlapping sessions horizontal stacking,US11 / AC3,"1. Create 2 overlapping sessions
+2. Switch to Day view
+3. Verify horizontal stacking","Session A: 10:00 AM - 11:00 AM
+Session B: 10:30 AM - 11:30 AM
+Same trainer","- Sessions displayed side by side (horizontally stacked)
+- Session A on the left (earlier start time)
+- Session B on the right
+- Width reduced proportionally"
+US11-13,Day view — overlapping same start time sort by duration,US11 / AC3,"1. Create 2 sessions with same start time but different durations
+2. Verify sorting","Session A: 10:00 AM, Duration 60 min (created first)
+Session B: 10:00 AM, Duration 30 min (created second)","- Session A on the left (longer duration)
+- Session B on the right (shorter duration)"
+US11-14,Day view — overlapping same start and duration sort by created_at,US11 / AC3,"1. Create 2 sessions with same start time and duration
+2. Verify sorting","Session A: 10:00 AM, 30 min (created 9:00 AM)
+Session B: 10:00 AM, 30 min (created 9:05 AM)","- Session A on the left (older created_at)
+- Session B on the right (newer created_at)"
+US11-15,Day view — early canceled session display,US11 / AC3,"1. Switch to Day view
+2. Verify early canceled session display",Session with status Early Canceled,"- Session displayed with dashed border
+- Client name has strikethrough
+- Past/current date state applied"
+US11-16,Day view — late canceled session display,US11 / AC3,"1. Switch to Day view
+2. Verify late canceled session display",Session with status Late Canceled,"- Session displayed with dashed border
+- ""i"" icon displayed
+- Client name has strikethrough
+- Past/current date state applied"
+US11-17,Week view — sessions across 7 day columns,US11 / AC3,"1. Switch to Week view
+2. Verify sessions displayed across the week","Multiple sessions across different days in the week","- Sessions displayed across 7 day columns
+- Overlapping sessions stacked with hover state
+- Sorted by start time ascending"
+US11-18,Week view — cross-day session display,US11 / AC3,"1. Create session spanning midnight
+2. Switch to Week view
+3. Verify split display","Session: 11:00 PM Jan 30 to 1:00 AM Jan 31
+Duration: 120 min","- Jan 30 column: session from 11:00 PM to 12:00 AM
+- Jan 31 column: session from 12:00 AM to 1:00 AM"
+US11-19,Month view — session display in date cells,US11 / AC3,"1. Switch to Month view
+2. Verify sessions in date cells",Multiple sessions on various dates,"- Sessions displayed as condensed items with hover state
+- Each shows: Start time, Client name
+- Session color applied (type-based or custom)
+- Past vs current color distinction applied"
+US11-20,Month view — overflow sessions with more indicator,US11 / AC3,"1. Switch to Month view on a date with many sessions
+2. Verify overflow indicator
+3. Click the indicator","Date with 8 sessions, screen shows max 5","- ""3 more"" indicator displayed
+- Clicking opens popover listing all 8 sessions (max height 292px)
+- Scrollable list
+- Sorted by start time, then created_at for same start
+- Click session to open detail popup
+- Click outside to close popover"
+US11-21,View session details popover,US11 / AC4,"1. Click on a session on the calendar
+2. Verify popover content","Session: ""Strength Training""
+Client: John Doe
+Date: Mar 15, 2026
+Start: 10:00 AM, End: 11:00 AM
+Duration: 60 min
+Location: In-person
+Address: 123 Gym St
+Description: Full body workout
+Note: Bring towel
+Trainer: Admin User
+Status: Scheduled","- Session detail popover opens
+- Displays: Status (Scheduled), Session name, Client name + avatar, Date, Time (10:00 AM – 11:00 AM), Duration, Location, Address, Description, Note to client, Trainer name + avatar
+- Quick action icons: Edit (tooltip: ""Edit session""), Delete (tooltip: ""Cancel session""), x icon (no hover state)"
+US11-22,Session details popover — same AM/PM time display,US11 / AC4,"1. Click on session with same AM/PM start and end
+2. Verify time format","Start: 10:00 AM
+End: 11:00 AM","- Time displayed as: 10:00 AM – 11:00 AM (both show AM)"
+US11-23,Session details popover — cross-day time display,US11 / AC4,"1. Click on cross-day session
+2. Verify time format","Start: 11:00 PM Mar 15
+End: 1:00 AM Mar 16","- Time displayed as: Mar 15, 11:00 PM - Mar 16, 1:00 AM"
+US11-24,Session details popover — optional fields not defined,US11 / AC4,"1. Click on session with no optional data
+2. Verify popover","Session with no Address, no Location note, no Description, no Note to client","- Address, Location note, Description, Note to client not displayed
+- Other required fields shown normally"
+,US12. Edit a scheduled/completed session,,,,
+US12-1,Open Edit session for session with session type,US12 / AC1,"1. Click on a scheduled session tied to a session type
+2. Click ""Edit"" icon on popover
+3. Verify Edit session modal","Session: ""Strength Training"" (session type)
+Status: Scheduled","- ""Edit session"" modal opens overlaying calendar
+- Loading state displayed until data loaded
+- All fields editable except Client and Trainer
+- Coach cannot remove selected session type
+- Field validation same as Book session AC2"
+US12-2,Open Edit session for custom session,US12 / AC1,"1. Click on a custom scheduled session
+2. Click ""Edit"" icon
+3. Verify Edit session modal","Custom session (no session type)
+Status: Scheduled","- Edit session modal opens
+- All fields editable except Client and Trainer
+- Session Type field hidden
+- Field validation same as Book session AC2"
+US12-3,Open Edit session for completed session,US12 / AC1,"1. Click on a completed session
+2. Click ""Edit"" icon
+3. Verify Edit session modal","Session status: Completed","- Edit session modal opens
+- All fields editable except Client and Trainer"
+US12-4,Save changes — successful update,US12 / AC2,"1. Open Edit session modal
+2. Change Name to ""Updated Session""
+3. Click ""Update""
+4. Verify session updated","Original name: ""Weekly Check-in""
+Changed name: ""Updated Session""","- Update button enabled after change
+- Validation and overlap check applied
+- Session saved
+- Modal closes
+- Calendar updated immediately
+- Toast: ""The session has been updated."""
+US12-5,Save changes — no changes made — Update disabled,US12 / AC2,"1. Open Edit session modal
+2. Make no changes
+3. Verify Update button state",No changes made,"- ""Update"" CTA remains disabled"
+US12-6,Save changes — overlap detected during edit,US12 / AC2,"1. Open Edit session
+2. Change time to overlap with another session
+3. Click ""Update""","Changed start time: 2:00 PM
+Existing session: 2:00 PM - 3:00 PM","- Overlap confirmation popup displayed
+- Same behavior as Book session overlap handling"
+US12-7,Edit canceled session — Edit icon hidden (Early Cancel),US12 / AC2,"1. Click on Early Canceled session
+2. Verify popover icons","Session status: Early Canceled","- ""Edit"" icon is hidden
+- Coach cannot edit canceled session"
+US12-8,Edit canceled session — Edit icon hidden (Late Cancel),US12 / AC2,"1. Click on Late Canceled session
+2. Verify popover icons","Session status: Late Canceled","- ""Edit"" icon is hidden
+- Coach cannot edit canceled session"
+US12-9,Save changes — server error,US12 / AC2,"1. Open Edit session
+2. Make changes
+3. Click ""Update""
+4. Simulate server error",Server returns error on update,"- Modal stays open
+- All changes preserved
+- Toast: ""Failed to update session. Please try again""
+- Retry possible by clicking ""Update"" again"
+US12-10,Cancel edit — no changes made,US12 / AC3,"1. Open Edit session modal
+2. Make no changes
+3. Click ""Cancel""",No changes made,"- Edit session modal closes
+- Calendar view maintained
+- Session details popover closed"
+US12-11,Cancel edit — with unsaved changes,US12 / AC3,"1. Open Edit session modal
+2. Change Name field
+3. Click ""Cancel""
+4. Verify discard confirmation","Changed name: ""New Name""","- ""Discard all unsaved changes"" confirmation popup displayed"
+US12-12,Cancel edit via x icon — with changes,US12 / AC3,"1. Open Edit session modal
+2. Change Duration
+3. Click ""x"" icon","Changed duration: 45 min","- ""Discard all unsaved changes"" confirmation popup displayed"
+US12-13,Quick update via drag and drop — out of scope,US12 / AC4,"1. Verify drag and drop is not available",P1.0,"- Drag and drop functionality is OUT OF SCOPE for P1.0"
+,US13. Cancel a scheduled session,,,,
+US13-1,Cancel session — Early cancel flow,US13 / AC1,"1. Click on a scheduled session
+2. Click ""Delete"" icon on popover
+3. Verify cancel confirmation dialog
+4. Select ""Early cancel""
+5. Click ""Cancel Session""","Session: ""Weekly Check-in""
+Client: John Doe
+Status: Scheduled","- ""Cancel session?"" dialog opens over calendar
+- Session popover closed
+- Title: ""Cancel session?""
+- Message includes ""John Doe"" (full name)
+- ""Early cancel"" option with helper: ""Client will be notified about this cancellation.""
+- ""Late cancel"" option with helper: ""Client will not be notified about this cancellation.""
+- Selecting Early cancel enables ""Cancel Session"" button
+- Both buttons disabled during processing
+- Session canceled, dialog closes
+- Toast: ""Session has been canceled."""
+US13-2,Cancel session — Late cancel flow,US13 / AC1,"1. Click on a scheduled session
+2. Click ""Delete"" icon
+3. Select ""Late cancel""
+4. Click ""Cancel Session""","Session: ""Morning Yoga""
+Client: Jane Smith
+Status: Scheduled","- Late cancel selected
+- ""Cancel Session"" button enabled and focused
+- Session canceled
+- Calendar updated in real-time without page refresh
+- Toast: ""Session has been canceled."""
+US13-3,Cancel session — with cancellation note,US13 / AC1,"1. Open cancel confirmation
+2. Select ""Early cancel""
+3. Type cancellation note
+4. Click ""Cancel Session""","Cancellation note: ""Client requested reschedule""","- Note input with placeholder ""Add a reason for cancellation""
+- Note accepted
+- Session canceled with note saved"
+US13-4,Cancel session — cancellation note 500 char limit,US13 / AC1,"1. Open cancel confirmation
+2. Type 500 characters in cancellation note
+3. Attempt to type more","Note: 500 characters","- Character counter appears at 450 chars
+- Input blocked at 500 chars"
+US13-5,Cancel session — Keep Session button,US13 / AC1,"1. Open cancel confirmation
+2. Click ""Keep Session""",Session status: Scheduled,"- Cancel dialog closes
+- Session unchanged
+- Calendar view maintained"
+US13-6,Cancel session — close via x icon,US13 / AC1,"1. Open cancel confirmation
+2. Click ""x"" icon",Session status: Scheduled,"- Dialog closes
+- Session unchanged
+- Calendar view maintained"
+US13-7,Cancel Session button disabled by default,US13 / AC1,"1. Open cancel confirmation
+2. Verify button states",No cancel option selected,"- ""Cancel Session"" button disabled
+- ""Keep Session"" button enabled"
+US13-8,Cancel session — completed session,US13 / AC1,"1. Click on a completed session
+2. Click ""Delete"" icon
+3. Verify cancel dialog opens","Session status: Completed","- Cancel confirmation dialog opens
+- Same behavior as scheduled session cancellation"
+US13-9,Cancel session — filter shows canceled session,US13 / AC1,"1. Cancel a session with Early cancel
+2. Verify calendar with filter set to Show","Early canceled filter: Show","- Session remains visible on calendar
+- Session displayed with canceled state (dashed border, strikethrough)"
+US13-10,Cancel session — server error,US13 / AC1,"1. Open cancel confirmation
+2. Select ""Early cancel""
+3. Click ""Cancel Session""
+4. Simulate server error",Server returns error,"- Cancel popup stays open
+- Data input preserved
+- CTA enabled for retry
+- Toast: ""Failed to cancel session. Please try again"""
+US13-11,View canceled session — with cancellation note,US13 / AC2,"1. Click on a canceled session with note
+2. Verify popover display","Canceled session with note: ""Client had emergency""","- Session popover opens
+- ""Note"" icon next to status
+- No ""Edit"" or ""Delete"" icons
+- Cancellation note shown in max 2 lines with ""..."" for overflow"
+US13-12,Hover over long cancellation note shows tooltip,US13 / AC2,"1. Click on canceled session with long note
+2. Hover over cancellation note area","Cancellation note: 300 characters (exceeds 2-line preview)","- Tooltip displayed with full cancellation note"
+US13-13,Edit existing cancellation note,US13 / AC2,"1. Click on canceled session with note
+2. Click ""Edit"" icon next to note
+3. Modify note
+4. Click ""Save""","Existing note: ""Client had emergency""
+Updated note: ""Client rescheduled to next week""","- Note preview replaced with editable input
+- Pre-filled with existing note
+- ""Cancel"" and ""Save"" buttons shown
+- After Save, note updated and displayed in view mode"
+US13-14,Add cancellation note to session without note,US13 / AC2,"1. Click on canceled session without note
+2. Click ""Add cancellation note""
+3. Type note
+4. Click ""Save""","New note: ""Schedule conflict""","- ""Add cancellation note"" button displayed
+- Clicking expands inline input area
+- Placeholder: ""Add a reason for cancellation...""
+- ""Cancel"" and ""Save"" buttons displayed
+- Cursor auto-focused
+- After Save, note saved and displayed in view mode"
+US13-15,Add cancellation note — Cancel discards input,US13 / AC2,"1. Click ""Add cancellation note""
+2. Type note
+3. Click ""Cancel""","Typed note: ""Test note""","- Unsaved content discarded
+- Input area collapsed
+- Original session card state restored
+- No data saved"
+US13-16,Filter canceled sessions — gear icon,US13 / AC3,"1. Click gear icon on Calendar page
+2. Verify filter panel","Calendar page displayed","- Floating filter panel opens anchored to Filter button
+- Calendar visible, nothing dimmed
+- Previously opened popovers closed
+- Checkboxes: ""Early canceled"" (Hidden by default), ""Late canceled"" (Hidden by default)
+- Hover state on checkboxes"
+US13-17,Filter — show Early canceled sessions,US13 / AC3,"1. Open filter panel
+2. Click Eye icon for ""Early canceled"" to Show
+3. Verify calendar updates","Early canceled sessions exist","- Early canceled sessions appear on calendar
+- Sessions displayed with canceled state styling"
+US13-18,Filter — show Late canceled sessions,US13 / AC3,"1. Open filter panel
+2. Click Eye icon for ""Late canceled"" to Show
+3. Verify calendar updates","Late canceled sessions exist","- Late canceled sessions appear on calendar
+- Sessions displayed with canceled state styling (dashed border, strikethrough, ""i"" icon)"
+US13-19,Filter — reopen panel reflects current selections,US13 / AC3,"1. Set Early canceled to Show
+2. Close filter panel
+3. Reopen filter panel",Early canceled: Show,"- Filter panel reflects current selections
+- Early canceled shows as ""Show"" state"
+,US14. Session status auto-update,,,,
+US14-1,Status assignment — future session saved as Scheduled,US14 / AC1,"1. Create a session with future end time
+2. Verify session status","Start: Mar 15, 2026 10:00 AM
+Duration: 60 min
+End time: 11:00 AM (future)","- Session saved with status ""Scheduled"""
+US14-2,Status assignment — past session saved as Completed,US14 / AC1,"1. Create a session with past end time
+2. Confirm past date popup
+3. Verify session status","Start: Mar 1, 2026 9:00 AM
+Duration: 30 min
+End time: 9:30 AM (past)","- Session saved with status ""Completed"""
+US14-3,Status assignment — ongoing session saved as Scheduled,US14 / AC1,"1. Create session with start in past but end in future
+2. Verify session status","Start time < current time
+End time > current time","- Session saved with status ""Scheduled"""
+US14-4,Auto status transition — Scheduled to Completed,US14 / AC2,"1. Create a scheduled session ending soon
+2. Wait for current time to pass end time
+3. Verify status updates","Session end time: passes during test","- Session status automatically changes to ""Completed""
+- No page refresh required"
+US14-5,Auto status — canceled sessions not auto-changed,US14 / AC2,"1. Cancel a session (Early cancel)
+2. Wait for time to pass end time
+3. Verify status unchanged","Session status: Early Canceled
+End time passes","- Session status remains ""Early Canceled""
+- Not auto-changed to Completed"
+US14-6,Manual cancel overrides auto status — Early Cancel,US14 / AC3,"1. Cancel a scheduled session with Early Cancel
+2. Verify status","Session status before: Scheduled","- Status immediately set to ""Early Canceled""
+- Date/time automation ignored for this session"
+US14-7,Manual cancel overrides auto status — Late Cancel,US14 / AC3,"1. Cancel a scheduled session with Late Cancel
+2. Verify status","Session status before: Scheduled","- Status immediately set to ""Late Canceled""
+- Date/time automation ignored for this session"
+US14-8,Late canceled session not auto-changed to Completed,US14 / AC3,"1. Verify Late Canceled session after end time passes","Session status: Late Canceled
+End time in past","- Session status remains ""Late Canceled""
+- Not updated to ""Completed"""

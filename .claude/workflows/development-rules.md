@@ -16,10 +16,7 @@
 
 | Type | Location | Naming |
 |------|----------|--------|
-| Demo Projects | `source/demo/{name}/` | kebab-case |
 | Design System Docs | `source/design-system/{name}.md` | PascalCase |
-| Product Ideas | `source/product-idea/{name}.md` | kebab-case |
-| Spec Templates | `source/spec-template/{name}.md` | kebab-case |
 | Pages | `client/src/pages/{name}.tsx` | PascalCase |
 | Components | `client/src/components/{name}.tsx` | PascalCase |
 | Hooks | `client/src/hooks/use{Name}.ts` | camelCase |

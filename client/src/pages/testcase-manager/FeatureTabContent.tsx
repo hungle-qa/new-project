@@ -2,8 +2,7 @@ import { StrategyTab } from '../../components/testcase/StrategyTab'
 import { KnowledgeSelectTab } from '../../components/testcase/KnowledgeSelectTab'
 import { ComponentsTab } from '../../components/testcase/ComponentsTab'
 import { ImportSpecTab } from '../../components/testcase/ImportSpecTab'
-import { RulesTab } from '../../components/testcase/RulesTab'
-import { TemplateTab } from '../../components/testcase/TemplateTab'
+import { ConfigTab } from '../../components/testcase/ConfigTab'
 import { ReviewExportTab } from '../../components/testcase/ReviewExportTab'
 import { CornerCasesTab } from '../../components/testcase/CornerCasesTab'
 import { FeatureConfig, TabType, TestcaseMode } from './types'
@@ -59,22 +58,11 @@ export function FeatureTabContent({
       {activeTab === 'import-spec' && (
         <ImportSpecTab feature={feature} onDirtyChange={onDirtyChange} saveRef={onSaveRef} />
       )}
-      {activeTab === 'rules' && (
-        <RulesTab
-          feature={feature}
+      {activeTab === 'config' && (
+        <ConfigTab
           selectedRule={config.rule || 'test-rules'}
-          onRuleChange={async (rule) => onSaveConfig({ rule })}
-          onDirtyChange={onDirtyChange}
-          saveRef={onSaveRef}
-        />
-      )}
-      {activeTab === 'template' && (
-        <TemplateTab
-          feature={feature}
           selectedTemplate={config.template || 'template'}
-          onTemplateChange={async (template) => onSaveConfig({ template })}
-          onDirtyChange={onDirtyChange}
-          saveRef={onSaveRef}
+          onSaveConfig={onSaveConfig}
         />
       )}
       {activeTab === 'corner-cases' && (

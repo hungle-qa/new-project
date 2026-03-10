@@ -3,7 +3,13 @@ import { X } from 'lucide-react'
 
 export function IconUploadModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        document.querySelector<HTMLFormElement>('form')?.requestSubmit()
+      }
+    }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])

@@ -1,0 +1,152 @@
+ID,Test Scenarios,Empty,Items for Pivot Table,Step,Test Data,Expected
+,"US1. As an Everfit Admin/Employee, I want to enable or disable the Booking feature for specific workspaces so that I can manage feature access in the first stage",,,,,
+US1-1,Navigate to WS Detail and toggle Booking ON,,"US1 / AC1, AC2","1. Log in to CMS as Everfit Admin/Employee
+2. Navigate to the Workspace Detail page for a target workspace
+3. Scroll to the Features grid section
+4. Verify a toggle card labeled ""Booking"" is displayed at the bottom of the grid
+5. Verify the Booking toggle is currently OFF
+6. Click the Booking toggle to turn it ON
+7. Verify a ""Success"" toast appears and the toggle displays as ON","CMS Admin/Employee account.
+Target workspace with Booking toggle currently OFF.","- Booking toggle card visible at the bottom of the Features grid
+- Toggle is clickable (can turn ON/OFF)
+- After clicking toggle, it displays as ""ON""
+- ""Success"" toast appears immediately after toggle state change
+- Workspace configuration is updated
+- Booking menu becomes visible to all Coaches in that Workspace"
+US1-2,Verify coach sees Booking menu after feature enabled,,US1 / AC2,"1. Ensure Booking feature is toggled ON for the workspace
+2. Log in as a Coach in the same workspace
+3. Navigate to the main application
+4. Verify the Booking menu item is visible in the left-side navigation
+5. Click the Booking menu item
+6. Verify the Booking page loads successfully","Coach account in the target workspace.
+Booking feature toggled ON for the workspace.","- Booking menu item visible in left-side navigation for the Coach
+- Coach can click and access Booking feature pages
+- Booking page loads without errors"
+US1-3,Refresh and navigate back to verify ON state persists,,"US1 / AC2, AC3","1. Ensure Booking toggle is set to ON from previous test
+2. Refresh the CMS page
+3. Navigate to the Workspace Detail page
+4. Scroll to the Features grid section
+5. Verify the Booking toggle still shows ON
+6. Navigate away to another CMS page
+7. Navigate back to the Workspace Detail page
+8. Verify the Booking toggle still shows ON",Booking toggle previously set to ON.,"- After page refresh, Booking toggle displays as ON
+- After navigating away and returning, Booking toggle displays as ON
+- Toggle state is persisted correctly across page refresh and navigation"
+US1-4,Toggle Booking OFF and verify feature hidden for coaches,,US1 / AC4,"1. Navigate to the Workspace Detail page in CMS
+2. Verify the Booking toggle is currently ON
+3. Click the Booking toggle to turn it OFF
+4. Verify a ""Success"" toast appears and the toggle displays as OFF
+5. Log in as a Coach in the same workspace
+6. Verify the Booking menu is NOT visible in left-side navigation
+7. Toggle Booking back ON and verify existing booking data is still available","Workspace with Booking previously ON and existing booking data.
+Coach account in the same workspace.","- Toggle changes to OFF state with Success toast
+- Booking feature on Coach Web App is hidden
+- Booking menu not visible for Coaches
+- Workspace data in Booking scope is persisted in the database (not deleted)
+- Re-enabling Booking restores access to previous data"
+US1-5,Refresh and navigate back to verify OFF state persists,,"US1 / AC3, AC4","1. Ensure Booking toggle is set to OFF from previous test
+2. Refresh the CMS page
+3. Navigate to the Workspace Detail page
+4. Scroll to the Features grid section
+5. Verify the Booking toggle shows OFF
+6. Navigate away to another CMS page
+7. Navigate back to the Workspace Detail page
+8. Verify the Booking toggle still shows OFF",Booking toggle previously set to OFF.,"- After page refresh, Booking toggle displays as OFF
+- After navigating away and returning, Booking toggle displays as OFF
+- Toggle state is persisted correctly across page refresh and navigation"
+,"US2. As an Owner or Admin of a Workspace that has Booking feature enabled, I want to access the Booking feature so that I can use this feature",,,,,
+US2-1,Booking menu visible with BETA tag and hover dropdown,,US2 / AC1,"1. Log in as Workspace Owner or Admin with Booking feature enabled
+2. Verify the Booking item is displayed in the left-side navigation
+3. Verify a ""BETA"" tag is displayed next to the Booking label
+4. Hover over the Booking menu item
+5. Verify background highlight appears on hover
+6. Verify contextual dropdown menu displays with ""Calendar"" and ""Session Type"" options","Owner or Admin account.
+Workspace with Booking feature enabled.","- Booking menu item visible in left-side navigation
+- ""BETA"" tag displayed next to the Booking label
+- Background highlight appears on hover
+- Contextual dropdown menu shows ""Calendar"" and ""Session Type"" options"
+US2-2,Click Booking first visit navigates to Calendar default,,US2 / AC1,"1. Clear browser cookies for Booking navigation history
+2. Log in as Workspace Owner or Admin with Booking feature enabled
+3. Click the Booking menu in the left navigation
+4. Verify the system navigates to the Calendar page
+5. Verify URL matches /home/booking/calendar?mode=(day|week|month)&start-date=YYYY-MM-DD&end-date=YYYY-MM-DD
+6. Verify Calendar is marked as the active menu item within Booking
+7. Verify the Booking submenu is expanded with Calendar visually highlighted","Owner or Admin account.
+No Booking navigation cookie exists.
+Booking feature enabled.","- System navigates to Calendar page by default
+- Calendar marked as active menu item within Booking
+- Booking submenu is expanded
+- Calendar is visually highlighted
+- Browser cookie stores Calendar as last visited Booking page
+- URL format: /home/booking/calendar?mode=(day|week|month)&start-date=YYYY-MM-DD&end-date=YYYY-MM-DD"
+US2-3,Click Booking return visit restores last visited page,,US2 / AC1,"1. Navigate to the Session Type page within Booking feature
+2. Verify browser cookie stores Session Type as last visited page
+3. Navigate away from the Booking feature to another section
+4. Click the Booking menu in the left navigation
+5. Verify the system navigates to Session Type page (last visited)
+6. Verify Booking submenu is expanded with Session Type highlighted","Owner or Admin account.
+Previous visit to Session Type page stored in browser cookie.
+Booking feature enabled.","- System automatically navigates to the last visited Booking page (Session Type)
+- Booking submenu is expanded
+- Session Type is visually highlighted as active
+- Cookie-based navigation restoration works correctly"
+US2-4,Verify Session Type page URL and tab navigation,,US2 / AC1,"1. Navigate to the Session Type page via the Booking submenu
+2. Verify URL matches app.everfit.io/booking/session-types?tab=active
+3. Verify the Active tab is displayed and selected by default
+4. Click the Archived tab
+5. Verify URL updates to app.everfit.io/booking/session-types?tab=archived
+6. Verify the Archived tab content is displayed","Owner or Admin account.
+Booking feature enabled.
+Existing session types in both active and archived states.","- Session Type page URL shows ?tab=active by default
+- Active tab is selected by default
+- Clicking Archived tab updates URL to ?tab=archived
+- Archived tab content displays correctly
+- Tab switching works without page reload"
+US2-5,Click Learn more about Booking opens help article,,US2 / AC1,"1. Navigate to the Booking section in left navigation
+2. Verify the Booking submenu is expanded
+3. Scroll to the bottom of the Booking submenu
+4. Verify ""Learn more about Booking"" button is displayed
+5. Click the ""Learn more about Booking"" button
+6. Verify a new browser tab opens with the Booking help article page","Owner or Admin account.
+Booking feature enabled.","- ""Learn more about Booking"" button visible at the bottom of the Booking submenu
+- Clicking the button opens a new browser tab
+- New tab loads the Booking help article page
+- Original application tab remains open and functional"
+US2-6,Booking feature disabled hides menu and blocks URL access,,US2 / AC2,"1. Log in as Workspace Owner/Admin with Booking feature NOT enabled
+2. Verify the Booking menu item is NOT visible in left-side navigation
+3. Attempt to access Calendar page via direct URL /home/booking/calendar
+4. Verify access is blocked or redirected
+5. Attempt to access Session Type page via direct URL /booking/session-types
+6. Verify access is blocked or redirected","Owner or Admin account.
+Workspace with Booking feature disabled.","- Booking menu navigation item is not visible in left-side navigation
+- Direct URL access to Calendar page is blocked or redirected
+- Direct URL access to Session Type page is blocked or redirected
+- No Booking-related UI elements are visible"
+US2-7,User terminology applied across Booking UI elements,,US2 / AC3,"1. Navigate to My Account settings
+2. Set Client Terminology to ""Athlete""
+3. Set Coach Terminology to ""Trainer""
+4. Navigate to the Booking feature
+5. Verify all occurrences of ""client"" display as ""Athlete""
+6. Verify all occurrences of ""coach"" display as ""Trainer""
+7. Check labels, field placeholders, helper text, empty states, tooltips, and notification messages","Owner or Admin account.
+Client Terminology set to: ""Athlete"".
+Coach Terminology set to: ""Trainer"".
+Booking feature enabled.","- All ""client""/""clients"" terms replaced with ""Athlete""/""Athletes""
+- All ""coach""/""coaches"" terms replaced with ""Trainer""/""Trainers""
+- Terminology applied consistently in labels, placeholders, helper text, empty states, tooltips, and messages
+- No untranslated default terms remain in Booking UI"
+US2-8,Update terminology reflects immediately without reload,,US2 / AC3,"1. Open the Booking feature page in one browser tab and note current terminology
+2. Open My Account settings in another tab
+3. Update Client Terminology from ""Athlete"" to ""Member""
+4. Switch back to the Booking feature tab without reloading
+5. Verify ""Athlete"" is immediately replaced with ""Member"" across all UI elements
+6. Update Coach Terminology from ""Trainer"" to ""Instructor"" in My Account tab
+7. Switch to Booking tab and verify ""Trainer"" replaced with ""Instructor""","Owner or Admin account.
+Initial Client Terminology: ""Athlete"".
+Updated Client Terminology: ""Member"".
+Initial Coach Terminology: ""Trainer"".
+Updated Coach Terminology: ""Instructor"".","- Terminology updates reflected immediately without page reload
+- All ""Athlete"" instances change to ""Member"" automatically
+- All ""Trainer"" instances change to ""Instructor"" automatically
+- No stale terminology visible after update
+- Changes apply across labels, placeholders, helper text, empty states, tooltips, and messages"

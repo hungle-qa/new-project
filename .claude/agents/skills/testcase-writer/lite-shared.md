@@ -123,26 +123,26 @@ Rules:
 
 1. Run `date +"%Y%m%d-%H%M%S"` and capture output as `{timestamp}`. Use exact captured value. Never infer or hallucinate it.
 2. Write JSON array to: `source/testcase/feature/{feature}/result/_temp.json`
-3. Run Node.js conversion:
+3. Write conversion script to `source/testcase/feature/{feature}/result/_convert.js`:
 
-```bash
-node -e "
-process.chdir('$(pwd)');
-const fs = require('fs');
-const data = JSON.parse(fs.readFileSync('source/testcase/feature/{feature}/result/_temp.json', 'utf-8'));
+```js
+const fs = require("fs");
+const data = JSON.parse(fs.readFileSync("source/testcase/feature/{feature}/result/_temp.json", "utf-8"));
 const quote = (v) => {
-  if (v === null || v === undefined) return '';
+  if (v === null || v === undefined) return "";
   const s = String(v);
-  if (s.includes(',') || s.includes('\"') || s.includes('\n')) return '\"' + s.replace(/\"/g, '\"\"') + '\"';
+  if (s.includes(",") || s.includes('"') || s.includes("\n")) return '"' + s.replace(/"/g, '""') + '"';
   return s;
 };
-const header = 'No.,US,AC,Step,Title,Expectation,Priority';
-const rows = data.map(r => [r.n, r.u, r.a, r.s, r.t, r.e, r.p].map(quote).join(','));
-fs.writeFileSync('source/testcase/feature/{feature}/result/{feature}-testcase-lite-{timestamp}.csv', header + '\n' + rows.join('\n') + '\n');
-"
+const header = "No.,US,AC,Step,Title,Expectation,Priority";
+const rows = data.map(r => [r.n, r.u, r.a, r.s, r.t, r.e, r.p].map(quote).join(","));
+fs.writeFileSync("source/testcase/feature/{feature}/result/{feature}-testcase-lite-{timestamp}.csv", header + "\n" + rows.join("\n") + "\n");
+console.log("CSV written: " + data.length + " tests");
 ```
-   - IF `node -e` exits with error: run `rm -f source/testcase/feature/{feature}/result/_temp.json`. Report: "CSV conversion failed: {error output}. Temp file removed. Check Node.js is available and the JSON is valid." STOP — do NOT write a partial CSV.
 
-4. Delete temp file: `rm source/testcase/feature/{feature}/result/_temp.json`
-   - IF delete fails: Report: "Warning: temp file `_temp.json` could not be deleted. Remove it manually."
-5. Do NOT regenerate. Write exact matrix from the generation step. Always NEW timestamped file (`-lite-` suffix).
+4. Run: `node source/testcase/feature/{feature}/result/_convert.js`
+   - IF node exits with error: run `rm -f source/testcase/feature/{feature}/result/_temp.json source/testcase/feature/{feature}/result/_convert.js`. Report: "CSV conversion failed: {error output}. Temp files removed." STOP — do NOT write a partial CSV.
+
+5. Delete temp files: `rm source/testcase/feature/{feature}/result/_temp.json source/testcase/feature/{feature}/result/_convert.js`
+   - IF delete fails: Report: "Warning: temp files could not be deleted. Remove `_temp.json` and `_convert.js` manually."
+6. Do NOT regenerate. Write exact matrix from the generation step. Always NEW timestamped file (`-lite-` suffix).

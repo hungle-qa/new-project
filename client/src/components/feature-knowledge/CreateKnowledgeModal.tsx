@@ -10,7 +10,10 @@ interface CreateKnowledgeModalProps {
 export function CreateKnowledgeModal({ isOpen, onClose, onCreated }: CreateKnowledgeModalProps) {
   useEffect(() => {
     if (!isOpen) return
-    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleCreate()
+    }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])

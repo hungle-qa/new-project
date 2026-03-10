@@ -12,7 +12,10 @@ interface UnsavedChangesModalProps {
 export function UnsavedChangesModal({ isOpen, onSave, onDiscard, onCancel, saving }: UnsavedChangesModalProps) {
   useEffect(() => {
     if (!isOpen) return
-    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onCancel() }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel()
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) onSave()
+    }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onCancel])

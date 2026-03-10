@@ -11,7 +11,10 @@ interface ColumnRulesModalProps {
 
 export function ColumnRulesModal({ columnName, text, onTextChange, onSave, onClose }: ColumnRulesModalProps) {
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) onSave()
+    }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])

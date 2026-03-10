@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Save, Plus, AlertTriangle, RefreshCw, Download } from 'lucide-react'
+import { Save, Plus } from 'lucide-react'
 import { ColumnRulesModal } from './template/ColumnRulesModal'
 import { ColumnEditorTable } from './template/ColumnEditorTable'
 import { TemplatePreview } from './template/TemplatePreview'
@@ -9,22 +9,16 @@ import {
 } from './template/templateUtils'
 
 interface TemplateTabProps {
-  feature?: string
   /** When set, edits a specific global template file (used by GlobalTabsPanel) */
   globalTemplateName?: string
-  selectedTemplate?: string
-  onTemplateChange?: (templateName: string) => void
   onDirtyChange?: (dirty: boolean) => void
   saveRef?: (saveFn: (() => Promise<void>) | null) => void
 }
 
-export function TemplateTab({ feature, globalTemplateName, selectedTemplate, onTemplateChange, onDirtyChange, saveRef }: TemplateTabProps) {
-  // Determine API base
+export function TemplateTab({ globalTemplateName, onDirtyChange, saveRef }: TemplateTabProps) {
   const apiBase = globalTemplateName
     ? `/api/testcase/templates/${globalTemplateName}`
-    : feature
-      ? `/api/testcase/${feature}/template`
-      : '/api/testcase/template'
+    : '/api/testcase/template'
 
   const [columns, setColumns] = useState<TemplateColumn[]>([])
   const [original, setOriginal] = useState<string>('')
@@ -32,28 +26,11 @@ export function TemplateTab({ feature, globalTemplateName, selectedTemplate, onT
   const [saving, setSaving] = useState(false)
   const [detailsCol, setDetailsCol] = useState<string | null>(null)
   const [detailsText, setDetailsText] = useState('')
-  const [columnDrift, setColumnDrift] = useState<{ missingColumns: string[]; extraColumns: string[] } | null>(null)
-  const [syncing, setSyncing] = useState(false)
-
-  // For per-feature combobox
-  const [templatesList, setTemplatesList] = useState<string[]>([])
-  const [templateSyncing, setTemplateSyncing] = useState(false)
 
   const hasChanges = JSON.stringify(columns) !== original
 
-  // Fetch available global templates for per-feature combobox
-  useEffect(() => {
-    if (feature) {
-      fetch('/api/testcase/templates/list')
-        .then(res => res.json())
-        .then(data => setTemplatesList(data))
-        .catch(() => {})
-    }
-  }, [feature])
-
   useEffect(() => {
     setLoading(true)
-    setColumnDrift(null)
     fetch(apiBase)
       .then(res => res.json())
       .then((data: TemplateColumn[]) => {
@@ -67,82 +44,7 @@ export function TemplateTab({ feature, globalTemplateName, selectedTemplate, onT
         setOriginal(JSON.stringify(DEFAULT_COLUMNS))
         setLoading(false)
       })
-
-    if (feature) {
-      fetch(`/api/testcase/${feature}/template/status`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.missingColumns?.length > 0 || data.extraColumns?.length > 0) {
-            setColumnDrift({ missingColumns: data.missingColumns, extraColumns: data.extraColumns })
-          }
-        })
-        .catch(() => {})
-    }
-  }, [apiBase, feature])
-
-  const handleSyncFromGlobal = async () => {
-    if (!feature) return
-    setSyncing(true)
-    try {
-      const res = await fetch('/api/testcase/template')
-      if (res.ok) {
-        const globalCols: TemplateColumn[] = await res.json()
-        setColumns(globalCols)
-        await handleSave(globalCols)
-        setColumnDrift(null)
-      }
-    } finally {
-      setSyncing(false)
-    }
-  }
-
-  const handleTemplateSelection = async (templateName: string) => {
-    if (!feature) return
-    onTemplateChange?.(templateName)
-    setTemplateSyncing(true)
-    try {
-      await fetch(`/api/testcase/${feature}/template/sync`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ templateName }),
-      })
-      // Reload content
-      const res = await fetch(`/api/testcase/${feature}/template`)
-      if (res.ok) {
-        const data: TemplateColumn[] = await res.json()
-        const cols = data.length > 0 ? data : DEFAULT_COLUMNS
-        setColumns(cols)
-        setOriginal(JSON.stringify(cols))
-        setColumnDrift(null)
-      }
-    } finally {
-      setTemplateSyncing(false)
-    }
-  }
-
-  const handleFetch = async () => {
-    if (!feature) return
-    const templateName = selectedTemplate || 'template'
-    setTemplateSyncing(true)
-    try {
-      await fetch(`/api/testcase/${feature}/template/sync`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ templateName }),
-      })
-      // Reload content
-      const res = await fetch(`/api/testcase/${feature}/template`)
-      if (res.ok) {
-        const data: TemplateColumn[] = await res.json()
-        const cols = data.length > 0 ? data : DEFAULT_COLUMNS
-        setColumns(cols)
-        setOriginal(JSON.stringify(cols))
-        setColumnDrift(null)
-      }
-    } finally {
-      setTemplateSyncing(false)
-    }
-  }
+  }, [apiBase])
 
   const handleSave = useCallback(async (cols?: TemplateColumn[]) => {
     const toSave = cols || columns
@@ -160,6 +62,17 @@ export function TemplateTab({ feature, globalTemplateName, selectedTemplate, onT
       setSaving(false)
     }
   }, [columns, apiBase])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && hasChanges) {
+        e.preventDefault()
+        handleSave()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [hasChanges, handleSave])
 
   useEffect(() => {
     onDirtyChange?.(hasChanges)
@@ -210,45 +123,13 @@ export function TemplateTab({ feature, globalTemplateName, selectedTemplate, onT
     return <div className="text-center py-8 text-gray-500 text-sm">Loading template...</div>
   }
 
-  const title = globalTemplateName
-    ? globalTemplateName
-    : feature ? 'Feature Template' : 'Default Template'
-
+  const title = globalTemplateName || 'Default Template'
   const subtitle = globalTemplateName
     ? 'Edit this global template file'
-    : feature ? 'Template specific to this feature (cloned from global)' : 'Default template for all new features'
+    : 'Default template for all new features'
 
   return (
     <div className="space-y-4">
-      {/* Per-feature: template source selector */}
-      {feature && templatesList.length > 0 && (
-        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-          <label className="text-xs font-medium text-gray-600 whitespace-nowrap">Source Template:</label>
-          <select
-            value={selectedTemplate || 'template'}
-            onChange={e => handleTemplateSelection(e.target.value)}
-            disabled={templateSyncing}
-            className="flex-1 text-sm px-2 py-1.5 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-          >
-            {templatesList.map(name => (
-              <option key={name} value={name}>{name}</option>
-            ))}
-          </select>
-          <button
-            onClick={handleFetch}
-            disabled={templateSyncing}
-            className="flex items-center gap-1 px-2 py-1.5 text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 disabled:opacity-50"
-            title="Fetch latest from selected global template"
-          >
-            <Download className="w-3 h-3" />
-            Fetch
-          </button>
-          {templateSyncing && (
-            <RefreshCw className="w-4 h-4 text-blue-500 animate-spin" />
-          )}
-        </div>
-      )}
-
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-medium text-gray-700">{title}</h3>
@@ -272,7 +153,6 @@ export function TemplateTab({ feature, globalTemplateName, selectedTemplate, onT
           </button>
         </div>
       </div>
-
 
       {/* Column Editor Table */}
       <ColumnEditorTable

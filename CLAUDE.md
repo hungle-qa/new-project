@@ -23,10 +23,12 @@ QA-kit is a testcase generation platform. Import UI components and specs, genera
 | Import Design | `.claude/agents/import-design.md` | `/import-design-by-image` |
 | Agent Audit | `.claude/agents/agia.md` | `/agent-audit` |
 | Brainstorm | `.claude/agents/brainstorm.md` | `/brainstorm` |
+| Code Rules | (standalone command) | `/rulecode` |
 
 - Development rules: `.claude/workflows/development-rules.md`
 - Slash commands: `.claude/commands/*.md`
 - Lite skill shared rules: `.claude/agents/skills/testcase-writer/lite-shared.md`
+- Code rules index: `.claude/rules/code-rules.md`
 
 ## Rules
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Save, Globe, RotateCcw } from 'lucide-react'
 
 interface PromptEditorProps {
@@ -27,6 +28,17 @@ export function PromptEditor({
   promptSaved,
   defaultSaved,
 }: PromptEditorProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && promptChanged) {
+        e.preventDefault()
+        onSavePrompt()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [promptChanged, onSavePrompt])
+
   const handleUseDefault = () => {
     onPromptChange(savedPrompt || effectiveDefault)
   }

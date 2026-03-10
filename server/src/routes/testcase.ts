@@ -108,68 +108,6 @@ router.post('/:feature/context-digest', async (req, res) => {
   }
 })
 
-// --- Per-feature Rules/Template Status ---
-router.get('/:feature/rules/status', async (req, res) => {
-  try { res.json(await TestcaseConfigService.checkRulesCustomized(req.params.feature)) }
-  catch (error) { res.status(500).json({ error: 'Failed to check rules status' }) }
-})
-
-router.get('/:feature/template/status', async (req, res) => {
-  try { res.json(await TestcaseConfigService.checkTemplateCustomized(req.params.feature)) }
-  catch (error) { res.status(500).json({ error: 'Failed to check template status' }) }
-})
-
-// --- Per-feature Rules ---
-router.get('/:feature/rules', async (req, res) => {
-  try { res.json({ content: await TestcaseConfigService.getFeatureRules(req.params.feature) }) }
-  catch (error) { res.status(500).json({ error: 'Failed to fetch feature rules' }) }
-})
-
-router.put('/:feature/rules', async (req, res) => {
-  try {
-    if (typeof req.body.content !== 'string') return res.status(400).json({ error: 'Content is required' })
-    await TestcaseConfigService.saveFeatureRules(req.params.feature, req.body.content)
-    res.json({ success: true })
-  } catch (error) { res.status(500).json({ error: 'Failed to save feature rules' }) }
-})
-
-// --- Per-feature Template ---
-router.get('/:feature/template', async (req, res) => {
-  try { res.json(await TestcaseConfigService.getFeatureTemplate(req.params.feature)) }
-  catch (error) { res.status(500).json({ error: 'Failed to fetch feature template' }) }
-})
-
-router.put('/:feature/template', async (req, res) => {
-  try {
-    if (!Array.isArray(req.body)) return res.status(400).json({ error: 'Columns array is required' })
-    await TestcaseConfigService.saveFeatureTemplate(req.params.feature, req.body)
-    res.json({ success: true })
-  } catch (error) { res.status(500).json({ error: 'Failed to save feature template' }) }
-})
-
-// --- Per-feature Sync (re-clone from selected global) ---
-router.post('/:feature/rules/sync', async (req, res) => {
-  try {
-    const { ruleName } = req.body
-    if (!ruleName || typeof ruleName !== 'string') return res.status(400).json({ error: 'Rule name is required' })
-    await TestcaseConfigService.syncFeatureRules(req.params.feature, ruleName)
-    res.json({ success: true })
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to sync rules' })
-  }
-})
-
-router.post('/:feature/template/sync', async (req, res) => {
-  try {
-    const { templateName } = req.body
-    if (!templateName || typeof templateName !== 'string') return res.status(400).json({ error: 'Template name is required' })
-    await TestcaseConfigService.syncFeatureTemplate(req.params.feature, templateName)
-    res.json({ success: true })
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to sync template' })
-  }
-})
-
 // --- Per-feature Spec Prompt ---
 router.get('/:feature/spec-prompt', async (req, res) => {
   try { res.json({ prompt: await TestcaseConfigService.getSpecPrompt(req.params.feature) }) }

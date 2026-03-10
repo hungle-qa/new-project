@@ -1,0 +1,278 @@
+No.,US,AC,Step,Title,Expectation,Priority
+1,"US10: As a coach, I can book a session for a client in the Workspace via ""Book Session"" CTA so that I can schedule a session with client",AC1: Entry Point,"1. Login as Owner/Admin
+2. Navigate to Calendar page on Booking feature
+3. Click ""Book a session"" CTA button
+4. Verify popup",Book a session popup displayed,"- SHOULD display ""Book a session"" popup
+- SHOULD dim background calendar
+- SHOULD trap focus inside modal",Critical
+2,,,,Popup structure and fields,"- SHOULD display popup name ""Book a session""
+- SHOULD include fields: Trainer (disabled), Client (required), Start Date (required), Start Time (required), Type (optional), Name (required), Duration (required), Location (required), Description (optional), Add note to client (optional)
+- SHOULD include CTA buttons: ""Book Session"" | ""Cancel""
+- SHOULD include Close icon",High
+3,,,"1. Click ""Book a session"" CTA button
+2. Verify prefill values",CTA prefill defaults,"- SHOULD prefill Start date = Today
+- SHOULD prefill Start time = 7:00 AM
+- SHOULD set Trainer to Workspace Owner (disabled)
+- SHOULD set Location default to ""In-person""
+- SHOULD set Duration default to 30 min",High
+4,,,"1. On Calendar page, double-click a blank space on Day/Week view time slot
+2. Verify prefill values",Day/Week view time slot prefill,"- SHOULD prefill Start date = clicked date
+- SHOULD prefill Start time = start hour of clicked time slot",High
+5,,,"1. On Calendar page in Month view, click a blank day cell
+2. Verify prefill values",Month view time slot prefill,- SHOULD prefill Start date = clicked date,Medium
+6,,AC2: Session data input,"1. Open ""Book a session"" modal
+2. Click Client field
+3. Verify dropdown",Client dropdown opens with valid clients,"- SHOULD show searchable dropdown with hover state
+- SHOULD display clients NOT at status Pending, Archived, or Waiting Activation
+- SHOULD sort clients alphabetically by name
+- SHOULD load first 20 clients; scrolling loads next 20",High
+7,,,"1. Click Client field
+2. Type a client name or email in the search box
+3. Verify search results",Client search by name or email,"- SHOULD trigger search automatically after 200ms debounce
+- SHOULD display only clients matching search input
+- SHOULD show matching clients list",High
+8,,,"1. Click Client field
+2. Type value with no matching client
+3. Verify dropdown",Client search no results,"- SHOULD display blank dropdown with message ""No clients found.""",Medium
+9,,,"1. Open Client dropdown
+2. Verify each client item",Client item display info,"- SHOULD display: Profile image, Client name, Client email",Medium
+10,,,"1. Open Client dropdown
+2. Select a client
+3. Verify dropdown state",Select client closes dropdown,- SHOULD close dropdown after selection,High
+11,,,"1. Click ""Start date"" field
+2. Verify field behavior",Start Date field click behavior,"- SHOULD highlight entire current value (text selection)
+- SHOULD open date picker with hover state
+- SHOULD highlight currently selected date as selected state in date picker",High
+12,,,"1. Click ""Start date"" field
+2. Type a valid date in format mmm dd, yyyy
+3. Verify hover on calendar picker",Start Date typing hovers calendar,"- SHOULD hover the matching date on the calendar picker as value is typed
+- Given only mmm typed: hover on 1st day of that month of current year
+- Given mmm invalid: keep hover on previous date
+- Given dd typed: hover on that date of selected month
+- Given yyyy typed: hover on that date of selected year",Medium
+13,,,"1. Type date in Start Date field
+2. Press Enter or click outside field and picker
+3. Verify result",Start Date confirmed on Enter / click outside,"- SHOULD apply input value to Start Date field
+- SHOULD close calendar picker",High
+14,,,"1. Open date picker in Start Date
+2. Hover on a date outside supported range
+3. Verify",Out-of-range date hover shows stop icon,"- SHOULD display ""stop"" icon on dates outside supported range (WS creation date up to 1 year from current date)",Medium
+15,,,"1. Click ""Start time"" field
+2. Verify field behavior",Start Time field click behavior,"- SHOULD highlight entire current value (text selection)
+- SHOULD display time slots in 15-minute increments with hover state
+- SHOULD display coach's timezone",High
+16,,,"1. Type a value into Start Time field matching an available option
+2. Verify dropdown",Start Time typing highlights matching option,- SHOULD visually highlight matching option in dropdown (hover state),Medium
+17,,,"1. Type value into Start Time field
+2. Press Enter or click outside field and dropdown
+3. Verify result",Start Time confirmed on Enter / click outside,"- SHOULD apply input value to Start Time field
+- SHOULD close dropdown",High
+18,,,"1. Click Name field
+2. Type a session name
+3. Verify",Name field allows text input,- SHOULD allow inputting session name,High
+19,,,"1. Click Duration field
+2. Verify dropdown",Duration dropdown opens,- SHOULD display time slots in a dropdown list,High
+20,,,"1. Click ""Add note to client"" button
+2. Verify textbox appears",Add note to client textbox displayed,"- SHOULD display textbox with placeholder ""Add note to client""
+- SHOULD focus cursor in textbox
+- SHOULD enforce 500 character limit (block input at 500)
+- SHOULD show character counter when input reaches 450 characters",Medium
+21,,,"1. Click Type field
+2. Verify dropdown",Type dropdown shows active session types,"- SHOULD display searchable list with hover state
+- SHOULD show only active session types (team = current WS, is_archived = FALSE)
+- SHOULD NOT show archived session types
+- SHOULD sort alphabetically by name
+- SHOULD load first 20; scrolling loads next 20
+- Each option SHOULD display: Session type name, Duration, Location type, Number of clients (1:1)",High
+22,,,"1. Click Type field with no active session types in WS
+2. Verify dropdown",Type dropdown empty state,"- SHOULD display text ""No session types yet""
+- SHOULD display ""Create session type"" CTA button
+- On click SHOULD navigate to Session Type creation",Medium
+23,,,"1. Click Type field
+2. Type a session type name in search box
+3. Verify results",Type search by name,"- SHOULD trigger search after 200ms debounce
+- SHOULD display only matching session types",High
+24,,,"1. Type value in Type search with no match
+2. Verify dropdown",Type search no results,"- SHOULD display empty dropdown with message ""No result found.""",Medium
+25,,,"1. Click Type field and select a session type
+2. Verify form state",Session type selected — summary and field visibility,"- SHOULD close dropdown
+- SHOULD display session type summary: color, name, duration, location, address (if provided), location note (if provided), description (if provided)
+- SHOULD hide fields: Name, Duration, Location, Description
+- SHOULD still display ""Add note to client"" field",High
+26,,,"1. Select a session type
+2. Click ""x"" icon to clear selection
+3. Verify form state",Clear session type returns to Custom mode,"- SHOULD clear session type summary section
+- SHOULD return form to Custom Session mode
+- SHOULD persist: Client, Start date, Start time, Add note to client values",High
+27,,,"1. Select a session type
+2. Hover over ""Edit"" icon
+3. Verify tooltip",Edit icon tooltip,"- SHOULD display tooltip: ""Change duration, location or description""",Low
+28,,,"1. Select a session type
+2. Click ""Edit"" icon
+3. Verify overlay popup",Edit session type overlay opens,"- SHOULD display ""Edit [Session type name]"" popup overlay on Book Session popup
+- SHOULD show message: ""Changes apply to this session only.""
+- SHOULD auto-populate session type info
+- SHOULD allow editing: Duration, Location, Description
+- SHOULD display CTA: ""Cancel"" | ""Apply""
+- Apply button SHOULD be disabled by default",High
+29,,,"1. Open Edit session type overlay
+2. Change a value (Duration, Location, or Description)
+3. Verify Apply button",Apply button enabled on value change,- SHOULD enable Apply button when any value is changed,High
+30,,,"1. Open Edit overlay, change a value
+2. Click Apply
+3. Verify result",Apply closes overlay and updates summary,"- SHOULD close Edit overlay
+- SHOULD display new values on session type summary section
+- SHOULD return to Book Session popup",High
+31,,,"1. Open Edit overlay
+2. Click Cancel or x icon
+3. Verify result",Cancel / x on Edit overlay preserves original data,"- SHOULD close Edit overlay
+- SHOULD display Book Session popup with session type info unchanged",High
+32,,AC2.1: Add missing data for Session Type,"1. Open Book a session modal
+2. Select a session type with location type ""In-person"" that has both Address and Description
+3. Verify display",Session type with address and description displays normally,- SHOULD display session type info as usual (no Add address / Add description links),Medium
+33,,,"1. Select session type with In-person location, no Address, but Description provided
+2. Verify display",Missing address — Add address hyperlink shown,"- SHOULD display ""Add address"" hyperlink button with hover state
+- SHOULD display description as usual
+- On click of ""Add address"" SHOULD turn into text input for address entry",High
+34,,,"1. Select session type with In-person location, no Description
+2. Verify display",Missing description — Add description hyperlink shown,"- SHOULD display ""Add description"" hyperlink button with hover state
+- On click of ""Add description"" SHOULD open text input for description entry",High
+35,,AC3: Book validation and Conflict handling,"1. Open Book a session modal
+2. Leave one or more required fields empty
+3. Click ""Book Session""
+4. Verify validation",Required field validation on submit,"- SHOULD highlight empty required fields
+- SHOULD display inline validation message for each empty required field",Critical
+36,,,"1. Fill all required fields with a future session (no existing overlap)
+2. Click ""Book Session""
+3. Verify result",Successful booking — no overlap,"- SHOULD save session to database
+- SHOULD close popup
+- SHOULD render session on calendar at correct start time and duration
+- SHOULD navigate coach to the calendar date of the new session",Critical
+37,,,"1. Fill all required fields with a future session that overlaps an existing session
+2. Click ""Book Session""
+3. Verify overlap confirmation popup",Overlap detected — confirmation popup shown,"- SHOULD display confirmation popup with title ""Session Overlap""
+- SHOULD display description: ""You already have another session during this time. Are you sure you want to book this session anyway?""
+- SHOULD show actions: ""Cancel"" | ""Book Anyway"" (focused)",Critical
+38,,,"1. Overlap confirmation popup is open
+2. Click ""Cancel"" or x icon
+3. Verify result",Dismiss overlap popup returns to Book Session,"- SHOULD close confirmation modal
+- SHOULD return to Book a session popup with all inputted data kept",High
+39,,,"1. Overlap confirmation popup is open
+2. Click ""Book Anyway""
+3. Verify result",Book Anyway saves overlapping session,- SHOULD save session (same behavior as no-overlap success),High
+40,,,"1. Fill all required fields with a past end date & time
+2. Click ""Book Session""
+3. Verify past date confirmation popup",Past session — past date confirmation popup shown,"- SHOULD display popup name ""Session Date Is In the Past""
+- SHOULD display message: ""You selected a Date and time that is in the past. This session will be saved as Completed. No client communication will be sent. Are you sure you want to book this session anyway?""
+- SHOULD show actions: ""Cancel"" | ""Book Anyway"" (focused)
+- SHOULD NOT perform overlap check",High
+41,,,"1. Past date confirmation popup is open
+2. Click ""Cancel"" or x icon
+3. Verify result",Dismiss past date popup returns to Book Session,"- SHOULD close confirmation modal
+- SHOULD return to Book a session popup with all inputted data kept",High
+42,,,"1. Past date confirmation popup is open
+2. Click ""Book Anyway""
+3. Verify result",Book Anyway saves past session,- SHOULD save session (same behavior as no-overlap success),High
+43,,,"1. Book session successfully
+2. Verify UI feedback",Success toast and calendar update,"- SHOULD close Book a session popup
+- SHOULD store data in session and booking tables
+- SHOULD display toast: ""Session has been scheduled.""
+- SHOULD display session on coach's calendar in current view",Critical
+44,,,"1. Attempt to book session — API returns error
+2. Verify UI feedback",Failed booking — popup stays open,"- SHOULD keep Book a session popup open
+- SHOULD persist all coach's input data
+- SHOULD keep CTA enabled
+- SHOULD display toast: ""Failed to add a session. Please try again""",High
+45,,AC4: Cancel and close [unsaved changes],"1. Input data into any field in Book a session popup
+2. Click ""Cancel"" button or x icon
+3. Verify result",Cancel / x discards changes and closes popup,"- SHOULD discard unsaved changes
+- SHOULD close the popup",High
+46,"US11: As a coach, I can view the sessions on my calendar so that I can manage it",AC1: Entry point,"1. Login as Owner/Admin with Booking feature enabled
+2. Navigate to Calendar page
+3. Verify calendar display",Calendar displays all WS sessions,"- SHOULD display calendar view with all sessions associated with the Workspace
+- SHOULD render sessions according to currently selected calendar view (Day / Week / Month)",Critical
+47,,AC2: Empty state,"1. Navigate to Calendar page with no sessions in the selected date range
+2. Verify calendar",Empty calendar grid — no sessions,"- SHOULD display empty calendar grid
+- SHOULD NOT show any session cards or popovers
+- SHOULD maintain full calendar navigation and view switching",High
+48,,AC3: Session rendering on calendar,"1. Navigate to Calendar page with sessions in the selected date range
+2. Verify sessions displayed",Non-canceled sessions shown on calendar,- SHOULD display sessions that are NOT canceled with hover state,Critical
+49,,,"1. Switch to Day view
+2. Verify session layout",Day view — vertical time-slot layout,"- SHOULD display sessions in vertical time-slot layout with hover state
+- Session block SHOULD be aligned with its Start Time based on coach's timezone
+- Session SHOULD begin exactly at the corresponding time slot (same as Google Calendar behavior)",Critical
+50,,,"1. Day view — observe session tied to a session type vs custom session color
+2. Verify color",Day view session color — type-tied vs custom,"- SHOULD display session color based on selected session type (if tied to type)
+- SHOULD display color selected during creation (if custom session)",High
+51,,,"1. Day view — observe past vs current session display
+2. Verify color distinction",Day view past/current session color distinction,"- SHOULD visually distinguish past sessions (end_time < current_time) from current/upcoming sessions
+- SHOULD apply to all session statuses: Completed, Scheduled, Early canceled, Late canceled
+- SHOULD apply distinct hover and selected states",High
+52,,,"1. Day view — create or view overlapping sessions in same time range
+2. Verify layout",Day view — overlapping sessions stacked horizontally,"- SHOULD display overlapping sessions side by side (horizontally stacked)
+- SHOULD apply to fully and partially overlapping sessions
+- Width of each session block SHOULD be reduced proportionally
+- Given vacant slot, sessions SHOULD sort to the left side",High
+53,,,"1. Day view — observe overlapping sessions sort order
+2. Verify order",Day view overlapping sessions sort order,"- SHOULD sort by start_time ascending (earlier on left)
+- If same start_time: sort by duration (longer on left)
+- If same start_time and duration: sort by created_at (older on left)",Medium
+54,,,"1. Day view — view session block with content exceeding available space
+2. Verify",Session content truncated when exceeds space,"- SHOULD truncate session content if it exceeds available space
+- SHOULD allow clicking session to open Session Detail Popover for full details",Medium
+55,,,"1. Day view — view a session with duration <= 15 mins
+2. Verify block height and content",Session <= 15 min block height and content,"- SHOULD display block height = 1/4 of 1-hour time slot (fixed, not reduced further)
+- SHOULD display session info in 1 line: Client name, Start time, Session name",High
+56,,,"1. Day view — view a session with duration > 15 mins and <= 45 mins
+2. Verify block",Session > 15 min and <= 45 min — 1-line info,"- SHOULD display block height = duration / 60 mins of 1-hour slot
+- SHOULD display session info in 1 line: Client name, Start time, Session name",High
+57,,,"1. Day view — view a session with duration > 45 mins and < 60 mins
+2. Verify block",Session > 45 min and < 60 min — 2-line info,"- SHOULD display block height = duration / 60 mins of 1-hour slot
+- Line 1: Client name, Start time
+- Line 2: Session name",High
+58,,,"1. Day view — view a session with duration >= 60 mins where Start time and End time are in the same am/pm
+2. Verify block",Session >= 60 min — same am/pm time display,"- SHOULD display session info in 3 lines
+- Line 1: Client name
+- Line 2: Start time – end time (both with am/pm displayed)
+- Line 3: Session name",High
+59,,,"1. Day view — view a session >= 60 mins where Start time and End time are NOT in same day AND NOT same am/pm
+2. Verify time display",Session >= 60 min — different am/pm time display,"- SHOULD display only am/pm for End time (NOT for Start time)
+- Line 2: Start time – End time (am/pm on end time only)",Medium
+60,,,"1. Day view — view an Early canceled session
+2. Verify display",Early canceled session display,"- SHOULD display session with dash-line style
+- SHOULD display Client name with strikethrough
+- SHOULD apply past date and current date states",High
+61,,,"1. Day view — view a Late canceled session
+2. Verify display",Late canceled session display,"- SHOULD display session with dash-line style
+- SHOULD display ""i"" icon
+- SHOULD display Client name with strikethrough
+- SHOULD apply past date and current date states",High
+62,,,"1. Switch to Week view
+2. Verify session rendering",Week view — sessions across 7 day columns,"- SHOULD display sessions across 7 day columns
+- SHOULD stack overlapping sessions within same time range with hover state
+- SHOULD sort sessions by start time ascending; same start time sorted by created time
+- SHOULD display multi-day/all-day sessions at the top of the calendar area
+- Across-days sessions SHOULD display on both days (split at midnight)
+- SHOULD apply same session color rules as Day view",Critical
+63,,,"1. Switch to Month view
+2. Verify session rendering",Month view — condensed sessions per date cell,"- SHOULD display sessions as condensed items within each date cell with hover state
+- SHOULD show session info: Start time, Client name
+- SHOULD apply same session color and past/current distinction as Day view
+- SHOULD handle responsive display based on device screen
+- SHOULD display multi-day/all-day sessions across days on calendar",Critical
+64,,,"1. Month view — sessions exceed visible limit for a date
+2. Verify overflow indicator and popover","Month view ""N more"" indicator and popover","- SHOULD display ""[N] more"" indicator when sessions exceed visible limit
+- On click SHOULD open popover listing all sessions for that date (MAX HEIGHT: 292px)
+- SHOULD allow scroll to view full list
+- SHOULD display sessions sorted by start time ascending (same start time: by created time)
+- SHOULD allow clicking any session to open session detail popup
+- SHOULD close popover on click outside",High
+65,,AC4: View session details popover,"1. On Calendar page, click on a session block
+2. Verify popover",Session detail popover opens with all fields,"- SHOULD open session detail popover
+- SHOULD display: Session status (Scheduled / Completed / Early Cancel / Late Cancel), Session name, Client name, Client avatar, Date, Duration, Location type, Address (if defined), Location note (if defined), Description (if defined), Note to client (if defined), Trainer name and avatar
+- SHOULD handle long notes/description display",Critical
+66,,,,Session time display — same day same am/pm,"- SHOULD display start time – end time with am/pm shown for both (e.g., 9:00 AM – 10:00 AM)",Medium
+67,,,,Session time display — different days,"- SHOULD display as: <Date>, <Start time> - <Date, End time>",Medium
+68,,,,Quick action icons in popover,"- SHOULD display ""Edit"" icon with tooltip ""Edit session"" on hover
+- SHOULD display ""Delete"" icon with tooltip ""Cancel session"" on hover
+- SHOULD display ""x"" icon with NO hover state",High

@@ -43,12 +43,13 @@ export class TestcaseDigestService {
 
     const config = await TestcaseFeatureService.getFeatureConfig(name)
 
+    const ruleName = config?.rule || 'test-rules'
+    const templateName = config?.template || 'template'
+
     const filesToCheck = [
       path.join(FEATURE_DIR, name, 'config.md'),
-      path.join(FEATURE_DIR, name, 'rules.md'),
-      path.join(FEATURE_DIR, name, 'template.json'),
-      path.join(SOURCE_DIR, 'rule', 'test-rules.md'),
-      path.join(SOURCE_DIR, 'template', 'template.json'),
+      path.join(SOURCE_DIR, 'rule', `${ruleName}.md`),
+      path.join(SOURCE_DIR, 'template', `${templateName}.json`),
     ]
 
     try {
@@ -86,8 +87,8 @@ export class TestcaseDigestService {
     if (!config) throw new Error('Feature not found')
 
     const warnings: string[] = []
-    const rules = await TestcaseConfigService.getFeatureRules(name)
-    const template = await TestcaseConfigService.getFeatureTemplate(name)
+    const rules = await TestcaseConfigService.getResolvedRule(name)
+    const template = await TestcaseConfigService.getResolvedTemplate(name)
     const spec = await TestcaseFeatureService.getSpec(name)
 
     let strategyName = config.strategy || ''
@@ -128,11 +129,13 @@ export class TestcaseDigestService {
       : '(no components linked)'
 
     const now = new Date().toISOString()
+    const resolvedRuleName = config.rule || 'test-rules'
+    const resolvedTemplateName = config.template || 'template'
     const sources = [
       `source/testcase/feature/${name}/config.md`,
       `source/testcase/feature/${name}/spec/*.md`,
-      `source/testcase/feature/${name}/rules.md`,
-      `source/testcase/feature/${name}/template.json`,
+      `source/testcase/rule/${resolvedRuleName}.md`,
+      `source/testcase/template/${resolvedTemplateName}.json`,
       ...(config.strategy ? [`source/testcase/strategy/${config.strategy}.md`] : []),
       ...(config.linked_knowledge || []).map(k => `source/feature-knowledge/${getKnowledgeItemName(k)}/config.md`),
     ]

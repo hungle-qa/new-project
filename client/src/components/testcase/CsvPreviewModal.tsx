@@ -22,7 +22,10 @@ interface CsvPreviewModalProps {
 
 export function CsvPreviewModal({ filename, content, loading, feature, initialNote, onClose, onNoteSaved }: CsvPreviewModalProps) {
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleSaveNote()
+    }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])

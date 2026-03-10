@@ -174,125 +174,18 @@ export class TestcaseConfigService {
     }
   }
 
-  // --- Per-feature Rules ---
+  // --- Resolved Rule/Template (reads config.md → fetches from global) ---
 
-  static async getFeatureRules(name: string): Promise<string> {
-    let rulesContent: string
-    try {
-      const rulesPath = path.join(FEATURE_DIR, name, 'rules.md')
-      rulesContent = await fs.readFile(rulesPath, 'utf-8')
-    } catch {
-      // Clone from selected global rule (or default) on first access
-      const config = await TestcaseFeatureService.getFeatureConfig(name)
-      const ruleName = config?.rule || 'test-rules'
-      const globalRules = await this.getRule(ruleName)
-      if (globalRules) {
-        const featureDir = path.join(FEATURE_DIR, name)
-        await fs.mkdir(featureDir, { recursive: true })
-        await fs.writeFile(path.join(featureDir, 'rules.md'), globalRules)
-      }
-      rulesContent = globalRules
-    }
-
-    return rulesContent
+  static async getResolvedRule(featureName: string): Promise<string> {
+    const config = await TestcaseFeatureService.getFeatureConfig(featureName)
+    const ruleName = config?.rule || 'test-rules'
+    return this.getRule(ruleName)
   }
 
-  static async saveFeatureRules(name: string, content: string): Promise<void> {
-    const featureDir = path.join(FEATURE_DIR, name)
-    await fs.mkdir(featureDir, { recursive: true })
-    await fs.writeFile(path.join(featureDir, 'rules.md'), content)
-  }
-
-  // --- Per-feature Template ---
-
-  static async getFeatureTemplate(name: string): Promise<TemplateColumn[]> {
-    try {
-      const templatePath = path.join(FEATURE_DIR, name, 'template.json')
-      const raw = await fs.readFile(templatePath, 'utf-8')
-      return JSON.parse(raw)
-    } catch {
-      // Clone from selected global template (or default) on first access
-      const config = await TestcaseFeatureService.getFeatureConfig(name)
-      const templateName = config?.template || 'template'
-      const globalTemplate = await this.getTemplateByName(templateName)
-      if (globalTemplate.length > 0) {
-        const featureDir = path.join(FEATURE_DIR, name)
-        await fs.mkdir(featureDir, { recursive: true })
-        await fs.writeFile(
-          path.join(featureDir, 'template.json'),
-          JSON.stringify(globalTemplate, null, 2)
-        )
-      }
-      return globalTemplate
-    }
-  }
-
-  static async saveFeatureTemplate(name: string, columns: TemplateColumn[]): Promise<void> {
-    const featureDir = path.join(FEATURE_DIR, name)
-    await fs.mkdir(featureDir, { recursive: true })
-    await fs.writeFile(
-      path.join(featureDir, 'template.json'),
-      JSON.stringify(columns, null, 2)
-    )
-  }
-
-  // --- Sync (re-clone from selected global) ---
-
-  static async syncFeatureRules(featureName: string, ruleName: string): Promise<void> {
-    const globalRules = await this.getRule(ruleName)
-    const featureDir = path.join(FEATURE_DIR, featureName)
-    await fs.mkdir(featureDir, { recursive: true })
-    await fs.writeFile(path.join(featureDir, 'rules.md'), globalRules)
-  }
-
-  static async syncFeatureTemplate(featureName: string, templateName: string): Promise<void> {
-    const globalTemplate = await this.getTemplateByName(templateName)
-    const featureDir = path.join(FEATURE_DIR, featureName)
-    await fs.mkdir(featureDir, { recursive: true })
-    await fs.writeFile(
-      path.join(featureDir, 'template.json'),
-      JSON.stringify(globalTemplate, null, 2)
-    )
-  }
-
-  // --- Rules/Template Divergence Detection ---
-
-  static async checkRulesCustomized(name: string): Promise<{ customized: boolean }> {
-    try {
-      const featureRulesPath = path.join(FEATURE_DIR, name, 'rules.md')
-      const featureRules = await fs.readFile(featureRulesPath, 'utf-8')
-      const globalRules = await this.getRules()
-      // Compare trimmed content — ignore trailing whitespace differences
-      return { customized: featureRules.trim() !== globalRules.trim() }
-    } catch {
-      // Per-feature rules don't exist yet — not customized
-      return { customized: false }
-    }
-  }
-
-  static async checkTemplateCustomized(name: string): Promise<{
-    customized: boolean
-    missingColumns: string[]
-    extraColumns: string[]
-  }> {
-    try {
-      const featureTemplatePath = path.join(FEATURE_DIR, name, 'template.json')
-      const featureRaw = await fs.readFile(featureTemplatePath, 'utf-8')
-      const featureCols: TemplateColumn[] = JSON.parse(featureRaw)
-      const globalCols = await this.getTemplate()
-
-      const featureNames = featureCols.map(c => c.name)
-      const globalNames = globalCols.map(c => c.name)
-
-      const missingColumns = globalNames.filter(n => !featureNames.includes(n))
-      const extraColumns = featureNames.filter(n => !globalNames.includes(n))
-      const customized = missingColumns.length > 0 || extraColumns.length > 0 ||
-        JSON.stringify(featureCols) !== JSON.stringify(globalCols)
-
-      return { customized, missingColumns, extraColumns }
-    } catch {
-      return { customized: false, missingColumns: [], extraColumns: [] }
-    }
+  static async getResolvedTemplate(featureName: string): Promise<TemplateColumn[]> {
+    const config = await TestcaseFeatureService.getFeatureConfig(featureName)
+    const templateName = config?.template || 'template'
+    return this.getTemplateByName(templateName)
   }
 
   // --- Strategies ---

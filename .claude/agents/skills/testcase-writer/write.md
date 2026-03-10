@@ -53,45 +53,44 @@ Rules:
 
 1. Run `date +"%Y%m%d-%H%M%S"` and capture output as `{timestamp}`. Use exact captured value.
 2. Write JSON array from Step 3 to: `source/testcase/feature/{feature}/result/_temp.json`
-3. Run Node.js conversion:
+3. Write conversion script to `source/testcase/feature/{feature}/result/_convert.js`:
 
-```bash
-node -e "
-process.chdir('$(pwd)');
-const fs = require('fs');
-const path = require('path');
-const data = JSON.parse(fs.readFileSync('source/testcase/feature/{feature}/result/_temp.json', 'utf-8'));
-const tplPath = fs.existsSync('source/testcase/feature/{feature}/template.json')
-  ? 'source/testcase/feature/{feature}/template.json'
-  : 'source/testcase/template/template.json';
-const tpl = JSON.parse(fs.readFileSync(tplPath, 'utf-8'));
+```js
+const fs = require("fs");
+const data = JSON.parse(fs.readFileSync("source/testcase/feature/{feature}/result/_temp.json", "utf-8"));
+const configRaw = fs.readFileSync("source/testcase/feature/{feature}/config.md", "utf-8");
+const tplMatch = configRaw.match(/template:\s*(.+)/);
+const tplName = (tplMatch ? tplMatch[1].trim() : "template");
+const tpl = JSON.parse(fs.readFileSync("source/testcase/template/" + tplName + ".json", "utf-8"));
 const colNames = tpl.map(c => c.name);
 const quote = (v) => {
-  if (v === null || v === undefined) return '';
+  if (v === null || v === undefined) return "";
   const s = String(v);
-  if (s.includes(',') || s.includes('\"') || s.includes('\n')) return '\"' + s.replace(/\"/g, '\"\"') + '\"';
+  if (s.includes(",") || s.includes('"') || s.includes("\n")) return '"' + s.replace(/"/g, '""') + '"';
   return s;
 };
-const header = colNames.map(quote).join(',');
+const header = colNames.map(quote).join(",");
 const rows = data.map(r => {
   if (r._header) {
-    const cells = colNames.map((c, i) => i === 1 ? quote(r._header) : '');
-    return cells.join(',');
+    const cells = colNames.map((c, i) => i === 1 ? quote(r._header) : "");
+    return cells.join(",");
   }
-  return colNames.map(c => quote(r[c] !== undefined ? r[c] : null)).join(',');
+  return colNames.map(c => quote(r[c] !== undefined ? r[c] : null)).join(",");
 });
-const csv = header + '\n' + rows.join('\n') + '\n';
-const outPath = 'source/testcase/feature/{feature}/result/{feature}-testcase-{timestamp}.csv';
+const csv = header + "\n" + rows.join("\n") + "\n";
+const outPath = "source/testcase/feature/{feature}/result/{feature}-testcase-{timestamp}.csv";
 fs.writeFileSync(outPath, csv);
 const testCount = data.filter(r => !r._header).length;
-fs.writeFileSync(outPath + '.metadata.json', JSON.stringify({ test_count: testCount }, null, 2));
-"
+fs.writeFileSync(outPath + ".metadata.json", JSON.stringify({ test_count: testCount }, null, 2));
+console.log("CSV written: " + testCount + " tests");
 ```
-   - IF `node -e` exits with error: run `rm -f source/testcase/feature/{feature}/result/_temp.json`. Report: "CSV conversion failed: {error output}. Temp file removed." STOP.
 
-4. Delete temp file: `rm source/testcase/feature/{feature}/result/_temp.json`
-   - IF delete fails: Report: "Warning: temp file `_temp.json` could not be deleted. Remove it manually."
-5. Confirm: "Done! {N} testcases written to {path}"
+4. Run: `node source/testcase/feature/{feature}/result/_convert.js`
+   - IF node exits with error: run `rm -f source/testcase/feature/{feature}/result/_temp.json source/testcase/feature/{feature}/result/_convert.js`. Report: "CSV conversion failed: {error output}. Temp files removed." STOP.
+
+5. Delete temp files: `rm source/testcase/feature/{feature}/result/_temp.json source/testcase/feature/{feature}/result/_convert.js`
+   - IF delete fails: Report: "Warning: temp files could not be deleted. Remove `_temp.json` and `_convert.js` manually."
+6. Confirm: "Done! {N} testcases written to {path}"
 
 **CRITICAL:** Write the exact matrix from Step 3. Do NOT regenerate. Always create a NEW timestamped file.
 

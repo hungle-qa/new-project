@@ -9,7 +9,7 @@
 
 - CSV at `source/testcase/feature/{feature}/result/{feature}-testcase.csv`
 - Spec at `source/testcase/feature/{feature}/spec/`
-- Rules (cascading): `source/testcase/feature/{feature}/rules.md` (per-feature, if exists) OR `source/testcase/rule/test-rules.md` (global fallback)
+- Rules: Read `config.md` frontmatter `rule` field → `source/testcase/rule/{rule-from-config}.md` (defaults to `test-rules`)
 - Strategy in `config.md` frontmatter (optional — used to maintain consistent generation approach)
 - Structure in `config.md` frontmatter (optional — if defined, new cases must follow the structure strictly). Set via Template tab > Module Structure section.
 - Scope hints in per-feature rules (`## Scope` section) — used for happy/corner case guidance

@@ -138,6 +138,29 @@ export class TestcaseFeatureService {
       if (config) {
         await this.updateFeatureConfig(newName, { name: newName } as Partial<FeatureConfig>)
       }
+
+      // Update context-digest.md references
+      try {
+        const digestPath = path.join(newDir, 'context-digest.md')
+        const digestContent = await fs.readFile(digestPath, 'utf-8')
+        const updated = digestContent
+          .replace(new RegExp(`feature: ${oldName}`, 'g'), `feature: ${newName}`)
+          .replace(new RegExp(`source/testcase/feature/${oldName}/`, 'g'), `source/testcase/feature/${newName}/`)
+        await fs.writeFile(digestPath, updated)
+      } catch { /* digest may not exist */ }
+
+      // Rename result files (csv, metadata.json, note.md) that start with oldName
+      try {
+        const resultDir = path.join(newDir, 'result')
+        const files = await fs.readdir(resultDir)
+        for (const file of files) {
+          if (file.startsWith(`${oldName}-`)) {
+            const newFile = file.replace(`${oldName}-`, `${newName}-`)
+            await fs.rename(path.join(resultDir, file), path.join(resultDir, newFile))
+          }
+        }
+      } catch { /* result dir may not exist */ }
+
       return newName
     } catch {
       return null

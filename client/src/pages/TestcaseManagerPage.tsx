@@ -26,7 +26,10 @@ export function TestcaseManagerPage() {
   const [digestDone, setDigestDone] = useState(false)
   const [digestWarnings, setDigestWarnings] = useState<string[]>([])
   const [showDigestWarnings, setShowDigestWarnings] = useState(false)
-  const [mode, setMode] = useState<TestcaseMode>('lite-v2')
+  const [mode, setMode] = useState<TestcaseMode>(() => {
+    const saved = localStorage.getItem('testcase-mode')
+    return (saved === 'lite' || saved === 'lite-v2' || saved === 'full') ? saved : 'lite-v2'
+  })
 
   // Unsaved changes guard
   const [isDirty, setIsDirty] = useState(false)
@@ -177,6 +180,7 @@ export function TestcaseManagerPage() {
 
   const handleModeChange = (newMode: TestcaseMode) => {
     setMode(newMode)
+    localStorage.setItem('testcase-mode', newMode)
     const visible = getVisibleTabs(newMode)
     if (selectedFeature && !visible.some(t => t.id === activeTab)) {
       setActiveTab(visible[0].id)
@@ -247,7 +251,7 @@ export function TestcaseManagerPage() {
               onDirtyChange={handleDirtyChange}
               onSaveRef={handleSaveRef}
             />
-          ) : activeTab === 'default-rules' || activeTab === 'default-template' ? (
+          ) : activeTab === 'default-rules' || activeTab === 'default-template' || activeTab === 'learn' ? (
             <GlobalTabsPanel
               activeTab={activeTab}
               onTabChange={handleTabChange}

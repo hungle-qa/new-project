@@ -1,0 +1,51 @@
+[
+  {
+    "id": "col_1",
+    "name": "ID",
+    "width": "100px",
+    "style": "bold mono",
+    "columnRules": "Format: US{N}-{N} (e.g., US10-1, US11-5). Sequential within each User Story. Empty for US header rows."
+  },
+  {
+    "id": "col_2",
+    "name": "Test Scenarios",
+    "width": "300px",
+    "style": "bold",
+    "columnRules": "Descriptive test title. Starts with action verb or noun phrase. Max ~80 chars. US header rows use format 'US{N}. {Title}' with no ID."
+  },
+  {
+    "id": "col_1773115889950",
+    "name": "Empty",
+    "width": "30px",
+    "style": "normal",
+    "columnRules": "Just keep the column empty."
+  },
+  {
+    "id": "col_3",
+    "name": "Items for Pivot Table",
+    "width": "150px",
+    "style": "normal",
+    "columnRules": "AC traceability. Format: US{N} / AC{N} or US{N} / AC{N}, AC{N} for multi-AC coverage. Links testcase to spec. Prefer multi-AC mapping when workflow spans entry point + field behavior. Every test maps to ALL ACs it verifies."
+  },
+  {
+    "id": "col_4",
+    "name": "Step",
+    "width": "350px",
+    "style": "mono",
+    "columnRules": "Numbered steps: 1. Action\\n2. Action\\n... Actions use verbs: Navigate, Click, Verify, Type, Enter, Select, Wait, Ensure, Hover, Create. Steps include both actions AND verifications inline. UI elements not wrapped in brackets. Target 5-8 steps. Chain progressive verifications into one test rather than splitting."
+  },
+  {
+    "id": "col_5",
+    "name": "Test Data",
+    "width": "250px",
+    "style": "normal",
+    "columnRules": "Only show input data (not precondition). Free text with specific concrete values (names, dates, times, counts). Use \\n for multi-line. Include exact test values, not abstract placeholders."
+  },
+  {
+    "id": "col_6",
+    "name": "Expected",
+    "width": "350px",
+    "style": "normal",
+    "columnRules": "Bullet list starting with '- '. Each bullet is one assertion. Multiple assertions per row allowed. Describes observable outcomes with concrete values matching test data. Typically 4-8 assertions for consolidated tests. Include assertions for ALL mapped ACs."
+  }
+]

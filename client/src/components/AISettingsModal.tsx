@@ -20,6 +20,13 @@ const DEFAULT_MODELS: AIModel[] = [
 ]
 
 export function AISettingsModal({ isOpen, onClose, onSave }: AISettingsModalProps) {
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
   const { settings, saveSettings, isConfigured } = useAISettings()
   const [apiKey, setApiKey] = useState('')
   const [model, setModel] = useState('gemini-2.0-flash')

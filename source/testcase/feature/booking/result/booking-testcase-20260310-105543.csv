@@ -1,0 +1,335 @@
+ID,Test Scenarios,Empty column,Items for Pivot Table,Step,Test Data,Expected
+,US10. As a coach I can book a session for a client via "Book Session" CTA,,,,,
+US10-1,Open "Book a session" popup via CTA button and verify default prefills,,US10 / AC1,"1. Navigate to the Calendar page on the Booking feature.
+2. Click the ""Book a session"" CTA button.
+3. Verify the ""Book a session"" popup.","Precondition: Logged in as Owner/Admin. Booking feature is enabled.","- ""Book a session"" popup is displayed.
+- Background calendar is dimmed.
+- Focus is trapped inside the modal.
+- Popup header shows ""Book a session"".
+- Trainer field is disabled and defaults to the Workspace's Owner.
+- Location field defaults to ""In-person"".
+- Start date defaults to today's date.
+- Start time defaults to 7:00 AM.
+- Duration field defaults to 30 min.
+- Client field is empty (required).
+- Name field is empty (required).
+- CTA buttons ""Book Session"" and ""Cancel"" are visible.
+- Close (x) icon is visible."
+US10-2,Open popup by clicking a time slot on Day/Week view and verify prefills,,US10 / AC1,"1. Navigate to the Calendar page on Day view.
+2. Click a time slot at 9:00 AM on today's date.
+3. Verify prefilled values in the ""Book a session"" popup.
+4. Close the popup.
+5. Switch to Week view.
+6. Click a time slot at 2:00 PM on a future date.
+7. Verify prefilled values in the ""Book a session"" popup.","Precondition: Logged in as Owner/Admin. Booking feature is enabled.","- (Day view) Popup opens with Start date = today's date and Start time = 9:00 AM.
+- (Week view) Popup opens with Start date = clicked future date and Start time = 2:00 PM."
+US10-3,Open popup by clicking a day cell on Month view and verify prefills,,US10 / AC1,"1. Navigate to the Calendar page on Month view.
+2. Click on a future date cell.
+3. Verify prefilled values in the ""Book a session"" popup.","Precondition: Logged in as Owner/Admin. Booking feature is enabled.","- Popup opens with Start date = clicked date.
+- Start time defaults to 7:00 AM."
+US10-4,Search and select a client in the Client field,,US10 / AC2,"1. Open the ""Book a session"" popup via CTA button.
+2. Click the Client field.
+3. Observe the dropdown list.
+4. Type ""Jane"" in the search box.
+5. Wait 200ms for debounce.
+6. Observe matching results.
+7. Select the first matching client.
+8. Verify the Client field.","Precondition: Workspace has active clients (not Pending/Archived/Waiting Activation). At least one client named ""Jane"" exists.","- Dropdown shows up to 20 clients sorted alphabetically by name.
+- Each item displays profile image, client name, and client email.
+- Clients with Pending, Archived, or Waiting Activation status are not shown.
+- After typing ""Jane"", only clients matching the name are displayed.
+- Selecting a client closes the dropdown.
+- The selected client's name appears in the Client field."
+US10-5,Scroll to load more clients and handle no-results search,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Click the Client field.
+3. Scroll to the bottom of the dropdown.
+4. Observe that more clients load.
+5. Type a search string that matches no clients (e.g., ""zzznomatch"").
+6. Wait 200ms.
+7. Verify the dropdown.","Precondition: Workspace has more than 20 active clients.","- Scrolling loads the next 20 clients.
+- When no clients match, the dropdown shows ""No clients found."""
+US10-6,Enter a Start Date via keyboard and verify calendar picker behavior,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Click the Start date field.
+3. Verify the field is highlighted and calendar picker opens.
+4. Type ""Feb 15, 2026"".
+5. Observe the calendar picker as each segment is typed.
+6. Press Enter.
+7. Verify the Start date field.","Precondition: Workspace was created before Feb 2026. Target date is within supported range.","- Clicking the field highlights the entire current value.
+- Calendar picker opens.
+- As ""Feb"" is typed, the picker hovers on Feb 1, 2026.
+- As ""15"" is typed, the picker hovers on Feb 15, 2026.
+- As ""2026"" is typed, the picker hovers on Feb 15, 2026.
+- After pressing Enter, the date ""Feb 15, 2026"" is applied to the Start date field and the calendar picker closes."
+US10-7,Select a date from the calendar picker and verify out-of-range hover,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Click the Start date field.
+3. In the calendar picker, hover over a date one year and one day beyond the current date (out of range).
+4. Observe the hover state.
+5. Click a valid in-range date.
+6. Verify the Start date field.","Precondition: Logged in as Owner/Admin.","- The out-of-range date shows a ""stop"" icon on hover.
+- The selected in-range date is visually highlighted in the picker.
+- The date is applied to the Start date field and the picker closes."
+US10-8,Enter a Start Time via keyboard and verify dropdown highlight and apply,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Click the Start time field.
+3. Verify the field is highlighted.
+4. Type ""09:30 AM"".
+5. Observe the dropdown to see if the matching option is highlighted.
+6. Press Enter.
+7. Verify the Start time field and coach timezone display.","Precondition: Logged in as Owner/Admin.","- Clicking the field highlights the entire current value.
+- Dropdown displays time slots in 15-minute increments.
+- The option ""9:30 AM"" is visually highlighted (hover state) in the dropdown.
+- After pressing Enter, ""9:30 AM"" is applied to the Start time field and dropdown closes.
+- The coach's timezone is displayed next to the Start time field."
+US10-9,Toggle ""Add note to client"" field — verify counter at 450 and block at 500,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Click the ""Add note to client"" button.
+3. Verify the textbox appears and has focus.
+4. Type exactly 450 characters into the textbox.
+5. Observe the character counter.
+6. Type until reaching 500 characters.
+7. Attempt to type one more character beyond 500.
+8. Verify input is blocked.","Precondition: ""Add note to client"" field is collapsed by default.
+Test input: a 500-character string.","- Clicking the button shows the textbox with placeholder ""Add note to client"" and cursor focused.
+- At 450 characters, the character counter becomes visible.
+- At 500 characters, the input cursor is blocked (no further input accepted)."
+US10-10,Select a session type — verify summary section and hidden fields,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Click the Type field.
+3. Observe the dropdown list.
+4. Select an active session type (e.g., ""Personal Training"").
+5. Verify the popup layout.","Precondition: Workspace has at least one active session type (not archived, belongs to current WS).","- Dropdown shows active session types sorted alphabetically; first 20 loaded.
+- Each option shows: session type name, duration, location type, number of clients (1:1).
+- Archived session types are not shown.
+- After selection, the dropdown closes.
+- A summary section displays: session type color, name, duration, location, address (if any), location note (if any), description (if any).
+- Name, Duration, Location, Description fields are hidden from the popup.
+- ""Add note to client"" field remains visible."
+US10-11,Search for a session type and handle no-results state,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Click the Type field.
+3. Type ""zzznoresult"" in the search box.
+4. Wait 200ms.
+5. Observe the dropdown.","Precondition: No active session type matches ""zzznoresult"".","- The dropdown shows an empty list with the message ""No result found."""
+US10-12,Handle empty session type list — display create CTA,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Click the Type field.
+3. Observe the dropdown when no active session types exist.","Precondition: Workspace has no active session types.","- Dropdown shows text ""No session types yet"".
+- A ""Create session type"" CTA button is displayed.
+- Clicking the CTA navigates to Session Type creation."
+US10-13,Clear selected session type and return to Custom mode,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Select a session type.
+3. Fill in Client field and Start time.
+4. Click the ""x"" icon on the session type summary.
+5. Verify the popup state.","Precondition: At least one active session type exists. Client and Start time are filled.","- The session type summary section is cleared.
+- The popup returns to Custom Session mode (Name, Duration, Location, Description fields reappear).
+- Client field, Start date, Start time, and Add note to client data are persisted."
+US10-14,Edit session type for current session only and apply changes,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Select a session type.
+3. Hover over the ""Edit"" icon.
+4. Verify the tooltip.
+5. Click the ""Edit"" icon.
+6. Verify the edit popup.
+7. Change the Duration to 60 min.
+8. Verify the Apply button state.
+9. Click ""Apply"".
+10. Verify the session type summary.","Precondition: At least one active session type exists. Session type has default duration of 30 min.","- Hovering the Edit icon shows tooltip ""Change duration, location or description"".
+- Edit popup opens with title ""Edit [Session type name]"".
+- Message ""Changes apply to this session only."" is displayed.
+- Session type info is auto-populated.
+- Apply button is disabled by default.
+- After changing Duration, Apply button becomes enabled.
+- Clicking Apply closes the edit popup.
+- The summary section on the Book Session popup reflects the new duration (60 min).
+- The Book Session popup is displayed for continued booking."
+US10-15,Cancel edit of session type overlay and verify data unchanged,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Select a session type.
+3. Click the ""Edit"" icon.
+4. Change the Location field.
+5. Click ""Cancel"" in the edit popup.
+6. Verify the Book Session popup.","Precondition: At least one active session type exists.","- The Edit popup closes.
+- The Book Session popup is displayed.
+- The session type summary shows the original location (unchanged)."
+US10-16,Book session via session type in Custom mode — full manual input flow,,US10 / AC2,"1. Open the ""Book a session"" popup.
+2. Do NOT select a session type.
+3. Fill in Client, Start date, Start time, Name, Duration, Location, and Description.
+4. Verify all fields are editable.","Precondition: Logged in as Owner/Admin.","- Without a session type selected, all editable fields (Name, Duration, Location, Description) are manually inputtable.
+- No session type summary section is displayed."
+US10-17,Session type In-person — address and description both provided,,US10 / AC2.1,"1. Open the ""Book a session"" popup.
+2. Select a session type with In-person location, address provided, and description provided.
+3. Verify the session type summary section.","Precondition: Active session type exists with In-person location, non-empty address, and non-empty description.","- Session type summary shows address and description as normal text (no hyperlinks)."
+US10-18,Session type In-person — address missing, description provided,,US10 / AC2.1,"1. Open the ""Book a session"" popup.
+2. Select a session type with In-person location, no address, and a description.
+3. Verify the session type summary section.
+4. Click ""Add address"".
+5. Verify the input appears.","Precondition: Active session type exists with In-person location, empty address, non-empty description.","- Session type summary shows a hyperlink button ""Add address"".
+- Description is displayed as normal text.
+- Clicking ""Add address"" turns it into a text input field for entering an address."
+US10-19,Session type In-person — description missing,,US10 / AC2.1,"1. Open the ""Book a session"" popup.
+2. Select a session type with In-person location and no description.
+3. Verify the session type summary section.
+4. Click ""Add description"".
+5. Verify the input appears.","Precondition: Active session type exists with In-person location, empty description.","- Session type summary shows a hyperlink button ""Add description"".
+- Clicking ""Add description"" opens a text input for entering a description."
+US10-20,Submit with required fields empty — validate inline errors,,US10 / AC3,"1. Open the ""Book a session"" popup.
+2. Leave Client, Start date, Start time, Name, Duration, Location fields empty.
+3. Click ""Book Session"".
+4. Verify validation errors.","Precondition: Popup is open in Custom mode (no session type selected).","- Each empty required field is highlighted.
+- An inline error message is displayed for each required field.
+- The popup remains open."
+US10-21,Book a future session with no overlap — success,,US10 / AC3,"1. Open the ""Book a session"" popup.
+2. Fill in all required fields: Client = ""Alice"", Start date = tomorrow, Start time = 10:00 AM, Name = ""Yoga"", Duration = 30 min, Location = In-person.
+3. Click ""Book Session"".
+4. Verify popup closes and session appears on calendar.","Precondition: No existing sessions overlap tomorrow 10:00–10:30 AM for the Workspace Owner.","- The popup closes.
+- A toast message ""The session has been added"" / ""Session has been scheduled."" appears.
+- The session is rendered on the calendar at the correct time slot.
+- If the calendar view is on a different week/month, the view navigates to the week/month of the new session."
+US10-22,Book a future session with overlap — cancel from overlap confirmation,,US10 / AC3,"1. Open the ""Book a session"" popup.
+2. Fill in all fields with a start time that overlaps an existing valid session.
+3. Click ""Book Session"".
+4. Verify the overlap confirmation popup.
+5. Click ""Cancel"" in the overlap popup.
+6. Verify return to the Book Session popup.","Precondition: An existing valid (non-canceled) session exists tomorrow 10:00–10:30 AM for the Workspace Owner.
+Test values: Client = ""Bob"", Start date = tomorrow, Start time = 10:00 AM, Duration = 30 min, Name = ""Pilates"", Location = In-person.","- The ""Session Overlap"" confirmation popup is displayed.
+- Title: ""Session Overlap"".
+- Description: ""You already have another session during this time. Are you sure you want to book this session anyway?"".
+- Two actions displayed: ""Cancel"" and ""Book Anyway"" (focused).
+- After clicking Cancel, the overlap popup closes.
+- The Book Session popup is displayed with all previously entered data preserved."
+US10-23,Book a future session with overlap — book anyway,,US10 / AC3,"1. Open the ""Book a session"" popup.
+2. Fill in all fields overlapping an existing session.
+3. Click ""Book Session"".
+4. Click ""Book Anyway"" in the overlap popup.
+5. Verify session is created.","Precondition: An existing valid (non-canceled) session exists at the chosen time.","- Clicking ""Book Anyway"" saves the session.
+- The popup closes.
+- Toast message ""The session has been added"" / ""Session has been scheduled."" appears.
+- The session is displayed on the calendar."
+US10-24,Close overlap popup via x icon and verify data preserved,,US10 / AC3,"1. Open the ""Book a session"" popup.
+2. Fill in fields that cause an overlap.
+3. Click ""Book Session"".
+4. Click the ""x"" icon on the overlap popup.
+5. Verify the Book Session popup state.","Precondition: An existing valid session overlaps the chosen time.","- Overlap popup closes.
+- Book Session popup is displayed.
+- All previously entered data is preserved."
+US10-25,Book a session in the past — past date confirmation flow,,US10 / AC3,"1. Open the ""Book a session"" popup.
+2. Set Start date = yesterday, Start time = 9:00 AM, Duration = 30 min.
+3. Fill all other required fields.
+4. Click ""Book Session"".
+5. Verify the past date confirmation popup.
+6. Click ""Book Anyway"".
+7. Verify session is created.","Precondition: Session end time is in the past (yesterday 9:30 AM < current time).","- No overlap check is performed.
+- ""Session Date Is In the Past"" popup is displayed.
+- Message: ""You selected a Date and time that is in the past. This session will be saved as Completed. No client communication will be sent. Are you sure you want to book this session anyway?"".
+- Two actions: ""Cancel"" and ""Book Anyway"" (focused).
+- Clicking ""Book Anyway"" saves the session.
+- Toast message ""The session has been added"" / ""Session has been scheduled."" appears.
+- Session appears on the calendar as Completed."
+US10-26,Cancel past date confirmation popup and verify data preserved,,US10 / AC3,"1. Open the ""Book a session"" popup.
+2. Set a past end date and fill all required fields.
+3. Click ""Book Session"".
+4. Click ""Cancel"" in the past date popup.
+5. Verify the Book Session popup.","Precondition: Session end time is in the past.","- Past date popup closes.
+- Book Session popup is displayed with all previously entered data preserved."
+US10-27,Book session fails — verify error state and retry ability,,US10 / AC3,"1. Open the ""Book a session"" popup.
+2. Fill in all required fields.
+3. Simulate a server failure (e.g., disconnect network before clicking Book Session).
+4. Click ""Book Session"".
+5. Verify the error behavior.","Precondition: Server is unreachable or returns an error.","- The popup remains open.
+- All entered data is preserved.
+- ""Book Session"" CTA remains enabled.
+- Toast message ""Failed to add a session. Please try again"" is displayed."
+US10-28,Close popup with no changes — popup closes immediately,,US10 / AC4,"1. Open the ""Book a session"" popup via CTA.
+2. Do NOT input any data.
+3. Click ""Cancel"" button.
+4. Verify the popup closes.","Precondition: No data has been entered into any field.","- The popup closes immediately without any discard confirmation dialog."
+US10-29,Cancel with unsaved changes — choose to discard,,US10 / AC4,"1. Open the ""Book a session"" popup.
+2. Type a client name in the Client search field and select a client.
+3. Enter a session name.
+4. Click ""Cancel"" button.
+5. Observe the discard confirmation prompt.
+6. Click ""Discard"".","Precondition: Data has been entered into at least one field.","- A discard confirmation prompt appears.
+- Clicking ""Discard"" closes the popup and discards all unsaved data."
+US10-30,Cancel with unsaved changes — choose to stay (via x icon),,US10 / AC4,"1. Open the ""Book a session"" popup.
+2. Enter a session name in the Name field.
+3. Click the ""x"" icon.
+4. Observe the discard confirmation prompt.
+5. Click ""Stay"" (or equivalent keep-editing action).","Precondition: Data has been entered.","- A discard confirmation prompt appears.
+- Clicking ""Stay"" (or equivalent) closes the prompt.
+- The ""Book a session"" popup remains open with all entered data intact."
+,US11. As a coach I can view the sessions on my calendar,,,,,
+US11-1,View calendar with sessions on Day view and Week view — entry point,,US11 / AC1,"1. Navigate to the Calendar page with Booking feature enabled.
+2. Verify the calendar renders sessions on Day view.
+3. Switch to Week view.
+4. Verify sessions are rendered across 7 day columns.","Precondition: Booking feature is enabled. Sessions exist in the current date range.","- Day view shows sessions in a vertical time-slot layout.
+- Week view shows sessions across 7 columns for the week.
+- Sessions are associated with the current Workspace."
+US11-2,View empty calendar — no sessions in selected date range,,US11 / AC2,"1. Navigate to the Calendar page.
+2. Navigate to a date range with no sessions (e.g., 2 years in the future).
+3. Verify the calendar state.","Precondition: No sessions exist in the selected date range.","- Calendar grid is displayed with no session cards.
+- No popovers are shown.
+- Calendar navigation and view switching remain functional."
+US11-3,Day view — session block height by duration and content display rules,,US11 / AC3,"1. Navigate to the Calendar page on Day view.
+2. Verify the display of a 10-minute session block.
+3. Verify the display of a 30-minute session block.
+4. Verify the display of a 50-minute session block.
+5. Verify the display of a 90-minute session block.","Precondition: Sessions exist with durations: 10 min, 30 min, 50 min, 90 min.","- 10-min session: block height = 1/4 of 1-hour slot (fixed); info displayed in 1 line (client name, start time, session name).
+- 30-min session: height = 1/2 of 1-hour slot; info displayed in 1 line (client name, start time, session name).
+- 50-min session: height between 45–60 min threshold; info displayed in 2 lines — Line 1: client name and start time; Line 2: session name.
+- 90-min session: height = 1.5 hour slots; info displayed in 3 lines — Line 1: client name; Line 2: start time – end time; Line 3: session name."
+US11-4,Day view — start time / end time am/pm display rules in session block,,US11 / AC3,"1. Navigate to Day view.
+2. Verify a session where start time and end time share the same am/pm (e.g., 10:00 AM – 10:45 AM, duration >= 60 min in same AM).
+3. Verify a session where start time and end time are in different am/pm (e.g., 11:30 AM – 12:30 PM, duration >= 60 min).","Precondition: Sessions with duration >= 60 min exist with matching and non-matching am/pm start/end.","- Same day AND same am/pm: both start and end time display am/pm (e.g., 10:00 AM – 10:45 AM... adjust for 60+ min).
+- Different am/pm: only end time displays am/pm (e.g., 11:30 – 12:30 PM)."
+US11-5,Day view — session color for session-type sessions vs custom sessions,,US11 / AC3,"1. Navigate to Day view with a mix of session-type sessions and custom sessions.
+2. Verify the color of a session tied to a session type.
+3. Verify the color of a custom session.","Precondition: Both session-type-based and custom sessions exist on the same day.","- Session-type session is displayed in the session type's configured color.
+- Custom session is displayed in the color selected during creation."
+US11-6,Day view — past vs current/upcoming session color distinction,,US11 / AC3,"1. Navigate to Day view on today's date.
+2. Verify the visual appearance of a past session (end_time < current_time).
+3. Verify the visual appearance of an upcoming session (end_time >= current_time).","Precondition: Both a past session and an upcoming session exist on today's date.","- Past and current/upcoming sessions are visually distinguished (different color states).
+- Distinction applies to both session blocks and all-day events.
+- All session statuses (Completed, Scheduled, Early Canceled, Late Canceled) apply this distinction."
+US11-7,Day view — canceled session display (Early and Late canceled),,US11 / AC3,"1. Navigate to Day view.
+2. Verify the display of an Early canceled session block.
+3. Verify the display of a Late canceled session block.","Precondition: Both an Early canceled and a Late canceled session exist on the viewed day.","- Canceled sessions are displayed on the calendar.
+- Early canceled: dashed border and client name is struck through.
+- Late canceled: dashed border, client name is struck through, and an ""i"" icon is displayed."
+US11-8,Day view — overlapping sessions horizontal stacking and sorting,,US11 / AC3,"1. Navigate to Day view.
+2. Verify display of two overlapping sessions with different start times.
+3. Verify display of two sessions with the same start time but different durations.
+4. Verify display of two sessions with the same start time and duration but different created_at.","Precondition: Overlapping session sets exist on the viewed day as described.","- Overlapping sessions are displayed side by side (horizontally stacked).
+- Earlier start time = left; later start time = right.
+- Same start time: longer duration = left; shorter duration = right.
+- Same start time and duration: older created_at = left; newer created_at = right.
+- Width of each block is proportionally reduced.
+- Vacant slots are filled from the left."
+US11-9,Week view — session display across 7 columns and multi-day session spanning,,US11 / AC3,"1. Navigate to Week view on a week containing a multi-day session (e.g., 11:00 PM Jan 30 to 1:00 AM Feb 1).
+2. Verify session placement on Jan 30.
+3. Verify session placement on Feb 1.
+4. Verify sorting of sessions with same start time.","Precondition: A multi-day session spanning two days exists. Multiple sessions exist with the same start time.","- Week view shows 7 columns.
+- Jan 30: session block displayed from 11:00 PM to 12:00 AM.
+- Feb 1: session block displayed from 12:00 AM to 1:00 AM.
+- Sessions with same start time are sorted by created_at (ascending).
+- Multi-day/all-day sessions appear at the top of the calendar area."
+US11-10,Month view — condensed session display and overflow indicator,,US11 / AC3,"1. Navigate to Month view on a date cell with more sessions than the screen can display.
+2. Verify the overflow indicator.
+3. Click the overflow indicator.
+4. Verify the session popover.
+5. Click outside the popover.","Precondition: A date cell has enough sessions to exceed visible limit (based on screen size).","- Session items within the cell show start time and client name.
+- An overflow indicator ""[N] more"" is shown for hidden sessions.
+- Clicking the indicator opens a popover listing all sessions for that date.
+- Popover max height is 292px; scroll is supported.
+- Sessions in the popover are sorted by start time ascending; same start time sorted by created_at.
+- Clicking any session opens the session detail popup.
+- Clicking outside the popover closes it."
+US11-11,Month view — multi-day and all-day session display,,US11 / AC3,"1. Navigate to Month view.
+2. Verify an all-day session spanning multiple days.
+3. Verify the collapsed count on the date cell.
+4. Click the count and verify expanded view in the popover.","Precondition: A multi-day or all-day session exists spanning multiple days in the current month.","- Multi-day/all-day session is displayed across the days it spans on the calendar.
+- A collapsed count (e.g., ""9 more"") appears on the date cell.
+- Clicking the count opens the popover with the expanded list of sessions."
+US11-12,Click a session to open session detail popover — verify all fields,,US11 / AC4,"1. Navigate to Day view.
+2. Click on a session with all fields defined (address, location note, description, note to client, long notes).
+3. Verify the session detail popover.","Precondition: A session exists with status Scheduled, all optional fields populated (address, location note, description, note to client). Trainer has a name and avatar.","- Session detail popover opens.
+- Displays: session status (Scheduled), session name, client name, client avatar, date, start time – end time, duration, location type, address, location note, description, note to client, trainer name and avatar.
+- Long notes and descriptions are displayed fully (no truncation in popover).
+- Quick action icons are visible: Edit icon (hover tooltip: ""Edit session""), Delete icon (hover tooltip: ""Cancel session""), x icon (no hover state)."
+US11-13,Session detail popover — start/end time same am/pm vs different day display,,US11 / AC4,"1. Click a session where start time and end time are in the same day AND same am/pm.
+2. Verify the time display format in the popover.
+3. Click a session where start time and end time are NOT in the same day.
+4. Verify the time display format in the popover.","Precondition: Both session types exist: one within the same day/same am/pm, one spanning two days.","- Same day, same am/pm: displays am/pm for both start and end time (e.g., 9:00 AM – 10:00 AM).
+- Cross-day: displays in format "", - <Date, end time>"" (e.g., "", - Feb 1, 1:00 AM"")."

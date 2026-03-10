@@ -62,6 +62,8 @@ export function FeatureTabContent({
       {activeTab === 'rules' && (
         <RulesTab
           feature={feature}
+          selectedRule={config.rule || 'test-rules'}
+          onRuleChange={async (rule) => onSaveConfig({ rule })}
           onDirtyChange={onDirtyChange}
           saveRef={onSaveRef}
         />
@@ -69,8 +71,8 @@ export function FeatureTabContent({
       {activeTab === 'template' && (
         <TemplateTab
           feature={feature}
-          structure={config.structure || []}
-          onStructureSave={async (structure) => onSaveConfig({ structure })}
+          selectedTemplate={config.template || 'template'}
+          onTemplateChange={async (template) => onSaveConfig({ template })}
           onDirtyChange={onDirtyChange}
           saveRef={onSaveRef}
         />

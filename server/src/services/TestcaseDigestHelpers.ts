@@ -8,45 +8,38 @@ export function renderTree(nodes: StructureNode[], indent = ''): string {
   }).join('\n')
 }
 
+/**
+ * Strip lossless decorative elements from spec/rules to reduce token count
+ * while preserving all testable behaviors and constraints
+ */
+export function stripDecorativeElements(content: string): string {
+  let result = content
+
+  // Strip HTML tags (e.g. <br> from spec imports)
+  // IMPORTANT: Only match tags starting with a letter or slash — NOT comparison operators like <=, >=
+  result = result.replace(/<br\s*\/?>/gi, ' / ')
+  result = result.replace(/<\/?[a-zA-Z][a-zA-Z0-9]*(?:\s[^>]*)?>/g, '')
+
+  // Strip changelog date annotations — not needed for generation logic
+  result = result.replace(/\s*\(Updated on \w+ \d+,?\s*\d{4}\)/g, '')
+
+  // Strip purely decorative state descriptions
+  result = result.replace(/\s*\(Have hover state\)/g, '')
+  result = result.replace(/\s*\(have hover state\)/g, '')
+  result = result.replace(/\s*\(have past date and current date state\)/g, '')
+  result = result.replace(/\s*\(have hover, selected state\)/g, '')
+
+  // Add a global rule to Constraints so inline decorations can be removed
+  // This is handled in condenseRules() which adds it once, so AI doesn't need 15+ repetitions
+
+  // Collapse excessive blank lines
+  result = result.replace(/\n{3,}/g, '\n\n')
+
+  return result
+}
+
 export function condenseSpec(spec: string): string {
-  const condensedLines: string[] = []
-  const usPattern = /(?:^##\s+(US\d+.*)$)|(?:^\*\*(US\d+\s*-\s*.*?)\*\*)/gm
-  let usMatch: RegExpExecArray | null
-  const usPositions: { title: string; pos: number }[] = []
-  while ((usMatch = usPattern.exec(spec)) !== null) {
-    const title = (usMatch[1] || usMatch[2]).trim()
-    usPositions.push({ title, pos: usMatch.index })
-  }
-
-  for (let i = 0; i < usPositions.length; i++) {
-    const us = usPositions[i]
-    const nextPos = i + 1 < usPositions.length ? usPositions[i + 1].pos : spec.length
-    const usBlock = spec.slice(us.pos, nextPos)
-    condensedLines.push(`### ${us.title}`)
-
-    const acTableRows = usBlock.match(/^\|\s*AC\d+\s*\|.*$/gm)
-    if (acTableRows) {
-      for (const row of acTableRows) {
-        const cells = row.split('|').map(c => c.trim()).filter(Boolean)
-        if (cells.length >= 5) {
-          const [acId, desc, given, when, then] = cells
-          condensedLines.push(`- **${acId}: ${desc}**`)
-          condensedLines.push(`  - Given: ${given}`)
-          condensedLines.push(`  - When: ${when}`)
-          condensedLines.push(`  - Then: ${then}`)
-        }
-      }
-    }
-
-    const acHeadings = usBlock.match(/^###\s+(AC\d+.*)$/gm)
-    if (acHeadings && !acTableRows) {
-      for (const ac of acHeadings) {
-        condensedLines.push(`- ${ac.replace(/^###\s+/, '').trim()}`)
-      }
-    }
-  }
-
-  return condensedLines.length > 0 ? condensedLines.join('\n') : spec
+  return stripDecorativeElements(spec)
 }
 
 export function buildTestScope(
@@ -135,92 +128,48 @@ export function buildTestScope(
 export function extractTerminology(knowledgeSections: string[]): string {
   if (knowledgeSections.length === 0) return '(no linked knowledge)'
 
-  const fullKnowledge = knowledgeSections.join('\n\n')
-
-  function isCleanLine(line: string): boolean {
-    const trimmed = line.trim()
-    if (trimmed.length < 5) return false
-    if (trimmed.startsWith('|')) return false
-    if (/https?:\/\//.test(trimmed)) return false
-    if (trimmed.startsWith('---')) return false
-    return true
-  }
-
-  const glossaryTerms: string[] = []
-  const glossaryMatches = fullKnowledge.match(/^\*\*([^*]{2,50})\*\*[:\s]+([^\n|]{5,})/gm)
-  if (glossaryMatches) {
-    const seen = new Set<string>()
-    for (const g of glossaryMatches) {
-      if (!isCleanLine(g)) continue
-      const termMatch = g.match(/^\*\*(.+?)\*\*/)
-      const key = termMatch ? termMatch[1].toLowerCase() : g.toLowerCase()
-      if (!seen.has(key)) {
-        seen.add(key)
-        glossaryTerms.push(g.trim())
-      }
+  // Return full knowledge content, only dedup identical sections
+  const seen = new Set<string>()
+  const unique: string[] = []
+  for (const section of knowledgeSections) {
+    const key = section.trim()
+    if (!seen.has(key)) {
+      seen.add(key)
+      unique.push(key)
     }
   }
 
-  const roles: string[] = []
-  const rolePatterns = fullKnowledge.match(/(?:^|\n)\*\*(?:User Roles?|Roles?)\*\*[:\s]+([^\n]+)/gi)
-  if (rolePatterns) {
-    for (const r of rolePatterns) {
-      const clean = r.trim()
-      if (isCleanLine(clean)) roles.push(`- ${clean}`)
-    }
-  }
-
-  const preconditions: string[] = []
-  const prePatterns = fullKnowledge.match(/(?:^|\n)\*\*(?:Preconditions?|Plans?)\*\*[:\s]+([^\n]+)/gi)
-  if (prePatterns) {
-    for (const p of prePatterns) {
-      const clean = p.trim()
-      if (isCleanLine(clean)) preconditions.push(`- ${clean}`)
-    }
-  }
-
-  const parts: string[] = []
-  if (glossaryTerms.length > 0) parts.push(`**Glossary:**\n${glossaryTerms.slice(0, 15).join('\n')}`)
-  if (roles.length > 0) parts.push(`**User Roles:**\n${roles.slice(0, 5).join('\n')}`)
-  if (preconditions.length > 0) parts.push(`**Preconditions:**\n${preconditions.slice(0, 5).join('\n')}`)
-
-  return parts.length > 0
-    ? parts.join('\n\n')
-    : '(knowledge linked but no extractable terminology found)'
+  return unique.join('\n\n')
 }
 
 export function condenseRules(rules: string): string {
   if (!rules) return '(no rules)'
 
-  const rulesParts: string[] = []
+  let result = stripDecorativeElements(rules)
 
-  const priorityMatch = rules.match(/##\s*Priority Mapping\s*\n([\s\S]*?)(?=\n##|$)/)
-  if (priorityMatch) rulesParts.push(`### Priority Mapping\n${priorityMatch[1].trim()}`)
+  // Remove ## Column Format section from Rules Summary if present
+  // (Template Columns section already in digest provides this exact content)
+  const cfStart = result.indexOf('\n## Column Format\n')
+  if (cfStart !== -1) {
+    const nextSection = result.indexOf('\n## ', cfStart + 1)
+    if (nextSection !== -1) {
+      result = result.slice(0, cfStart) + result.slice(nextSection)
+    } else {
+      result = result.slice(0, cfStart)
+    }
+  }
 
-  const constraintsMatch = rules.match(/##\s*CONSTRAINTS\s*\n([\s\S]*?)(?=\n##|$)/i)
-  if (constraintsMatch) rulesParts.push(`### Constraints\n${constraintsMatch[1].trim()}`)
-
-  const orderMatch = rules.match(/##\s*Order of case\s*\n([\s\S]*?)(?=\n##|$)/i)
-  if (orderMatch) rulesParts.push(`### Order\n${orderMatch[1].trim()}`)
-
-  const platformMatch = rules.match(/###\s*Platform[:\s]+(.+)/i)
-  if (platformMatch) rulesParts.push(`**Platform:** ${platformMatch[1].trim()}`)
-
-  return rulesParts.length > 0 ? rulesParts.join('\n\n') : rules
+  return result
 }
 
 export function buildTemplateSection(
-  template: Array<{ name: string; writingStyle: string }>,
+  template: Array<{ name: string; columnRules: string }>,
   structure: StructureNode[] | undefined
 ): { templateSection: string; fullColumnOrder: string; mergedOrder: string } {
-  const colsWithStyle = template.filter(c => c.writingStyle)
-  const templateSection = colsWithStyle.map(c => {
-    const firstLine = c.writingStyle
-      .split('\n')
-      .map(l => l.replace(/^#+\s*/, '').trim())
-      .find(l => l.length > 0)
-    return `- **${c.name}**: ${firstLine || c.writingStyle.slice(0, 80)}`
-  }).join('\n')
+  const colsWithRules = template.filter(c => c.columnRules)
+  const templateSection = colsWithRules.map(c => {
+    return `### ${c.name}\n${c.columnRules}`
+  }).join('\n\n')
   const fullColumnOrder = template.map(c => c.name).join(', ')
 
   const maxDepth = getMaxDepth(structure || [])

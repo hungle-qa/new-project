@@ -4,7 +4,7 @@ export const BASE_SOURCE_DIR = path.join(__dirname, '../../../source')
 export const SOURCE_DIR = path.join(BASE_SOURCE_DIR, 'testcase')
 export const FEATURE_DIR = path.join(SOURCE_DIR, 'feature')
 export const EXCLUDED_DIRS = ['rule', 'template', 'strategy']
-export const CURRENT_DIGEST_VERSION = 2
+export const CURRENT_DIGEST_VERSION = 3
 
 export interface StructureNode {
   id: string
@@ -22,7 +22,7 @@ export interface TemplateColumn {
   name: string
   width: string
   style: string
-  writingStyle: string
+  columnRules: string
 }
 
 export interface FeatureSummary {
@@ -38,12 +38,9 @@ export interface FeatureConfig {
   created: string
   updated: string
   strategy: string
+  rule: string
+  template: string
   structure: StructureNode[]
-  scope: {
-    happy_case: string
-    corner_case: string
-    negative_case: string
-  }
   linked_knowledge: LinkedKnowledgeEntry[]
   components: ComponentMapping[]
   content: string

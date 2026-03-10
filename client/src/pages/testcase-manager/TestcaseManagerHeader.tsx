@@ -1,4 +1,4 @@
-import { Plus, ScrollText, Table } from 'lucide-react'
+import { Plus, ScrollText, Table, GraduationCap } from 'lucide-react'
 import { TabType, TestcaseMode } from './types'
 
 interface TestcaseManagerHeaderProps {
@@ -56,6 +56,17 @@ export function TestcaseManagerHeader({
             >
               <Table className="w-4 h-4" />
               Default Template
+            </button>
+            <button
+              onClick={() => onGlobalTab('learn')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${
+                activeTab === 'learn' && isGlobalTabActive
+                  ? 'text-purple-600 bg-purple-50 border border-purple-200'
+                  : 'text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <GraduationCap className="w-4 h-4" />
+              Learn
             </button>
           </>
         )}

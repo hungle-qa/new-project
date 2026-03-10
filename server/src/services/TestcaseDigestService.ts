@@ -13,7 +13,6 @@ import {
   filterContentBySections,
 } from './TestcaseTypes'
 import {
-  renderTree,
   condenseSpec,
   buildTestScope,
   extractTerminology,
@@ -101,18 +100,9 @@ export class TestcaseDigestService {
 
     // Read linked knowledge
     const knowledgeSections: string[] = []
-    const specLower = (spec || '').toLowerCase()
     for (const entry of config.linked_knowledge || []) {
       const kName = getKnowledgeItemName(entry)
       const selectedSections = getKnowledgeSections(entry)
-
-      if (spec && selectedSections.length > 0) {
-        const anyRelevant = selectedSections.some(s => {
-          const words = s.replace(/^#+\s*/, '').replace(/^[IVXL]+\.\s*/, '').trim().toLowerCase()
-          return specLower.includes(words)
-        })
-        if (!anyRelevant) continue
-      }
 
       try {
         const kContent = await fs.readFile(
@@ -126,19 +116,8 @@ export class TestcaseDigestService {
       }
     }
 
-    const structureText = config.structure?.length
-      ? renderTree(config.structure)
-      : 'No structure defined — AI freestyles module assignment.'
-
     const specSummary = spec ? condenseSpec(spec) : '(no spec imported)'
-    const { testable: testScopeTestable, outOfScope: testScopeOutOfScope } = buildTestScope(spec, knowledgeSections, config)
-
-    const happyCaseMatch = rules.match(/###\s*Happy Case\s*\n([\s\S]*?)(?=\n###|\n##|$)/)
-    const cornerCaseMatch = rules.match(/###\s*Corner Case\s*\n([\s\S]*?)(?=\n###|\n##|$)/)
-    const negativeCaseMatch = rules.match(/###\s*Negative Case\s*\n([\s\S]*?)(?=\n###|\n##|$)/)
-    const happyCase = happyCaseMatch ? happyCaseMatch[1].trim() : 'Standard happy paths'
-    const cornerCase = cornerCaseMatch ? cornerCaseMatch[1].trim() : 'Standard edge cases'
-    const negativeCase = negativeCaseMatch ? negativeCaseMatch[1].trim() : (config.scope.negative_case || '')
+    const { testable: testScopeTestable } = buildTestScope(spec, knowledgeSections, config)
 
     const terminologySection = extractTerminology(knowledgeSections)
     const rulesCondensed = condenseRules(rules)
@@ -159,7 +138,7 @@ export class TestcaseDigestService {
     ]
 
     const digest = `---
-digest-version: 2
+digest-version: 3
 generated: ${now}
 feature: ${name}
 sources:
@@ -168,7 +147,6 @@ ${sources.map(s => `  - ${s}`).join('\n')}
 
 ## Config
 strategy: ${config.strategy || '(none)'}
-structure: ${config.structure?.length ? 'defined (see below)' : 'empty'}
 components: ${(config.components || []).map(c => c.name).join(', ') || '(none)'}
 linked_knowledge: ${(config.linked_knowledge || []).map(k => {
   const kn = getKnowledgeItemName(k)
@@ -176,7 +154,22 @@ linked_knowledge: ${(config.linked_knowledge || []).map(k => {
   return sections.length > 0 ? `${kn} (${sections.length} sections)` : kn
 }).join(', ') || '(none)'}
 
-<!-- [REQUIREMENTS — Generate testcases from this] -->
+<!-- [FORMAT — Read these rules FIRST before reading the spec] -->
+
+## Template Columns
+${templateSection || '(no column rules defined)'}
+Full column order: ${fullColumnOrder}
+
+## Merged Column Order
+${mergedOrder}
+
+## Rules Summary
+${rulesCondensed}
+
+## Strategy Guide
+${strategyName ? `strategy: ${strategyName}\n${strategySummary}\n(Full strategy: source/testcase/strategy/${strategyName}.md)` : 'No strategy selected — use default balanced approach.'}
+
+<!-- [REQUIREMENTS — Generate testcases from this, following the rules above] -->
 
 ## Spec Summary
 ${specSummary}
@@ -186,39 +179,7 @@ ${specSummary}
 ### TESTABLE (generate testcases for these)
 ${testScopeTestable}
 
-### OUT OF SCOPE (in knowledge but NOT in spec — do NOT test)
-${testScopeOutOfScope}
-
-### Scope Hints
-**Happy Case:** ${happyCase}
-**Corner Case:** ${cornerCase}${negativeCase ? `\n**Negative Case:** ${negativeCase}` : ''}
-
-## Structure
-${structureText}
-
-**RULE:** Structure defined → MUST follow tree, replace Module with Level 1..N, test ONLY leaf nodes. Empty → freestyle.
-
-## Strategy Guide
-${strategyName ? `strategy: ${strategyName}\n${strategySummary}\n(Full strategy: source/testcase/strategy/${strategyName}.md)` : 'No strategy selected — use default balanced approach.'}
-
-<!-- [FORMAT — How to write testcases] -->
-
-## Template Columns
-${templateSection || '(no writing styles defined)'}
-Full column order: ${fullColumnOrder}
-
-## Merged Column Order
-${mergedOrder}
-
-## Rules Summary
-${rulesCondensed}
-
-<!-- [REFERENCE — Terminology only, do NOT generate testcases from this] -->
-
-## Terminology & Context
-${terminologySection}
-
-## Component Knowledge
+${terminologySection !== '(no linked knowledge)' ? `<!-- [REFERENCE — Terminology only, do NOT generate testcases from this] -->\n\n## Terminology & Context\n${terminologySection}\n\n` : ''}## Component Knowledge
 ${componentSection}
 ${warnings.length > 0 ? `\n## Warnings\n${warnings.map(w => `- ${w}`).join('\n')}\n` : ''}`
 

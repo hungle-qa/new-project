@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { X, Tag, Expand, StickyNote } from 'lucide-react'
 import {
   extractUniqueTags,
@@ -21,6 +21,12 @@ interface CsvPreviewModalProps {
 }
 
 export function CsvPreviewModal({ filename, content, loading, feature, initialNote, onClose, onNoteSaved }: CsvPreviewModalProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   const headers = content.length > 0 ? content[0] : []
   const [showNote, setShowNote] = useState(!!initialNote)
   const [noteText, setNoteText] = useState(initialNote || '')

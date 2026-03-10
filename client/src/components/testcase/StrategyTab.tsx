@@ -19,6 +19,11 @@ interface StrategyOption {
 
 const STRATEGIES: StrategyOption[] = [
   {
+    id: 'none',
+    name: 'None',
+    description: "Don't use any testing strategy. Testcases will be generated without a predefined approach.",
+  },
+  {
     id: 'spec-driven',
     name: 'Spec-Driven Testing',
     description: 'Follow the spec exactly. US = Level 1, AC = Level 2. Given/When -> Steps, Then -> Expected Result.',
@@ -36,18 +41,19 @@ const STRATEGIES: StrategyOption[] = [
 ]
 
 export function StrategyTab({ feature, strategy: initialStrategy, onSave, onDirtyChange, saveRef }: StrategyTabProps) {
-  const [selected, setSelected] = useState(initialStrategy)
+  const [selected, setSelected] = useState(initialStrategy || 'none')
   const [saving, setSaving] = useState(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [detailsContent, setDetailsContent] = useState<Record<string, string>>({})
   const [loadingDetails, setLoadingDetails] = useState<string | null>(null)
 
-  const hasChanges = selected !== initialStrategy
+  const normalizedInitial = initialStrategy || 'none'
+  const hasChanges = selected !== normalizedInitial
 
   const handleSave = useCallback(async () => {
     setSaving(true)
     try {
-      await onSave(selected)
+      await onSave(selected === 'none' ? '' : selected)
     } finally {
       setSaving(false)
     }
@@ -63,7 +69,7 @@ export function StrategyTab({ feature, strategy: initialStrategy, onSave, onDirt
   }, [hasChanges, handleSave])
 
   useEffect(() => {
-    setSelected(initialStrategy)
+    setSelected(initialStrategy || 'none')
   }, [initialStrategy, feature])
 
   const toggleDetails = async (id: string) => {
@@ -143,7 +149,7 @@ export function StrategyTab({ feature, strategy: initialStrategy, onSave, onDirt
               </button>
 
               {/* View Details Toggle */}
-              <div className={`border-t ${isSelected ? 'border-blue-200' : 'border-gray-100'}`}>
+              {id !== 'none' && <div className={`border-t ${isSelected ? 'border-blue-200' : 'border-gray-100'}`}>
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleDetails(id) }}
                   className={`w-full flex items-center justify-center gap-1 px-4 py-2 text-xs font-medium transition-colors ${
@@ -164,7 +170,7 @@ export function StrategyTab({ feature, strategy: initialStrategy, onSave, onDirt
                     </>
                   )}
                 </button>
-              </div>
+              </div>}
 
               {/* Expanded Details */}
               {isExpanded && (
@@ -190,9 +196,6 @@ export function StrategyTab({ feature, strategy: initialStrategy, onSave, onDirt
         })}
       </div>
 
-      {!selected && (
-        <p className="text-xs text-gray-400">No strategy selected. Choose one above and save.</p>
-      )}
     </div>
   )
 }

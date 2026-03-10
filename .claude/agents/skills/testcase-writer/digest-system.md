@@ -4,7 +4,7 @@
 
 **Digest location:** `source/testcase/feature/{feature}/context-digest.md`
 
-**Note:** `write-lite` does NOT use digest — reads spec + rules directly. Skip digest for `write-lite`.
+**Note:** `write-lite` and `write-lite-v2` do NOT use digest — they read spec + rules directly.
 
 ---
 
@@ -16,16 +16,16 @@ Call the server API to check if digest needs regenerating:
 curl -s http://localhost:3001/api/testcase/{feature-name}/digest-status
 ```
 
-Response: `{"status":"FRESH"}` or `{"status":"STALE","reason":"source/testcase/feature/{feature}/config.md"}`
+Response: `{"status":"FRESH"}` or `{"status":"STALE","reason":"..."}`
 
-- If `status` is `STALE` → regenerate digest (read all sources, write digest)
-- If `status` is `FRESH` → read only the digest file, skip all individual reads
+- If `STALE` → regenerate via `POST /api/testcase/{feature}/digest`
+- If `FRESH` → read only the digest file
 
 ---
 
-## Digest Generation
+## Digest Format
 
-When STALE, read sources and write to `source/testcase/feature/{feature}/context-digest.md`:
+The server generates the digest with this structure:
 
 ```markdown
 ---
@@ -37,84 +37,49 @@ sources: [list all read files]
 
 ## Config
 strategy: {id or "none"}
-structure: {tree or "empty"}
-components: {list}
 linked_knowledge: {list}
+components: {list}
 
 <!-- [REQUIREMENTS — Generate testcases from this] -->
 
 ## Spec Summary
-{User stories, acceptance criteria as bullets, key requirements}
+{Full spec content}
 
 ## Test Scope
 
 ### TESTABLE (generate testcases for these)
-{List each User Story with its Acceptance Criteria:}
-- US1: {title}
-  - AC1: {criterion}
-  - AC2: {criterion}
-- US2: ...
-
-### OUT OF SCOPE (in knowledge but NOT in spec — do NOT test)
-{List feature-knowledge functions/topics NOT referenced in any spec AC}
-- {Function/topic name}
-- ...
-
-### Scope Hints
-**Happy Case:** {from per-feature rules ## Scope, or "Standard happy paths"}
-**Corner Case:** {from per-feature rules ## Scope, or "Standard edge cases"}
-
-## Structure
-{If non-empty: render tree. Example:}
-- Pop-up
-  - Header
-  - Footer
-
-{If empty: "No structure — AI freestyles."}
-
-**RULE:** Structure defined → MUST follow tree, replace Module with Level 1..N, test ONLY leaf nodes. Empty → freestyle.
+{US/AC list from spec}
 
 ## Strategy Guide
-{If strategy set: strategy name + 1-line summary + path reference}
-{If none: "No strategy — balanced approach"}
-{Agent reads full strategy from source/testcase/strategy/{name}.md if needed}
+{Strategy name + summary, or "No strategy — balanced approach"}
 
 <!-- [FORMAT — How to write testcases] -->
 
 ## Template Columns
-{For each column with writingStyle: name + 1-line hint (condensed from full writingStyle)}
-{Agent reads full writingStyle from per-feature template.json if needed}
-Full order: {comma-separated}
+{Full column rules per column}
+Full column order: {comma-separated}
 
 ## Merged Column Order
-{Structure defined: show merged with Level 1..N replacing Module}
-{Structure empty: same as template order}
+{Column order with Level 1..N if structure defined}
 
 ## Rules Summary
-{Condensed rules: priority map, constraints, column format}
+{Full rules content}
 
 <!-- [REFERENCE — Terminology only, do NOT generate testcases from this] -->
 
 ## Terminology & Context
-{Extract ONLY these from feature knowledge — omit full prose/function details:}
-
-**Glossary:** {term → definition table, only terms referenced in spec}
-**UI Elements:** {button/panel/screen names referenced in spec}
-**User Roles:** {roles and access levels relevant to spec}
-**Preconditions:** {plans, settings, conditions required for testing}
-**Test Accounts:** {if available in knowledge}
+{Full linked knowledge content — only present if knowledge is linked}
 
 ## Component Knowledge
-{Behavior, states, interactions — only for components listed in config}
+{Component behavior and usage}
 ```
 
 ---
 
-## Digest Generation Rules
+## Key Rules
 
-1. Spec Summary MUST appear before any other content section — agent reads requirements FIRST
-2. Test Scope MUST list every spec US/AC under TESTABLE and every knowledge topic not in spec under OUT OF SCOPE
-3. Terminology & Context MUST contain only glossary/UI/roles/preconditions — never full feature prose
-4. All 3 zone comment markers MUST be present in every digest
-
-**CRITICAL:** Preserve ALL acceptance criteria, rule constraints, writingStyle, and terminology. Summarize for brevity but omit nothing testable.
+1. The digest is the **single source of truth** for the write skill — no need to read individual files
+2. Spec Summary contains full spec content — all requirements are here
+3. Rules Summary contains full rules — all generation rules are here
+4. Template Columns contains full column rules — all formatting rules are here
+5. Terminology section is reference only — do NOT generate testcases from it

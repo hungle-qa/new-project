@@ -161,14 +161,69 @@ export const webAppSubTabContent: Record<WebAppSubTab, WebAppRichContent> = {
   full: {
     sections: [
       {
-        title: '🚧 Full Mode — Coming Soon',
-        upcoming: true,
+        title: '🎯 Full Mode Overview',
         bullets: [
-          'Full mode uses a deep digest pipeline for richer testcase coverage.',
+          'Full mode uses a deep digest pipeline — compiles spec, rules, template, strategy, and linked knowledge into one context document.',
           'Includes design system component mapping — links UI components to testcase steps.',
           'Better for complex features with many interactive states, modals, and edge cases.',
-          'Stay tuned — this tab will be updated when Full mode is released.',
+          'Adds global tools: Default Rules, Default Template, and Learn — visible only in Full mode.',
         ],
+      },
+      {
+        title: '🎓 Learn from Testcase',
+        bullets: [
+          'Upload an existing testcase CSV + optional spec to reverse-engineer your team\'s conventions.',
+          'AI analyzes column formatting, case ordering, coverage patterns, and priority rules.',
+          'Review and edit the analysis before saving — nothing is saved without your approval.',
+          'Saves as new named template + new named rule — never overwrites your defaults.',
+          'Use it when onboarding from another tool or extracting patterns from a well-written testcase.',
+        ],
+      },
+      {
+        title: '🔄 Learn Workflow',
+        flow: ['Upload CSV', 'Add Spec (optional)', 'Analyze', 'Review & Edit', 'Name & Save'],
+        bullets: [
+          'Upload CSV — drag-and-drop or browse for a .csv testcase file.',
+          'Add Spec — paste spec text or select an existing feature\'s spec for better analysis.',
+          'Analyze — AI extracts patterns: column rules (formatting, style) and QA rules (ordering, coverage, priority).',
+          'Review & Edit — every column rule and QA rule section is editable. AI reasoning shown for reference.',
+          'Name & Save — choose names for the new template and rule. They appear in Default Template and Default Rules.',
+        ],
+        protip: 'The more rows in your CSV, the more accurate the pattern detection. 10+ rows gives good results. 30+ is ideal.',
+      },
+      {
+        title: '🔧 Analyze — Technical Details',
+        bullets: [
+          'AI Provider: Google Gemini API — the same provider used for spec import. Not Claude/Opus.',
+          'API Key: Your Google AI Studio API key from AI Settings. Stored in browser localStorage only — never persisted on the server.',
+          'Model: Configurable in AI Settings (default: gemini-2.0-flash). Shown next to the Analyze button.',
+          'Flow: CSV uploaded to Express server → parsed with csv-parse → if >30 rows, sampled to 30 representative rows → prompt built with CSV + spec → single Gemini API call → structured JSON returned.',
+          'API key is passed per-request via HTTP header (X-AI-API-Key). The server forwards it to Google and discards it after the request.',
+          'Cost: Single API call per analysis. ~5K-20K input tokens depending on CSV size. Billed at Gemini Flash pricing.',
+          'Privacy: CSV content is sent to Google Gemini for analysis. No data is stored on the server beyond the request lifecycle.',
+          'Rate limiting: Auto-retry with exponential backoff if Gemini returns 429 (rate limited). Up to 2 retries.',
+        ],
+      },
+      {
+        title: '⌨️ Learn via CLI',
+        bullets: [
+          'Run /testcase learn {feature-name} to analyze a feature\'s most recent CSV + spec.',
+          'The agent presents the analysis in the terminal for your review.',
+          'After approval, saves the template and rule to the global folders.',
+          'Requires the feature to have both an imported spec and at least one result CSV.',
+        ],
+        code: '/testcase learn inbox-feb-12',
+      },
+      {
+        title: '📌 Full Mode Tips',
+        bullets: [
+          'Default Rules — manage multiple rule sets in the Default Rules tab. Each feature can select which rule to use.',
+          'Default Template — manage column definitions. Features auto-clone the global template on first access.',
+          'Context Digest — Full mode compiles all context into a digest before generation. If it says "STALE", regenerate it.',
+          'Linked Knowledge — connect feature knowledge documents for richer context in the digest.',
+          'Strategy — choose a testing strategy (e.g., balanced, exhaustive) to guide generation behavior.',
+        ],
+        protip: 'Start with Lite to get a baseline CSV, then switch to Full mode and use Learn to extract the patterns from that CSV into your template and rules.',
       },
     ],
   },
@@ -333,6 +388,7 @@ export const commandsContent: WebAppRichContent = {
         'write-lite {feature} — fast, spec-driven generation. Best for most cases. No digest needed.',
         'write {feature} — full generation with digest pipeline + component mapping. For complex features.',
         'update {feature} — add, edit, or remove rows from an existing testcase CSV.',
+        'learn {feature} — analyze existing CSV + spec to create new template and rules from patterns.',
         'Prerequisites: feature must exist in Testcase Manager + spec must be imported.',
         'Output: timestamped CSV saved to source/testcase/{feature}/result/.',
       ],
@@ -440,7 +496,7 @@ export const claudeDirectoryContent: WebAppRichContent = {
       title: '🧩 Skills (.claude/agents/skills/)',
       bullets: [
         'implementer/: easy.md · medium.md · hard.md — scoped workflows by task complexity.',
-        'testcase-writer/: write.md · write-lite.md · write-lite-v2.md · update.md · update-lite.md · digest-system.md — full, lean, and update pipelines.',
+        'testcase-writer/: write.md · write-lite.md · write-lite-v2.md · update.md · update-lite.md · learn.md · digest-system.md — full, lean, update, and learn pipelines.',
         'import-design/: validate.md · single.md · multi.md · update.md — four import modes.',
         'doc-writer/: review.md · create.md · update.md — documentation lifecycle operations.',
         'agia/: audit.md · update.md · test.md · optimize.md · create-skill.md · system-audit.md — agent improvement operations.',
@@ -453,6 +509,7 @@ export const claudeDirectoryContent: WebAppRichContent = {
         '/start Add export button  →  implementer  →  reads task → MEDIUM → loads medium.md',
         '/testcase write-lite login-page  →  testcase-writer  →  parses "write-lite" → loads write-lite.md',
         '/testcase update login-page  →  testcase-writer  →  parses "update" → loads update.md',
+        '/testcase learn inbox-feb-12  →  testcase-writer  →  parses "learn" → loads learn.md',
         '/import-design-by-image [1 image]  →  import-design  →  detects SINGLE mode → loads single.md',
         '/agent-audit audit testcase-writer  →  agia  →  parses "audit" → loads audit.md',
         '/doc create codebase-summary  →  doc-writer  →  parses "create" → loads create.md',

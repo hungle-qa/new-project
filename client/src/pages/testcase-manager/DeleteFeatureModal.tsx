@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Trash2 } from 'lucide-react'
 
 interface DeleteFeatureModalProps {
@@ -8,6 +9,12 @@ interface DeleteFeatureModalProps {
 }
 
 export function DeleteFeatureModal({ feature, deleting, onDelete, onClose }: DeleteFeatureModalProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />

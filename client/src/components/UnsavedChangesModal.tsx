@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Save, Trash2, X } from 'lucide-react'
 
 interface UnsavedChangesModalProps {
@@ -9,6 +10,13 @@ interface UnsavedChangesModalProps {
 }
 
 export function UnsavedChangesModal({ isOpen, onSave, onDiscard, onCancel, saving }: UnsavedChangesModalProps) {
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onCancel() }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onCancel])
+
   if (!isOpen) return null
 
   return (

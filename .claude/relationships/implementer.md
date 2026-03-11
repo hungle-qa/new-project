@@ -23,15 +23,6 @@
 | `.claude/skills/implementer/hard.md` | Skill — HARD tasks (4+ files) | If hard workflow steps change |
 | `.claude/workflows/development-rules.md` | Shared — tech stack, code standards, patterns | If tech stack or coding patterns change (agent references these) |
 
-## Key Contracts
-
-- Command dispatches only — no classification or workflow logic
-- Agent classifies BEFORE reading skill file
-- MEDIUM/HARD require user approval via AskUserQuestion before coding
-- Agent contains tech context (stack, architecture, patterns) — skills reference it
-- Development-rules.md defines shared standards that agent enforces
-- Model: `sonnet`
-
 ## Module Architecture
 
 Follows the generic vertical slice pattern. See `relationships/app-module.md` for the full template.

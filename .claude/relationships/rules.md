@@ -48,13 +48,3 @@
 | `.claude/commands/rulecode.md` | Capture command for code rules | If rule format or capture flow changes |
 | `.claude/commands/ruleagent.md` | Capture command for agent rules | If rule format or capture flow changes |
 | `.claude/CLAUDE.md` | Relationship index | When any relationship changes |
-
-## Key Contracts
-
-- Both rule indexes live in `.claude/rules/` so they auto-load into every conversation
-- Code-rules triggers on **keywords only** (single gate)
-- Agent-rules triggers on **file path + keywords** (two gates — prevents false positives)
-- Rule files use consistent format: Mistake / Fix / Example
-- Agent-rules add an "Applies to: command / agent / skill" field
-- `/ruleagent` includes deprecation check; `/rulecode` does not (yet)
-- development-rules.md is referenced by the implementer agent for tech context

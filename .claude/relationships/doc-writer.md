@@ -23,18 +23,6 @@
 | `.claude/skills/doc-writer/update.md` | Skill — update existing doc workflow | If update steps change |
 | `docs/*` | Output — generated documentation files | Created/updated by this agent |
 
-## Key Contracts
-
-- Command lists valid operations and doc types — agent validates against them
-- 5 valid doc types: `context`, `project-overview`, `codebase-summary`, `design-guidelines`, `system-architecture`
-- Each doc type maps to `docs/{doc-type}.md` output file
-- Agent owns doc-type→output-file mapping and context source registry (single source of truth)
-- Skills reference agent's `[CONTEXT_SOURCE_REGISTRY]` for sources and `[WRITING_RULES]` for formatting
-- `create` requires doc does NOT exist; `update` requires doc DOES exist
-- `create`/`update` require AskUserQuestion approval before writing files
-- `review` is console-only — no file writes
-- Model: `sonnet`
-
 ## Adding a New Doc Type
 
 1. Add row to doc types table in `commands/doc.md`

@@ -33,11 +33,11 @@ Adapt questions to the specific idea — skip what's obvious, dig into what's am
 
 ## STEP 3: BLIND SPOTS & COUNTER-ARGUMENTS
 
-After receiving answers, list ALL blind spots as a **numbered checklist**. Then ask the user which to address and which to skip.
+After receiving answers, present blind spots **one at a time**. For each blind spot, show it and get the user's decision before moving to the next.
 
-### How to present
+### How to identify blind spots
 
-Analyze the idea against the categories below. For each real risk found, add it as a numbered item with a short explanation (1 sentence). Skip categories that don't apply.
+Analyze the idea against the categories below. For each real risk found, prepare it as a blind spot. Skip categories that don't apply.
 
 **Categories to scan:**
 
@@ -47,23 +47,21 @@ Analyze the idea against the categories below. For each real risk found, add it 
 | **Technical** | Token cost explosion, latency spikes, prompt injection/jailbreak, context window limits, infinite loops in agentic workflows |
 | **Simpler Alternative** | Single prompt vs chain, retrieval vs fine-tuning, smaller/cheaper model, rule-based pre/post-processing, context digest/compression |
 
-### Output format
+### Execution: one-by-one loop
 
-Present the list like this:
+For each blind spot, present it like this:
 
 ```
-Here are the blind spots I see:
-
-1. **[Category] Short title** — 1-sentence explanation
-2. **[Category] Short title** — 1-sentence explanation
-3. ...
+**Blind spot [N]:** **[Category] Short title** — 1-sentence explanation
 ```
 
-Then use **AskUserQuestion** to ask:
+Then immediately use **AskUserQuestion** to ask:
 
-> Which blind spots should I address in the final plan? (list numbers, or "all", or "skip all")
+> Address this in the final plan, or skip? (address / skip)
 
-**STOP — wait for user response before proceeding to Step 4.**
+**STOP — wait for user decision before showing the next blind spot.**
+
+Repeat until all blind spots have been presented. Track which ones the user chose to address.
 
 ---
 

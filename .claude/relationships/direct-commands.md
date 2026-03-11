@@ -44,10 +44,3 @@
 ```
 
 **Related files:** `.claude/rules/agent-rules.md` (index), `.claude/agent-rules/*.md` (categories)
-
-## Key Contracts
-
-- Direct commands contain full logic — no agent delegation
-- /rulecode and /ruleagent share the same pattern but target different rule systems
-- /ruleagent adds a deprecation check step that /rulecode does not have
-- These commands should stay simple — if logic grows complex, consider extracting to an agent

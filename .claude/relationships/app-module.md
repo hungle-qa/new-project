@@ -22,14 +22,6 @@ source/{module}/                              # Markdown data files
 | `client/src/pages/{module}/*` | Page — main page component | When page layout or features change |
 | `client/src/components/{module}/*` | Components — module-specific UI | When UI patterns change |
 
-## Key Contracts
-
-- **No cross-module imports** — modules communicate via API only
-- **Service uses file-based storage** — gray-matter for frontmatter parsing
-- **Module-specific components** live in `components/{module}/`, not shared folders
-- **New module = full slice** — create service + route + page + components subfolder
-- Follows patterns defined in `agents/implementer.md` and `workflows/development-rules.md`
-
 ## Creating a New Module
 
 1. Create `source/{module}/` directory for data files

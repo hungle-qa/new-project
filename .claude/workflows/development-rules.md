@@ -16,7 +16,6 @@
 
 | Type | Location | Naming |
 |------|----------|--------|
-| Design System Docs | `source/design-system/{name}.md` | PascalCase |
 | Pages | `client/src/pages/{name}.tsx` | PascalCase |
 | Components | `client/src/components/{name}.tsx` | PascalCase |
 | Hooks | `client/src/hooks/use{Name}.ts` | camelCase |
@@ -29,19 +28,19 @@
 ### Express API Routes (File-based)
 
 ```typescript
-// server/routes/design-system.ts
+// server/routes/{module}.ts
 import { Router } from 'express'
-import { DesignSystemService } from '../services/DesignSystemService'
+import { {Name}Service } from '../services/{Name}Service'
 
 const router = Router()
 
 router.get('/', async (req, res) => {
-  const items = await DesignSystemService.getAll()
+  const items = await {Name}Service.getAll()
   res.json(items)
 })
 
 router.post('/', async (req, res) => {
-  const item = await DesignSystemService.create(req.body)
+  const item = await {Name}Service.create(req.body)
   res.json(item)
 })
 
@@ -51,13 +50,13 @@ export default router
 ### File-based Service
 
 ```typescript
-// server/services/DesignSystemService.ts
+// server/services/{Name}Service.ts
 import fs from 'fs/promises'
 import path from 'path'
 
-const SOURCE_DIR = 'source/design-system'
+const SOURCE_DIR = 'source/{module}'
 
-export class DesignSystemService {
+export class {Name}Service {
   static async getAll() {
     const files = await fs.readdir(SOURCE_DIR)
     return files.filter(f => f.endsWith('.md'))

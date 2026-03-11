@@ -33,25 +33,37 @@ Adapt questions to the specific idea — skip what's obvious, dig into what's am
 
 ## STEP 3: BLIND SPOTS & COUNTER-ARGUMENTS
 
-After receiving answers, challenge the idea:
+After receiving answers, list ALL blind spots as a **numbered checklist**. Then ask the user which to address and which to skip.
 
-### Product Blind Spots
-- Over-reliance on AI where simple rules/regex suffice
-- Hallucination risks — what happens when the model is wrong?
-- User trust — how do users verify AI output?
+### How to present
 
-### Technical Risks
-- Token cost explosion (long contexts, unnecessary chains, redundant retrievals)
-- Latency spikes (sequential API calls, large embeddings, cold starts)
-- Prompt injection / jailbreak vulnerabilities
-- Context window limits — what happens when data exceeds the window?
+Analyze the idea against the categories below. For each real risk found, add it as a numbered item with a short explanation (1 sentence). Skip categories that don't apply.
 
-### The "Better Way"
-Propose a simpler alternative:
-- Single prompt vs multi-step chain
-- Retrieval vs fine-tuning — which fits better?
-- Smaller/cheaper model vs frontier model — where's the quality threshold?
-- Rule-based pre/post-processing to reduce AI dependency
+**Categories to scan:**
+
+| Category | Look for |
+|----------|----------|
+| **Product** | Over-reliance on AI where rules/regex suffice, hallucination risks, user trust/verification, missing human-in-the-loop at critical checkpoints |
+| **Technical** | Token cost explosion, latency spikes, prompt injection/jailbreak, context window limits, infinite loops in agentic workflows |
+| **Simpler Alternative** | Single prompt vs chain, retrieval vs fine-tuning, smaller/cheaper model, rule-based pre/post-processing, context digest/compression |
+
+### Output format
+
+Present the list like this:
+
+```
+Here are the blind spots I see:
+
+1. **[Category] Short title** — 1-sentence explanation
+2. **[Category] Short title** — 1-sentence explanation
+3. ...
+```
+
+Then use **AskUserQuestion** to ask:
+
+> Which blind spots should I address in the final plan? (list numbers, or "all", or "skip all")
+
+**STOP — wait for user response before proceeding to Step 4.**
 
 ---
 
@@ -71,10 +83,11 @@ Pipeline diagram description: ingestion → processing → retrieval → generat
 | **Cut** | (explicitly out of scope) |
 
 ### Tech Stack Recommendation
-- **Models:** Compare options (GPT-4o vs Claude Sonnet 4.6 vs local models) with trade-offs
+- **Models:** Default to Claude model family (Opus 4.6, Sonnet 4.6, Haiku 4.5) — recommend tier based on task complexity and cost
 - **Frameworks:** LangChain, CrewAI, Claude Agent SDK, or vanilla API calls — justify choice
 - **Vector DBs:** Pinecone, Chroma, pgvector — if RAG is involved
 - **Infra:** Hosting, caching, rate limiting strategy
+- **Context Caching:** Use prompt caching (e.g., Claude's cache_control) for repeated system prompts and static context — reduces latency and cost on high-frequency calls
 
 ### Cost Estimation
 | Component | Est. Monthly Cost | Notes |
@@ -82,6 +95,15 @@ Pipeline diagram description: ingestion → processing → retrieval → generat
 | Model API calls | $ | tokens/request x requests/day |
 | Embedding/retrieval | $ | vector DB hosting + embedding calls |
 | Infrastructure | $ | compute, storage, CDN |
+
+### Evaluation Strategy
+| Metric | What to Measure | Method |
+|--------|----------------|--------|
+| **Speed** | End-to-end latency per request, time-to-first-token | Benchmark with realistic payloads; set p95 latency targets |
+| **Accuracy** | Correctness of AI output vs ground truth | Golden dataset + automated scoring (exact match, semantic similarity, LLM-as-judge) |
+| **Cost-per-query** | Tokens consumed per successful output | Log token usage; compare across model tiers |
+
+Run eval before and after each pipeline change. Automate with CI where possible.
 
 ### Actionable Next Steps
 Numbered implementation guide — what to build first, second, third. Each step should be completable in 1-3 days.

@@ -1,6 +1,6 @@
 ---
 name: implementer
-description: Use this agent to generate ReactJS + ExpressJS code following project patterns. Uses file-based storage, no database.\n\n<example>\nuser: "Implement the design system viewer"\nassistant: "I'll use implementer to create the service, route, and React components"\n</example>\n\n<example>\nuser: "Create the demo page preview"\nassistant: "Let me use implementer to generate the Express endpoint and React UI"\n</example>\n\nProactively use when:\n- Plan is approved and ready for implementation\n- Need to update existing code
+description: Use this agent to generate ReactJS + ExpressJS code following project patterns. Uses file-based storage, no database.\n\n<example>\nuser: "Implement the feature viewer"\nassistant: "I'll use implementer to create the service, route, and React components"\n</example>\n\n<example>\nuser: "Create the demo page preview"\nassistant: "Let me use implementer to generate the Express endpoint and React UI"\n</example>\n\nProactively use when:\n- Plan is approved and ready for implementation\n- Need to update existing code
 tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
@@ -45,9 +45,9 @@ After classification, read and execute the matching skill file:
 
 | Level | Skill File |
 |-------|------------|
-| EASY | `.claude/agents/skills/implementer/easy.md` |
-| MEDIUM | `.claude/agents/skills/implementer/medium.md` |
-| HARD | `.claude/agents/skills/implementer/hard.md` |
+| EASY | `.claude/skills/implementer/easy.md` |
+| MEDIUM | `.claude/skills/implementer/medium.md` |
+| HARD | `.claude/skills/implementer/hard.md` |
 
 **Execution:** Read skill file → follow its steps → report results.
 
@@ -66,12 +66,12 @@ After classification, read and execute the matching skill file:
 
 ### File Targets
 
-| Feature Area | Files |
-|--------------|-------|
-| Design System | `client/src/pages/DesignSystemPage.tsx`, `server/src/routes/design-system.ts` |
-| Feature Knowledge | `client/src/pages/FeatureKnowledgePage.tsx`, `server/src/routes/feature-knowledge.ts` |
-| Testcase Manager | `client/src/pages/TestcaseManagerPage.tsx`, `server/src/routes/testcase.ts` |
-| Import Features | `client/src/components/Import*.tsx`, `server/src/services/*Service.ts` |
+| Layer | Pattern |
+|-------|---------|
+| Page | `client/src/pages/{module}/` |
+| Route | `server/src/routes/{module}.ts` |
+| Service | `server/src/services/{Name}Service.ts` |
+| Components | `client/src/components/{module}/` |
 
 ---
 
@@ -123,11 +123,13 @@ If called without file paths:
 
 **Module = Domain Feature.** Each module owns its full vertical slice: data → service → route → page → components.
 
-| Module | Service | Route | Page | Components |
-|--------|---------|-------|------|------------|
-| Design System | DesignSystemService | design-system.ts | DesignSystemPage | components/design-system/ |
-| Feature Knowledge | FeatureKnowledgeService | feature-knowledge.ts | FeatureKnowledgePage | components/feature-knowledge/ |
-| Testcase | TestcaseService | testcase.ts | TestcaseManagerPage | components/testcase/ |
+| Layer | Pattern |
+|-------|---------|
+| Data | `source/{module}/` |
+| Service | `server/src/services/{Name}Service.ts` |
+| Route | `server/src/routes/{module}.ts` |
+| Page | `client/src/pages/{module}/` |
+| Components | `client/src/components/{module}/` |
 
 **Rules:**
 - **No cross-module imports** — modules communicate via API only
@@ -139,22 +141,17 @@ If called without file paths:
 
 ```
 source/
-├── design-system/      # [MODULE] Component docs (.md)
-├── feature-knowledge/  # [MODULE] Feature knowledge items
-└── testcase/           # [MODULE] QA testcase data
+└── {module}/           # Markdown data files (one folder per module)
 
-client/
-├── src/
-│   ├── components/
-│   │   ├── design-system/    # [MODULE] Design System components
-│   │   ├── feature-knowledge/ # [MODULE] Feature Knowledge components
-│   │   ├── testcase/          # [MODULE] Testcase components
-│   │   └── *.tsx              # Shared components only
-│   ├── pages/          # Page components (one per module)
-│   ├── hooks/          # Shared hooks only (generic)
-│   └── utils/          # Shared helpers only (generic)
+client/src/
+├── components/
+│   ├── {module}/       # Module-specific components (one folder per module)
+│   └── *.tsx           # Shared components only
+├── pages/              # Page components (one per module)
+├── hooks/              # Shared hooks only (generic)
+└── utils/              # Shared helpers only (generic)
 
-server/
+server/src/
 ├── routes/             # Express routes (one per module)
 ├── services/           # File-based services (one per module)
 └── utils/              # Shared server utilities

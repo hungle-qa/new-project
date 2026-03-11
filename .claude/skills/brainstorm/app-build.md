@@ -33,23 +33,37 @@ Adapt questions to the specific idea — skip what's obvious, dig into what's am
 
 ## STEP 3: BLIND SPOTS & COUNTER-ARGUMENTS
 
-After receiving answers, challenge the idea:
+After receiving answers, list ALL blind spots as a **numbered checklist**. Then ask the user which to address and which to skip.
 
-### Product Blind Spots
-- Feature creep risks — what can be cut?
-- UX friction points — where will users drop off?
-- Market fit — does this solve a real problem or a perceived one?
+### How to present
 
-### Technical Risks
-- Scalability bottlenecks (N+1 queries, unbounded lists, missing indexes)
-- Security vulnerabilities (auth gaps, data exposure, injection surfaces)
-- Data modeling issues (premature normalization, missing audit trails)
+Analyze the idea against the categories below. For each real risk found, add it as a numbered item with a short explanation (1 sentence). Skip categories that don't apply.
 
-### The "Better Way"
-Propose a simpler MVP alternative:
-- Fewer screens, simpler data model
-- Off-the-shelf components over custom builds
-- Managed services over self-hosted infrastructure
+**Categories to scan:**
+
+| Category | Look for |
+|----------|----------|
+| **Product** | Feature creep, UX friction/drop-off points, market fit doubts |
+| **Technical** | Scalability bottlenecks (N+1, unbounded lists, missing indexes), security gaps (auth, injection), data modeling issues |
+| **Simpler Alternative** | Fewer screens, off-the-shelf components, managed services over custom |
+
+### Output format
+
+Present the list like this:
+
+```
+Here are the blind spots I see:
+
+1. **[Category] Short title** — 1-sentence explanation
+2. **[Category] Short title** — 1-sentence explanation
+3. ...
+```
+
+Then use **AskUserQuestion** to ask:
+
+> Which blind spots should I address in the final plan? (list numbers, or "all", or "skip all")
+
+**STOP — wait for user response before proceeding to Step 4.**
 
 ---
 

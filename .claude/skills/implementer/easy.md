@@ -7,9 +7,10 @@
 
 ## Workflow
 
-1. **Read** the target file
-2. **Edit** to apply the fix
-3. **Report** (see below)
+1. **Code Rules** — Read `.claude/rules/code-rules.md`, match task keywords, read matched rule files, display summary (see agent's `[CODE_RULES_CHECK]`)
+2. **Read** the target file
+3. **Edit** to apply the fix (respect matched code rules)
+4. **Report** (see below)
 
 **Skip:** Plan, wireframe, approval, verification — change is trivial.
 

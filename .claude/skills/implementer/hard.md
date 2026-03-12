@@ -7,8 +7,9 @@
 
 ## Workflow
 
-1. **Deep Scan** — Grep/Glob/Read to understand architecture, related modules, patterns. Justify each read beyond 5 files
-2. **Full Plan** — Detailed step-by-step:
+1. **Code Rules** — Read `.claude/rules/code-rules.md`, match task keywords, read matched rule files, display summary (see agent's `[CODE_RULES_CHECK]`)
+2. **Deep Scan** — Grep/Glob/Read to understand architecture, related modules, patterns. Justify each read beyond 5 files
+3. **Full Plan** — Detailed step-by-step:
    ```
    ## Implementation Plan
 
@@ -22,9 +23,9 @@
    1. {step}
    ```
 3. **Wireframe** — Full wireframe with component structure, state, props (required for UI)
-4. **Approve** — Use AskUserQuestion: "Plan and wireframe above. Proceed?"
-5. **Code in phases** — Backend first, then frontend. Verify after each phase
-6. **Full Verify** — `cd server && npx tsc --noEmit` + `cd client && npx tsc --noEmit`
+5. **Approve** — Use AskUserQuestion: "Plan and wireframe above. Proceed?"
+6. **Code in phases** — Backend first, then frontend. Respect matched code rules. Verify after each phase
+7. **Full Verify** — `cd server && npx tsc --noEmit` + `cd client && npx tsc --noEmit`
 
 ## Guardrails
 

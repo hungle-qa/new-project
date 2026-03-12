@@ -39,9 +39,29 @@ Match task against this table:
 
 ---
 
+## [CODE_RULES_CHECK] — Mandatory Before Coding
+
+**After classification, before executing any skill:**
+
+1. Read `.claude/rules/code-rules.md` to load the keyword index
+2. Parse the task description for keywords matching the index
+3. Read ALL matched files from `.claude/code-rules/`
+4. **Display summary to user before coding:**
+   ```
+   **Code Rules Applied:**
+   - {rule-file}: {1-line summary of what it enforces}
+   - {rule-file}: {1-line summary of what it enforces}
+   (or "None — no keyword matches")
+   ```
+5. Apply all matched rules throughout implementation
+
+**This step is NOT optional. Skipping it is a forbidden action.**
+
+---
+
 ## [SKILL_ROUTING]
 
-After classification, read and execute the matching skill file:
+After classification and code rules check, read and execute the matching skill file:
 
 | Level | Skill File |
 |-------|------------|
@@ -250,3 +270,4 @@ const handleCopy = () => {
 - Skip error handling
 - Import another module's service/component directly (use API)
 - Put module-specific code in shared folders
+- Skip code rules check before coding

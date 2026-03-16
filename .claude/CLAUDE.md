@@ -25,11 +25,7 @@
 | `.claude/agent-rules/*` | `relationships/rules.md` |
 | `.claude/workflows/*` | `relationships/rules.md` |
 | `.claude/CLAUDE.md` | `relationships/rules.md` |
-| `source/{module}/**` | `relationships/app-module.md` |
-| `server/src/services/*Service.ts` | `relationships/app-module.md` |
-| `server/src/routes/*.ts` | `relationships/app-module.md` |
-| `client/src/pages/*/` | `relationships/app-module.md` |
-| `client/src/components/{module}/*` | `relationships/app-module.md` |
+| app source files (any module) | `relationships/app-module.md` — **discover actual structure first, do not assume paths** |
 
 ## Update Rules
 

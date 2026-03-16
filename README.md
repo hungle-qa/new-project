@@ -1,22 +1,72 @@
 # new-project
 
-A Claude Code starter kit that gives you a ready-made agent workflow for building full-stack web applications. Clone it, open it in Claude Code, and use the built-in commands to go from idea to shipped product.
+A Claude Code configuration toolkit. It gives you a ready-made agent workflow for planning, building, documenting, and shipping full-stack web applications — and a script to copy that setup into any project you already have.
 
 ---
 
 ## What this is
 
-This repo is a pre-configured `.claude/` folder — no application code included. It provides **agents, commands, and a knowledge base** that guide Claude through planning, building, documenting, and shipping your project.
+This repo contains a pre-configured `.claude/` folder — no application code included. It provides **agents, commands, skills, and a knowledge base** that guide Claude through the full development cycle.
 
-You bring the idea. The agents handle the workflow.
+You bring the project. The agents handle the workflow.
+
+---
+
+## How to integrate into another project
+
+Use `integrate.sh` to copy the `.claude/` folder from this repo into any target project on your machine.
+
+### Run directly
+
+```bash
+# Pass the target path as an argument
+./integrate.sh ~/projects/my-app
+
+# Or run it with no arguments — it will prompt you
+./integrate.sh
+```
+
+### Run via npm
+
+```bash
+npm run integrate
+```
+
+You can also double-click `integrate.sh` in macOS Finder to run it interactively.
+
+### What it does, step by step
+
+1. Asks for a target project path (or reads it from the argument you passed)
+2. Checks that the path exists
+3. Creates a timestamped backup of any existing `.claude/` folder — for example, `.claude.bak.20260316_143022`
+4. Walks every file in the source `.claude/` and copies it to the target
+5. If a file already exists in the target, it asks: **overwrite? (y/n)**
+6. Prints a summary: how many files were copied and how many were skipped
+
+---
+
+## Conflict handling
+
+When a file already exists at the destination, the script pauses and asks you what to do:
+
+```
+Conflict: agents/implementer.md — overwrite? (y/n):
+```
+
+- Enter `y` to replace the file in the target project
+- Enter `n` to keep the existing file
+
+The backup created in step 3 means you can always restore the original state.
 
 ---
 
 ## Commands
 
+Once integrated, these commands are available in Claude Code:
+
 | Command | What it does |
 |---------|-------------|
-| `/brainstorm {idea}` | Strategic product session — Claude acts as a technical co-founder, stress-tests your plan, and outputs a structured spec |
+| `/brainstorm {idea}` | Strategic product session — stress-tests your plan and outputs a structured spec |
 | `/start {feature}` | Builds or enhances features — auto-classifies task complexity and follows the right workflow |
 | `/doc {operation} {type}` | Creates, reviews, or updates project documentation |
 | `/ship [message]` | Commits all changes, merges to main, and returns to your branch |
@@ -51,36 +101,14 @@ Three agents are included:
 
 The `.claude/` folder includes two mistake-driven knowledge bases:
 
-- **code-rules/** — coding patterns (React state, TypeScript types, file I/O, Tailwind, etc.)
+- **code-rules/** — coding patterns (React state, TypeScript types, file I/O, Tailwind, CSV parsing, etc.)
 - **agent-rules/** — agent-authoring patterns (separation of concerns, prompt engineering, workflow execution, etc.)
 
-Claude reads matching rules **before** writing any code or editing any agent file. When you hit a new mistake, `/rulecode` or `/ruleagent` saves it so it only happens once.
+Claude reads matching rules **before** writing any code or editing any agent file. When you hit a new mistake, `/rulecode` or `/ruleagent` saves it permanently.
 
 ---
 
-## Getting started
-
-1. Clone this repo
-2. Open the folder in Claude Code
-3. `/brainstorm {your idea}` — plan your first feature
-4. `/start {feature}` — build it
-5. `/doc create project-overview` — generate docs
-6. `/ship` — commit and merge
-
----
-
-## Tech stack (when building)
-
-| Layer | Technology |
-|-------|------------|
-| Frontend | React + TypeScript |
-| Backend | Express + TypeScript |
-| Styling | Tailwind CSS + shadcn/ui |
-| Storage | File-based markdown (no database) |
-
----
-
-## Project structure
+## What gets integrated
 
 ```
 .claude/
@@ -94,3 +122,14 @@ Claude reads matching rules **before** writing any code or editing any agent fil
 ├── rules/                  # Rule indexes
 └── workflows/              # Development standards
 ```
+
+---
+
+## Tech stack (when building)
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React + TypeScript |
+| Backend | Express + TypeScript |
+| Styling | Tailwind CSS + shadcn/ui |
+| Storage | File-based markdown (no database) |

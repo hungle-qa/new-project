@@ -1,0 +1,11 @@
+{
+  "name": "new-project",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "electron electron/main.js",
+    "integrate": "bash integrate.command"
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}

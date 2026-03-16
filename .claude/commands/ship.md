@@ -24,25 +24,23 @@ CURRENT_BRANCH=$(git branch --show-current)
   - Generate a concise commit message from the diff (if `$ARGUMENTS` is provided, use it as the message).
   - Commit following the Git Safety Protocol (use HEREDOC format, include Co-Authored-By trailer).
 
-### Step 3 — Push current branch
+### Step 3 — Push & merge
+
+**If `$CURRENT_BRANCH` is `main`:**
+- `git push origin main`
+- Skip Steps 4 and 5.
+
+**If `$CURRENT_BRANCH` is not `main`:**
 ```
 git push origin $CURRENT_BRANCH
-```
-
-### Step 4 — Merge into main
-```
 git checkout main
 git pull origin main
 git merge $CURRENT_BRANCH --no-ff
 git push origin main
-```
-
-### Step 5 — Switch back
-```
 git checkout $CURRENT_BRANCH
 ```
 
-### Step 6 — Report
+### Step 4 — Report
 Output a short summary:
 ```
 Shipped: {CURRENT_BRANCH} → main
@@ -57,7 +55,6 @@ Status: back on {CURRENT_BRANCH}
 - NEVER force-push to main.
 - If merge has conflicts → stop, report conflicts to user, do NOT auto-resolve.
 - If push is rejected → stop and report, do NOT force.
-- Confirm with user before proceeding if on `main` already (nothing to merge).
 
 ---
 

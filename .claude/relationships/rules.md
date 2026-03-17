@@ -9,14 +9,15 @@
 ├── rules/                          # Auto-loaded indexes (in every conversation)
 │   ├── code-rules.md               # Index → .claude/code-rules/*.md
 │   └── agent-rules.md              # Index → .claude/agent-rules/*.md
-├── code-rules/                     # Code mistake categories (7 files)
+├── code-rules/                     # Code mistake categories (8 files)
 │   ├── csv-parsing.md
 │   ├── react-state.md
 │   ├── file-io.md
 │   ├── typescript-types.md
 │   ├── tailwind-styling.md
 │   ├── ui-keyboard.md
-│   └── node-eval.md
+│   ├── node-eval.md
+│   └── file-size.md
 ├── agent-rules/                    # Agent mistake categories (5 files)
 │   ├── separation-of-concerns.md
 │   ├── workflow-execution.md

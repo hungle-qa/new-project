@@ -13,6 +13,7 @@
 | tailwind-styling.md | tailwind, className, shadcn, dark mode, responsive, breakpoint, scroll, overflow, scrollbar, layout shift | Class ordering, shadcn/ui overrides, scrollbar layout shift |
 | ui-keyboard.md | popup, modal, dialog, keyboard, shortcut, hotkey, ESC, Ctrl+Enter | Keyboard shortcuts for popups/modals/dialogs |
 | node-eval.md | node -e, node eval, inline script, zsh, histexpand | Never use node -e; write temp .js file instead |
+| file-size.md | lines, size, length, split, large file, 300 | Keep .ts/.tsx files under 300 lines |
 
 ## How to use
 

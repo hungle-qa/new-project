@@ -3,8 +3,18 @@ description: Strategic product brainstorming with devil's advocate analysis
 argument-hint: <idea or request>
 ---
 
-1. Read `.claude/agents/brainstorm.md` — this is the single source of truth
-2. Follow every instruction in the agent file exactly as written
-3. The agent will classify the domain and tell you which skill file to read — do NOT read skill files before classification
+**Purpose:** Transform raw ideas into scalable, cost-effective solutions. Combines technical excellence with business intuition through a structured 4-step flow.
+
+**Agent:** Uses `brainstorm` agent for all operations.
+
+---
+
+## Workflow
+
+**Reference:** `.claude/agents/brainstorm.md`
+
+Read agent file first. Agent classifies domain (App Build vs AI Workflow) and routes to matching skill.
+
+---
 
 Task: $ARGUMENTS

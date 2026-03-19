@@ -147,3 +147,37 @@ button.action { margin-top: 16px; }
 }
 
 .status-bar.error { color: #f38ba8; }
+
+.search-row {
+  margin-bottom: 16px;
+}
+
+.search-row input {
+  width: 100%;
+}
+
+.file-list li.hidden-filter { display: none; }
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #313244;
+  padding-bottom: 0;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: #6c7086;
+  padding: 8px 18px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.tab-btn:hover { background: transparent; color: #cdd6f4; }
+.tab-btn.active { color: #cba6f7; border-bottom-color: #cba6f7; }

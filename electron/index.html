@@ -10,39 +10,92 @@
   <div class="container">
     <h1>.claude Integrator</h1>
 
-    <section class="path-section">
-      <label for="targetPath">Target project folder</label>
-      <div class="path-row">
-        <input type="text" id="targetPath" placeholder="/path/to/your/project" />
-        <button id="browseBtn">Browse…</button>
-      </div>
-      <button id="scanBtn" class="primary">Scan</button>
-    </section>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="push">Push →</button>
+      <button class="tab-btn" data-tab="pull">← Pull</button>
+    </div>
 
-    <section id="resultsSection" class="hidden">
-      <div id="newFilesSection">
-        <h2>New files <span id="newCount" class="badge">0</span></h2>
-        <ul id="newFilesList" class="file-list readonly"></ul>
-      </div>
-
-      <div id="conflictsSection">
-        <h2>Conflicts <span id="conflictCount" class="badge warn">0</span></h2>
-        <p class="hint">Checked = overwrite existing file. Uncheck to skip.</p>
-        <div class="bulk-actions">
-          <button id="checkAllBtn" class="small">Check all</button>
-          <button id="uncheckAllBtn" class="small">Uncheck all</button>
+    <!-- PUSH TAB -->
+    <div id="tab-push">
+      <section class="path-section">
+        <label for="targetPath">Target project folder</label>
+        <div class="path-row">
+          <input type="text" id="targetPath" placeholder="/path/to/your/project" />
+          <button id="browseBtn">Browse…</button>
         </div>
-        <ul id="conflictsList" class="file-list"></ul>
-      </div>
+        <button id="scanBtn" class="primary">Scan</button>
+      </section>
 
-      <button id="integrateBtn" class="primary action">Confirm &amp; Integrate</button>
-    </section>
+      <section id="resultsSection" class="hidden">
+        <div id="newFilesSection">
+          <h2>New files <span id="newCount" class="badge">0</span></h2>
+          <ul id="newFilesList" class="file-list readonly"></ul>
+        </div>
 
-    <section id="summarySection" class="hidden">
-      <h2>Done</h2>
-      <div id="summaryContent" class="summary-box"></div>
-      <button id="resetBtn" class="small">Start over</button>
-    </section>
+        <div id="conflictsSection">
+          <h2>Conflicts <span id="conflictCount" class="badge warn">0</span></h2>
+          <p class="hint">Checked = overwrite existing file. Uncheck to skip.</p>
+          <div class="bulk-actions">
+            <button id="checkAllBtn" class="small">Check all</button>
+            <button id="uncheckAllBtn" class="small">Uncheck all</button>
+          </div>
+          <ul id="conflictsList" class="file-list"></ul>
+        </div>
+
+        <button id="integrateBtn" class="primary action">Confirm &amp; Integrate</button>
+      </section>
+
+      <section id="summarySection" class="hidden">
+        <h2>Done</h2>
+        <div id="summaryContent" class="summary-box"></div>
+        <button id="resetBtn" class="small">Start over</button>
+      </section>
+    </div>
+
+    <!-- PULL TAB -->
+    <div id="tab-pull" class="hidden">
+      <section class="path-section">
+        <label for="sourcePath">Source project folder (pull from)</label>
+        <div class="path-row">
+          <input type="text" id="sourcePath" placeholder="/path/to/source/project" />
+          <button id="pullBrowseBtn">Browse…</button>
+        </div>
+        <button id="pullScanBtn" class="primary">Scan</button>
+      </section>
+
+      <section id="pullResultsSection" class="hidden">
+        <div class="search-row">
+          <input type="text" id="pullSearchInput" placeholder="Filter files…" />
+        </div>
+        <div id="pullAddsSection">
+          <h2>New files <span id="pullAddCount" class="badge">0</span></h2>
+          <p class="hint">Checked = include in pull.</p>
+          <div class="bulk-actions">
+            <button id="pullCheckAllAddsBtn" class="small">Check all</button>
+            <button id="pullUncheckAllAddsBtn" class="small">Uncheck all</button>
+          </div>
+          <ul id="pullAddsList" class="file-list"></ul>
+        </div>
+
+        <div id="pullUpdatesSection">
+          <h2>Updates <span id="pullUpdateCount" class="badge warn">0</span></h2>
+          <p class="hint">Checked = overwrite existing file.</p>
+          <div class="bulk-actions">
+            <button id="pullCheckAllUpdatesBtn" class="small">Check all</button>
+            <button id="pullUncheckAllUpdatesBtn" class="small">Uncheck all</button>
+          </div>
+          <ul id="pullUpdatesList" class="file-list"></ul>
+        </div>
+
+        <button id="pullApplyBtn" class="primary action">Apply Pull</button>
+      </section>
+
+      <section id="pullSummarySection" class="hidden">
+        <h2>Done</h2>
+        <div id="pullSummaryContent" class="summary-box"></div>
+        <button id="pullResetBtn" class="small">Start over</button>
+      </section>
+    </div>
 
     <div id="statusBar" class="status-bar"></div>
   </div>

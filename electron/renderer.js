@@ -1,3 +1,15 @@
+// --- Tab switching ---
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+    btn.classList.add('active')
+    document.getElementById('tab-push').classList.toggle('hidden', btn.dataset.tab !== 'push')
+    document.getElementById('tab-pull').classList.toggle('hidden', btn.dataset.tab !== 'pull')
+    statusBar.textContent = ''
+  })
+})
+
+// --- Push tab ---
 const targetPathInput = document.getElementById('targetPath')
 const browseBtn = document.getElementById('browseBtn')
 const scanBtn = document.getElementById('scanBtn')
@@ -105,5 +117,147 @@ resetBtn.addEventListener('click', () => {
   summarySection.classList.add('hidden')
   resultsSection.classList.add('hidden')
   targetPathInput.value = ''
+  setStatus('')
+})
+
+// --- Pull tab ---
+const sourcePathInput = document.getElementById('sourcePath')
+const pullBrowseBtn = document.getElementById('pullBrowseBtn')
+const pullScanBtn = document.getElementById('pullScanBtn')
+const pullResultsSection = document.getElementById('pullResultsSection')
+const pullAddsSection = document.getElementById('pullAddsSection')
+const pullUpdatesSection = document.getElementById('pullUpdatesSection')
+const pullAddCount = document.getElementById('pullAddCount')
+const pullUpdateCount = document.getElementById('pullUpdateCount')
+const pullAddsList = document.getElementById('pullAddsList')
+const pullUpdatesList = document.getElementById('pullUpdatesList')
+const pullApplyBtn = document.getElementById('pullApplyBtn')
+const pullSummarySection = document.getElementById('pullSummarySection')
+const pullSummaryContent = document.getElementById('pullSummaryContent')
+const pullResetBtn = document.getElementById('pullResetBtn')
+
+function makeCheckList(list, files) {
+  list.innerHTML = ''
+  files.forEach(f => {
+    const li = document.createElement('li')
+    const label = document.createElement('label')
+    const cb = document.createElement('input')
+    cb.type = 'checkbox'
+    cb.checked = true
+    cb.dataset.file = f
+    label.appendChild(cb)
+    label.append(' ' + f)
+    li.appendChild(label)
+    list.appendChild(li)
+  })
+}
+
+const pullSearchInput = document.getElementById('pullSearchInput')
+
+pullSearchInput.addEventListener('input', () => {
+  const q = pullSearchInput.value.toLowerCase()
+  ;[pullAddsList, pullUpdatesList].forEach(list => {
+    list.querySelectorAll('li').forEach(li => {
+      const text = li.textContent.toLowerCase()
+      li.classList.toggle('hidden-filter', q.length > 0 && !text.includes(q))
+    })
+  })
+})
+
+document.getElementById('pullCheckAllAddsBtn').addEventListener('click', () => {
+  pullAddsList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = true)
+})
+document.getElementById('pullUncheckAllAddsBtn').addEventListener('click', () => {
+  pullAddsList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false)
+})
+document.getElementById('pullCheckAllUpdatesBtn').addEventListener('click', () => {
+  pullUpdatesList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = true)
+})
+document.getElementById('pullUncheckAllUpdatesBtn').addEventListener('click', () => {
+  pullUpdatesList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false)
+})
+
+pullBrowseBtn.addEventListener('click', async () => {
+  const selected = await window.integrator.browse()
+  if (selected) sourcePathInput.value = selected
+})
+
+pullScanBtn.addEventListener('click', async () => {
+  const sourcePath = sourcePathInput.value.trim()
+  if (!sourcePath) { setStatus('Enter a source path first.', true); return }
+
+  setStatus('Scanning…')
+  pullScanBtn.disabled = true
+
+  let result
+  try {
+    result = await window.integrator.pullScan(sourcePath)
+  } catch (err) {
+    pullScanBtn.disabled = false
+    setStatus(err.message, true)
+    return
+  }
+  pullScanBtn.disabled = false
+
+  if (result.error) { setStatus(result.error, true); return }
+
+  makeCheckList(pullAddsList, result.adds)
+  pullAddCount.textContent = result.adds.length
+  pullAddsSection.style.display = result.adds.length ? '' : 'none'
+
+  makeCheckList(pullUpdatesList, result.updates)
+  pullUpdateCount.textContent = result.updates.length
+  pullUpdatesSection.style.display = result.updates.length ? '' : 'none'
+
+  if (result.adds.length === 0 && result.updates.length === 0) {
+    setStatus('Already up to date.')
+    pullResultsSection.classList.add('hidden')
+    return
+  }
+
+  pullResultsSection.classList.remove('hidden')
+  pullSummarySection.classList.add('hidden')
+  setStatus(`Found ${result.adds.length} new, ${result.updates.length} update(s).`)
+})
+
+pullApplyBtn.addEventListener('click', async () => {
+  const sourcePath = sourcePathInput.value.trim()
+  const selectedFiles = [
+    ...pullAddsList.querySelectorAll('input[type=checkbox]:checked'),
+    ...pullUpdatesList.querySelectorAll('input[type=checkbox]:checked'),
+  ].map(cb => cb.dataset.file)
+
+  if (selectedFiles.length === 0) { setStatus('No files selected.', true); return }
+
+  setStatus('Pulling…')
+  pullApplyBtn.disabled = true
+
+  let result
+  try {
+    result = await window.integrator.pullRun(sourcePath, selectedFiles)
+  } catch (err) {
+    pullApplyBtn.disabled = false
+    setStatus(err.message, true)
+    return
+  }
+  pullApplyBtn.disabled = false
+
+  if (result.error) { setStatus(result.error, true); return }
+
+  pullResultsSection.classList.add('hidden')
+  pullSummarySection.classList.remove('hidden')
+  pullSummaryContent.innerHTML = `
+    <p><strong>Added:</strong> ${result.added} file(s)</p>
+    <p><strong>Updated:</strong> ${result.updated} file(s)</p>
+    <p><strong>Backup:</strong> ${result.backup}</p>
+  `
+  setStatus('Pull complete.')
+})
+
+pullResetBtn.addEventListener('click', () => {
+  pullSummarySection.classList.add('hidden')
+  pullResultsSection.classList.add('hidden')
+  sourcePathInput.value = ''
+  pullSearchInput.value = ''
   setStatus('')
 })

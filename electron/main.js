@@ -94,6 +94,64 @@ ipcMain.handle('integrate:run', async (_event, { targetPath, overwriteList }) =>
   }
 })
 
+const SCOPED_DIRS = ['agents', 'skills', 'commands', 'rules', 'code-rules', 'agent-rules', 'workflows']
+
+ipcMain.handle('pull:scan', async (_event, { sourcePath }) => {
+  try {
+    const sourceClaudeDir = path.join(sourcePath, '.claude')
+    if (!fs.existsSync(sourceClaudeDir)) {
+      return { error: `.claude not found at: ${sourcePath}` }
+    }
+    const adds = []
+    const updates = []
+    for (const scope of SCOPED_DIRS) {
+      const scopeDir = path.join(sourceClaudeDir, scope)
+      if (!fs.existsSync(scopeDir)) continue
+      for (const rel of walkDir(scopeDir, sourceClaudeDir)) {
+        const destFile = path.join(SOURCE_DIR, rel)
+        if (!fs.existsSync(destFile)) {
+          adds.push(rel)
+        } else {
+          const srcContent = fs.readFileSync(path.join(sourceClaudeDir, rel))
+          const dstContent = fs.readFileSync(destFile)
+          if (!srcContent.equals(dstContent)) updates.push(rel)
+        }
+      }
+    }
+    return { adds, updates }
+  } catch (err) {
+    return { error: err.message }
+  }
+})
+
+ipcMain.handle('pull:run', async (_event, { sourcePath, selectedFiles }) => {
+  try {
+    const sourceClaudeDir = path.join(sourcePath, '.claude')
+    const ts = new Date().toISOString().replace(/[:.]/g, '-').replace('T', '_').slice(0, 19)
+    const backup = path.join(path.dirname(SOURCE_DIR), `.claude.bak.${ts}`)
+    fs.cpSync(SOURCE_DIR, backup, { recursive: true })
+
+    const selectedSet = new Set(selectedFiles)
+    let added = 0, updated = 0
+    for (const scope of SCOPED_DIRS) {
+      const scopeDir = path.join(sourceClaudeDir, scope)
+      if (!fs.existsSync(scopeDir)) continue
+      for (const rel of walkDir(scopeDir, sourceClaudeDir)) {
+        if (!selectedSet.has(rel)) continue
+        const srcFile = path.join(sourceClaudeDir, rel)
+        const destFile = path.join(SOURCE_DIR, rel)
+        const isNew = !fs.existsSync(destFile)
+        fs.mkdirSync(path.dirname(destFile), { recursive: true })
+        fs.copyFileSync(srcFile, destFile)
+        isNew ? added++ : updated++
+      }
+    }
+    return { added, updated, backup }
+  } catch (err) {
+    return { error: err.message }
+  }
+})
+
 // --- Helpers ---
 
 function walkDir(dir, base) {

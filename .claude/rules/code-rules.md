@@ -14,6 +14,7 @@
 | ui-keyboard.md | popup, modal, dialog, keyboard, shortcut, hotkey, ESC, Ctrl+Enter | Keyboard shortcuts for popups/modals/dialogs |
 | node-eval.md | node -e, node eval, inline script, zsh, histexpand | Never use node -e; write temp .js file instead |
 | file-size.md | lines, size, length, split, large file, 300 | Keep .ts/.tsx files under 300 lines |
+| backend-selection.md | selection, selected, checkbox, walkDir, IPC, selectedFiles, bulk action | Backend must only act on user-selected items, never walk all files independently |
 
 ## How to use
 

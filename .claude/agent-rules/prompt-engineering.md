@@ -19,3 +19,12 @@
   - Bad: "It's worth noting that the agent should always wait for user input between steps, as this ensures better interaction quality."
   - Good: "**Rule: ALWAYS wait for user input between steps. Use AskUserQuestion + STOP.**"
 - **Applies to**: commands, agents, and skills
+
+## Disambiguate skill triggers from literal commands
+
+- **Mistake**: User said "start electron" meaning "run the Electron app" (`npm start`). Claude interpreted "start" as the `/start` skill and began the build-app workflow instead.
+- **Fix**: Before invoking a skill, check whether the user's intent is the skill or a literal action. If the phrase matches a common shell/dev operation (start, build, test, run, deploy), confirm intent or default to the literal operation unless the user explicitly references the skill with `/` prefix or mentions coding/building a feature.
+- **Example**:
+  - "start electron" → Run the Electron app (`npm start`)
+  - "/start electron" or "start building electron feature" → Invoke the `/start` skill
+- **Applies to**: commands, agents, and skills

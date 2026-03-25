@@ -57,7 +57,7 @@ ipcMain.handle('integrate:scan', async (_event, { targetPath }) => {
   }
 })
 
-ipcMain.handle('integrate:run', async (_event, { targetPath, overwriteList }) => {
+ipcMain.handle('integrate:run', async (_event, { targetPath, selectedFiles }) => {
   try {
     const targetClaudeDir = path.join(targetPath, '.claude')
     let backup = null
@@ -69,23 +69,18 @@ ipcMain.handle('integrate:run', async (_event, { targetPath, overwriteList }) =>
       fs.cpSync(targetClaudeDir, backup, { recursive: true })
     }
 
-    const sourceFiles = walkDir(SOURCE_DIR, SOURCE_DIR)
+    const selectedSet = new Set(selectedFiles)
     let copied = 0
     let skipped = 0
-    const overwriteSet = new Set(overwriteList)
 
+    const sourceFiles = walkDir(SOURCE_DIR, SOURCE_DIR)
     for (const rel of sourceFiles) {
+      if (!selectedSet.has(rel)) { skipped++; continue }
       const srcFile = path.join(SOURCE_DIR, rel)
       const destFile = path.join(targetClaudeDir, rel)
-      const exists = fs.existsSync(destFile)
-
-      if (!exists || overwriteSet.has(rel)) {
-        fs.mkdirSync(path.dirname(destFile), { recursive: true })
-        fs.copyFileSync(srcFile, destFile)
-        copied++
-      } else {
-        skipped++
-      }
+      fs.mkdirSync(path.dirname(destFile), { recursive: true })
+      fs.copyFileSync(srcFile, destFile)
+      copied++
     }
 
     return { copied, skipped, backup }

@@ -11,7 +11,7 @@
 | separation-of-concerns.md | command, agent, skill, delegate, duplicate, routing, dispatch, role, tone | Single responsibility: command dispatches, agent orchestrates, skill executes |
 | workflow-execution.md | step, WAIT, AskUserQuestion, multi-step, sequential, STOP, proceed, workflow | Step sequencing, STOP conditions, user interaction gates |
 | file-conventions.md | file, path, location, naming, directory, structure, metadata, tools, frontmatter | Directory layout, naming, metadata requirements |
-| prompt-engineering.md | instruction, prompt, ambiguous, enforce, mandatory, constraint, rule, clarity | Writing clear, unambiguous instructions that Claude reliably follows |
+| prompt-engineering.md | instruction, prompt, ambiguous, enforce, mandatory, constraint, rule, clarity, intent, disambiguate, start, build, run | Writing clear, unambiguous instructions that Claude reliably follows; disambiguate skill triggers from literal commands |
 | content-lifecycle.md | create, update, delete, duplicate, stale, outdated, version, deprecate | Rule hygiene: avoid duplicates, deprecate stale content, review periodically |
 
 ## How to use

@@ -9,19 +9,98 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   })
 })
 
+// --- Confirm dialog ---
+const confirmOverlay = document.getElementById('confirmOverlay')
+const confirmBody = document.getElementById('confirmBody')
+const confirmOkBtn = document.getElementById('confirmOkBtn')
+const confirmCancelBtn = document.getElementById('confirmCancelBtn')
+
+function showConfirm(html) {
+  return new Promise(resolve => {
+    confirmBody.innerHTML = html
+    confirmOverlay.classList.remove('hidden')
+    const cleanup = () => {
+      confirmOverlay.classList.add('hidden')
+      confirmOkBtn.removeEventListener('click', onOk)
+      confirmCancelBtn.removeEventListener('click', onCancel)
+      window.removeEventListener('keydown', onKey)
+    }
+    const onOk = () => { cleanup(); resolve(true) }
+    const onCancel = () => { cleanup(); resolve(false) }
+    const onKey = (e) => {
+      if (e.key === 'Escape') onCancel()
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) onOk()
+    }
+    confirmOkBtn.addEventListener('click', onOk)
+    confirmCancelBtn.addEventListener('click', onCancel)
+    window.addEventListener('keydown', onKey)
+  })
+}
+
+function buildConfirmHtml(newFiles, updateFiles, targetLabel) {
+  let html = `<p style="margin-bottom:12px">Push to <strong>${targetLabel}</strong></p>`
+  if (newFiles.length > 0) {
+    html += `<p><span class="badge">${newFiles.length}</span> new file(s)</p>`
+    html += `<ul class="file-list">${newFiles.map(f => `<li>${f}</li>`).join('')}</ul>`
+  }
+  if (updateFiles.length > 0) {
+    html += `<p><span class="badge warn">${updateFiles.length}</span> file(s) to overwrite</p>`
+    html += `<ul class="file-list">${updateFiles.map(f => `<li>${f}</li>`).join('')}</ul>`
+  }
+  return html
+}
+
+function buildPullConfirmHtml(addFiles, updateFiles, sourceLabel) {
+  let html = `<p style="margin-bottom:12px">Pull from <strong>${sourceLabel}</strong></p>`
+  if (addFiles.length > 0) {
+    html += `<p><span class="badge">${addFiles.length}</span> new file(s)</p>`
+    html += `<ul class="file-list">${addFiles.map(f => `<li>${f}</li>`).join('')}</ul>`
+  }
+  if (updateFiles.length > 0) {
+    html += `<p><span class="badge warn">${updateFiles.length}</span> file(s) to overwrite</p>`
+    html += `<ul class="file-list">${updateFiles.map(f => `<li>${f}</li>`).join('')}</ul>`
+  }
+  return html
+}
+
+// --- Shared helpers ---
+function toggleVisible(list, checked) {
+  list.querySelectorAll('li').forEach(li => {
+    if (!li.classList.contains('hidden-filter')) {
+      const cb = li.querySelector('input[type=checkbox]')
+      if (cb) cb.checked = checked
+    }
+  })
+}
+
+function makeCheckList(list, files) {
+  list.innerHTML = ''
+  files.forEach(f => {
+    const li = document.createElement('li')
+    const label = document.createElement('label')
+    const cb = document.createElement('input')
+    cb.type = 'checkbox'
+    cb.checked = true
+    cb.dataset.file = f
+    label.appendChild(cb)
+    label.append(' ' + f)
+    li.appendChild(label)
+    list.appendChild(li)
+  })
+}
+
 // --- Push tab ---
 const targetPathInput = document.getElementById('targetPath')
 const browseBtn = document.getElementById('browseBtn')
 const scanBtn = document.getElementById('scanBtn')
 const resultsSection = document.getElementById('resultsSection')
 const newFilesSection = document.getElementById('newFilesSection')
-const conflictsSection = document.getElementById('conflictsSection')
+const updatesSection = document.getElementById('updatesSection')
 const newCount = document.getElementById('newCount')
-const conflictCount = document.getElementById('conflictCount')
+const updateCount = document.getElementById('updateCount')
 const newFilesList = document.getElementById('newFilesList')
-const conflictsList = document.getElementById('conflictsList')
-const checkAllBtn = document.getElementById('checkAllBtn')
-const uncheckAllBtn = document.getElementById('uncheckAllBtn')
+const updatesList = document.getElementById('updatesList')
+const pushSearchInput = document.getElementById('pushSearchInput')
 const integrateBtn = document.getElementById('integrateBtn')
 const summarySection = document.getElementById('summarySection')
 const summaryContent = document.getElementById('summaryContent')
@@ -38,6 +117,16 @@ browseBtn.addEventListener('click', async () => {
   if (selected) targetPathInput.value = selected
 })
 
+pushSearchInput.addEventListener('input', () => {
+  const q = pushSearchInput.value.toLowerCase()
+  ;[newFilesList, updatesList].forEach(list => {
+    list.querySelectorAll('li').forEach(li => {
+      const text = li.textContent.toLowerCase()
+      li.classList.toggle('hidden-filter', q.length > 0 && !text.includes(q))
+    })
+  })
+})
+
 scanBtn.addEventListener('click', async () => {
   const targetPath = targetPathInput.value.trim()
   if (!targetPath) { setStatus('Enter a target path first.', true); return }
@@ -51,54 +140,47 @@ scanBtn.addEventListener('click', async () => {
   if (result.error) { setStatus(result.error, true); return }
 
   // New files
-  newFilesList.innerHTML = ''
-  result.newFiles.forEach(f => {
-    const li = document.createElement('li')
-    li.textContent = f
-    newFilesList.appendChild(li)
-  })
+  makeCheckList(newFilesList, result.newFiles)
   newCount.textContent = result.newFiles.length
   newFilesSection.style.display = result.newFiles.length ? '' : 'none'
 
-  // Conflicts
-  conflictsList.innerHTML = ''
-  result.conflictFiles.forEach(f => {
-    const li = document.createElement('li')
-    const label = document.createElement('label')
-    const cb = document.createElement('input')
-    cb.type = 'checkbox'
-    cb.checked = true
-    cb.dataset.file = f
-    label.appendChild(cb)
-    label.append(' ' + f)
-    li.appendChild(label)
-    conflictsList.appendChild(li)
-  })
-  conflictCount.textContent = result.conflictFiles.length
-  conflictsSection.style.display = result.conflictFiles.length ? '' : 'none'
+  // Updates (conflicts)
+  makeCheckList(updatesList, result.conflictFiles)
+  updateCount.textContent = result.conflictFiles.length
+  updatesSection.style.display = result.conflictFiles.length ? '' : 'none'
+
+  if (result.newFiles.length === 0 && result.conflictFiles.length === 0) {
+    setStatus('Already up to date.')
+    resultsSection.classList.add('hidden')
+    return
+  }
 
   resultsSection.classList.remove('hidden')
   summarySection.classList.add('hidden')
-  setStatus(`Found ${result.newFiles.length} new, ${result.conflictFiles.length} conflict(s).`)
+  pushSearchInput.value = ''
+  setStatus(`Found ${result.newFiles.length} new, ${result.conflictFiles.length} update(s).`)
 })
 
-checkAllBtn.addEventListener('click', () => {
-  conflictsList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = true)
-})
-
-uncheckAllBtn.addEventListener('click', () => {
-  conflictsList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false)
-})
+document.getElementById('pushCheckAllNewBtn').addEventListener('click', () => toggleVisible(newFilesList, true))
+document.getElementById('pushUncheckAllNewBtn').addEventListener('click', () => toggleVisible(newFilesList, false))
+document.getElementById('pushCheckAllUpdatesBtn').addEventListener('click', () => toggleVisible(updatesList, true))
+document.getElementById('pushUncheckAllUpdatesBtn').addEventListener('click', () => toggleVisible(updatesList, false))
 
 integrateBtn.addEventListener('click', async () => {
   const targetPath = targetPathInput.value.trim()
-  const overwriteList = [...conflictsList.querySelectorAll('input[type=checkbox]:checked')]
-    .map(cb => cb.dataset.file)
+  const newSelected = [...newFilesList.querySelectorAll('input[type=checkbox]:checked')].map(cb => cb.dataset.file)
+  const updateSelected = [...updatesList.querySelectorAll('input[type=checkbox]:checked')].map(cb => cb.dataset.file)
+  const selectedFiles = [...newSelected, ...updateSelected]
+
+  if (selectedFiles.length === 0) { setStatus('No files selected.', true); return }
+
+  const confirmed = await showConfirm(buildConfirmHtml(newSelected, updateSelected, targetPath))
+  if (!confirmed) return
 
   setStatus('Integrating…')
   integrateBtn.disabled = true
 
-  const result = await window.integrator.run(targetPath, overwriteList)
+  const result = await window.integrator.run(targetPath, selectedFiles)
   integrateBtn.disabled = false
 
   if (result.error) { setStatus(result.error, true); return }
@@ -117,6 +199,7 @@ resetBtn.addEventListener('click', () => {
   summarySection.classList.add('hidden')
   resultsSection.classList.add('hidden')
   targetPathInput.value = ''
+  pushSearchInput.value = ''
   setStatus('')
 })
 
@@ -136,22 +219,6 @@ const pullSummarySection = document.getElementById('pullSummarySection')
 const pullSummaryContent = document.getElementById('pullSummaryContent')
 const pullResetBtn = document.getElementById('pullResetBtn')
 
-function makeCheckList(list, files) {
-  list.innerHTML = ''
-  files.forEach(f => {
-    const li = document.createElement('li')
-    const label = document.createElement('label')
-    const cb = document.createElement('input')
-    cb.type = 'checkbox'
-    cb.checked = true
-    cb.dataset.file = f
-    label.appendChild(cb)
-    label.append(' ' + f)
-    li.appendChild(label)
-    list.appendChild(li)
-  })
-}
-
 const pullSearchInput = document.getElementById('pullSearchInput')
 
 pullSearchInput.addEventListener('input', () => {
@@ -164,18 +231,10 @@ pullSearchInput.addEventListener('input', () => {
   })
 })
 
-document.getElementById('pullCheckAllAddsBtn').addEventListener('click', () => {
-  pullAddsList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = true)
-})
-document.getElementById('pullUncheckAllAddsBtn').addEventListener('click', () => {
-  pullAddsList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false)
-})
-document.getElementById('pullCheckAllUpdatesBtn').addEventListener('click', () => {
-  pullUpdatesList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = true)
-})
-document.getElementById('pullUncheckAllUpdatesBtn').addEventListener('click', () => {
-  pullUpdatesList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false)
-})
+document.getElementById('pullCheckAllAddsBtn').addEventListener('click', () => toggleVisible(pullAddsList, true))
+document.getElementById('pullUncheckAllAddsBtn').addEventListener('click', () => toggleVisible(pullAddsList, false))
+document.getElementById('pullCheckAllUpdatesBtn').addEventListener('click', () => toggleVisible(pullUpdatesList, true))
+document.getElementById('pullUncheckAllUpdatesBtn').addEventListener('click', () => toggleVisible(pullUpdatesList, false))
 
 pullBrowseBtn.addEventListener('click', async () => {
   const selected = await window.integrator.browse()
@@ -222,12 +281,14 @@ pullScanBtn.addEventListener('click', async () => {
 
 pullApplyBtn.addEventListener('click', async () => {
   const sourcePath = sourcePathInput.value.trim()
-  const selectedFiles = [
-    ...pullAddsList.querySelectorAll('input[type=checkbox]:checked'),
-    ...pullUpdatesList.querySelectorAll('input[type=checkbox]:checked'),
-  ].map(cb => cb.dataset.file)
+  const addSelected = [...pullAddsList.querySelectorAll('input[type=checkbox]:checked')].map(cb => cb.dataset.file)
+  const updateSelected = [...pullUpdatesList.querySelectorAll('input[type=checkbox]:checked')].map(cb => cb.dataset.file)
+  const selectedFiles = [...addSelected, ...updateSelected]
 
   if (selectedFiles.length === 0) { setStatus('No files selected.', true); return }
+
+  const confirmed = await showConfirm(buildPullConfirmHtml(addSelected, updateSelected, sourcePath))
+  if (!confirmed) return
 
   setStatus('Pulling…')
   pullApplyBtn.disabled = true
